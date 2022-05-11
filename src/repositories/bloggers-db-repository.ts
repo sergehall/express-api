@@ -1,0 +1,108 @@
+import {deletedAllPostsByBloggerId} from "./posts-repository";
+import {bloggersCollection} from "./db";
+import {ArrayErrorsType, BloggerType, ErrorType, ReturnTypeObjectBlogers} from "../types/all_types";
+import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-validator-middleware";
+
+
+export class BloggersRepository {
+  async findBloggers(youtubeUrl: string | null | undefined): Promise<BloggerType[]> {
+    const filter: any = {}
+    if (youtubeUrl) {
+      filter.youtubeUrl = {$regex: youtubeUrl}
+    }
+    return bloggersCollection.find(filter).toArray()
+  }
+
+  async createNewBlogger(newBlogger: BloggerType): Promise<ReturnTypeObjectBlogers> {
+    const errorsArray: ArrayErrorsType = [];
+
+    const result = await bloggersCollection.insertOne(newBlogger)
+    if (!result.insertedId) {
+      errorsArray.push(MongoHasNotUpdated)
+    }
+    if (errorsArray.length !== 0) {
+      return {
+        data: newBlogger,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+    return {
+      data: newBlogger,
+      errorsMessages: errorsArray,
+      resultCode: 0
+    }
+  }
+
+  async getBloggerById(id: number): Promise<BloggerType | null> {
+    const blogger: BloggerType | null = await bloggersCollection.findOne({id: id})
+    if (blogger) {
+      return blogger
+    } else {
+      return null
+    }
+  }
+
+  async updateBloggerById(id: number, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBlogers> {
+    let errorsArray: Array<ErrorType> = [];
+    const data = {
+      id: id,
+      name: name,
+      youtubeUrl: youtubeUrl
+    }
+
+    const result = await bloggersCollection.updateOne({id: id}, {
+      $set: {
+        name: name,
+        youtubeUrl: youtubeUrl
+      }
+    })
+
+    if (result.matchedCount === 0) {
+      errorsArray.push(notFoundBloggerId, MongoHasNotUpdated,)
+    }
+
+    if (errorsArray.length !== 0) {
+      return {
+        data: data,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+    return {
+      data: data,
+      errorsMessages: errorsArray,
+      resultCode: 0
+    }
+  }
+
+  async deletedBloggerById(id: number): Promise<boolean> {
+    const result = await bloggersCollection.deleteMany({id: id})
+    return result.deletedCount !== 0
+    //   if (!id) {
+    //     return false
+    //   }
+    //   // delete from bloggers array
+    //   const blogger = bloggers.filter(v => v.id === id)
+    //
+    //   if (bloggers.filter(v => v.id === id) && bloggers.indexOf(blogger[0]) !== -1) {
+    //     const newV = bloggers.indexOf(blogger[0]);
+    //     bloggers.splice(newV, 1);
+    //     try {
+    //
+    //       // If the blogger is in the array, then we call the function in the post repository
+    //       // deletedAllPostsByBloggerId so that it deletes all posts with this bloggerId
+    //       await deletedAllPostsByBloggerId(id);
+    //
+    //       // Checking the blogger in the deleted array, if it is not there, then push him there
+    //       if (deletedBloggers.filter(v => v.id === id).length === 0) {
+    //         deletedBloggers.push(blogger[0])
+    //       }
+    //     } catch (e) {
+    //       console.log("Error => function deletedAllPostsByBloggerId. " +
+    //         "Фунция сделана самостоятельно, не по заданию возможна ошибка при тестах.")
+    //     }
+    //   }
+    //   return true
+  }
+}
