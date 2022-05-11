@@ -22,7 +22,7 @@ const port = process.env.PORT || 5000
 
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Bloggers, posts, users, feedback!');
+  res.send('Learning Node.js, Express, {api: [bloggers, posts, users, feedback]}');
 })
 
 app.use('/posts', postsRouts)
