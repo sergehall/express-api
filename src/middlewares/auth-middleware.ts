@@ -8,7 +8,7 @@ export const authRouter = Router({})
 
 authRouter.post('/login',
   async (req: Request, res: Response) => {
-    const user = await ioc.userService.checkCredentials(req.body.loginOrEmail, req.body.password)
+    const user = await ioc.usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
     if (user) {
       const token = await jwtService.createJWT(user)
       res.status(201).send(token)
@@ -27,7 +27,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
   const userId = await jwtService.getUserIdByToken(token)
   if (userId) {
-    req.user = await ioc.userService.findUser(userId)
+    req.user = await ioc.usersService.findUser(userId)
     next()
   }
   res.send(401)
