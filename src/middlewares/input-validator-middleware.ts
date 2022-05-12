@@ -66,7 +66,6 @@ export const inputValidatorMiddleware = (req: Request, res: Response, next: Next
   }
 }
 
-
 export const checkoutMongoDbId = (req: Request, res: Response, next: NextFunction) => {
   const mongoDbIdRegExp = /^([\da-f]{24})$/i
   const paramsMongoId = req.params.mongoId;

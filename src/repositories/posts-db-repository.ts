@@ -1,14 +1,6 @@
-import {bloggers} from "./bloggers-repository";
-import {
-  bloggersCollection,
-  postsCollection,
-} from "./db";
+import {bloggersCollection, postsCollection,} from "./db";
 import {ArrayErrorsType, PostsType, ReturnTypeObjectPosts} from "../types/all_types";
-import {
-  MongoHasNotUpdated,
-  notFoundBloggerId,
-  notFoundPostId
-} from "../middlewares/input-validator-middleware";
+import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/input-validator-middleware";
 
 
 export class PostsRepository {

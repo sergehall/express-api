@@ -1,17 +1,9 @@
-import {Request, Response, Router} from "express";
-import {
-  allDeletedBloggersPostsRepository
-} from "../repositories/all-deleted-bloggers-db-repository";
+import {Router} from "express";
+import {ioc} from "../IoCContainer";
+
 
 
 export const allDeletedBloggersRouts = Router({})
 
 allDeletedBloggersRouts.get('/',
-  async (req: Request, res: Response) => {
-    const foundBloggersPosts = await allDeletedBloggersPostsRepository.findBloggersPosts();
-    if (foundBloggersPosts) {
-      res.send(foundBloggersPosts)
-    }else {
-      res.status(404)
-    }
-  })
+  ioc.allDelBloggersController.getAllDeletedBloggers.bind(ioc.allDelBloggersController))

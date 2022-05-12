@@ -7,6 +7,7 @@ import {
   UserDBType
 } from "../types/all_types";
 
+// start mongod local
 // ./mongod --dbpath ./data/db
 
 

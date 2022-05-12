@@ -1,15 +1,7 @@
 import {MongoClient} from 'mongodb'
 
-// const dotenv = require('dotenv')
-//
-// const result = dotenv.config({path: '/Users/Hall/WebstormProjects/bloggers-api/.env'})
-// if (result.error) {
-//   console.log(result.error)
-//   throw result.error
-// }
-// console.log(result.parsed.ATLAS_URI)
-
 const ck = require('ckey')
+
 
 const dbUrl = ck.ATLAS_URI
 export const client = new MongoClient(dbUrl);
