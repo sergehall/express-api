@@ -31,12 +31,10 @@ export class PostsRepository {
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
     }
-    //const found = await postsCollection.find(filter).toArray()
     const startIndex = (pageNumber - 1) * pageSize
     const result = await postsCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
-
     // @ts-ignore
-    result.map(i => delete i._id)
+    result.forEach(i => delete i._id)
 
     const totalCount = await postsCollection.countDocuments(filter)
 
@@ -49,7 +47,6 @@ export class PostsRepository {
       totalCount: totalCount,
       items: result
     };
-
   }
 
   async createPost(newPost: PostsType): Promise<ReturnTypeObjectPosts> {

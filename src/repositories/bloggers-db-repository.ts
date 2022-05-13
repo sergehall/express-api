@@ -1,4 +1,4 @@
-import {bloggersCollection} from "./db";
+import {bloggersCollection, postsCollection} from "./db";
 import {
   ArrayErrorsType,
   BloggerType,
@@ -13,7 +13,7 @@ import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-valida
 
 export class BloggersRepository {
   async findBloggers(pageNumber: number, pageSize: number, searchNameTerm: string| null): Promise<Pagination> {
-    let filter: any = {}
+    let filter = {}
 
     if (searchNameTerm !== null) {
       filter = {name: {$regex: searchNameTerm}}
@@ -21,14 +21,9 @@ export class BloggersRepository {
     const startIndex = (pageNumber - 1) * pageSize
     const result = await bloggersCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
     // @ts-ignore
-    result.map(i => delete i._id)
+    result.forEach(i => delete i._id)
 
-    const foundBySearchNameTerm = await bloggersCollection.find(filter).toArray()
-    let totalCount: number = foundBySearchNameTerm.length
-    if (searchNameTerm === null) {
-      totalCount = await bloggersCollection.countDocuments()
-    }
-
+    const totalCount = await bloggersCollection.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)
 
     return {
