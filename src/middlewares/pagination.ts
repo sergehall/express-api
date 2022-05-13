@@ -1,7 +1,7 @@
-import {Request, Response} from "express";
+import {Request} from "express";
 
 
-export async function parseQuery(req: Request, res: Response) {
+export async function parseQuery(req: Request) {
   let pageNumber: number = parseInt(<string>req.query.PageNumber)
   let pageSize: number = parseInt(<string>req.query.PageSize)
   let searchNameTerm: string | null;

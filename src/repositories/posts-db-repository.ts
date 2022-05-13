@@ -23,22 +23,21 @@ export class PostsRepository {
       items: result
     };
   }
-  async findPostsByBloggerId(id: string | null | undefined, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
-    let filter: any = {}
 
-    if (searchNameTerm !== null) {
-      filter = {bloggerId: {$regex: searchNameTerm}}
+  async findPostsByBloggerId(bloggerId: string | null | undefined, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
+    let filter: any = {}
+    let bId: number = parseInt(<string>bloggerId)
+    if (bloggerId) {
+      filter = {bloggerId: bId}
     }
+    const found = await postsCollection.find(filter).toArray()
     const startIndex = (pageNumber - 1) * pageSize
     const result = await postsCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
+
     // @ts-ignore
     result.map(i => delete i._id)
 
-    const foundBySearchNameTerm = await postsCollection.find(filter).toArray()
-    let totalCount: number = foundBySearchNameTerm.length
-    if (searchNameTerm === null) {
-      totalCount = await postsCollection.countDocuments()
-    }
+    let totalCount: number = found.length
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 
@@ -51,7 +50,6 @@ export class PostsRepository {
     };
 
   }
-
 
   async createPost(newPost: PostsType): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];

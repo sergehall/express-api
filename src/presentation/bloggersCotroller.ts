@@ -10,7 +10,7 @@ export class BloggersController {
   constructor(private bloggersService: BloggersService, private postsService: PostsService ) {
   }
   async getAllBloggers(req: Request, res: Response) {
-    const parseData = await parseQuery(req, res)
+    const parseData = await parseQuery(req)
 
     const foundBloggers = await this.bloggersService.findBloggers(parseData.pageNumber,parseData.pageSize, parseData.searchNameTerm)
 
@@ -19,7 +19,7 @@ export class BloggersController {
 
   async getAllPostByBloggerId(req: Request, res: Response) {
     const id = +req.params.bloggerId;
-    const parseData = await parseQuery(req, res)
+    const parseData = await parseQuery(req)
 
     const foundBlogger =  await this.bloggersService.getBloggerById(id);
 
