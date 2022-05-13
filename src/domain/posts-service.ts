@@ -39,4 +39,8 @@ export class PostsService {
   async deletedById(id: number): Promise<Boolean> {
     return await this.postsRepository.deletedById(id)
   }
+
+  async deletedAllPosts(): Promise<Boolean> {
+    return await this.postsRepository.deletedAllPosts()
+  }
 }

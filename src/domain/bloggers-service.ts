@@ -31,6 +31,9 @@ export class BloggersService {
 
   async deletedBloggerById(id: number): Promise<boolean> {
     return await this.bloggersRepository.deletedBloggerById(id);
+  }
 
+  async deletedAllBloggers(): Promise<boolean> {
+    return await this.bloggersRepository.deletedAllBloggers();
   }
 }

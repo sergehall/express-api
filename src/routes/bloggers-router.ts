@@ -29,6 +29,9 @@ bloggersRouts.get('/',
     bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.deleteBloggerById.bind(ioc.bloggersController))
 
+  .delete('/', authMiddlewareHeadersAuthorization,
+    ioc.bloggersController.deleteAllBloggers.bind(ioc.bloggersController))
+
   .get('/:bloggerId/posts', bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.getAllPostByBloggerId.bind(ioc.bloggersController))
 

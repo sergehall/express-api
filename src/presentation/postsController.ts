@@ -105,4 +105,15 @@ export class PostsController {
       res.sendStatus(404)
     }
   }
+
+  async deletePosts(req: Request, res: Response) {
+
+    const deletedPost = await this.postsService.deletedAllPosts()
+
+    if (deletedPost) {
+      res.sendStatus(204)
+    } else {
+      res.sendStatus(404)
+    }
+  }
 }

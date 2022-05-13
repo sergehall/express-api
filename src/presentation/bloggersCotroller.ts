@@ -139,4 +139,14 @@ export class BloggersController {
       res.sendStatus(404)
     }
   }
+
+  async deleteAllBloggers(req: Request, res: Response) {
+    const deletedBlogger = await this.bloggersService.deletedAllBloggers();
+
+    if (deletedBlogger) {
+      res.sendStatus(204)
+    } else {
+      res.sendStatus(404)
+    }
+  }
 }

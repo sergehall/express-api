@@ -83,7 +83,7 @@ export class BloggersRepository {
   }
 
   async deletedBloggerById(id: number): Promise<boolean> {
-    const result = await bloggersCollection.deleteMany({id: id})
+    const result = await bloggersCollection.deleteOne({id: id})
     return result.deletedCount !== 0
     //   if (!id) {
     //     return false
@@ -110,5 +110,10 @@ export class BloggersRepository {
     //     }
     //   }
     //   return true
+  }
+
+  async deletedAllBloggers(): Promise<boolean> {
+    const result = await bloggersCollection.deleteMany({})
+    return result.deletedCount !== 0
   }
 }

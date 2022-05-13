@@ -30,3 +30,6 @@ postsRouts.get('/',
   .delete('/:postId', authMiddlewareHeadersAuthorization,
     postIdParamsValidation, inputValidatorMiddleware,
     ioc.postsController.deletePostById.bind(ioc.postsController))
+
+  .delete('/', authMiddlewareHeadersAuthorization,
+    ioc.postsController.deletePosts.bind(ioc.postsController))
