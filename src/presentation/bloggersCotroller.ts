@@ -25,7 +25,7 @@ export class BloggersController {
 
     if (foundBlogger) {
 
-      const foundPosts = await this.postsService.findPostsByBloggerId(id.toString(), parseData.pageNumber,parseData.pageSize, parseData.searchNameTerm);
+      const foundPosts = await this.postsService.findPostsByBloggerId(id, parseData.pageNumber,parseData.pageSize, parseData.searchNameTerm);
 
       res.send(foundPosts)
     } else {

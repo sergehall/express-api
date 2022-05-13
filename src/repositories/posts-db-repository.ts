@@ -11,9 +11,11 @@ export class PostsRepository {
     const page = pageNumber
     const pagesCount = Math.ceil(totalCount / pageSize)
 
-    const result = await postsCollection.find({}).limit(pageSize).skip(startIndex).toArray()
+    const result = await postsCollection.find({},{projection: {
+      _id: false
+      }}).limit(pageSize).skip(startIndex).toArray()
     // @ts-ignore
-    result.map(i => delete i._id)
+    result.forEach(i => delete i._id)
 
     return {
       pagesCount: pagesCount,
@@ -24,20 +26,19 @@ export class PostsRepository {
     };
   }
 
-  async findPostsByBloggerId(bloggerId: string | null | undefined, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
-    let filter: any = {}
-    let bId: number = parseInt(<string>bloggerId)
+  async findPostsByBloggerId(bloggerId: number, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
+    let filter = {}
     if (bloggerId) {
-      filter = {bloggerId: bId}
+      filter = {bloggerId: bloggerId}
     }
-    const found = await postsCollection.find(filter).toArray()
+    //const found = await postsCollection.find(filter).toArray()
     const startIndex = (pageNumber - 1) * pageSize
     const result = await postsCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
 
     // @ts-ignore
     result.map(i => delete i._id)
 
-    let totalCount: number = found.length
+    const totalCount = await postsCollection.countDocuments(filter)
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 

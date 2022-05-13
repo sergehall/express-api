@@ -10,7 +10,7 @@ export class PostsService {
   async findPosts(pageNumber: number, pageSize: number): Promise<Pagination>{
     return await this.postsRepository.findPosts(pageNumber, pageSize)
   }
-  async findPostsByBloggerId(bloggerId: string | null | undefined, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination>{
+  async findPostsByBloggerId(bloggerId: number, pageNumber: number = 1, pageSize: number = 10, searchNameTerm: string | null = null): Promise<Pagination>{
     return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize, searchNameTerm)
   }
 
