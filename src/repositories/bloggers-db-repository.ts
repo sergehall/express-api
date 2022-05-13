@@ -14,13 +14,18 @@ import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-valida
 export class BloggersRepository {
   async findBloggers(pageNumber: number, pageSize: number, searchNameTerm: string| null): Promise<Pagination> {
     let filter: any = {}
+
     if (searchNameTerm !== null) {
       filter = {name: {$regex: searchNameTerm}}
     }
-
     const startIndex = (pageNumber - 1) * pageSize
-    const totalCount = await bloggersCollection.countDocuments()
-    const page = pageNumber
+
+    const foundBySearchNameTerm = await bloggersCollection.find(filter).toArray()
+    let totalCount: number = foundBySearchNameTerm.length
+    if (searchNameTerm === null) {
+      totalCount = await bloggersCollection.countDocuments()
+    }
+
     const pagesCount = Math.ceil(totalCount / pageSize)
 
     const result = await bloggersCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
@@ -29,9 +34,9 @@ export class BloggersRepository {
 
     return {
       pagesCount: pagesCount,
-      page: page,
+      page: pageNumber,
       pageSize: pageSize,
-      totalCount:totalCount,
+      totalCount: totalCount,
       items: result
     };
   }
