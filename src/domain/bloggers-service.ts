@@ -1,4 +1,4 @@
-import {BloggerType, ReturnTypeObjectBlogers} from "../types/all_types";
+import {BloggerType, ReturnTypeObjectBloggers} from "../types/all_types";
 import {BloggersRepository} from "../repositories/bloggers-db-repository";
 
 
@@ -6,11 +6,11 @@ export class BloggersService {
   constructor(private bloggersRepository: BloggersRepository) {
     this.bloggersRepository = bloggersRepository
   }
-  async findBloggers(youtubeUrl: string | null | undefined): Promise<BloggerType[]> {
-    return await this.bloggersRepository.findBloggers(youtubeUrl)
+  async findBloggers(name: string | null | undefined): Promise<BloggerType[]> {
+    return await this.bloggersRepository.findBloggers(name)
   }
 
-  async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBlogers> {
+  async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
     const newId = Math.round((+new Date()+ +new Date())/2);
     const newBlogger = {
       id: newId,
@@ -25,7 +25,7 @@ export class BloggersService {
     return await this.bloggersRepository.getBloggerById(id)
   }
 
-  async updateBloggerById(id: number, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBlogers> {
+  async updateBloggerById(id: number, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
     return await this.bloggersRepository.updateBloggerById(id, name, youtubeUrl);
   }
 

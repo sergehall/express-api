@@ -6,8 +6,12 @@ export class PostsService {
   constructor(private postsRepository: PostsRepository) {
     this.postsRepository = postsRepository
   }
+
   async findPosts(title: string | null | undefined): Promise<PostsType[]>{
     return await this.postsRepository.findPosts(title)
+  }
+  async findPostsByBloggerId(bloggerId: string | null | undefined): Promise<PostsType[]>{
+    return await this.postsRepository.findPostsByBloggerId(bloggerId)
   }
 
   async createPost(title: string, shortDescription: string, content: string, bloggerId: number): Promise<ReturnTypeObjectPosts> {

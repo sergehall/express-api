@@ -8,8 +8,7 @@ export type BloggerType = {
   name: string
   youtubeUrl: string
 }
-export type ArrayBloggersType = Array<BloggerType>
-export type ReturnTypeObjectBlogers = {
+export type ReturnTypeObjectBloggers = {
   data: BloggerType,
   errorsMessages: Array<ErrorType>,
   resultCode: number

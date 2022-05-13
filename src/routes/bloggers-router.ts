@@ -1,9 +1,9 @@
 import {Router} from "express";
 import {ioc} from "../IoCContainer";
 import {
-  bloggerIdParamsValidation,
+  bloggerIdParamsValidation, contentValidation,
   inputValidatorMiddleware,
-  nameValidation, validatorUrl,
+  nameValidation, shortDescriptionValidation, titleValidation, validatorUrl,
 } from "../middlewares/input-validator-middleware";
 import {authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware";
 
@@ -28,3 +28,11 @@ bloggersRouts.get('/',
   .delete('/:bloggerId', authMiddlewareHeadersAuthorization,
     bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.deleteBloggerById.bind(ioc.bloggersController))
+
+  .get('/:bloggerId/posts', bloggerIdParamsValidation, inputValidatorMiddleware,
+    ioc.bloggersController.getAllPostByBloggerId.bind(ioc.bloggersController))
+
+  .post('/:bloggerId/posts', authMiddlewareHeadersAuthorization,
+    bloggerIdParamsValidation, titleValidation, shortDescriptionValidation,
+    contentValidation, inputValidatorMiddleware,
+    ioc.bloggersController.createPostByBloggerId.bind(ioc.bloggersController))

@@ -7,10 +7,18 @@ export class PostsRepository {
   async findPosts(title: string | null | undefined): Promise<PostsType[]> {
     const filter: any = {}
     if (title) {
-      filter.title = {$regex: title}
+      filter.title = {title: {$regex: title}}
     }
-    return postsCollection.find(filter).toArray()
+    return await postsCollection.find(filter.title).toArray()
   }
+  async findPostsByBloggerId(id: string | null | undefined): Promise<PostsType[]> {
+    const filter: any = {}
+    if (id) {
+      filter.bloggerId = {bloggerId: Number(id)}
+    }
+    return await postsCollection.find(filter.bloggerId).toArray()
+  }
+
 
   async createPost(newPost: PostsType): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];

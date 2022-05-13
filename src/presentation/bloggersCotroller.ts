@@ -1,17 +1,64 @@
 import {BloggersService} from "../domain/bloggers-service";
 import {Request, Response} from "express";
+import {PostsService} from "../domain/posts-service";
 
 
 
 
 export class BloggersController {
-  constructor(private bloggersService: BloggersService ) {
+  constructor(private bloggersService: BloggersService, private postsService: PostsService ) {
   }
   async getAllBloggers(req: Request, res: Response) {
-    const foundBloggers = await this.bloggersService.findBloggers(req.query.youtubeUrl?.toString())
+    const foundBloggers = await this.bloggersService.findBloggers(req.query.name?.toString())
     // @ts-ignore
     foundBloggers.map(i => delete i._id)
     res.send(foundBloggers)
+  }
+
+  async getAllPostByBloggerId(req: Request, res: Response) {
+    const id = +req.params.bloggerId;
+    const foundBlogger =  await this.bloggersService.getBloggerById(id);
+    if (foundBlogger) {
+      const foundPosts = await this.postsService.findPostsByBloggerId(id.toString());
+      // @ts-ignore
+      foundPosts.map(i => delete i._id)
+      res.send({
+        "pagesCount": 0,
+        "page": 0,
+        "pageSize": 0,
+        "totalCount": 0,
+        "items": [foundPosts]
+      })
+    } else {
+      res.status(404)
+      res.send()
+    }
+  }
+
+  async createPostByBloggerId(req: Request, res: Response) {
+    const id = +req.params.bloggerId;
+    const title: string = req.body.title
+    const shortDescription: string = req.body.shortDescription
+    const content: string = req.body.content
+
+    const foundBlogger =  await this.bloggersService.getBloggerById(id);
+    if (foundBlogger) {
+      const bloggerId = foundBlogger.id
+      const createPosts = await this.postsService.createPost(title, shortDescription, content, bloggerId)
+      const creatBloggerBack = {
+        id: createPosts.data.id,
+        title: createPosts.data.title,
+        shortDescription: createPosts.data.shortDescription,
+        content: createPosts.data.content,
+        bloggerId: createPosts.data.bloggerId,
+        bloggerName: createPosts.data.bloggerName
+      }
+      res.status(201)
+      res.send(creatBloggerBack)
+    } else {
+      res.status(404)
+      res.send()
+    }
   }
 
   async createNewBlogger(req: Request, res: Response) {
@@ -20,7 +67,7 @@ export class BloggersController {
       const youtubeUrl = req.body.youtubeUrl
       const createNewBlogger = await this.bloggersService.createNewBlogger(name, youtubeUrl)
 
-      if (createNewBlogger.resultCode == 0) {
+      if (createNewBlogger.resultCode === 0) {
         // @ts-ignore
         delete createNewBlogger.data._id
         res.status(201)

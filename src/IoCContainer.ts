@@ -15,13 +15,13 @@ import {AllDelBloggersService} from "./domain/all-del-bloggers-service";
 import {AllDelBloggersController} from "./presentation/all-dell-bloggersController";
 
 
-const bloggersRepository = new BloggersRepository()
-const bloggersService = new BloggersService(bloggersRepository)
-const bloggersController = new BloggersController(bloggersService)
-
 const postsRepository = new PostsRepository()
 const postsService = new PostsService(postsRepository)
 const postsController = new PostsController(postsService)
+
+const bloggersRepository = new BloggersRepository()
+const bloggersService = new BloggersService(bloggersRepository)
+const bloggersController = new BloggersController(bloggersService, postsService)
 
 const usersRepository = new UsersRepository()
 const usersService = new UsersService(usersRepository)

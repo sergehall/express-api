@@ -27,6 +27,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/posts', postsRouts)
 app.use('/bloggers', bloggersRouts)
+app.use('/bloggers/', bloggersRouts)
 app.use('/users', authRouter, usersRouter)
 app.use('/auth', authRouter)
 app.use('/feedbacks', feedbacksRouter)

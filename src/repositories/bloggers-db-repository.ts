@@ -1,19 +1,25 @@
-import {deletedAllPostsByBloggerId} from "./posts-repository";
 import {bloggersCollection} from "./db";
-import {ArrayErrorsType, BloggerType, ErrorType, ReturnTypeObjectBlogers} from "../types/all_types";
+import {
+  ArrayErrorsType,
+  BloggerType,
+  ErrorType,
+  ReturnTypeObjectBloggers
+} from "../types/all_types";
 import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-validator-middleware";
 
 
 export class BloggersRepository {
-  async findBloggers(youtubeUrl: string | null | undefined): Promise<BloggerType[]> {
+  async findBloggers(name: string | null | undefined): Promise<BloggerType[]> {
     const filter: any = {}
-    if (youtubeUrl) {
-      filter.youtubeUrl = {$regex: youtubeUrl}
+
+    if (name) {
+      console.log(name)
+      filter.name = {name: {$regex: name}}
     }
-    return bloggersCollection.find(filter).toArray()
+    return bloggersCollection.find(filter.name).toArray()
   }
 
-  async createNewBlogger(newBlogger: BloggerType): Promise<ReturnTypeObjectBlogers> {
+  async createNewBlogger(newBlogger: BloggerType): Promise<ReturnTypeObjectBloggers> {
     const errorsArray: ArrayErrorsType = [];
 
     const result = await bloggersCollection.insertOne(newBlogger)
@@ -43,7 +49,7 @@ export class BloggersRepository {
     }
   }
 
-  async updateBloggerById(id: number, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBlogers> {
+  async updateBloggerById(id: number, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
     let errorsArray: Array<ErrorType> = [];
     const data = {
       id: id,

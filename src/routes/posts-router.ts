@@ -1,6 +1,7 @@
 import {Router} from "express";
-import {contentValidation, postIdParamsValidation, inputValidatorMiddleware,
-  shortDescriptionValidation, titleValidation, bloggerIdBodyValidator
+import {
+  contentValidation, postIdParamsValidation, inputValidatorMiddleware,
+  shortDescriptionValidation, titleValidation, bloggerIdBodyValidator, bloggerIdParamsValidation
 } from "../middlewares/input-validator-middleware";
 import {ioc} from "../IoCContainer";
 import {authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware";
@@ -11,8 +12,7 @@ import {authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware
 export const postsRouts = Router({})
 
 postsRouts.get('/',
-  ioc.postsController.getAllPosts.bind(ioc.postsController)
-  )
+  ioc.postsController.getAllPosts.bind(ioc.postsController))
 
   .post('/', authMiddlewareHeadersAuthorization,
     titleValidation, shortDescriptionValidation, contentValidation,
