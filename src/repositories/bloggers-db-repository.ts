@@ -19,6 +19,9 @@ export class BloggersRepository {
       filter = {name: {$regex: searchNameTerm}}
     }
     const startIndex = (pageNumber - 1) * pageSize
+    const result = await bloggersCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
+    // @ts-ignore
+    result.map(i => delete i._id)
 
     const foundBySearchNameTerm = await bloggersCollection.find(filter).toArray()
     let totalCount: number = foundBySearchNameTerm.length
@@ -27,10 +30,6 @@ export class BloggersRepository {
     }
 
     const pagesCount = Math.ceil(totalCount / pageSize)
-
-    const result = await bloggersCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
-    // @ts-ignore
-    result.map(i => delete i._id)
 
     return {
       pagesCount: pagesCount,

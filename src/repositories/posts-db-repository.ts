@@ -23,12 +23,33 @@ export class PostsRepository {
       items: result
     };
   }
-  async findPostsByBloggerId(id: string | null | undefined): Promise<PostsType[]> {
-    const filter: any = {}
-    if (id) {
-      filter.bloggerId = {bloggerId: Number(id)}
+  async findPostsByBloggerId(id: string | null | undefined, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
+    let filter: any = {}
+
+    if (searchNameTerm !== null) {
+      filter = {bloggerId: {$regex: searchNameTerm}}
     }
-    return await postsCollection.find(filter.bloggerId).toArray()
+    const startIndex = (pageNumber - 1) * pageSize
+    const result = await postsCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
+    // @ts-ignore
+    result.map(i => delete i._id)
+
+    const foundBySearchNameTerm = await postsCollection.find(filter).toArray()
+    let totalCount: number = foundBySearchNameTerm.length
+    if (searchNameTerm === null) {
+      totalCount = await postsCollection.countDocuments()
+    }
+
+    const pagesCount = Math.ceil(totalCount / pageSize)
+
+    return {
+      pagesCount: pagesCount,
+      page: pageNumber,
+      pageSize: pageSize,
+      totalCount: totalCount,
+      items: result
+    };
+
   }
 
 
