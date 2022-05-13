@@ -114,6 +114,6 @@ export class BloggersRepository {
 
   async deletedAllBloggers(): Promise<boolean> {
     const result = await bloggersCollection.deleteMany({})
-    return result.deletedCount !== 0
+    return result.acknowledged
   }
 }

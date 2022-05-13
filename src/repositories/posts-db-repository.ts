@@ -118,6 +118,6 @@ export class PostsRepository {
 
   async deletedAllPosts(): Promise<Boolean> {
     const result = await postsCollection.deleteMany({})
-    return result.deletedCount !== 0
+    return result.acknowledged
   }
 }
