@@ -12,9 +12,9 @@ import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-valida
 
 
 export class BloggersRepository {
-  async findBloggers(pageNumber: number, pageSize: number, searchNameTerm: string): Promise<Pagination> {
+  async findBloggers(pageNumber: number, pageSize: number, searchNameTerm: string| null): Promise<Pagination> {
     let filter: any = {}
-    if (searchNameTerm) {
+    if (searchNameTerm !== null) {
       filter = {name: {$regex: searchNameTerm}}
     }
 

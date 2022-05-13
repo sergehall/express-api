@@ -11,9 +11,12 @@ export class BloggersController {
   async getAllBloggers(req: Request, res: Response) {
     let pageNumber: number = parseInt(<string>req.query.PageNumber)
     let pageSize: number = parseInt(<string>req.query.PageSize)
-    let searchNameTerm: string = ""
-    if (req.query.SearchNameTerm?.toString()) {
-      searchNameTerm = req.query.SearchNameTerm?.toString()
+    let searchNameTerm: string | null;
+
+    if (req.query.SearchNameTerm && req.query.SearchNameTerm?.length !== 0) {
+      searchNameTerm = req.query.SearchNameTerm.toString()
+    }else {
+      searchNameTerm = null
     }
 
     if(isNaN(pageNumber)) {

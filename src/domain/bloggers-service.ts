@@ -7,7 +7,7 @@ export class BloggersService {
   constructor(private bloggersRepository: BloggersRepository) {
     this.bloggersRepository = bloggersRepository
   }
-  async findBloggers(pageNumber: number,pageSize: number, searchNameTerm: string): Promise<Pagination> {
+  async findBloggers(pageNumber: number,pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
     return await this.bloggersRepository.findBloggers(pageNumber, pageSize, searchNameTerm)
   }
 
