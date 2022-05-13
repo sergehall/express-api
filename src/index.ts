@@ -8,6 +8,7 @@ import {postsRouts} from "./routes/posts-router";
 import {feedbacksRouter} from "./routes/feedbacks-router";
 import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
 import {usersRouter} from "./routes/users-router";
+import {paginatedRouter} from "./middlewares/paginated_test";
 
 
 
@@ -27,10 +28,10 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/posts', postsRouts)
 app.use('/bloggers', bloggersRouts)
-app.use('/bloggers/', bloggersRouts)
 app.use('/users', authRouter, usersRouter)
 app.use('/auth', authRouter)
 app.use('/feedbacks', feedbacksRouter)
+app.use('/pag', paginatedRouter)
 
 app.use('/deleted-bloggers', allDeletedBloggersRouts)
 

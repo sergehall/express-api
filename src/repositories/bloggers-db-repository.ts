@@ -3,20 +3,44 @@ import {
   ArrayErrorsType,
   BloggerType,
   ErrorType,
-  ReturnTypeObjectBloggers
+  ReturnTypeObjectBloggers,
+  Pagination
 } from "../types/all_types";
 import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-validator-middleware";
 
 
+
+
 export class BloggersRepository {
-  async findBloggers(name: string | null | undefined): Promise<BloggerType[]> {
+  async findBloggers(pageNumber: number, pageSize: number): Promise<BloggerType[] | Pagination> {
     const filter: any = {}
 
-    if (name) {
-      console.log(name)
-      filter.name = {name: {$regex: name}}
-    }
-    return bloggersCollection.find(filter.name).toArray()
+    // if (name) {
+    //   console.log(name)
+    //   filter.name = {name: {$regex: name}}
+    // }
+    // const result = await bloggersCollection.find(filter.name).limit(5).skip(5).toArray()
+
+
+    const startIndex = (pageNumber - 1) * pageSize // page
+    const totalCount = await bloggersCollection.countDocuments()
+    const page = pageNumber
+
+    const pagesCount = Math.ceil(totalCount / pageSize)
+
+    const result = await bloggersCollection.find(filter.name).limit(pageSize).skip(startIndex).toArray()
+    // @ts-ignore
+    result.map(i => delete i._id)
+
+    return {
+      pagesCount: pagesCount,
+      page: page,
+      pageSize: pageSize,
+      totalCount:totalCount,
+      items: result
+    };
+
+    // return await bloggersCollection.find(filter.name).toArray()
   }
 
   async createNewBlogger(newBlogger: BloggerType): Promise<ReturnTypeObjectBloggers> {

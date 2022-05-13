@@ -6,7 +6,7 @@ const ck = require('ckey')
 const dbUrl = ck.ATLAS_URI
 export const client = new MongoClient(dbUrl);
 
-// connect to atlas cluster
+// connect to ATLAS_URI or local
 export async function runDb() {
   try {
     //Connect the client to the server

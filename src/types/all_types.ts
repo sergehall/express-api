@@ -43,3 +43,11 @@ export type FeedbackDBType = {
     comment: string
   }>
 }
+
+export type Pagination = {
+  pagesCount: number
+  page: number
+  pageSize: number
+  totalCount: number
+  items: object
+}

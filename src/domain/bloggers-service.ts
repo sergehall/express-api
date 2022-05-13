@@ -1,13 +1,14 @@
 import {BloggerType, ReturnTypeObjectBloggers} from "../types/all_types";
 import {BloggersRepository} from "../repositories/bloggers-db-repository";
+import {Pagination} from "../types/all_types";
 
 
 export class BloggersService {
   constructor(private bloggersRepository: BloggersRepository) {
     this.bloggersRepository = bloggersRepository
   }
-  async findBloggers(name: string | null | undefined): Promise<BloggerType[]> {
-    return await this.bloggersRepository.findBloggers(name)
+  async findBloggers(pageNumber: number,pageSize: number): Promise<BloggerType[] | Pagination> {
+    return await this.bloggersRepository.findBloggers(pageNumber, pageSize)
   }
 
   async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {

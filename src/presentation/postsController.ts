@@ -106,7 +106,7 @@ export class PostsController {
     }
   }
 
-  async deletePosts(req: Request, res: Response) {
+  async deleteAllPosts(req: Request, res: Response) {
 
     const deletedPost = await this.postsService.deletedAllPosts()
 
