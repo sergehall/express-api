@@ -1,5 +1,5 @@
 import {PostsRepository} from "../repositories/posts-db-repository";
-import {PostsType, ReturnTypeObjectPosts} from "../types/all_types";
+import {Pagination, PostsType, ReturnTypeObjectPosts} from "../types/all_types";
 
 
 export class PostsService {
@@ -7,8 +7,8 @@ export class PostsService {
     this.postsRepository = postsRepository
   }
 
-  async findPosts(title: string | null | undefined): Promise<PostsType[]>{
-    return await this.postsRepository.findPosts(title)
+  async findPosts(pageNumber: number, pageSize: number): Promise<Pagination>{
+    return await this.postsRepository.findPosts(pageNumber, pageSize)
   }
   async findPostsByBloggerId(bloggerId: string | null | undefined): Promise<PostsType[]>{
     return await this.postsRepository.findPostsByBloggerId(bloggerId)

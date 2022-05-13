@@ -7,9 +7,17 @@ export class PostsController {
   }
 
   async getAllPosts(req: Request, res: Response) {
-    const foundPosts = await this.postsService.findPosts(req.query.title?.toString());
-    // @ts-ignore
-    foundPosts.map(i => delete i._id)
+    let pageNumber: number = parseInt(<string>req.query.PageNumber)
+    let pageSize: number = parseInt(<string>req.query.PageSize)
+
+    if(isNaN(pageNumber)) {
+      pageNumber = 1
+    }
+    if(isNaN(pageSize)) {
+      pageSize = 10
+    }
+
+    const foundPosts = await this.postsService.findPosts(pageNumber, pageSize);
     res.send(foundPosts)
   }
 

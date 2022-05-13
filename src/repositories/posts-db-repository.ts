@@ -1,15 +1,27 @@
 import {bloggersCollection, postsCollection,} from "./db";
-import {ArrayErrorsType, PostsType, ReturnTypeObjectPosts} from "../types/all_types";
+import {ArrayErrorsType, Pagination, PostsType, ReturnTypeObjectPosts} from "../types/all_types";
 import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/input-validator-middleware";
 
 
 export class PostsRepository {
-  async findPosts(title: string | null | undefined): Promise<PostsType[]> {
-    const filter: any = {}
-    if (title) {
-      filter.title = {title: {$regex: title}}
-    }
-    return await postsCollection.find(filter.title).toArray()
+  async findPosts(pageNumber: number, pageSize: number): Promise<Pagination> {
+
+    const startIndex = (pageNumber - 1) * pageSize
+    const totalCount = await postsCollection.countDocuments()
+    const page = pageNumber
+    const pagesCount = Math.ceil(totalCount / pageSize)
+
+    const result = await postsCollection.find({}).limit(pageSize).skip(startIndex).toArray()
+    // @ts-ignore
+    result.map(i => delete i._id)
+
+    return {
+      pagesCount: pagesCount,
+      page: page,
+      pageSize: pageSize,
+      totalCount:totalCount,
+      items: result
+    };
   }
   async findPostsByBloggerId(id: string | null | undefined): Promise<PostsType[]> {
     const filter: any = {}

@@ -11,6 +11,10 @@ export class BloggersController {
   async getAllBloggers(req: Request, res: Response) {
     let pageNumber: number = parseInt(<string>req.query.PageNumber)
     let pageSize: number = parseInt(<string>req.query.PageSize)
+    let searchNameTerm: string = ""
+    if (req.query.SearchNameTerm?.toString()) {
+      searchNameTerm = req.query.SearchNameTerm?.toString()
+    }
 
     if(isNaN(pageNumber)) {
       pageNumber = 1
@@ -19,11 +23,8 @@ export class BloggersController {
       pageSize = 10
     }
 
-    const foundBloggers = await this.bloggersService.findBloggers(pageNumber, pageSize)
-    // const foundBloggers = await this.bloggersService.findBloggers(req.query.name?.toString())
+    const foundBloggers = await this.bloggersService.findBloggers(pageNumber, pageSize, searchNameTerm)
 
-    // @ts-ignore
-    // foundBloggers.map(i => delete i._id)
     res.send(foundBloggers)
   }
 
@@ -36,13 +37,7 @@ export class BloggersController {
       // @ts-ignore
       foundPosts.map(i => delete i._id)
 
-      res.send({
-        "pagesCount": 0,
-        "page": 0,
-        "pageSize": 0,
-        "totalCount": 0,
-        "items": [foundPosts]
-      })
+      res.send(foundPosts)
     } else {
       res.status(404)
       res.send()

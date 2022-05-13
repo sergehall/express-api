@@ -12,23 +12,18 @@ import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-valida
 
 
 export class BloggersRepository {
-  async findBloggers(pageNumber: number, pageSize: number): Promise<BloggerType[] | Pagination> {
-    const filter: any = {}
+  async findBloggers(pageNumber: number, pageSize: number, searchNameTerm: string): Promise<Pagination> {
+    let filter: any = {}
+    if (searchNameTerm) {
+      filter = {name: {$regex: searchNameTerm}}
+    }
 
-    // if (name) {
-    //   console.log(name)
-    //   filter.name = {name: {$regex: name}}
-    // }
-    // const result = await bloggersCollection.find(filter.name).limit(5).skip(5).toArray()
-
-
-    const startIndex = (pageNumber - 1) * pageSize // page
+    const startIndex = (pageNumber - 1) * pageSize
     const totalCount = await bloggersCollection.countDocuments()
     const page = pageNumber
-
     const pagesCount = Math.ceil(totalCount / pageSize)
 
-    const result = await bloggersCollection.find(filter.name).limit(pageSize).skip(startIndex).toArray()
+    const result = await bloggersCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
     // @ts-ignore
     result.map(i => delete i._id)
 
@@ -39,8 +34,6 @@ export class BloggersRepository {
       totalCount:totalCount,
       items: result
     };
-
-    // return await bloggersCollection.find(filter.name).toArray()
   }
 
   async createNewBlogger(newBlogger: BloggerType): Promise<ReturnTypeObjectBloggers> {
