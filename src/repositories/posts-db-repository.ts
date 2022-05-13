@@ -14,8 +14,6 @@ export class PostsRepository {
     const result = await postsCollection.find({},{projection: {
       _id: false
       }}).limit(pageSize).skip(startIndex).toArray()
-    // @ts-ignore
-    result.forEach(i => delete i._id)
 
     return {
       pagesCount: pagesCount,
@@ -26,15 +24,15 @@ export class PostsRepository {
     };
   }
 
-  async findPostsByBloggerId(bloggerId: number, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
+  async findPostsByBloggerId(bloggerId: number, pageNumber: number, pageSize: number): Promise<Pagination> {
     let filter = {}
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await postsCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
-    // @ts-ignore
-    result.forEach(i => delete i._id)
+    const result = await postsCollection.find(filter, {projection: {
+        _id: false
+      }}).limit(pageSize).skip(startIndex).toArray()
 
     const totalCount = await postsCollection.countDocuments(filter)
 

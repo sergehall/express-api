@@ -1,7 +1,7 @@
 import {BloggersService} from "../domain/bloggers-service";
 import {Request, Response} from "express";
 import {PostsService} from "../domain/posts-service";
-import {parseQuery} from "../middlewares/pagination";
+import {parseQuery} from "../middlewares/parse-query";
 
 
 
@@ -25,7 +25,7 @@ export class BloggersController {
 
     if (foundBlogger) {
 
-      const foundPosts = await this.postsService.findPostsByBloggerId(id, parseData.pageNumber,parseData.pageSize, parseData.searchNameTerm);
+      const foundPosts = await this.postsService.findPostsByBloggerId(id, parseData.pageNumber,parseData.pageSize);
 
       res.send(foundPosts)
     } else {

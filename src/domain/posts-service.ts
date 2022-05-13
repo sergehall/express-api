@@ -11,7 +11,7 @@ export class PostsService {
     return await this.postsRepository.findPosts(pageNumber, pageSize)
   }
   async findPostsByBloggerId(bloggerId: number, pageNumber: number = 1, pageSize: number = 10, searchNameTerm: string | null = null): Promise<Pagination>{
-    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize, searchNameTerm)
+    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize)
   }
 
   async createPost(title: string, shortDescription: string, content: string, bloggerId: number): Promise<ReturnTypeObjectPosts> {

@@ -19,9 +19,9 @@ export class BloggersRepository {
       filter = {name: {$regex: searchNameTerm}}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await bloggersCollection.find(filter).limit(pageSize).skip(startIndex).toArray()
-    // @ts-ignore
-    result.forEach(i => delete i._id)
+    const result = await bloggersCollection.find(filter, {projection: {
+        _id: false
+      }}).limit(pageSize).skip(startIndex).toArray()
 
     const totalCount = await bloggersCollection.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)
