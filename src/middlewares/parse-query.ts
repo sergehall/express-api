@@ -1,15 +1,19 @@
 import {Request} from "express";
 
 
-export async function parseQuery(req: Request) {
+export function parseQuery (req: Request) {
+
   let pageNumber: number = parseInt(<string>req.query.PageNumber)
   let pageSize: number = parseInt(<string>req.query.PageSize)
-  let searchNameTerm: string | null;
+  let searchNameTerm: string | undefined | null  = req.query.SearchNameTerm?.toString()
+  let title: string | undefined | null = req.query.Title?.toString()
 
-  if (req.query.SearchNameTerm && req.query.SearchNameTerm?.length !== 0) {
-    searchNameTerm = req.query.SearchNameTerm.toString()
-  } else {
+  // default settings for searchNameTer, title, pageNumber, pageSize
+  if (!searchNameTerm || searchNameTerm.length === 0 ) {
     searchNameTerm = null
+  }
+  if (!title || title.length === 0) {
+    title = null
   }
   if (isNaN(pageNumber)) {
     pageNumber = 1
@@ -20,5 +24,7 @@ export async function parseQuery(req: Request) {
    return {
     pageNumber: pageNumber,
     pageSize: pageSize,
-    searchNameTerm: searchNameTerm}
+    searchNameTerm: searchNameTerm,
+    title: title
+  }
 }

@@ -37,7 +37,6 @@ const allDelBloggersController = new AllDelBloggersController(allDelBloggersServ
 
 
 
-
 export const ioc = {
   bloggersService: bloggersService,
   bloggersController: bloggersController,
@@ -48,5 +47,5 @@ export const ioc = {
   usersService: usersService,
   usersController: usersController,
   allDelBloggersService: allDelBloggersService,
-  allDelBloggersController: allDelBloggersController
+  allDelBloggersController: allDelBloggersController,
 }

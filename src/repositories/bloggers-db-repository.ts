@@ -1,4 +1,4 @@
-import {bloggersCollection, postsCollection} from "./db";
+import {bloggersCollection} from "./db";
 import {
   ArrayErrorsType,
   BloggerType,
@@ -14,7 +14,6 @@ import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-valida
 export class BloggersRepository {
   async findBloggers(pageNumber: number, pageSize: number, searchNameTerm: string| null): Promise<Pagination> {
     let filter = {}
-
     if (searchNameTerm !== null) {
       filter = {name: {$regex: searchNameTerm}}
     }
@@ -39,25 +38,31 @@ export class BloggersRepository {
     const errorsArray: ArrayErrorsType = [];
 
     const result = await bloggersCollection.insertOne(newBlogger)
+
     if (!result.insertedId) {
       errorsArray.push(MongoHasNotUpdated)
-    }
-    if (errorsArray.length !== 0) {
       return {
         data: newBlogger,
         errorsMessages: errorsArray,
         resultCode: 1
       }
     }
+
     return {
-      data: newBlogger,
+      data: {
+        id: newBlogger.id,
+        name: newBlogger.name,
+        youtubeUrl: newBlogger.youtubeUrl
+      },
       errorsMessages: errorsArray,
       resultCode: 0
     }
   }
 
   async getBloggerById(id: number): Promise<BloggerType | null> {
-    const blogger: BloggerType | null = await bloggersCollection.findOne({id: id})
+    const blogger: BloggerType | null = await bloggersCollection.findOne({id: id}, {projection: {
+        _id: false
+      }})
     if (blogger) {
       return blogger
     } else {

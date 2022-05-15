@@ -1,9 +1,13 @@
 import {Router} from "express";
 import {ioc} from "../IoCContainer";
 import {
-  bloggerIdParamsValidation, contentValidation,
+  bloggerIdParamsValidation,
+  contentValidation,
   inputValidatorMiddleware,
-  nameValidation, shortDescriptionValidation, titleValidation, validatorUrl,
+  nameValidation,
+  shortDescriptionValidation,
+  titleValidation,
+  validatorUrl,
 } from "../middlewares/input-validator-middleware";
 import {authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware";
 

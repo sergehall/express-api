@@ -4,20 +4,24 @@ import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewa
 
 
 export class PostsRepository {
-  async findPosts(pageNumber: number, pageSize: number): Promise<Pagination> {
-
+  async findPosts(pageNumber: number, pageSize: number, title: string| null): Promise<Pagination> {
+    let filter = {}
+    if (title !== null) {
+      filter = {title: {$regex: title}}
+    }
     const startIndex = (pageNumber - 1) * pageSize
-    const totalCount = await postsCollection.countDocuments()
-    const page = pageNumber
-    const pagesCount = Math.ceil(totalCount / pageSize)
+    const result = await postsCollection.find(filter,{
+      projection: {
+        _id: false
+      }
+    }).limit(pageSize).skip(startIndex).toArray()
 
-    const result = await postsCollection.find({},{projection: {
-      _id: false
-      }}).limit(pageSize).skip(startIndex).toArray()
+    const totalCount = await postsCollection.countDocuments(filter)
+    const pagesCount = Math.ceil(totalCount / pageSize)
 
     return {
       pagesCount: pagesCount,
-      page: page,
+      page: pageNumber,
       pageSize: pageSize,
       totalCount:totalCount,
       items: result
@@ -30,9 +34,11 @@ export class PostsRepository {
       filter = {bloggerId: bloggerId}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await postsCollection.find(filter, {projection: {
+    const result = await postsCollection.find(filter, {
+      projection: {
         _id: false
-      }}).limit(pageSize).skip(startIndex).toArray()
+      }
+    }).limit(pageSize).skip(startIndex).toArray()
 
     const totalCount = await postsCollection.countDocuments(filter)
 
@@ -65,9 +71,17 @@ export class PostsRepository {
     const nameBlogger = await bloggersCollection.find({id: bloggerId}).toArray()
     newPost.bloggerName = nameBlogger[0].name
     const result = await postsCollection.insertOne(newPost)
+
     if (result) {
       return {
-        data: newPost,
+        data: {
+          id: newPost.id,
+          title: newPost.title,
+          shortDescription: newPost.shortDescription,
+          content: newPost.content,
+          bloggerId: newPost.bloggerId,
+          bloggerName: newPost.bloggerName
+        },
         errorsMessages: errorsArray,
         resultCode: 0
       }
@@ -80,7 +94,9 @@ export class PostsRepository {
   }
 
   async getPostById(id: number): Promise<PostsType | null> {
-    const post: PostsType | null = await postsCollection.findOne({id: id})
+    const post: PostsType | null = await postsCollection.findOne({id: id}, {projection: {
+        _id: false
+      }})
     if (post) {
       return post
     } else {
@@ -92,23 +108,13 @@ export class PostsRepository {
     const searchPost = await postsCollection.findOne({id: id});
     const searchBlogger = await bloggersCollection.findOne({id: bloggerId})
     const errorsArray: ArrayErrorsType = [];
-    const data = {
-      id: 0,
-      title: title,
-      shortDescription: shortDescription,
-      content: content,
-      bloggerId: bloggerId,
-      bloggerName: ""
-    }
 
     if (!searchPost) {
       errorsArray.push(notFoundPostId)
     }
-
     if (!searchBlogger) {
       errorsArray.push(notFoundBloggerId)
     }
-
     if (searchPost && searchBlogger) {
       const result = await postsCollection.updateOne({id: id}, {
         $set: {
@@ -123,18 +129,24 @@ export class PostsRepository {
         errorsArray.push(MongoHasNotUpdated)
       }
     }
-    if (errorsArray.length !== 0 || !searchPost) {
+    if (errorsArray.length !== 0 || searchPost === null) {
       return {
-        data: data,
+        data: {
+          id: 0,
+          title: title,
+          shortDescription: shortDescription,
+          content: content,
+          bloggerId: bloggerId,
+          bloggerName: ""
+        },
         errorsMessages: errorsArray,
         resultCode: 1
       }
-    } else {
-      return {
-        data: searchPost,
-        errorsMessages: errorsArray,
-        resultCode: 0
-      }
+    }
+    return {
+      data: searchPost,
+      errorsMessages: errorsArray,
+      resultCode: 0
     }
   }
 

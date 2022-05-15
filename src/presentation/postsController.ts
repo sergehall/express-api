@@ -1,5 +1,6 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
+import {parseQuery} from "../middlewares/parse-query";
 
 
 export class PostsController {
@@ -7,17 +8,13 @@ export class PostsController {
   }
 
   async getAllPosts(req: Request, res: Response) {
-    let pageNumber: number = parseInt(<string>req.query.PageNumber)
-    let pageSize: number = parseInt(<string>req.query.PageSize)
 
-    if(isNaN(pageNumber)) {
-      pageNumber = 1
-    }
-    if(isNaN(pageSize)) {
-      pageSize = 10
-    }
+    const parseQueryData = parseQuery(req)
+    const pageNumber = parseQueryData.pageNumber
+    const pageSize = parseQueryData.pageSize
+    const title = parseQueryData.title
 
-    const foundPosts = await this.postsService.findPosts(pageNumber, pageSize);
+    const foundPosts = await this.postsService.findPosts(pageNumber, pageSize, title);
     res.send(foundPosts)
   }
 
@@ -31,16 +28,8 @@ export class PostsController {
       const newPost = await this.postsService.createPost(title, shortDescription, content, bloggerId)
 
       if (newPost.resultCode === 0) {
-        const postReturn = {
-          id: newPost.data.id,
-          title: newPost.data.title,
-          shortDescription: newPost.data.shortDescription,
-          content: newPost.data.content,
-          bloggerId: newPost.data.bloggerId,
-          bloggerName: newPost.data.bloggerName
-        }
         res.status(201)
-        res.send(postReturn)
+        res.send(newPost.data)
       } else {
         res.status(400)
         const errorsMessages = newPost.errorsMessages
@@ -57,15 +46,7 @@ export class PostsController {
       const postId = +req.params.postId;
       const getPost = await this.postsService.getPostById(postId);
       if (getPost) {
-        const postReturn = {
-          id: getPost.id,
-          title: getPost.title,
-          shortDescription: getPost.shortDescription,
-          content: getPost.content,
-          bloggerId: getPost.bloggerId,
-          bloggerName: getPost.bloggerName
-        }
-        res.send(postReturn)
+        res.send(getPost)
       } else {
         res.status(404).send()
       }
@@ -86,11 +67,10 @@ export class PostsController {
       if (updatedPost.resultCode === 0) {
         res.status(204)
         res.send()
-      } else if (updatedPost.errorsMessages.find(p => p.field === "postId")) {
+      } else if (updatedPost.errorsMessages.find(p => p.field === "Not found postId")) {
         res.status(404)
         res.send()
       } else {
-        console.log(updatedPost)
         res.status(400)
         const errorsMessages = updatedPost.errorsMessages
         const resultCode = updatedPost.resultCode

@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {body, param, validationResult} from "express-validator";
+import {body, param, query, validationResult} from "express-validator";
 
 
 const youtubeUrlRegExp = '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'
@@ -40,11 +40,11 @@ export const MongoHasNotUpdated = {
 }
 export const notFoundBloggerId = {
   message: "Invalid 'bloggerId' such blogger doesn't exist",
-  field: "bloggerId"
+  field: "Not found bloggerId"
 }
 export const notFoundPostId = {
   message: "Invalid '/:postId' such post doesn't exist",
-  field: "postId"
+  field: "Not found postId"
 }
 
 const bloggerIdBodyRegExp2 = /^\d+$/i

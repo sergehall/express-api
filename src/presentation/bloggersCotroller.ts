@@ -10,23 +10,28 @@ export class BloggersController {
   constructor(private bloggersService: BloggersService, private postsService: PostsService ) {
   }
   async getAllBloggers(req: Request, res: Response) {
-    const parseData = await parseQuery(req)
 
-    const foundBloggers = await this.bloggersService.findBloggers(parseData.pageNumber,parseData.pageSize, parseData.searchNameTerm)
+    const parseQueryData = parseQuery(req)
+    const pageNumber = parseQueryData.pageNumber
+    const pageSize = parseQueryData.pageSize
+    const searchNameTerm = parseQueryData.searchNameTerm
+
+    const foundBloggers = await this.bloggersService.findBloggers(pageNumber, pageSize, searchNameTerm)
 
     res.send(foundBloggers)
   }
 
   async getAllPostByBloggerId(req: Request, res: Response) {
     const id = +req.params.bloggerId;
-    const parseData = await parseQuery(req)
+
+    const parseQueryData = parseQuery(req)
+    const pageNumber = parseQueryData.pageNumber
+    const pageSize = parseQueryData.pageSize
 
     const foundBlogger =  await this.bloggersService.getBloggerById(id);
 
     if (foundBlogger) {
-
-      const foundPosts = await this.postsService.findPostsByBloggerId(id, parseData.pageNumber,parseData.pageSize);
-
+      const foundPosts = await this.postsService.findPostsByBloggerId(id, pageNumber, pageSize);
       res.send(foundPosts)
     } else {
       res.status(404)
@@ -44,16 +49,8 @@ export class BloggersController {
     if (foundBlogger) {
       const bloggerId = foundBlogger.id
       const createPosts = await this.postsService.createPost(title, shortDescription, content, bloggerId)
-      const creatBloggerBack = {
-        id: createPosts.data.id,
-        title: createPosts.data.title,
-        shortDescription: createPosts.data.shortDescription,
-        content: createPosts.data.content,
-        bloggerId: createPosts.data.bloggerId,
-        bloggerName: createPosts.data.bloggerName
-      }
       res.status(201)
-      res.send(creatBloggerBack)
+      res.send(createPosts.data)
     } else {
       res.status(404)
       res.send()
@@ -67,8 +64,6 @@ export class BloggersController {
       const createNewBlogger = await this.bloggersService.createNewBlogger(name, youtubeUrl)
 
       if (createNewBlogger.resultCode === 0) {
-        // @ts-ignore
-        delete createNewBlogger.data._id
         res.status(201)
         res.send(createNewBlogger.data)
       } else {
@@ -87,12 +82,7 @@ export class BloggersController {
       const id = +req.params.bloggerId;
       const getBlogger = await this.bloggersService.getBloggerById(id);
       if (getBlogger) {
-        const blogger = {
-          id: getBlogger.id,
-          name: getBlogger.name,
-          youtubeUrl: getBlogger.youtubeUrl
-        }
-        res.send(blogger)
+        res.send(getBlogger)
       } else {
         res.sendStatus(404)
       }
@@ -113,7 +103,7 @@ export class BloggersController {
         res.status(204)
         res.send()
       } else {
-        if (updatedBlogger.errorsMessages.find(f => f.field === "bloggerId")) {
+        if (updatedBlogger.errorsMessages.find(f => f.field === "Not found bloggerId")) {
           res.status(404)
           res.send()
         } else {
