@@ -35,9 +35,15 @@ export const validatorUrl = body("youtubeUrl").trim().matches(youtubeUrlRegExp).
 }).withMessage("\"youtubeUrl2 should be maxLength=100 or matched to pattern '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'")
 
 //users validator
-export const bodyLogin = body(['login']).isString().withMessage('Login must be string')
-export const bodyEmail= body(['email']).isString().withMessage('Email must be string')
-export const bodyPassword = body(['password']).isString().withMessage('Password must be string')
+export const bodyLogin = body(['login']).trim().isString().withMessage('Login must be string').isLength({
+  min: 3,
+  max: 10
+}).withMessage("bodyLogin must be >3 and <10 characters.")
+export const bodyEmail= body(['email']).trim().isString().withMessage('Email must be string')
+export const bodyPassword = body(['password']).isString().withMessage('Password must be string').isLength({
+  min: 3,
+  max: 20
+}).withMessage("bodyPassword must be >3 and <20 characters.")
 
 // db
 export const MongoHasNotUpdated = {
