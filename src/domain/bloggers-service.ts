@@ -12,25 +12,24 @@ export class BloggersService {
   }
 
   async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
-    const newId = Math.round((+new Date()+ +new Date())/2);
+    const newId = Math.round((+new Date()+ +new Date())/2).toString();
     const newBlogger = {
       id: newId,
       name: name,
       youtubeUrl: youtubeUrl
     }
-
     return await this.bloggersRepository.createNewBlogger(newBlogger)
   }
 
-  async getBloggerById(id: number): Promise<ReturnTypeObjectBloggers> {
+  async getBloggerById(id: string): Promise<ReturnTypeObjectBloggers> {
     return await this.bloggersRepository.getBloggerById(id)
   }
 
-  async updateBloggerById(id: number, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
+  async updateBloggerById(id: string, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
     return await this.bloggersRepository.updateBloggerById(id, name, youtubeUrl);
   }
 
-  async deletedBloggerById(id: number): Promise<boolean> {
+  async deletedBloggerById(id: string): Promise<boolean> {
     return await this.bloggersRepository.deletedBloggerById(id);
   }
 

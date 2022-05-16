@@ -6,25 +6,29 @@ const youtubeUrlRegExp = '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z
 
 // posts and bloggers validator
 export const titleValidation = body("title").trim().isLength({
-  min: 3,
+  min: 1,
   max: 30
-}).withMessage("title must be >3 <30 characters.")
+}).withMessage("title must be >1 and <30 characters.")
 export const shortDescriptionValidation = body("shortDescription").trim().isLength({
-  min: 3,
+  min: 1,
   max: 100
-}).withMessage("shortDescription must be >3 and <100 characters.")
+}).withMessage("shortDescription must be >1 and <100 characters.")
 export const contentValidation = body("content").trim().isLength({
-  min: 3,
+  min: 1,
   max: 1000
-}).withMessage("content must be >3 and <100 characters.")
-export const postIdParamsValidation = param('postId').trim().isInt().withMessage('params postId must be Int')
+}).withMessage("content must be >1 and <100 characters.")
+export const postIdParamsValidation = param('postId').trim().isLength({
+  min: 1,
+  max: 100
+}).withMessage("shortDescription must be >1 and <30 characters.")
+
 export const nameValidation = body("name").trim().isLength({
-  min: 3,
+  min: 1,
   max: 15
-}).withMessage("Name must be >3 and <15 characters.")
+}).withMessage("Name must be >1 and <15 characters.")
 export const bloggerIdParamsValidation = param('bloggerId').trim().isInt().withMessage('param bloggerId must be Int')
 export const validatorUrl = body("youtubeUrl").trim().matches(youtubeUrlRegExp).isLength({
-  min: 0,
+  min: 1,
   max: 100
 }).withMessage("\"youtubeUrl2 should be maxLength=100 or matched to pattern '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'")
 
@@ -49,6 +53,7 @@ export const notFoundPostId = {
 
 const bloggerIdBodyRegExp2 = /^\d+$/i
 export const  bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
+
 
 export const inputValidatorMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);

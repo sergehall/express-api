@@ -23,7 +23,7 @@ export class PostsController {
       const title: string = req.body.title;
       const shortDescription: string = req.body.shortDescription;
       const content: string = req.body.content;
-      const bloggerId: number = +req.body.bloggerId
+      const bloggerId: string = req.body.bloggerId
 
       const newPost = await this.postsService.createPost(title, shortDescription, content, bloggerId)
 
@@ -43,7 +43,7 @@ export class PostsController {
 
   async getPostById(req: Request, res: Response) {
     try {
-      const postId = +req.params.postId;
+      const postId = req.params.postId;
       const getPost = await this.postsService.getPostById(postId);
       if (getPost) {
         res.send(getPost)
@@ -57,11 +57,11 @@ export class PostsController {
 
   async updatePostById(req: Request, res: Response) {
     try {
-      const id: number = +req.params.postId;
+      const id: string = req.params.postId;
       const title: string = req.body.title
       const shortDescription: string = req.body.shortDescription
       const content: string = req.body.content
-      const bloggerId: number = +req.body.bloggerId
+      const bloggerId: string = req.body.bloggerId
 
       const updatedPost = await this.postsService.updatePostById(id, title, shortDescription, content, bloggerId)
       if (updatedPost.resultCode === 0) {
@@ -83,7 +83,7 @@ export class PostsController {
   }
 
   async deletePostById(req: Request, res: Response) {
-    const id = +req.params.postId
+    const id = req.params.postId
 
     const deletedPost = await this.postsService.deletedById(id)
 

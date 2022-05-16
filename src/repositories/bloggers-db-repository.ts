@@ -59,7 +59,7 @@ export class BloggersRepository {
     }
   }
 
-  async getBloggerById(id: number): Promise<ReturnTypeObjectBloggers> {
+  async getBloggerById(id: string): Promise<ReturnTypeObjectBloggers> {
     const errorsArray: ArrayErrorsType = [];
     const blogger: BloggerType | null = await bloggersCollection.findOne({id: id}, {
       projection: {
@@ -77,7 +77,7 @@ export class BloggersRepository {
     errorsArray.push(MongoHasNotUpdated)
     return {
       data: {
-        id: 0,
+        id: "0",
         name: "",
         youtubeUrl: ""
       },
@@ -87,7 +87,7 @@ export class BloggersRepository {
 
   }
 
-  async updateBloggerById(id: number, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
+  async updateBloggerById(id: string, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
     let errorsArray: Array<ErrorType> = [];
     const data = {
       id: id,
@@ -120,7 +120,7 @@ export class BloggersRepository {
     }
   }
 
-  async deletedBloggerById(id: number): Promise<boolean> {
+  async deletedBloggerById(id: string): Promise<boolean> {
     const result = await bloggersCollection.deleteOne({id: id})
     return result.deletedCount !== 0
     //   if (!id) {

@@ -4,7 +4,7 @@ export type ErrorType = {
 }
 export type ArrayErrorsType = Array<ErrorType>
 export type BloggerType = {
-  id: number
+  id: string
   name: string
   youtubeUrl: string
 }
@@ -14,11 +14,11 @@ export type ReturnTypeObjectBloggers = {
   resultCode: number
 }
 export type PostsType = {
-  id: number
+  id: string
   title: string
   shortDescription: string
   content: string
-  bloggerId: number
+  bloggerId: string
   bloggerName: string
 }
 export type ReturnTypeObjectPosts = {
@@ -26,7 +26,7 @@ export type ReturnTypeObjectPosts = {
   errorsMessages: Array<ErrorType>,
   resultCode: number
 }
-export type BloggerIdAndArrayPosts = [bloggerIdKey: number, posts: Array<PostsType>]
+export type BloggerIdAndArrayPosts = [bloggerIdKey: string, posts: Array<PostsType>]
 export type AllDeletedPosts = Array<BloggerIdAndArrayPosts>
 export type UserDBType = {
   _id: object,

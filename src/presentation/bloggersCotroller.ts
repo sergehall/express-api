@@ -22,7 +22,7 @@ export class BloggersController {
   }
 
   async getAllPostByBloggerId(req: Request, res: Response) {
-    const id = +req.params.bloggerId;
+    const id: string = req.params.bloggerId;
     const foundBlogger =  await this.bloggersService.getBloggerById(id);
 
     if (foundBlogger) {
@@ -41,15 +41,15 @@ export class BloggersController {
 
   async createPostByBloggerId(req: Request, res: Response) {
     try {
-      const bloggerId: number = +req.params.bloggerId;
+      const bloggerId: string = req.params.bloggerId;
       const title: string = req.body.title
       const shortDescription: string = req.body.shortDescription
       const content: string = req.body.content
 
       const getBlogger = await this.bloggersService.getBloggerById(bloggerId);
-      let foundBloggerId: number = getBlogger.data.id
-      if (foundBloggerId === 0) {
-        foundBloggerId = 0
+      let foundBloggerId: string = getBlogger.data.id
+      if (foundBloggerId === "0") {
+        foundBloggerId = "0"
       }
       const createPosts = await this.postsService.createPost(title, shortDescription, content, foundBloggerId)
 
@@ -88,10 +88,10 @@ export class BloggersController {
 
   async getBloggerById(req: Request, res: Response) {
     try {
-      const id = +req.params.bloggerId;
+      const id = req.params.bloggerId;
       const getBlogger = await this.bloggersService.getBloggerById(id);
       if (getBlogger) {
-        res.send(getBlogger)
+        res.send(getBlogger.data)
       } else {
         res.sendStatus(404)
       }
@@ -102,7 +102,7 @@ export class BloggersController {
 
   async updateBloggerById(req: Request, res: Response) {
     try {
-      const id = +req.params.bloggerId;
+      const id = req.params.bloggerId;
       const name = req.body.name;
       const youtubeUrl = req.body.youtubeUrl
 
@@ -128,7 +128,7 @@ export class BloggersController {
   }
 
   async deleteBloggerById(req: Request, res: Response) {
-    const id = +req.params.bloggerId
+    const id = req.params.bloggerId
     const deletedBlogger = await this.bloggersService.deletedBloggerById(id);
 
     if (deletedBlogger) {

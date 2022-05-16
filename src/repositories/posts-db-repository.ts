@@ -33,7 +33,7 @@ export class PostsRepository {
     };
   }
 
-  async findPostsByBloggerId(bloggerId: number, pageNumber: number, pageSize: number): Promise<Pagination> {
+  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<Pagination> {
     let filter = {}
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
@@ -58,9 +58,9 @@ export class PostsRepository {
     };
   }
 
-  async createPost(title: string, shortDescription: string, content: string, bloggerId: number): Promise<ReturnTypeObjectPosts> {
+  async createPost(title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
-    const newPostId = Math.round((+new Date() + +new Date()) / 2);
+    const newPostId = Math.round((+new Date() + +new Date()) / 2).toString();
 
     const foundBloggerId = await bloggersCollection.findOne({id: bloggerId})
     if (!foundBloggerId) {
@@ -101,7 +101,7 @@ export class PostsRepository {
     }
   }
 
-  async getPostById(id: number): Promise<PostsType | null> {
+  async getPostById(id: string): Promise<PostsType | null> {
     const post: PostsType | null = await postsCollection.findOne({id: id}, {
       projection: {
         _id: false
@@ -114,7 +114,7 @@ export class PostsRepository {
     }
   }
 
-  async updatePostById(id: number, title: string, shortDescription: string, content: string, bloggerId: number): Promise<ReturnTypeObjectPosts> {
+  async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
     const searchPost = await postsCollection.findOne({id: id});
     const searchBlogger = await bloggersCollection.findOne({id: bloggerId})
     const errorsArray: ArrayErrorsType = [];
@@ -142,7 +142,7 @@ export class PostsRepository {
     if (errorsArray.length !== 0 || searchPost === null) {
       return {
         data: {
-          id: 0,
+          id: "0",
           title: title,
           shortDescription: shortDescription,
           content: content,
@@ -160,7 +160,7 @@ export class PostsRepository {
     }
   }
 
-  async deletedById(id: number): Promise<Boolean> {
+  async deletedById(id: string): Promise<Boolean> {
     const result = await postsCollection.deleteOne({id: id})
     return result.deletedCount === 1
   }
