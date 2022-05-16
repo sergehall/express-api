@@ -50,7 +50,7 @@ export class UsersRepository {
   }
 
   async findByLoginOrEmail(loginOrEmail: string) {
-    return await usersCollection.findOne({$or: [{email: loginOrEmail}, {userName: loginOrEmail}]})
+    return await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
   }
 
   async deletedUserById(id: string): Promise<boolean> {

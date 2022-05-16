@@ -39,11 +39,11 @@ export const bodyLogin = body(['login']).trim().isString().withMessage('Login mu
   min: 3,
   max: 10
 }).withMessage("bodyLogin must be >3 and <10 characters.")
-export const bodyEmail= body(['email']).trim().isString().withMessage('Email must be string')
-export const bodyPassword = body(['password']).isString().withMessage('Password must be string').isLength({
+export const bodyPassword = body(['password']).trim().isString().withMessage('Password must be string').isLength({
   min: 6,
   max: 20
 }).withMessage("bodyPassword must be >3 and <20 characters.")
+export const bodyEmail= body(['email']).trim().isString().withMessage('Email must be string')
 
 // db
 export const MongoHasNotUpdated = {

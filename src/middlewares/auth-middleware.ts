@@ -13,7 +13,7 @@ authRouter.post('/login', bodyLogin, bodyPassword, inputValidatorMiddleware,
     const user = await ioc.usersService.checkCredentials(req.body.login, req.body.password)
     if (user) {
       const token = await jwtService.createJWT(user)
-      res.status(201).send({
+      res.send({
         "token": token
       })
     } else {
