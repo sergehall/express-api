@@ -42,7 +42,7 @@ export const bodyLogin = body(['login']).trim().isString().withMessage('Login mu
 export const bodyPassword = body(['password']).trim().isString().withMessage('Password must be string').isLength({
   min: 6,
   max: 20
-}).withMessage("bodyPassword must be >3 and <20 characters.")
+}).withMessage("bodyPassword must be >6 and <20 characters.")
 export const bodyEmail= body(['email']).trim().isString().withMessage('Email must be string')
 
 // db
