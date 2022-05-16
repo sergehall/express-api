@@ -1,7 +1,6 @@
-import {bloggersCollection, usersCollection} from "./db";
+import {usersCollection} from "./db";
 import {ObjectId} from "mongodb";
 import {Pagination, UserDBType} from "../types/all_types";
-import {jwtService} from "../application/jwt-service";
 
 
 export class UsersRepository {

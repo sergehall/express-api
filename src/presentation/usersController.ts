@@ -48,7 +48,7 @@ export class UsersController {
       if (newUsers) {
         const userReturn = {
           id: newUsers.id,
-          login: newUsers.userName
+          login: newUsers.login
         }
         res.status(201).send(userReturn)
         return

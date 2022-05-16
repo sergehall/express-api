@@ -18,7 +18,7 @@ export class UsersService {
     const newUser: UserDBType = {
       _id: new ObjectId(),
       id: newId,
-      userName: login,
+      login: login,
       email,
       passwordSalt,
       passwordHash,

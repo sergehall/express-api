@@ -31,7 +31,7 @@ export type AllDeletedPosts = Array<BloggerIdAndArrayPosts>
 export type UserDBType = {
   _id: object,
   id: string
-  userName: string
+  login: string
   email: string,
   passwordHash: string,
   passwordSalt: string,
