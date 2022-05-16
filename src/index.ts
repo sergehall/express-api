@@ -25,13 +25,13 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Learning Node.js, Express, {api: [bloggers, posts, users, feedback]}');
 })
 
-app.use('/api/posts', postsRouts)
-app.use('/api/bloggers', bloggersRouts)
-app.use('/api/users', usersRouter)
-app.use('/api/auth', authRouter)
-app.use('/api/feedbacks', feedbacksRouter)
+app.use('/posts', postsRouts)
+app.use('/bloggers', bloggersRouts)
+app.use('/users', usersRouter)
+app.use('/auth', authRouter)
+app.use('/feedbacks', feedbacksRouter)
 
-app.use('/api/deleted-bloggers', allDeletedBloggersRouts)
+app.use('/deleted-bloggers', allDeletedBloggersRouts)
 
 
 
