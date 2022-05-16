@@ -2,7 +2,6 @@ import {NextFunction, Request, Response} from "express";
 import {body, param, validationResult} from "express-validator";
 
 
-const youtubeUrlRegExp = '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'
 
 // posts and bloggers validator
 export const titleValidation = body("title").trim().isLength({
@@ -29,8 +28,9 @@ export const nameValidation = body("name").trim().isLength({
 export const bloggerIdParamsValidation = param('bloggerId').trim().isInt().withMessage('param bloggerId must be Int')
 const userIdBodyRegExp = /^\d+$/i
 export const  userIdParamsValidation = param('userId').matches(userIdBodyRegExp).withMessage('param userId must be Int')
+const youtubeUrlRegExp = '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'
 export const validatorUrl = body("youtubeUrl").trim().matches(youtubeUrlRegExp).isLength({
-  min: 1,
+  min: 0,
   max: 100
 }).withMessage("\"youtubeUrl2 should be maxLength=100 or matched to pattern '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'")
 
@@ -41,7 +41,7 @@ export const bodyLogin = body(['login']).trim().isString().withMessage('Login mu
 }).withMessage("bodyLogin must be >3 and <10 characters.")
 export const bodyEmail= body(['email']).trim().isString().withMessage('Email must be string')
 export const bodyPassword = body(['password']).isString().withMessage('Password must be string').isLength({
-  min: 3,
+  min: 6,
   max: 20
 }).withMessage("bodyPassword must be >3 and <20 characters.")
 
