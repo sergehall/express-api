@@ -1,16 +1,21 @@
 import {bloggersCollection, postsCollection,} from "./db";
 import {ArrayErrorsType, Pagination, PostsType, ReturnTypeObjectPosts} from "../types/all_types";
-import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/input-validator-middleware";
+import {
+  MongoHasNotUpdated,
+  notFoundBloggerId,
+  notFoundPostId
+} from "../middlewares/input-validator-middleware";
 
 
 export class PostsRepository {
-  async findPosts(pageNumber: number, pageSize: number, title: string| null): Promise<Pagination> {
+
+  async findPosts(pageNumber: number, pageSize: number, title: string | null): Promise<Pagination> {
     let filter = {}
     if (title !== null) {
       filter = {title: {$regex: title}}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await postsCollection.find(filter,{
+    const result = await postsCollection.find(filter, {
       projection: {
         _id: false
       }
@@ -23,7 +28,7 @@ export class PostsRepository {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
-      totalCount:totalCount,
+      totalCount: totalCount,
       items: result
     };
   }
@@ -53,37 +58,40 @@ export class PostsRepository {
     };
   }
 
-  async createPost(newPost: PostsType): Promise<ReturnTypeObjectPosts> {
+  async createPost(title: string, shortDescription: string, content: string, bloggerId: number): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
-    const bloggerId = newPost.bloggerId
+    const newPostId = Math.round((+new Date() + +new Date()) / 2);
 
     const foundBloggerId = await bloggersCollection.findOne({id: bloggerId})
-
-    if (foundBloggerId === null) {
+    if (!foundBloggerId) {
       errorsArray.push(notFoundBloggerId)
-      return {
-        data: newPost,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
     }
 
-    const nameBlogger = await bloggersCollection.find({id: bloggerId}).toArray()
-    newPost.bloggerName = nameBlogger[0].name
-    const result = await postsCollection.insertOne(newPost)
+    let newPost = {
+      id: newPostId,
+      title: title,
+      shortDescription: shortDescription,
+      content: content,
+      bloggerId: bloggerId,
+      bloggerName: ""
+    }
 
-    if (result) {
-      return {
-        data: {
-          id: newPost.id,
-          title: newPost.title,
-          shortDescription: newPost.shortDescription,
-          content: newPost.content,
-          bloggerId: newPost.bloggerId,
-          bloggerName: newPost.bloggerName
-        },
-        errorsMessages: errorsArray,
-        resultCode: 0
+    if (foundBloggerId) {
+      const result = await postsCollection.insertOne(newPost)
+      if (result.acknowledged) {
+        const nameBloggerId = foundBloggerId.name
+        return {
+          data: {
+            id: newPostId,
+            title: title,
+            shortDescription: shortDescription,
+            content: content,
+            bloggerId: bloggerId,
+            bloggerName: nameBloggerId
+          },
+          errorsMessages: errorsArray,
+          resultCode: 0
+        }
       }
     }
     return {
@@ -94,9 +102,11 @@ export class PostsRepository {
   }
 
   async getPostById(id: number): Promise<PostsType | null> {
-    const post: PostsType | null = await postsCollection.findOne({id: id}, {projection: {
+    const post: PostsType | null = await postsCollection.findOne({id: id}, {
+      projection: {
         _id: false
-      }})
+      }
+    })
     if (post) {
       return post
     } else {

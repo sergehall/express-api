@@ -59,15 +59,32 @@ export class BloggersRepository {
     }
   }
 
-  async getBloggerById(id: number): Promise<BloggerType | null> {
-    const blogger: BloggerType | null = await bloggersCollection.findOne({id: id}, {projection: {
+  async getBloggerById(id: number): Promise<ReturnTypeObjectBloggers> {
+    const errorsArray: ArrayErrorsType = [];
+    const blogger: BloggerType | null = await bloggersCollection.findOne({id: id}, {
+      projection: {
         _id: false
-      }})
+      }
+    })
+
     if (blogger) {
-      return blogger
-    } else {
-      return null
+      return {
+        data: blogger,
+        errorsMessages: errorsArray,
+        resultCode: 0
+      }
     }
+    errorsArray.push(MongoHasNotUpdated)
+    return {
+      data: {
+        id: 0,
+        name: "",
+        youtubeUrl: ""
+      },
+      errorsMessages: errorsArray,
+      resultCode: 1
+    }
+
   }
 
   async updateBloggerById(id: number, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
@@ -86,7 +103,7 @@ export class BloggersRepository {
     })
 
     if (result.matchedCount === 0) {
-      errorsArray.push(notFoundBloggerId, MongoHasNotUpdated,)
+      errorsArray.push(notFoundBloggerId, MongoHasNotUpdated)
     }
 
     if (errorsArray.length !== 0) {

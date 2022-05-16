@@ -10,22 +10,12 @@ export class PostsService {
   async findPosts(pageNumber: number, pageSize: number, title: string | null): Promise<Pagination>{
     return await this.postsRepository.findPosts(pageNumber, pageSize, title)
   }
-  async findPostsByBloggerId(bloggerId: number, pageNumber: number = 1, pageSize: number = 10, searchNameTerm: string | null = null): Promise<Pagination>{
+  async findPostsByBloggerId(bloggerId: number, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination>{
     return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize)
   }
 
   async createPost(title: string, shortDescription: string, content: string, bloggerId: number): Promise<ReturnTypeObjectPosts> {
-    const newId = Math.round((+new Date()+ +new Date())/2);
-    const newPost = {
-      id: newId,
-      title: title,
-      shortDescription: shortDescription,
-      content: content,
-      bloggerId: bloggerId,
-      bloggerName: ""
-    }
-
-    return await this.postsRepository.createPost(newPost)
+    return await this.postsRepository.createPost(title, shortDescription, content, bloggerId)
   }
 
   async getPostById(id: number): Promise<PostsType | null >{

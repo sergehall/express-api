@@ -23,15 +23,15 @@ export class BloggersController {
 
   async getAllPostByBloggerId(req: Request, res: Response) {
     const id = +req.params.bloggerId;
-
-    const parseQueryData = parseQuery(req)
-    const pageNumber = parseQueryData.pageNumber
-    const pageSize = parseQueryData.pageSize
-
     const foundBlogger =  await this.bloggersService.getBloggerById(id);
 
     if (foundBlogger) {
-      const foundPosts = await this.postsService.findPostsByBloggerId(id, pageNumber, pageSize);
+      const parseQueryData = parseQuery(req)
+      const pageNumber: number = parseQueryData.pageNumber
+      const pageSize: number = parseQueryData.pageSize
+      const searchNameTerm: string | null = parseQueryData.searchNameTerm
+
+      const foundPosts = await this.postsService.findPostsByBloggerId(id, pageNumber, pageSize, searchNameTerm);
       res.send(foundPosts)
     } else {
       res.status(404)
@@ -40,20 +40,29 @@ export class BloggersController {
   }
 
   async createPostByBloggerId(req: Request, res: Response) {
-    const id = +req.params.bloggerId;
-    const title: string = req.body.title
-    const shortDescription: string = req.body.shortDescription
-    const content: string = req.body.content
+    try {
+      const bloggerId: number = +req.params.bloggerId;
+      const title: string = req.body.title
+      const shortDescription: string = req.body.shortDescription
+      const content: string = req.body.content
 
-    const foundBlogger =  await this.bloggersService.getBloggerById(id);
-    if (foundBlogger) {
-      const bloggerId = foundBlogger.id
-      const createPosts = await this.postsService.createPost(title, shortDescription, content, bloggerId)
-      res.status(201)
-      res.send(createPosts.data)
-    } else {
-      res.status(404)
-      res.send()
+      const getBlogger = await this.bloggersService.getBloggerById(bloggerId);
+      let foundBloggerId: number = getBlogger.data.id
+      if (foundBloggerId === 0) {
+        foundBloggerId = 0
+      }
+      const createPosts = await this.postsService.createPost(title, shortDescription, content, foundBloggerId)
+
+      if (createPosts) {
+        res.status(201)
+        res.send(createPosts.data)
+      } else {
+        res.status(404)
+        res.send()
+      }
+    } catch (e) {
+      console.log(e)
+      res.status(500)
     }
   }
 

@@ -22,7 +22,7 @@ export class BloggersService {
     return await this.bloggersRepository.createNewBlogger(newBlogger)
   }
 
-  async getBloggerById(id: number): Promise<BloggerType | null> {
+  async getBloggerById(id: number): Promise<ReturnTypeObjectBloggers> {
     return await this.bloggersRepository.getBloggerById(id)
   }
 

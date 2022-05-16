@@ -10,9 +10,9 @@ export class PostsController {
   async getAllPosts(req: Request, res: Response) {
 
     const parseQueryData = parseQuery(req)
-    const pageNumber = parseQueryData.pageNumber
-    const pageSize = parseQueryData.pageSize
-    const title = parseQueryData.title
+    const pageNumber: number = parseQueryData.pageNumber
+    const pageSize: number = parseQueryData.pageSize
+    const title: string | null = parseQueryData.title
 
     const foundPosts = await this.postsService.findPosts(pageNumber, pageSize, title);
     res.send(foundPosts)
