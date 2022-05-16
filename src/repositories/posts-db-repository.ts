@@ -118,7 +118,8 @@ export class PostsRepository {
     const searchPost = await postsCollection.findOne({id: id});
     const searchBlogger = await bloggersCollection.findOne({id: bloggerId})
     const errorsArray: ArrayErrorsType = [];
-
+    console.log(id, bloggerId)
+    console.log( searchPost, searchBlogger)
     if (!searchPost) {
       errorsArray.push(notFoundPostId)
     }

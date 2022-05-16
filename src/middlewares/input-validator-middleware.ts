@@ -27,6 +27,8 @@ export const nameValidation = body("name").trim().isLength({
   max: 15
 }).withMessage("Name must be >1 and <15 characters.")
 export const bloggerIdParamsValidation = param('bloggerId').trim().isInt().withMessage('param bloggerId must be Int')
+const userIdBodyRegExp = /^\d+$/i
+export const  userIdParamsValidation = param('userId').matches(userIdBodyRegExp).withMessage('param userId must be Int')
 export const validatorUrl = body("youtubeUrl").trim().matches(youtubeUrlRegExp).isLength({
   min: 1,
   max: 100

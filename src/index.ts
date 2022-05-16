@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import {authRouter} from "./middlewares/auth-middleware";
+import {authMiddleware, authRouter} from "./middlewares/auth-middleware";
 import {runDb} from "./repositories/db-connection";
 import {bloggersRouts} from "./routes/bloggers-router";
 import {postsRouts} from "./routes/posts-router";
@@ -27,7 +27,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/api/posts', postsRouts)
 app.use('/api/bloggers', bloggersRouts)
-app.use('/api/users', authRouter, usersRouter)
+app.use('/api/users', usersRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/feedbacks', feedbacksRouter)
 

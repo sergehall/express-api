@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response, Router} from "express";
 import {jwtService} from "../application/jwt-service";
 import {ioc} from "../IoCContainer";
+
 const base64 = require('base-64');
 
 
@@ -8,10 +9,12 @@ export const authRouter = Router({})
 
 authRouter.post('/login',
   async (req: Request, res: Response) => {
-    const user = await ioc.usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
+    const user = await ioc.usersService.checkCredentials(req.body.login, req.body.password)
     if (user) {
       const token = await jwtService.createJWT(user)
-      res.status(201).send(token)
+      res.status(201).send({
+        "token": token
+      })
     } else {
       res.sendStatus(401)
     }
@@ -37,7 +40,7 @@ export const authMiddlewareHeadersAuthorization = (req: Request, res: Response, 
   try {
     const expectedAuthHeaderValue = "Basic " + base64.encode("admin:qwerty")
 
-    if (req.headers.authorization !== expectedAuthHeaderValue){
+    if (req.headers.authorization !== expectedAuthHeaderValue) {
       return res.sendStatus(401)
     }
     next();

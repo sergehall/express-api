@@ -30,6 +30,7 @@ export type BloggerIdAndArrayPosts = [bloggerIdKey: string, posts: Array<PostsTy
 export type AllDeletedPosts = Array<BloggerIdAndArrayPosts>
 export type UserDBType = {
   _id: object,
+  id: string
   userName: string
   email: string,
   passwordHash: string,
