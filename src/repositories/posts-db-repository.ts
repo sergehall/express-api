@@ -118,8 +118,7 @@ export class PostsRepository {
     const searchPost = await postsCollection.findOne({id: id});
     const searchBlogger = await bloggersCollection.findOne({id: bloggerId})
     const errorsArray: ArrayErrorsType = [];
-    console.log(id, bloggerId)
-    console.log( searchPost, searchBlogger)
+
     if (!searchPost) {
       errorsArray.push(notFoundPostId)
     }
@@ -140,10 +139,10 @@ export class PostsRepository {
         errorsArray.push(MongoHasNotUpdated)
       }
     }
-    if (errorsArray.length !== 0 || searchPost === null) {
+    if (errorsArray.length !== 0 || !searchPost) {
       return {
         data: {
-          id: "0",
+          id: null,
           title: title,
           shortDescription: shortDescription,
           content: content,

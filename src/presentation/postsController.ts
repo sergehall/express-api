@@ -67,15 +67,18 @@ export class PostsController {
       if (updatedPost.resultCode === 0) {
         res.status(204)
         res.send()
-      } else if (updatedPost.errorsMessages.find(p => p.field === "Not found postId")) {
+        return
+      }
+      if (updatedPost.errorsMessages.find(p => p.field === "postId")) {
         res.status(404)
         res.send()
-      } else {
-        res.status(400)
-        const errorsMessages = updatedPost.errorsMessages
-        const resultCode = updatedPost.resultCode
-        res.send({errorsMessages, resultCode})
+        return
       }
+      res.status(400)
+      const errorsMessages = updatedPost.errorsMessages
+      const resultCode = updatedPost.resultCode
+      res.send({errorsMessages, resultCode})
+
     } catch (error) {
       console.log(error)
       return res.sendStatus(500)

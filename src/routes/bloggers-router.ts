@@ -22,7 +22,7 @@ bloggersRouts.get('/',
     nameValidation, validatorUrl, inputValidatorMiddleware,
     ioc.bloggersController.createNewBlogger.bind(ioc.bloggersController))
 
-  .get('/:bloggerId', bloggerIdParamsValidation, inputValidatorMiddleware,
+  .get('/:bloggerId', authMiddlewareHeadersAuthorization, bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.getBloggerById.bind(ioc.bloggersController))
 
   .put('/:bloggerId', authMiddlewareHeadersAuthorization,

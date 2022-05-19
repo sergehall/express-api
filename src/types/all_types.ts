@@ -14,7 +14,7 @@ export type ReturnTypeObjectBloggers = {
   resultCode: number
 }
 export type PostsType = {
-  id: string
+  id: string | null
   title: string
   shortDescription: string
   content: string

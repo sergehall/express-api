@@ -109,17 +109,18 @@ export class BloggersController {
       if (updatedBlogger.resultCode === 0) {
         res.status(204)
         res.send()
-      } else {
-        if (updatedBlogger.errorsMessages.find(f => f.field === "Not found bloggerId")) {
-          res.status(404)
-          res.send()
-        } else {
-          const errorsMessages = updatedBlogger.errorsMessages
-          const resultCode = updatedBlogger.resultCode
-          res.status(400)
-          res.send({errorsMessages, resultCode})
-        }
+        return
       }
+      if (updatedBlogger.errorsMessages.find(f => f.field === "bloggerId")) {
+        res.status(404)
+        res.send()
+        return
+      }
+      const errorsMessages = updatedBlogger.errorsMessages
+      const resultCode = updatedBlogger.resultCode
+      res.status(400)
+      res.send({errorsMessages, resultCode})
+
     } catch (error) {
       return res.sendStatus(500)
     }
