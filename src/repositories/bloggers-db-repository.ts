@@ -9,18 +9,18 @@ import {
 import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-validator-middleware";
 
 
-
-
 export class BloggersRepository {
-  async findBloggers(pageNumber: number, pageSize: number, searchNameTerm: string| null): Promise<Pagination> {
+  async findBloggers(pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
     let filter = {}
     if (searchNameTerm !== null) {
       filter = {name: {$regex: searchNameTerm}}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await bloggersCollection.find(filter, {projection: {
+    const result = await bloggersCollection.find(filter, {
+      projection: {
         _id: false
-      }}).limit(pageSize).skip(startIndex).toArray()
+      }
+    }).limit(pageSize).skip(startIndex).toArray()
 
     const totalCount = await bloggersCollection.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)
@@ -66,25 +66,23 @@ export class BloggersRepository {
         _id: false
       }
     })
-
-    if (blogger) {
+    if (!blogger) {
+      errorsArray.push(notFoundBloggerId)
       return {
-        data: blogger,
+        data: {
+          id: null,
+          name: "",
+          youtubeUrl: ""
+        },
         errorsMessages: errorsArray,
-        resultCode: 0
+        resultCode: 1
       }
     }
-    errorsArray.push(MongoHasNotUpdated)
     return {
-      data: {
-        id: "0",
-        name: "",
-        youtubeUrl: ""
-      },
+      data: blogger,
       errorsMessages: errorsArray,
-      resultCode: 1
+      resultCode: 0
     }
-
   }
 
   async updateBloggerById(id: string, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {

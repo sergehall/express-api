@@ -4,7 +4,7 @@ export type ErrorType = {
 }
 export type ArrayErrorsType = Array<ErrorType>
 export type BloggerType = {
-  id: string
+  id: string | null
   name: string
   youtubeUrl: string
 }

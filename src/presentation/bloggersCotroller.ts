@@ -47,19 +47,17 @@ export class BloggersController {
       const content: string = req.body.content
 
       const getBlogger = await this.bloggersService.getBloggerById(bloggerId);
-      let foundBloggerId: string = getBlogger.data.id
-      if (foundBloggerId === "0") {
-        foundBloggerId = "0"
+      const foundBloggerId = getBlogger.data.id
+      if (foundBloggerId !== null) {
+        const createPosts = await this.postsService.createPost(title, shortDescription, content, foundBloggerId)
+        if (createPosts) {
+          res.status(201)
+          res.send(createPosts.data)
+        }
       }
-      const createPosts = await this.postsService.createPost(title, shortDescription, content, foundBloggerId)
+      res.status(404)
+      res.send()
 
-      if (createPosts) {
-        res.status(201)
-        res.send(createPosts.data)
-      } else {
-        res.status(404)
-        res.send()
-      }
     } catch (e) {
       console.log(e)
       res.status(500)
@@ -90,7 +88,7 @@ export class BloggersController {
     try {
       const id = req.params.bloggerId;
       const getBlogger = await this.bloggersService.getBloggerById(id);
-      if (getBlogger) {
+      if (getBlogger.data.id !== null) {
         res.send(getBlogger.data)
       } else {
         res.sendStatus(404)

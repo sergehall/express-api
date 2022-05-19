@@ -52,11 +52,11 @@ export const MongoHasNotUpdated = {
 }
 export const notFoundBloggerId = {
   message: "Invalid 'bloggerId' such blogger doesn't exist",
-  field: "Not found bloggerId"
+  field: "bloggerId"
 }
 export const notFoundPostId = {
   message: "Invalid '/:postId' such post doesn't exist",
-  field: "Not found postId"
+  field: "postId"
 }
 
 const bloggerIdBodyRegExp2 = /^\d+$/i
