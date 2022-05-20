@@ -1,4 +1,4 @@
-import {BloggerType, ReturnTypeObjectBloggers} from "../types/all_types";
+import {ReturnTypeObjectBloggers} from "../types/all_types";
 import {BloggersRepository} from "../repositories/bloggers-db-repository";
 import {Pagination} from "../types/all_types";
 
@@ -12,13 +12,7 @@ export class BloggersService {
   }
 
   async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
-    const newId = Math.round((+new Date()+ +new Date())/2).toString();
-    const newBlogger = {
-      id: newId,
-      name: name,
-      youtubeUrl: youtubeUrl
-    }
-    return await this.bloggersRepository.createNewBlogger(newBlogger)
+    return await this.bloggersRepository.createNewBlogger(name, youtubeUrl)
   }
 
   async getBloggerById(id: string): Promise<ReturnTypeObjectBloggers> {

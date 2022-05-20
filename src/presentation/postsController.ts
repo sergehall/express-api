@@ -1,6 +1,7 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
 import {parseQuery} from "../middlewares/parse-query";
+import {UserDBType} from "../types/all_types";
 
 
 export class PostsController {
@@ -26,6 +27,28 @@ export class PostsController {
       const bloggerId: string = req.body.bloggerId
 
       const newPost = await this.postsService.createPost(title, shortDescription, content, bloggerId)
+
+      if (newPost.resultCode === 0) {
+        res.status(201)
+        res.send(newPost.data)
+      } else {
+        res.status(400)
+        const errorsMessages = newPost.errorsMessages
+        const resultCode = newPost.resultCode
+        res.send({errorsMessages, resultCode})
+      }
+    } catch (error) {
+      return res.sendStatus(500)
+    }
+  }
+
+  async createNewCommentsByPostId(req: Request, res: Response) {
+    try {
+      const postId: string = req.params.postId;
+      const content: string = req.body.content;
+      const  user: UserDBType = req.user
+
+      const newPost = await this.postsService.createNewCommentsByPostId(postId, content, user)
 
       if (newPost.resultCode === 0) {
         res.status(201)

@@ -23,17 +23,19 @@ authRouter.post('/login',
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.headers.authorization) {
-    res.send(401)
+    res.sendStatus(401)
     return
   }
-  const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
 
+  const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
   const userId = await jwtService.getUserIdByToken(token)
   if (userId) {
     req.user = await ioc.usersService.findUser(userId)
     next()
+    return
   }
-  res.send(401)
+  res.sendStatus(401)
+  return
 }
 
 export const authMiddlewareHeadersAuthorization = (req: Request, res: Response, next: NextFunction) => {

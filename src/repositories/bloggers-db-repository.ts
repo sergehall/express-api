@@ -34,8 +34,15 @@ export class BloggersRepository {
     };
   }
 
-  async createNewBlogger(newBlogger: BloggerType): Promise<ReturnTypeObjectBloggers> {
+  async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
     const errorsArray: ArrayErrorsType = [];
+
+    const newId = Math.round((+new Date()+ +new Date())/2).toString();
+    const newBlogger = {
+      id: newId,
+      name: name,
+      youtubeUrl: youtubeUrl
+    }
 
     const result = await bloggersCollection.insertOne(newBlogger)
 

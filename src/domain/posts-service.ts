@@ -1,5 +1,11 @@
 import {PostsRepository} from "../repositories/posts-db-repository";
-import {Pagination, PostsType, ReturnTypeObjectPosts} from "../types/all_types";
+import {
+  Pagination,
+  PostsType,
+  ReturnTypeObjectComment,
+  ReturnTypeObjectPosts,
+  UserDBType
+} from "../types/all_types";
 
 
 export class PostsService {
@@ -11,11 +17,15 @@ export class PostsService {
     return await this.postsRepository.findPosts(pageNumber, pageSize, title)
   }
   async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination>{
-    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize)
+    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize, searchNameTerm)
   }
 
   async createPost(title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
     return await this.postsRepository.createPost(title, shortDescription, content, bloggerId)
+  }
+
+  async createNewCommentsByPostId(postId: string, content: string, user: UserDBType): Promise<ReturnTypeObjectComment> {
+    return await this.postsRepository.createNewCommentsByPostId(postId, content, user)
   }
 
   async getPostById(id: string): Promise<PostsType | null >{

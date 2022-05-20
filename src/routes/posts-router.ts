@@ -1,10 +1,15 @@
 import {Router} from "express";
 import {
-  contentValidation, postIdParamsValidation, inputValidatorMiddleware,
-  shortDescriptionValidation, titleValidation, bloggerIdBodyValidator, bloggerIdParamsValidation
+  contentValidation,
+  postIdParamsValidation,
+  inputValidatorMiddleware,
+  shortDescriptionValidation,
+  titleValidation,
+  bloggerIdBodyValidator,
+  contentCommentValidation
 } from "../middlewares/input-validator-middleware";
 import {ioc} from "../IoCContainer";
-import {authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware";
+import {authMiddleware, authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware";
 
 
 
@@ -33,3 +38,9 @@ postsRouts.get('/',
 
   .delete('/', authMiddlewareHeadersAuthorization,
     ioc.postsController.deleteAllPosts.bind(ioc.postsController))
+
+  .get('/:postId/comments', postIdParamsValidation, inputValidatorMiddleware,
+    ioc.postsController.getPostById.bind(ioc.postsController))
+
+  .post('/:postId/comments', authMiddleware, contentCommentValidation, inputValidatorMiddleware,
+    ioc.postsController.createNewCommentsByPostId.bind(ioc.postsController))

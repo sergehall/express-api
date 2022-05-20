@@ -22,7 +22,7 @@ export class UsersService {
       email,
       passwordSalt,
       passwordHash,
-      createdAt: new Date()
+      createdAt: new Date().toISOString()
     }
     return this.userRepository.createUser(newUser)
   }

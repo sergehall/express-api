@@ -20,6 +20,8 @@ export const postIdParamsValidation = param('postId').trim().isLength({
   min: 1,
   max: 100
 }).withMessage("shortDescription must be >1 and <30 characters.")
+const bloggerIdBodyRegExp2 = /^\d+$/i
+export const  bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
 
 export const nameValidation = body("name").trim().isLength({
   min: 1,
@@ -58,9 +60,24 @@ export const notFoundPostId = {
   message: "Invalid '/:postId' such post doesn't exist",
   field: "postId"
 }
+// comments
+export const notFoundCommentId = {
+  message: "Invalid 'commentId' such comment doesn't exist",
+  field: "commentId"
+}
+export const forbiddenUpdateComment = {
+  message: "Only the owner can change the post",
+  field: "forbidden"
+}
+export const notDeletedComment = {
+  message: "comment not deleted",
+  field: "notDeleted"
+}
 
-const bloggerIdBodyRegExp2 = /^\d+$/i
-export const  bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
+export const contentCommentValidation = body("content").trim().isLength({
+  min: 20,
+  max: 300
+}).withMessage("content must be >20 and <300 characters.")
 
 
 export const inputValidatorMiddleware = (req: Request, res: Response, next: NextFunction) => {

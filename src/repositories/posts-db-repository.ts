@@ -1,5 +1,11 @@
-import {bloggersCollection, postsCollection,} from "./db";
-import {ArrayErrorsType, Pagination, PostsType, ReturnTypeObjectPosts} from "../types/all_types";
+import {bloggersCollection, commentsCollection, postsCollection,} from "./db";
+import {
+  ArrayErrorsType,
+  Pagination,
+  PostsType, ReturnTypeObjectComment,
+  ReturnTypeObjectPosts,
+  UserDBType
+} from "../types/all_types";
 import {
   MongoHasNotUpdated,
   notFoundBloggerId,
@@ -33,7 +39,7 @@ export class PostsRepository {
     };
   }
 
-  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<Pagination> {
+  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
     let filter = {}
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
@@ -98,6 +104,55 @@ export class PostsRepository {
       data: newPost,
       errorsMessages: errorsArray,
       resultCode: 1
+    }
+  }
+
+  async createNewCommentsByPostId(postId: string, content: string, user: UserDBType): Promise<ReturnTypeObjectComment> {
+    let errorsArray: ArrayErrorsType = [];
+    const newCommentId = Math.round((+new Date() + +new Date()) / 2).toString();
+    const addedAt = (new Date()).toISOString()
+
+    const newComment = {
+      id: newCommentId,
+      content: content,
+      userId: user.id,
+      userLogin: user.login,
+      addedAt: addedAt
+    }
+
+    const foundComments = await commentsCollection.findOne({postId: postId})
+
+    if (!foundComments) {
+      const insertNewComment = await commentsCollection.insertOne({
+        postId: postId,
+        allComments: [newComment]
+      })
+      if (!insertNewComment.acknowledged) {
+        errorsArray.push(MongoHasNotUpdated)
+      }
+    }
+
+    if (foundComments) {
+      const result = await commentsCollection.updateOne(
+        {postId: postId},
+        {
+          $push: {allComments: newComment}
+        })
+      if (!result.acknowledged) {
+        errorsArray.push(MongoHasNotUpdated)
+      }
+    }
+    if (errorsArray.length !== 0) {
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+    return {
+      data: newComment,
+      errorsMessages: errorsArray,
+      resultCode: 0
     }
   }
 

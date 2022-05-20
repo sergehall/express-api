@@ -28,6 +28,29 @@ export type ReturnTypeObjectPosts = {
 }
 export type BloggerIdAndArrayPosts = [bloggerIdKey: string, posts: Array<PostsType>]
 export type AllDeletedPosts = Array<BloggerIdAndArrayPosts>
+
+export type Pagination = {
+  pagesCount: number
+  page: number
+  pageSize: number
+  totalCount: number
+  items: object
+}
+
+export type CommentViewModel = {
+  id:	string
+  content:	string
+  userId:	string
+  userLogin:	string
+  addedAt:	string
+}
+
+export type ReturnTypeObjectComment = {
+  data: CommentViewModel | null,
+  errorsMessages: Array<ErrorType>,
+  resultCode: number
+}
+
 export type UserDBType = {
   _id: object,
   id: string
@@ -35,8 +58,9 @@ export type UserDBType = {
   email: string,
   passwordHash: string,
   passwordSalt: string,
-  createdAt: Date
+  createdAt: string
 }
+
 export type FeedbackDBType = {
   _id: object,
   allFeedbacks: Array<{
@@ -45,10 +69,7 @@ export type FeedbackDBType = {
   }>
 }
 
-export type Pagination = {
-  pagesCount: number
-  page: number
-  pageSize: number
-  totalCount: number
-  items: object
+export type CommentsDBType = {
+  postId: string
+  allComments: Array<CommentViewModel>
 }

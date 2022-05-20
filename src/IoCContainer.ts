@@ -13,6 +13,9 @@ import {UsersController} from "./presentation/usersController";
 import {AllDeletedBloggersPostsRepository} from "./repositories/all-deleted-bloggers-db-repository";
 import {AllDelBloggersService} from "./domain/all-del-bloggers-service";
 import {AllDelBloggersController} from "./presentation/all-dell-bloggersController";
+import {CommentsService} from "./domain/comments-service";
+import {CommentsRepository} from "./repositories/comments-db-repository";
+import {CommentsController} from "./presentation/commentsController";
 
 
 const postsRepository = new PostsRepository()
@@ -35,6 +38,10 @@ const allDeletedBloggersPostsRepository = new AllDeletedBloggersPostsRepository(
 const allDelBloggersService = new AllDelBloggersService(allDeletedBloggersPostsRepository)
 const allDelBloggersController = new AllDelBloggersController(allDelBloggersService)
 
+const commentsRepository = new CommentsRepository()
+const commentsService = new CommentsService(commentsRepository)
+const commentsController = new CommentsController(commentsService)
+
 
 
 export const ioc = {
@@ -48,4 +55,6 @@ export const ioc = {
   usersController: usersController,
   allDelBloggersService: allDelBloggersService,
   allDelBloggersController: allDelBloggersController,
+  commentsService: commentsService,
+  commentsController: commentsController
 }

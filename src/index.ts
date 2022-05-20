@@ -1,13 +1,14 @@
 import express, {Request, Response} from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import {authMiddleware, authRouter} from "./middlewares/auth-middleware";
+import {authRouter} from "./middlewares/auth-middleware";
 import {runDb} from "./repositories/db-connection";
 import {bloggersRouts} from "./routes/bloggers-router";
 import {postsRouts} from "./routes/posts-router";
 import {feedbacksRouter} from "./routes/feedbacks-router";
 import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
 import {usersRouter} from "./routes/users-router";
+import {commentsRouter} from "./routes/comments-router";
 
 
 
@@ -30,6 +31,7 @@ app.use('/bloggers', bloggersRouts)
 app.use('/users', usersRouter)
 app.use('/auth', authRouter)
 app.use('/feedbacks', feedbacksRouter)
+app.use('/comments', commentsRouter)
 
 app.use('/deleted-bloggers', allDeletedBloggersRouts)
 
