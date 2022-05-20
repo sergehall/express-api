@@ -108,7 +108,7 @@ export class PostsRepository {
     }
   }
 
-  async createNewCommentsByPostId(postId: string, content: string, user: UserDBType): Promise<ReturnTypeObjectComment> {
+  async createNewCommentByPostId(postId: string, content: string, user: UserDBType): Promise<ReturnTypeObjectComment> {
     let errorsArray: ArrayErrorsType = [];
     const newCommentId = Math.round((+new Date() + +new Date()) / 2).toString();
     const addedAt = (new Date()).toISOString()
@@ -131,6 +131,7 @@ export class PostsRepository {
         resultCode: 1
       }
     }
+    // const foundComments = await postsCollection.findOne(filterComments)
     // if (!foundComments) {
     //   const insertNewComment = await commentsCollection.insertOne({
     //     postId: postId,
@@ -141,13 +142,26 @@ export class PostsRepository {
     //   }
     // }
 
-    const result = await commentsCollection.updateOne(
-      {postId: postId},
-      {
-        $push: {allComments: newComment}
+    const filterComments = {postId: postId}
+    const foundComments = await commentsCollection.findOne(filterComments)
+    if (!foundComments) {
+      const insertNewComment = await commentsCollection.insertOne({
+        postId: postId,
+        allComments: [newComment]
       })
-    if (!result.acknowledged) {
-      errorsArray.push(MongoHasNotUpdated)
+      if (!insertNewComment.acknowledged) {
+        errorsArray.push(MongoHasNotUpdated)
+      }
+    } else {
+      const result = await commentsCollection.updateOne(
+        {postId: postId},
+        {
+          $push: {allComments: newComment}
+        })
+
+      if (!result.acknowledged) {
+        errorsArray.push(MongoHasNotUpdated)
+      }
     }
 
     if (errorsArray.length !== 0) {

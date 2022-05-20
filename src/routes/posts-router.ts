@@ -43,4 +43,4 @@ postsRouts.get('/',
     ioc.postsController.getPostById.bind(ioc.postsController))
 
   .post('/:postId/comments', authMiddleware, contentCommentValidation, inputValidatorMiddleware,
-    ioc.postsController.createNewCommentsByPostId.bind(ioc.postsController))
+    ioc.postsController.createNewCommentByPostId.bind(ioc.postsController))

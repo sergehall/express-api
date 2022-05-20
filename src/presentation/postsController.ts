@@ -49,13 +49,17 @@ export class PostsController {
     }
   }
 
-  async createNewCommentsByPostId(req: Request, res: Response) {
+  async createNewCommentByPostId(req: Request, res: Response) {
     try {
       const postId: string = req.params.postId;
       const content: string = req.body.content;
       const  user: UserDBType = req.user
-
-      const newPost = await this.postsService.createNewCommentsByPostId(postId, content, user)
+      if (user === null) {
+        res.status(401)
+        res.send()
+        return
+      }
+      const newPost = await this.postsService.createNewCommentByPostId(postId, content, user)
 
       if (newPost.resultCode === 0) {
         res.status(201)
