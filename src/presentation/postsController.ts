@@ -60,12 +60,17 @@ export class PostsController {
       if (newPost.resultCode === 0) {
         res.status(201)
         res.send(newPost.data)
-      } else {
-        res.status(400)
-        const errorsMessages = newPost.errorsMessages
-        const resultCode = newPost.resultCode
-        res.send({errorsMessages, resultCode})
+        return
       }
+      if (newPost.errorsMessages.find(f => f.field === "postId")) {
+        res.status(404)
+        res.send()
+        return
+      }
+      res.status(400)
+      const errorsMessages = newPost.errorsMessages
+      const resultCode = newPost.resultCode
+      res.send({errorsMessages, resultCode})
     } catch (error) {
       return res.sendStatus(500)
     }

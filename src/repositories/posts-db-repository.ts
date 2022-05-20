@@ -112,6 +112,7 @@ export class PostsRepository {
     let errorsArray: ArrayErrorsType = [];
     const newCommentId = Math.round((+new Date() + +new Date()) / 2).toString();
     const addedAt = (new Date()).toISOString()
+    const filter = {id: postId}
 
     const newComment = {
       id: newCommentId,
@@ -121,36 +122,34 @@ export class PostsRepository {
       addedAt: addedAt
     }
 
-    const foundComments = await commentsCollection.findOne({postId: postId})
-
+    const foundPost = await postsCollection.findOne(filter)
+    if (!foundPost) {
+      errorsArray.push(notFoundPostId)
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
     // if (!foundComments) {
-    //   errorsArray.push(notFoundPostId)
-    //   return {
-    //     data: null,
-    //     errorsMessages: errorsArray,
-    //     resultCode: 1
+    //   const insertNewComment = await commentsCollection.insertOne({
+    //     postId: postId,
+    //     allComments: [newComment]
+    //   })
+    //   if (!insertNewComment.acknowledged) {
+    //     errorsArray.push(MongoHasNotUpdated)
     //   }
     // }
-    if (!foundComments) {
-      const insertNewComment = await commentsCollection.insertOne({
-        postId: postId,
-        allComments: [newComment]
+
+    const result = await commentsCollection.updateOne(
+      {postId: postId},
+      {
+        $push: {allComments: newComment}
       })
-      if (!insertNewComment.acknowledged) {
-        errorsArray.push(MongoHasNotUpdated)
-      }
+    if (!result.acknowledged) {
+      errorsArray.push(MongoHasNotUpdated)
     }
 
-    if (foundComments) {
-      const result = await commentsCollection.updateOne(
-        {postId: postId},
-        {
-          $push: {allComments: newComment}
-        })
-      if (!result.acknowledged) {
-        errorsArray.push(MongoHasNotUpdated)
-      }
-    }
     if (errorsArray.length !== 0) {
       return {
         data: null,
