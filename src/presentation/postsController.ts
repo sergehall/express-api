@@ -30,7 +30,14 @@ export class PostsController {
 
       if (newPost.resultCode === 0) {
         res.status(201)
-        res.send(newPost.data)
+        res.send({
+          id: newPost.data.id,
+          title: newPost.data.title,
+          shortDescription: newPost.data.shortDescription,
+          content: newPost.data.content,
+          bloggerId: newPost.data.bloggerId,
+          bloggerName: newPost.data.bloggerName
+        })
       } else {
         res.status(400)
         const errorsMessages = newPost.errorsMessages

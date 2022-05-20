@@ -23,7 +23,7 @@ export class BloggersController {
 
   async getAllPostByBloggerId(req: Request, res: Response) {
     const id: string = req.params.bloggerId;
-    const foundBlogger =  await this.bloggersService.getBloggerById(id);
+    const foundBlogger = await this.bloggersService.getBloggerById(id);
     if (foundBlogger.errorsMessages.length === 0) {
       const parseQueryData = parseQuery(req)
       const pageNumber: number = parseQueryData.pageNumber
