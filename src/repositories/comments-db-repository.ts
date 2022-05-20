@@ -14,18 +14,18 @@ export class CommentsRepository {
 
   async findCommentById(commentId: string): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
-
     let filter = {}
     if (commentId) {
       filter = {"allComments.id": commentId}
     }
-    const result = await commentsCollection.findOne(filter, {
+    const foundPostWithComments = await commentsCollection.findOne(filter, {
       projection: {
         _id: false
       }
     })
+    const comment = foundPostWithComments?.allComments.filter(i => i.id === commentId)[0]
 
-    if (!result) {
+    if (!comment) {
       errorsArray.push(notFoundCommentId)
       return {
         data: null,
@@ -34,7 +34,7 @@ export class CommentsRepository {
       }
     }
     return {
-      data: result?.allComments.filter(i => i.id === commentId)[0],
+      data: comment,
       errorsMessages: errorsArray,
       resultCode: 0
     }
@@ -90,6 +90,7 @@ export class CommentsRepository {
 
   async deletedCommentById(commentId: string, user: UserDBType): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
+
     const userLogin = user.login
     const userId = user.id
     const filterToDelete = {"allComments.id": commentId}

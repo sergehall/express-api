@@ -10,7 +10,7 @@ import {
 export const commentsRouter = Router({})
 
 commentsRouter.get('/:commentId',
-  ioc.commentsController.getCommentsById.bind(ioc.commentsController))
+  ioc.commentsController.getCommentById.bind(ioc.commentsController))
 
   .put('/:commentId', authMiddleware, contentCommentValidation, inputValidatorMiddleware,
     ioc.commentsController.updateCommentsById.bind(ioc.commentsController))

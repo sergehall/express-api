@@ -6,12 +6,12 @@ import {CommentsService} from "../domain/comments-service";
 export class CommentsController {
   constructor(private commentsService: CommentsService) {
   }
-  async getCommentsById(req: Request, res: Response) {
+  async getCommentById(req: Request, res: Response) {
     try {
       const commId = req.params.commentId;
 
       const getComment: ReturnTypeObjectComment = await this.commentsService.findCommentById(commId);
-      if (getComment) {
+      if (getComment.data !== null) {
         res.send(getComment.data)
       } else {
         res.status(404).send()
@@ -26,6 +26,13 @@ export class CommentsController {
       const commentId: string = req.params.commentId;
       const content: string = req.body.content
       const  user: UserDBType = req.user
+
+      if (user === null) {
+        res.status(401)
+        res.send()
+        return
+      }
+
       const updatedComment: ReturnTypeObjectComment = await this.commentsService.updateCommentById(commentId, content, user)
 
       if (updatedComment.resultCode === 0) {
@@ -58,6 +65,11 @@ export class CommentsController {
     const commentsId = req.params.commentId
     const  user: UserDBType = req.user
 
+    if (user === null) {
+      res.status(401)
+      res.send()
+      return
+    }
     const deletedComments = await this.commentsService.deletedCommentById(commentsId, user)
 
     if (deletedComments.data !== null) {
