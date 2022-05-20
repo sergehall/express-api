@@ -124,14 +124,22 @@ export class PostsRepository {
     const foundComments = await commentsCollection.findOne({postId: postId})
 
     if (!foundComments) {
-      const insertNewComment = await commentsCollection.insertOne({
-        postId: postId,
-        allComments: [newComment]
-      })
-      if (!insertNewComment.acknowledged) {
-        errorsArray.push(MongoHasNotUpdated)
+      errorsArray.push(notFoundPostId)
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
       }
     }
+    // if (!foundComments) {
+    //   const insertNewComment = await commentsCollection.insertOne({
+    //     postId: postId,
+    //     allComments: [newComment]
+    //   })
+    //   if (!insertNewComment.acknowledged) {
+    //     errorsArray.push(MongoHasNotUpdated)
+    //   }
+    // }
 
     if (foundComments) {
       const result = await commentsCollection.updateOne(
