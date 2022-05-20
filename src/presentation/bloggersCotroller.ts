@@ -46,14 +46,18 @@ export class BloggersController {
       const shortDescription: string = req.body.shortDescription
       const content: string = req.body.content
 
-      const getBlogger = await this.bloggersService.getBloggerById(bloggerId);
-      const foundBloggerId = getBlogger.data.id
-      if (foundBloggerId !== null) {
-        const createPosts = await this.postsService.createPost(title, shortDescription, content, foundBloggerId)
-        if (createPosts) {
-          res.status(201)
-          res.send(createPosts.data)
-        }
+      const createPosts = await this.postsService.createPost(title, shortDescription, content, bloggerId)
+
+      if (createPosts.errorsMessages.length === 0) {
+        res.status(201)
+        res.send({
+          id: createPosts.data.id,
+          title: createPosts.data.title,
+          shortDescription: createPosts.data.shortDescription,
+          content: createPosts.data.content,
+          bloggerId: createPosts.data.bloggerId,
+          bloggerName: createPosts.data.bloggerName
+        })
       }
       res.status(404)
       res.send()

@@ -73,35 +73,36 @@ export class PostsRepository {
       errorsArray.push(notFoundBloggerId)
     }
 
-    let newPost = {
-      id: newPostId,
-      title: title,
-      shortDescription: shortDescription,
-      content: content,
-      bloggerId: bloggerId,
-      bloggerName: ""
-    }
-
     if (foundBloggerId) {
+      const nameBloggerId = foundBloggerId.name
+      const newPost = {
+        id: newPostId,
+        title: title,
+        shortDescription: shortDescription,
+        content: content,
+        bloggerId: bloggerId,
+        bloggerName: nameBloggerId
+      }
       const result = await postsCollection.insertOne(newPost)
-      if (result.acknowledged) {
-        const nameBloggerId = foundBloggerId.name
-        return {
-          data: {
-            id: newPostId,
-            title: title,
-            shortDescription: shortDescription,
-            content: content,
-            bloggerId: bloggerId,
-            bloggerName: nameBloggerId
-          },
-          errorsMessages: errorsArray,
-          resultCode: 0
-        }
+
+      if (!result.acknowledged) {
+        errorsArray.push(MongoHasNotUpdated)
+      }
+      return {
+        data: newPost,
+        errorsMessages: errorsArray,
+        resultCode: 0
       }
     }
     return {
-      data: newPost,
+      data: {
+        id: newPostId,
+        title: title,
+        shortDescription: shortDescription,
+        content: content,
+        bloggerId: bloggerId,
+        bloggerName: ""
+      },
       errorsMessages: errorsArray,
       resultCode: 1
     }
