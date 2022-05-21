@@ -38,17 +38,17 @@ export class CommentsController {
         res.send()
         return
       }
-      if (updatedComment.errorsMessages.find(f => f.field === "forbidden")) {
-        res.status(403)
-        res.send()
-        return
-      }
       if (updatedComment.errorsMessages.find(f => f.field === "commentId")) {
         res.status(404)
         res.send()
         return
       }
-      res.status(403)
+      if (updatedComment.errorsMessages.find(f => f.field === "forbidden")) {
+        res.status(403)
+        res.send()
+        return
+      }
+      res.status(400)
       const errorsMessages = updatedComment.errorsMessages
       const resultCode = updatedComment.resultCode
       res.send({errorsMessages, resultCode})
