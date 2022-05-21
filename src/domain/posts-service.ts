@@ -1,6 +1,6 @@
 import {PostsRepository} from "../repositories/posts-db-repository";
 import {
-  Pagination,
+  Pagination, PaginatorCommentViewModel,
   PostsType,
   ReturnTypeObjectComment,
   ReturnTypeObjectPosts,
@@ -30,6 +30,9 @@ export class PostsService {
 
   async getPostById(id: string): Promise<PostsType | null >{
     return await this.postsRepository.getPostById(id)
+  }
+  async getCommentsByPostId(id: string, pageNumber: number, pageSize: number): Promise<PaginatorCommentViewModel>{
+    return await this.postsRepository.getCommentsByPostId(id, pageNumber, pageSize,)
   }
 
   async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {

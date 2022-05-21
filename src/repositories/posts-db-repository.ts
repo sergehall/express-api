@@ -1,10 +1,11 @@
 import {bloggersCollection, commentsCollection, postsCollection,} from "./db";
 import {
-  ArrayErrorsType,
-  Pagination,
-  PostsType, ReturnTypeObjectComment,
+  ArrayErrorsType, CommentsDBType,
+  Pagination, PaginatorCommentViewModel,
+  PostsType,
+  ReturnTypeObjectComment,
   ReturnTypeObjectPosts,
-  UserDBType
+  UserDBType,
 } from "../types/all_types";
 import {
   MongoHasNotUpdated,
@@ -131,16 +132,6 @@ export class PostsRepository {
         resultCode: 1
       }
     }
-    // const foundComments = await postsCollection.findOne(filterComments)
-    // if (!foundComments) {
-    //   const insertNewComment = await commentsCollection.insertOne({
-    //     postId: postId,
-    //     allComments: [newComment]
-    //   })
-    //   if (!insertNewComment.acknowledged) {
-    //     errorsArray.push(MongoHasNotUpdated)
-    //   }
-    // }
 
     const filterComments = {postId: postId}
     const foundComments = await commentsCollection.findOne(filterComments)
@@ -149,7 +140,7 @@ export class PostsRepository {
         postId: postId,
         allComments: [newComment]
       })
-      if (!insertNewComment.acknowledged) {
+      if (!insertNewComment.insertedId) {
         errorsArray.push(MongoHasNotUpdated)
       }
     } else {
@@ -159,7 +150,7 @@ export class PostsRepository {
           $push: {allComments: newComment}
         })
 
-      if (!result.acknowledged) {
+      if (!result.modifiedCount && !result.matchedCount) {
         errorsArray.push(MongoHasNotUpdated)
       }
     }
@@ -189,6 +180,37 @@ export class PostsRepository {
     } else {
       return null
     }
+  }
+
+  async  getCommentsByPostId(id: string, pageNumber: number, pageSize: number,): Promise<PaginatorCommentViewModel> {
+    const startIndex = (pageNumber - 1) * pageSize
+    const filter = {postId: id}
+
+    let comments = await commentsCollection.findOne(filter, {
+      projection: {
+        _id: false
+      }
+    })
+      .then(comments => comments?.allComments.slice(startIndex, pageSize))
+
+    let totalCount = await commentsCollection.findOne(filter)
+      .then(comments => comments?.allComments.length)
+
+    if (!comments) {
+      comments = []
+    }
+    if (!totalCount) {
+      totalCount = 0
+    }
+    const pagesCount = Math.ceil(totalCount / pageSize)
+
+    return {
+      pagesCount: pagesCount,
+      page: pageNumber,
+      pageSize: pageSize,
+      totalCount: totalCount,
+      items: comments
+    };
   }
 
   async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {

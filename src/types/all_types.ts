@@ -3,6 +3,7 @@ export type ErrorType = {
   field: string
 }
 export type ArrayErrorsType = Array<ErrorType>
+
 export type BloggerType = {
   id: string | null
   name: string
@@ -72,4 +73,12 @@ export type FeedbackDBType = {
 export type CommentsDBType = {
   postId: string
   allComments: Array<CommentViewModel>
+}
+
+export type PaginatorCommentViewModel = {
+  pagesCount: number
+  page: number
+  pageSize: number
+  totalCount: number
+  items: Array<CommentViewModel>
 }

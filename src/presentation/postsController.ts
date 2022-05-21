@@ -1,7 +1,7 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
 import {parseQuery} from "../middlewares/parse-query";
-import {UserDBType} from "../types/all_types";
+import {PaginatorCommentViewModel, UserDBType} from "../types/all_types";
 
 
 export class PostsController {
@@ -93,6 +93,25 @@ export class PostsController {
       return res.sendStatus(500)
     }
   }
+
+  async getCommentsByPostId(req: Request, res: Response) {
+    try {
+      const postId = req.params.postId;
+      const parseQueryData = parseQuery(req)
+      const pageNumber = parseQueryData.pageNumber
+      const pageSize = parseQueryData.pageSize
+
+      const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize);
+      if (getPost) {
+        res.send(getPost)
+      } else {
+        res.status(404).send()
+      }
+    } catch (error) {
+      return res.sendStatus(500)
+    }
+  }
+
 
   async updatePostById(req: Request, res: Response) {
     try {

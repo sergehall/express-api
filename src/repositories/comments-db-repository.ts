@@ -16,13 +16,12 @@ export class CommentsRepository {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
 
-
     const foundPostWithComments = await commentsCollection.findOne(filter, {
       projection: {
         _id: false
       }
     })
-    console.log(commentId, foundPostWithComments)
+
     const comment = foundPostWithComments?.allComments.filter(i => i.id === commentId)[0]
 
     if (!comment) {

@@ -40,7 +40,7 @@ postsRouts.get('/',
     ioc.postsController.deleteAllPosts.bind(ioc.postsController))
 
   .get('/:postId/comments', postIdParamsValidation, inputValidatorMiddleware,
-    ioc.postsController.getPostById.bind(ioc.postsController))
+    ioc.postsController.getCommentsByPostId.bind(ioc.postsController))
 
   .post('/:postId/comments', authMiddleware, contentCommentValidation, inputValidatorMiddleware,
     ioc.postsController.createNewCommentByPostId.bind(ioc.postsController))
