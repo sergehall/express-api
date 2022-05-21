@@ -3,7 +3,6 @@ export type ErrorType = {
   field: string
 }
 export type ArrayErrorsType = Array<ErrorType>
-
 export type BloggerType = {
   id: string | null
   name: string

@@ -183,26 +183,28 @@ export class PostsRepository {
   }
 
   async  getCommentsByPostId(id: string, pageNumber: number, pageSize: number,): Promise<PaginatorCommentViewModel> {
-    const startIndex = (pageNumber - 1) * pageSize
+    let startIndex = (pageNumber - 1) * pageSize
     const filter = {postId: id}
+
+    let totalCount = await commentsCollection.findOne(filter)
+      .then(comments => comments?.allComments.length)
+
+    if (!totalCount) {
+      totalCount = 0
+    }
+    const pagesCount = Math.ceil(totalCount / pageSize)
 
     let comments = await commentsCollection.findOne(filter, {
       projection: {
         _id: false
       }
     })
-      .then(comments => comments?.allComments.slice(startIndex, pageSize))
+      .then(comments => comments?.allComments.slice(startIndex, startIndex + pageSize))
 
-    let totalCount = await commentsCollection.findOne(filter)
-      .then(comments => comments?.allComments.length)
 
     if (!comments) {
       comments = []
     }
-    if (!totalCount) {
-      totalCount = 0
-    }
-    const pagesCount = Math.ceil(totalCount / pageSize)
 
     return {
       pagesCount: pagesCount,
