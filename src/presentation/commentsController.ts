@@ -39,11 +39,11 @@ export class CommentsController {
         res.send()
         return
       }
-      if (updatedComment.errorsMessages.find(f => f.field === "forbidden")) {
-        res.status(403)
-        res.send()
-        return
-      }
+      // if (updatedComment.errorsMessages.find(f => f.field === "forbidden")) {
+      //   res.status(403)
+      //   res.send()
+      //   return
+      // }
       if (updatedComment.errorsMessages.find(f => f.field === "commentId")) {
         res.status(404)
         res.send()
@@ -56,6 +56,13 @@ export class CommentsController {
         res.send({errorsMessages, resultCode})
         return
       }
+      res.status(403)
+      res.send()
+      return
+
+      // res.status(204)
+      // res.send()
+      //
     } catch (error) {
       console.log(error)
       return res.sendStatus(500)
