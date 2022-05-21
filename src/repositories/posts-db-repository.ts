@@ -182,9 +182,20 @@ export class PostsRepository {
     }
   }
 
-  async  getCommentsByPostId(id: string, pageNumber: number, pageSize: number,): Promise<PaginatorCommentViewModel> {
+  async getCommentsByPostId(id: string, pageNumber: number, pageSize: number,): Promise<PaginatorCommentViewModel> {
     let startIndex = (pageNumber - 1) * pageSize
     const filter = {postId: id}
+
+    let foundPost = await postsCollection.findOne({id: id})
+    if (foundPost === null) {
+      return {
+        pagesCount: 0,
+        page: 0,
+        pageSize: 0,
+        totalCount: 0,
+        items: []
+      };
+    }
 
     let totalCount = await commentsCollection.findOne(filter)
       .then(comments => comments?.allComments.length)
@@ -192,6 +203,7 @@ export class PostsRepository {
     if (!totalCount) {
       totalCount = 0
     }
+
     const pagesCount = Math.ceil(totalCount / pageSize)
 
     let comments = await commentsCollection.findOne(filter, {
