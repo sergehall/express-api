@@ -44,16 +44,6 @@ export class CommentsRepository {
     const userLogin = user.login
     const userId = user.id
     const filterToUpdate = {"allComments.id": commentId}
-    const accessVerification = await commentsCollection.find({"allComments": {$elemMatch: {"id": commentId, "userId": userId, "userLogin": userLogin} }}).toArray()
-
-    if (accessVerification.length === 0) {
-      errorsArray.push(forbiddenUpdateComment)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
 
     const foundPostWithComments = await commentsCollection.findOne(filterToUpdate)
     if (!foundPostWithComments) {
@@ -65,22 +55,20 @@ export class CommentsRepository {
       }
     }
 
-    // it is not clear which is faster to access the database again or to run through the filter already on the object from the database
+    //it is not clear which is faster to access the database again or to run through the filter already on the object from the database
     // const foundPostWithComments2 = await commentsCollection.find({"allComments": {$elemMatch: {"id": commentId, "userId": userId, "userLogin": userLogin} }}).toArray()
 
-    // const postWithComments = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
-    //
-    // if (postWithComments.userId !== userId || postWithComments.userLogin !== userLogin) {
-    //   errorsArray.push(forbiddenUpdateComment)
-    //   return {
-    //     data: null,
-    //     errorsMessages: errorsArray,
-    //     resultCode: 1
-    //   }
-    // }
 
     const postWithComments = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
 
+    if (postWithComments.userId !== userId || postWithComments.userLogin !== userLogin) {
+      errorsArray.push(forbiddenUpdateComment)
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
 
     const result = await commentsCollection.updateOne(filterToUpdate,{$set: {"allComments.$.content": content}})
 
