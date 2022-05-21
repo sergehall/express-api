@@ -45,18 +45,6 @@ export class CommentsRepository {
     const userId = user.id
     const filterToUpdate = {"allComments.id": commentId}
 
-    if (content.length === 0) {
-      errorsArray.push({
-        field: "content",
-        message: "content must be >20 and <300 characters"
-      })
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
-
     const foundPostWithComments = await commentsCollection.findOne(filterToUpdate)
     if (!foundPostWithComments) {
       errorsArray.push(notFoundCommentId)
@@ -66,7 +54,7 @@ export class CommentsRepository {
         resultCode: 1
       }
     }
-
+  
     // it is not clear which is faster to access the database again or to run through the filter already on the object from the database
     // const foundPostWithComments2 = await commentsCollection.find({"allComments": {$elemMatch: {"id": commentId, "userId": userId, "userLogin": userLogin} }}).toArray()
 

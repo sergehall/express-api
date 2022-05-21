@@ -34,6 +34,12 @@ export class CommentsController {
 
       const updatedComment: ReturnTypeObjectComment = await this.commentsService.updateCommentById(commentId, content, user)
 
+      if (updatedComment.resultCode === 0) {
+        res.status(204)
+        res.send()
+        return
+      }
+      console.log(updatedComment, "updatedComment")
       if (updatedComment.errorsMessages.find(f => f.field === "forbidden")) {
         res.status(403)
         res.send()
@@ -44,15 +50,10 @@ export class CommentsController {
         res.send()
         return
       }
-      if (updatedComment.errorsMessages.find(f => f.field === "content")) {
-        res.status(400)
-        const errorsMessages = updatedComment.errorsMessages
-        const resultCode = updatedComment.resultCode
-        res.send({errorsMessages, resultCode})
-        return
-      }
-      res.status(204)
-      res.send()
+      res.status(400)
+      const errorsMessages = updatedComment.errorsMessages
+      const resultCode = updatedComment.resultCode
+      res.send({errorsMessages, resultCode})
 
     } catch (error) {
       console.log(error)
