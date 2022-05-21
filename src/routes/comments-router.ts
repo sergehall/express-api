@@ -12,7 +12,7 @@ export const commentsRouter = Router({})
 commentsRouter.get('/:commentId',
   ioc.commentsController.getCommentById.bind(ioc.commentsController))
 
-  .put('/:commentId', authMiddleware,
+  .put('/:commentId', authMiddleware, contentCommentValidation, inputValidatorMiddleware,
     ioc.commentsController.updateCommentsById.bind(ioc.commentsController))
 
   .delete('/:commentId', authMiddleware,
