@@ -45,6 +45,18 @@ export class CommentsRepository {
     const userId = user.id
     const filterToUpdate = {"allComments.id": commentId}
 
+    if (content.length === 0) {
+      errorsArray.push({
+        field: "content",
+        message: "content must be >20 and <300 characters"
+      })
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+
     const foundPostWithComments = await commentsCollection.findOne(filterToUpdate)
     if (!foundPostWithComments) {
       errorsArray.push(notFoundCommentId)

@@ -1,6 +1,6 @@
 import {bloggersCollection, commentsCollection, postsCollection,} from "./db";
 import {
-  ArrayErrorsType, CommentsDBType,
+  ArrayErrorsType,
   Pagination, PaginatorCommentViewModel,
   PostsType,
   ReturnTypeObjectComment,

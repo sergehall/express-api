@@ -49,11 +49,13 @@ export class CommentsController {
         res.send()
         return
       }
-      res.status(400)
-      const errorsMessages = updatedComment.errorsMessages
-      const resultCode = updatedComment.resultCode
-      res.send({errorsMessages, resultCode})
-
+      if (updatedComment.errorsMessages.find(f => f.field === "content")) {
+        res.status(400)
+        const errorsMessages = updatedComment.errorsMessages
+        const resultCode = updatedComment.resultCode
+        res.send({errorsMessages, resultCode})
+        return
+      }
     } catch (error) {
       console.log(error)
       return res.sendStatus(500)
