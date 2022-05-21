@@ -50,7 +50,7 @@ export class CommentsController {
         res.send()
         return
       }
-      res.status(400)
+      res.status(403)
       const errorsMessages = updatedComment.errorsMessages
       const resultCode = updatedComment.resultCode
       res.send({errorsMessages, resultCode})
