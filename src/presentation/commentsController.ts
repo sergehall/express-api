@@ -26,21 +26,18 @@ export class CommentsController {
       const content: string = req.body.content
       const  user: UserDBType = req.user
 
-      console.log("in", commentId, "commentId", content, "content", user , "user")
       if (user === null) {
         res.status(401)
         res.send()
         return
       }
-
       const updatedComment: ReturnTypeObjectComment = await this.commentsService.updateCommentById(commentId, content, user)
-      console.log("out", updatedComment, "updatedComment")
+
       if (updatedComment.resultCode === 0) {
         res.status(204)
         res.send()
         return
       }
-      console.log(updatedComment, "updatedComment")
       if (updatedComment.errorsMessages.find(f => f.field === "forbidden")) {
         res.status(403)
         res.send()
@@ -86,7 +83,5 @@ export class CommentsController {
       res.send()
       return
     }
-
   }
-
 }
