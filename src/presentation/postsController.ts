@@ -102,7 +102,7 @@ export class PostsController {
       const pageSize = parseQueryData.pageSize
 
       const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize);
-      if (getPost) {
+      if (getPost.items.length !== 0) {
         res.send(getPost)
       } else {
         res.status(404).send()

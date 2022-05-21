@@ -4,14 +4,13 @@ import {Pagination, UserDBType} from "../types/all_types";
 import {UsersRepository} from "../repositories/users-db-repository";
 
 
-
-
 export class UsersService {
-  constructor(private userRepository: UsersRepository ) {
+  constructor(private userRepository: UsersRepository) {
     this.userRepository = userRepository
   }
+
   async createUser(login: string, email: string, password: string): Promise<UserDBType | null> {
-    const newId = Math.round((+new Date()+ +new Date())/2).toString();
+    const newId = Math.round((+new Date() + +new Date()) / 2).toString();
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
 
@@ -28,30 +27,32 @@ export class UsersService {
   }
 
   async findUsers(pageNumber: number, pageSize: number, userName: string | null): Promise<Pagination> {
-    return  await this.userRepository.findUsers(pageNumber, pageSize, userName)
+    return await this.userRepository.findUsers(pageNumber, pageSize, userName)
   }
 
   async findUser(mongoId: ObjectId): Promise<UserDBType | null> {
-    return  await this.userRepository.findUserById(mongoId)
+    return await this.userRepository.findUserById(mongoId)
   }
 
-  async checkCredentials(loginOrEmail: string, password:string) {
+  async checkCredentials(loginOrEmail: string, password: string) {
     const user = await this.userRepository.findByLoginOrEmail(loginOrEmail)
 
-    if(!user){
-      return false
+    if (user === null) {
+      return null
     }
     const passwordHash = await this._generateHash(password, user.passwordSalt)
     const result = passwordHash === user.passwordHash
     if (result) {
       return user
     }
-    return false   //.passwordHash === passwordHash; // true or false if not match
+    return null   //.passwordHash === passwordHash; // true or false if not match
   }
+
   async _generateHash(password: string, salt: string) {
-    const  hash = await bcrypt.hash(password, salt)
+    const hash = await bcrypt.hash(password, salt)
     return hash
   }
+
   async deleteUserById(id: string): Promise<Boolean> {
     return await this.userRepository.deletedUserById(id)
   }

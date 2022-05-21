@@ -10,7 +10,7 @@ export const authRouter = Router({})
 authRouter.post('/login',
   async (req: Request, res: Response) => {
     const user = await ioc.usersService.checkCredentials(req.body.login, req.body.password)
-    if (user) {
+    if (user !== null) {
       const token = await jwtService.createJWT(user)
       res.send({
         "token": token

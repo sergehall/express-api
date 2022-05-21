@@ -55,6 +55,10 @@ export class CommentsRepository {
       }
     }
 
+    // it is not clear which is faster to access the database again or to run through the filter already on the object from the database
+    // const foundPostWithComments2 = await commentsCollection.find({"allComments": {$elemMatch: {"id": commentId, "userId": userId, "userLogin": userLogin} }}).toArray()
+
+
     const postWithComments = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
 
     if (postWithComments.userId !== userId || postWithComments.userLogin !== userLogin) {
