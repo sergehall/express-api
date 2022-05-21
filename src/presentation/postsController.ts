@@ -104,9 +104,10 @@ export class PostsController {
       const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize);
       if (getPost.items.length !== 0) {
         res.send(getPost)
-      } else {
-        res.status(404).send()
+        return
       }
+      res.status(404).send()
+      
     } catch (error) {
       return res.sendStatus(500)
     }
