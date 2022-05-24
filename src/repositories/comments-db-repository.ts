@@ -63,27 +63,7 @@ export class CommentsRepository {
   async deletedCommentById(commentId: string): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filterToDelete = {"allComments.id": commentId}
-    //
-    // const foundPostWithComments = await commentsCollection.findOne(filterToDelete)
-    // if (!foundPostWithComments) {
-    //   errorsArray.push(notFoundCommentId)
-    //   return {
-    //     data: null,
-    //     errorsMessages: errorsArray,
-    //     resultCode: 1
-    //   }
-    // }
-    //
-    // const deletedPostWithComments = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
-    // if (deletedPostWithComments.userId !== userId || deletedPostWithComments.userLogin !== userLogin) {
-    //   errorsArray.push(forbiddenUpdateComment)
-    //   return {
-    //     data: null,
-    //     errorsMessages: errorsArray,
-    //     resultCode: 1
-    //   }
-    // }
-
+    
     const resultDeleted = await commentsCollection.findOneAndUpdate(filterToDelete, {
       $pull: {
         allComments: {
