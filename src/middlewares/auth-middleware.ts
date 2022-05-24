@@ -38,7 +38,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   return
 }
 
-export const authMiddlewareHeadersAuthorization = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddlewareBasicAuthorization = (req: Request, res: Response, next: NextFunction) => {
   try {
     const expectedAuthHeaderValue = "Basic " + base64.encode("admin:qwerty")
 

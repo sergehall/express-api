@@ -6,7 +6,7 @@ import {
   checkoutMongoDbId,
   inputValidatorMiddleware, userIdParamsValidation
 } from "../middlewares/input-validator-middleware";
-import {authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware";
+import {authMiddlewareBasicAuthorization} from "../middlewares/auth-middleware";
 
 
 export const usersRouter = Router({});
@@ -17,15 +17,12 @@ usersRouter.get('/',
   .get('/:mongoId', checkoutMongoDbId,
     ioc.usersController.getUserByMongoDbId.bind(ioc.usersController))
 
-  .post('/', authMiddlewareHeadersAuthorization,
+  .post('/', authMiddlewareBasicAuthorization,
     bodyLogin, bodyPassword, inputValidatorMiddleware,
     ioc.usersController.createNewUser.bind(ioc.usersController))
 
-  .delete('/:userId', authMiddlewareHeadersAuthorization,
+  .delete('/:userId', authMiddlewareBasicAuthorization,
     userIdParamsValidation, inputValidatorMiddleware,
     ioc.usersController.deleteUserById.bind(ioc.usersController))
 
-
-// .post('/', bodyLogin, bodyEmail, bodyPassword, inputValidatorMiddleware,
-// ioc.usersController.createNewUser.bind(ioc.usersController))
 

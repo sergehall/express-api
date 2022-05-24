@@ -3,7 +3,7 @@ import {Request, Response, NextFunction} from "express";
 import {commentsCollection} from "../repositories/db";
 
 
-export const comparingLoginAndOwnerComment = async (req: Request, res: Response, next: NextFunction) => {
+export const comparingLoginAndOwnersComment = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user: UserDBType = req.user
     const userLogin = user.login

@@ -9,7 +9,7 @@ import {
   contentCommentValidation
 } from "../middlewares/input-validator-middleware";
 import {ioc} from "../IoCContainer";
-import {authMiddleware, authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware";
+import {authMiddleware, authMiddlewareBasicAuthorization} from "../middlewares/auth-middleware";
 
 
 
@@ -19,7 +19,7 @@ export const postsRouts = Router({})
 postsRouts.get('/',
   ioc.postsController.getAllPosts.bind(ioc.postsController))
 
-  .post('/', authMiddlewareHeadersAuthorization,
+  .post('/', authMiddlewareBasicAuthorization,
     titleValidation, shortDescriptionValidation, contentValidation,
     bloggerIdBodyValidator, inputValidatorMiddleware,
     ioc.postsController.createNewPost.bind(ioc.postsController))
@@ -27,16 +27,16 @@ postsRouts.get('/',
   .get('/:postId', postIdParamsValidation, inputValidatorMiddleware,
     ioc.postsController.getPostById.bind(ioc.postsController))
 
-  .put('/:postId', authMiddlewareHeadersAuthorization,
+  .put('/:postId', authMiddlewareBasicAuthorization,
     postIdParamsValidation, titleValidation, shortDescriptionValidation,
     contentValidation, bloggerIdBodyValidator, inputValidatorMiddleware,
     ioc.postsController.updatePostById.bind(ioc.postsController))
 
-  .delete('/:postId', authMiddlewareHeadersAuthorization,
+  .delete('/:postId', authMiddlewareBasicAuthorization,
     postIdParamsValidation, inputValidatorMiddleware,
     ioc.postsController.deletePostById.bind(ioc.postsController))
 
-  .delete('/', authMiddlewareHeadersAuthorization,
+  .delete('/', authMiddlewareBasicAuthorization,
     ioc.postsController.deleteAllPosts.bind(ioc.postsController))
 
   .get('/:postId/comments', postIdParamsValidation, inputValidatorMiddleware,

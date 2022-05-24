@@ -9,7 +9,7 @@ import {
   titleValidation,
   validatorUrl,
 } from "../middlewares/input-validator-middleware";
-import {authMiddlewareHeadersAuthorization} from "../middlewares/auth-middleware";
+import {authMiddlewareBasicAuthorization} from "../middlewares/auth-middleware";
 
 
 export const bloggersRouts = Router({})
@@ -18,28 +18,28 @@ export const bloggersRouts = Router({})
 bloggersRouts.get('/',
   ioc.bloggersController.getAllBloggers.bind(ioc.bloggersController))
 
-  .post('/', authMiddlewareHeadersAuthorization,
+  .post('/', authMiddlewareBasicAuthorization,
     nameValidation, validatorUrl, inputValidatorMiddleware,
     ioc.bloggersController.createNewBlogger.bind(ioc.bloggersController))
 
   .get('/:bloggerId', bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.getBloggerById.bind(ioc.bloggersController))
 
-  .put('/:bloggerId', authMiddlewareHeadersAuthorization,
+  .put('/:bloggerId', authMiddlewareBasicAuthorization,
     bloggerIdParamsValidation, nameValidation, validatorUrl, inputValidatorMiddleware,
     ioc.bloggersController.updateBloggerById.bind(ioc.bloggersController))
 
-  .delete('/', authMiddlewareHeadersAuthorization,
+  .delete('/', authMiddlewareBasicAuthorization,
     ioc.bloggersController.deleteAllBloggers.bind(ioc.bloggersController))
 
-  .delete('/:bloggerId', authMiddlewareHeadersAuthorization,
+  .delete('/:bloggerId', authMiddlewareBasicAuthorization,
     bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.deleteBloggerById.bind(ioc.bloggersController))
 
   .get('/:bloggerId/posts', bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.getAllPostByBloggerId.bind(ioc.bloggersController))
 
-  .post('/:bloggerId/posts', authMiddlewareHeadersAuthorization,
+  .post('/:bloggerId/posts', authMiddlewareBasicAuthorization,
     bloggerIdParamsValidation, titleValidation, shortDescriptionValidation,
     contentValidation, inputValidatorMiddleware,
     ioc.bloggersController.createPostByBloggerId.bind(ioc.bloggersController))
