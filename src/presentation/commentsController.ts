@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {ReturnTypeObjectComment, UserDBType} from "../types/all_types";
+import {ReturnTypeObjectComment} from "../types/all_types";
 import {CommentsService} from "../domain/comments-service";
 
 
@@ -44,27 +44,12 @@ export class CommentsController {
 
   async deleteCommentsById(req: Request, res: Response) {
     const commentsId = req.params.commentId
-    const  user: UserDBType = req.user
+    const deletedComments = await this.commentsService.deletedCommentById(commentsId)
 
-    if (user === null) {
-      res.status(401)
-      res.send()
-      return
-    }
-    const deletedComments = await this.commentsService.deletedCommentById(commentsId, user)
-
-    if (deletedComments.data !== null) {
+    if (deletedComments.errorsMessages.length === 0) {
       res.sendStatus(204)
     }
-    if (deletedComments.errorsMessages.find(f => f.field === "forbidden")) {
-      res.status(403)
-      res.send()
-      return
-    }
-    if (deletedComments.errorsMessages.find(f => f.field === "commentId")) {
-      res.status(404)
-      res.send()
-      return
-    }
+    res.send()
+    return
   }
 }

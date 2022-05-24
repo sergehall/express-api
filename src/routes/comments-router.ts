@@ -17,5 +17,5 @@ commentsRouter.get('/:commentId',
   .put('/:commentId', authMiddleware, comparingLoginAndOwnersComment, contentCommentValidation, inputValidatorMiddleware,
     ioc.commentsController.updateCommentsById.bind(ioc.commentsController))
 
-  .delete('/:commentId', authMiddleware,
+  .delete('/:commentId', authMiddleware, comparingLoginAndOwnersComment,
     ioc.commentsController.deleteCommentsById.bind(ioc.commentsController))
