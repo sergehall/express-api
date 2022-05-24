@@ -39,36 +39,10 @@ export class CommentsRepository {
     }
   }
 
-  async updateCommentById(commentId: string, content: string, user: UserDBType): Promise<ReturnTypeObjectComment> {
+  async updateCommentById(commentId: string, content: string): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
-    const userLogin = user.login
-    const userId = user.id
     const filterToUpdate = {"allComments.id": commentId}
-
-    const foundPostWithComments = await commentsCollection.findOne(filterToUpdate)
-    if (!foundPostWithComments) {
-      errorsArray.push(notFoundCommentId)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
-
-    //it is not clear which is faster to access the database again or to run through the filter already on the object from the database
-    // const foundPostWithComments2 = await commentsCollection.find({"allComments": {$elemMatch: {"id": commentId, "userId": userId, "userLogin": userLogin} }}).toArray()
-
-
-    const postWithComments = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
-
-    if (postWithComments.userId !== userId || postWithComments.userLogin !== userLogin) {
-      errorsArray.push(forbiddenUpdateComment)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
+    let resultCode = 0
 
     const result = await commentsCollection.updateOne(filterToUpdate,{$set: {"allComments.$.content": content}})
 
@@ -76,18 +50,14 @@ export class CommentsRepository {
       errorsArray.push(MongoHasNotUpdated)
     }
 
-    if (errorsArray.length !== 0 || !postWithComments) {
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
+    if (errorsArray.length !== 0) {
+      resultCode = 1
     }
 
     return {
-      data: postWithComments,
+      data: null,
       errorsMessages: errorsArray,
-      resultCode: 0
+      resultCode: resultCode
     }
   }
 
