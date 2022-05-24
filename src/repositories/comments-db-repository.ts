@@ -63,7 +63,7 @@ export class CommentsRepository {
   async deletedCommentById(commentId: string): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filterToDelete = {"allComments.id": commentId}
-    
+
     const resultDeleted = await commentsCollection.findOneAndUpdate(filterToDelete, {
       $pull: {
         allComments: {
