@@ -19,9 +19,32 @@ authRouter.post('/login',
       res.sendStatus(401)
     }
   })
+authRouter.post('/confirm-email',
+  async (req: Request, res: Response) => {
+    // const user = await ioc.usersService.createUser(req.body.login, req.body.password)
+    // if (user !== null) {
+    //   const token = await jwtService.createJWT(user)
+    //   res.send({
+    //     "token": token
+    //   })
+    // } else {
+    //   res.sendStatus(401)
+    // }
+  })
+authRouter.post('/resend-registration-code',
+  async (req: Request, res: Response) => {
+    // const user = await ioc.usersService.createUser(req.body.login, req.body.password)
+    // if (user !== null) {
+    //   const token = await jwtService.createJWT(user)
+    //   res.send({
+    //     "token": token
+    //   })
+    // } else {
+    //   res.sendStatus(401)
+    // }
+  })
 
-
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const authCheckUserAuthorization = async (req: Request, res: Response, next: NextFunction) => {
   if (!req.headers.authorization) {
     res.sendStatus(401)
     return

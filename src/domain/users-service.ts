@@ -36,7 +36,6 @@ export class UsersService {
 
   async checkCredentials(loginOrEmail: string, password: string) {
     const user = await this.userRepository.findByLoginOrEmail(loginOrEmail)
-
     if (user === null) {
       return null
     }
