@@ -29,8 +29,8 @@ export const emailAdapter = {
       to: user.accountData.email,
       subject: "Email confirmation",
       html: `
-      Click on the link and confirm your e-mail:
-      https://it-express-api.herokuapp.com/auth/confirm-code/${user.emailConfirmation.confirmationCode}
+      <h1 style="color: dimgrey">Click on the link below to confirm your email address</h1>
+      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-code/${user.emailConfirmation.confirmationCode}\"> Push to confirm </a></div>
       `
     })
   },
