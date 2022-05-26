@@ -29,7 +29,7 @@ authRouter.post('/confirm-email',
     }
   })
 
-authRouter.post('/confirm-code/:code',
+authRouter.get('/confirm-code/:code',
   async (req: Request, res: Response) => {
     const result = await ioc.authService.confirmByCode(req.params.code)
     if (result !== null) {
