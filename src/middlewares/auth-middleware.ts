@@ -32,8 +32,8 @@ authRouter.post('/confirm-email',
 authRouter.get('/confirm-code/:code',
   async (req: Request, res: Response) => {
     const result = await ioc.authService.confirmByCode(req.params.code)
-    if (result !== null) {
-      res.status(201).send(result)
+    if (result && result.emailConfirmation.isConfirmed) {
+      res.status(201).send("Email confirmed")
     } else {
       res.sendStatus(400)
     }
