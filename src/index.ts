@@ -9,6 +9,7 @@ import {feedbacksRouter} from "./routes/feedbacks-router";
 import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
 import {usersRouter} from "./routes/users-router";
 import {commentsRouter} from "./routes/comments-router";
+import {emailRouter} from "./routes/email-router";
 
 
 
@@ -32,6 +33,8 @@ app.use('/users', usersRouter)
 app.use('/auth', authRouter)
 app.use('/feedbacks', feedbacksRouter)
 app.use('/comments', commentsRouter)
+app.use('/email', emailRouter)
+
 
 app.use('/deleted-bloggers', allDeletedBloggersRouts)
 
