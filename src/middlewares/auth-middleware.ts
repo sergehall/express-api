@@ -7,6 +7,39 @@ const base64 = require('base-64');
 
 export const authRouter = Router({})
 
+authRouter.post('/registration',
+  async (req: Request, res: Response) => {
+    const user = await ioc.authService.createUserRegistration(req.body.login, req.body.email, req.body.password);
+    if (user) {
+      res.status(200)
+      res.send(user);
+
+    } else {
+      res.status(400).send('User already exists or invalid data');
+    }
+  });
+
+authRouter.post('/confirm-email',
+  async (req: Request, res: Response) => {
+    const result = await ioc.authService.confirmEmail(req.body.confirmationCode, req.body.email)
+    if (result !== null) {
+      res.status(201).send(result)
+    } else {
+      res.sendStatus(400)
+    }
+  })
+
+authRouter.post('/confirm-code/:code',
+  async (req: Request, res: Response) => {
+    const result = await ioc.authService.confirmByCode(req.params.code)
+    if (result !== null) {
+      res.status(201).send(result)
+    } else {
+      res.sendStatus(400)
+    }
+  })
+
+
 authRouter.post('/login',
   async (req: Request, res: Response) => {
     const user = await ioc.usersService.checkCredentials(req.body.login, req.body.password)
@@ -19,18 +52,7 @@ authRouter.post('/login',
       res.sendStatus(401)
     }
   })
-authRouter.post('/confirm-email',
-  async (req: Request, res: Response) => {
-    // const user = await ioc.usersService.createUser(req.body.login, req.body.password)
-    // if (user !== null) {
-    //   const token = await jwtService.createJWT(user)
-    //   res.send({
-    //     "token": token
-    //   })
-    // } else {
-    //   res.sendStatus(401)
-    // }
-  })
+
 authRouter.post('/resend-registration-code',
   async (req: Request, res: Response) => {
     // const user = await ioc.usersService.createUser(req.body.login, req.body.password)

@@ -1,3 +1,5 @@
+import {ObjectId} from "mongodb";
+
 export type ErrorType = {
   message: string
   field: string
@@ -80,4 +82,21 @@ export type PaginatorCommentViewModel = {
   pageSize: number
   totalCount: number
   items: Array<CommentViewModel>
+}
+
+export type UserAccountDBType = {
+  _id: ObjectId,
+  accountData: {
+    id: string
+    login: string
+    email: string
+    passwordHash: string
+    passwordSalt: string
+    createdAt: Date
+  }
+  emailConfirmation: {
+    confirmationCode: string
+    expirationDate: Date
+    isConfirmed: boolean
+  }
 }

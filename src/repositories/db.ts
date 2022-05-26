@@ -4,7 +4,7 @@ import {
   BloggerType,
   CommentsDBType,
   FeedbackDBType,
-  PostsType,
+  PostsType, UserAccountDBType,
   UserDBType
 } from "../types/all_types";
 
@@ -13,6 +13,7 @@ const db = client.db("users")
 export const bloggersCollection = db.collection<BloggerType>("bloggers")
 export const postsCollection = db.collection<PostsType>("posts")
 export const usersCollection = db.collection<UserDBType>("users")
+export const usersAccountCollection = db.collection<UserAccountDBType>("usersAccount")
 export const feedbacksCollection = db.collection<FeedbackDBType>("feedbacks")
 export const commentsCollection = db.collection<CommentsDBType>("comments")
 export const deletedBloggersPostsCollection = db.collection<AllDeletedPosts>("deletedBloggersPosts")
