@@ -9,7 +9,8 @@ import {
   titleValidation,
   validatorUrl,
 } from "../middlewares/input-validator-middleware";
-import {authMiddlewareBasicAuthorization} from "../middlewares/auth-middleware";
+import {authMiddlewareBasicAuthorization} from "../middlewares/auth-Basic-User-authorization";
+
 
 
 export const bloggersRouts = Router({})

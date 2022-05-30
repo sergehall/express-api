@@ -1,10 +1,10 @@
 import {Router} from "express";
 import {ioc} from "../IoCContainer";
-import {authCheckUserAuthorization} from "../middlewares/auth-middleware";
 import {
   contentCommentValidation, inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import {comparingLoginAndOwnersComment} from "../middlewares/comparison-login-and-owner-comment";
+import {authCheckUserAuthorization} from "../middlewares/auth-Basic-User-authorization";
 
 
 export const commentsRouter = Router({})

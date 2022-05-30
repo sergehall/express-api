@@ -9,7 +9,10 @@ import {
   contentCommentValidation
 } from "../middlewares/input-validator-middleware";
 import {ioc} from "../IoCContainer";
-import {authCheckUserAuthorization, authMiddlewareBasicAuthorization} from "../middlewares/auth-middleware";
+import {
+  authCheckUserAuthorization,
+  authMiddlewareBasicAuthorization
+} from "../middlewares/auth-Basic-User-authorization";
 
 
 

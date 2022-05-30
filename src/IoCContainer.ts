@@ -16,8 +16,8 @@ import {AllDelBloggersController} from "./presentation/all-dell-bloggersControll
 import {CommentsService} from "./domain/comments-service";
 import {CommentsRepository} from "./repositories/comments-db-repository";
 import {CommentsController} from "./presentation/commentsController";
-import {UsersAccountRepository} from "./repositories/user-account-db-repository";
-import {AuthService} from "./domain/auth-service";
+import {UsersAccountRepository} from "./repositories/usersAccount-db-repository";
+import {AuthUsersAccountService} from "./domain/auth-usersAccount-service";
 
 
 const postsRepository = new PostsRepository()
@@ -45,7 +45,7 @@ const commentsService = new CommentsService(commentsRepository)
 const commentsController = new CommentsController(commentsService)
 
 const usersAccountRepository = new UsersAccountRepository()
-const authService = new AuthService(usersAccountRepository)
+const authService = new AuthUsersAccountService(usersAccountRepository)
 
 
 export const ioc = {

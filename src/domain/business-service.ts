@@ -3,7 +3,7 @@ import {emailManagers} from "../managers/email-managers";
 
 export const businessService = {
   async doSendEmailSimple(email: string, subject: string, text: string) {
-    await emailManagers.doSendEmailSimple(email,  subject, text);
+    await emailManagers.doSendEmailSimple(email, subject, text);
   },
   async sendEmailRecoveryPassword(user: object, token: string) {
     // save to repository

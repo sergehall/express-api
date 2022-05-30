@@ -5,8 +5,8 @@ import {UsersRepository} from "../repositories/users-db-repository";
 
 
 export class UsersService {
-  constructor(private userRepository: UsersRepository) {
-    this.userRepository = userRepository
+  constructor(private usersRepository: UsersRepository) {
+    this.usersRepository = usersRepository
   }
 
   async createUser(login: string, email: string, password: string): Promise<UserDBType | null> {
@@ -23,19 +23,19 @@ export class UsersService {
       passwordHash,
       createdAt: new Date().toISOString()
     }
-    return this.userRepository.createUser(newUser)
+    return this.usersRepository.createUser(newUser)
   }
 
   async findUsers(pageNumber: number, pageSize: number, userName: string | null): Promise<Pagination> {
-    return await this.userRepository.findUsers(pageNumber, pageSize, userName)
+    return await this.usersRepository.findUsers(pageNumber, pageSize, userName)
   }
 
   async findUser(mongoId: ObjectId): Promise<UserDBType | null> {
-    return await this.userRepository.findUserById(mongoId)
+    return await this.usersRepository.findUserById(mongoId)
   }
 
   async checkCredentials(loginOrEmail: string, password: string) {
-    const user = await this.userRepository.findByLoginOrEmail(loginOrEmail)
+    const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail)
     if (user === null) {
       return null
     }
@@ -53,6 +53,6 @@ export class UsersService {
   }
 
   async deleteUserById(id: string): Promise<Boolean> {
-    return await this.userRepository.deletedUserById(id)
+    return await this.usersRepository.deletedUserById(id)
   }
 }

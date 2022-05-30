@@ -98,5 +98,16 @@ export type UserAccountDBType = {
     confirmationCode: string
     expirationDate: Date
     isConfirmed: boolean
+    sentEmail: [SentEmailType]
   }
+  registrationData : RegistrationDataType
+}
+
+export type RegistrationDataType = {
+  ip: string | null
+  createdAt: Date
+}
+
+export type SentEmailType = {
+  sendTime: Date
 }

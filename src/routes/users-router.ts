@@ -6,7 +6,7 @@ import {
   checkoutMongoDbId,
   inputValidatorMiddleware, userIdParamsValidation
 } from "../middlewares/input-validator-middleware";
-import {authMiddlewareBasicAuthorization} from "../middlewares/auth-middleware";
+import {authMiddlewareBasicAuthorization} from "../middlewares/auth-Basic-User-authorization";
 
 
 export const usersRouter = Router({});

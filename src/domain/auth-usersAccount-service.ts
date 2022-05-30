@@ -2,17 +2,17 @@ import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {UserAccountDBType} from "../types/all_types";
 import {emailManagers} from "../managers/email-managers";
-import {UsersAccountRepository} from "../repositories/user-account-db-repository";
+import {UsersAccountRepository} from "../repositories/usersAccount-db-repository";
 import uuid4 from "uuid4";
 import add from "date-fns/add";
 
 
-export class AuthService {
+export class AuthUsersAccountService {
   constructor(private usersAccountRepository: UsersAccountRepository) {
     this.usersAccountRepository = usersAccountRepository
   }
 
-  async createUserRegistration(login: string, email: string, password: string): Promise<UserAccountDBType | null> {
+  async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
     const newId = Math.round((+new Date() + +new Date()) / 2).toString();
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
@@ -34,7 +34,12 @@ export class AuthService {
             hours: 1,
             minutes: 5
           }),
-        isConfirmed: false
+        isConfirmed: false,
+        sentEmail: [{sendTime: new Date()}]
+      },
+      registrationData: {
+        ip: clientIp,
+        createdAt: new Date()
       }
     }
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
@@ -53,10 +58,10 @@ export class AuthService {
     return hash
   }
 
-  async confirmEmail(code: string, email: string): Promise<UserAccountDBType | null> {
+  async confirmByEmail(code: string, email: string): Promise<UserAccountDBType | null> {
     const user = await this.usersAccountRepository.getUserAccountByEmailCode(code, email)
     if (user) {
-      if (user.emailConfirmation.confirmationCode === code) {
+      if (user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.isConfirmed = true
           await this.usersAccountRepository.updateUserAccount(user)
@@ -67,10 +72,10 @@ export class AuthService {
     return null
   }
 
-  async confirmByCode(code: string): Promise<UserAccountDBType | null> {
+  async confirmByCodeInParams(code: string): Promise<UserAccountDBType | null> {
     const user = await this.usersAccountRepository.getUserAccountByCode(code)
     if (user) {
-      if (user.emailConfirmation.confirmationCode === code) {
+      if (user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.isConfirmed = true
           await this.usersAccountRepository.updateUserAccount(user)
@@ -91,6 +96,27 @@ export class AuthService {
     if (result) {
       return user
     }
-    return null   //.passwordHash === passwordHash; // true or false if not match
+    return null   //user.accountData.passwordHash === passwordHash; // true or false if not match
+  }
+
+  async checkHowManyTimesUserLoginLastHourWithSameIp(ip: string | null): Promise<number> {
+    return await this.usersAccountRepository.findByIpAndTime(ip)
+  }
+
+  async deleteUserWithRottenCreatedAt(): Promise<number> {
+    return await this.usersAccountRepository.findByIsConfirmedAndCreatedAt()
+  }
+
+  async updateAndSentConfirmationCode(code: string) {
+    const user = await this.usersAccountRepository.getUserAccountByCode(code)
+    if (user) {
+      if (user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed) {
+        if (user.emailConfirmation.expirationDate > new Date()) {
+          user.emailConfirmation.confirmationCode = uuid4()
+          await this.usersAccountRepository.updateUserAccount(user)
+          await emailManagers.sendEmailConfirmationMessage(user)
+        }
+      }
+    }
   }
 }
