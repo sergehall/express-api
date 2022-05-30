@@ -107,16 +107,29 @@ export class AuthUsersAccountService {
     return await this.usersAccountRepository.findByIsConfirmedAndCreatedAt()
   }
 
-  async updateAndSentConfirmationCode(code: string) {
-    const user = await this.usersAccountRepository.getUserAccountByCode(code)
+  async updateAndSentConfirmationCode(email: string, password: string) {
+    const user = await this.usersAccountRepository.findByLoginOrEmail(email)
+    if (user === null) {
+      return null
+    }
+    const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
+    const result = passwordHash === user.accountData.passwordHash
+    if (result === null) {
+      return null
+    }
     if (user) {
-      if (user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed) {
+      if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.confirmationCode = uuid4()
-          await this.usersAccountRepository.updateUserAccount(user)
+          await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
           await emailManagers.sendEmailConfirmationMessage(user)
+          user.emailConfirmation.sentEmail.push({sendTime: new Date()})
+          await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
+          // await this.usersAccountRepository.deleteSendTimeOlderMinute(user)
+          return user
         }
       }
     }
+    return null
   }
 }

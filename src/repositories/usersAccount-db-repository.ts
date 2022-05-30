@@ -13,7 +13,7 @@ export class UsersAccountRepository {
   }
 
   async findByLoginOrEmail(loginOrEmail: string) {
-    return await usersAccountCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+    return await usersAccountCollection.findOne({$or: [{"accountData.email": loginOrEmail}, {"accountData.login": loginOrEmail}]})
   }
 
   async getUserAccountByEmailCode(code: string, email: string) {
@@ -28,6 +28,17 @@ export class UsersAccountRepository {
 
   async updateUserAccount(user: UserAccountDBType) {
     return await usersAccountCollection.updateOne({_id: new ObjectId(user._id)}, {$set: user})
+  }
+
+  async updateUserAccountConfirmationCode(user: UserAccountDBType) {
+    return await usersAccountCollection.updateOne({_id: new ObjectId(user._id)}, {$set: user})
+  }
+
+  async deleteSendTimeOlderMinute(user: UserAccountDBType): Promise<number> {
+    // redo it so that it does not delete the entire user
+    const result = await usersAccountCollection.deleteMany({$and: [{_id: new ObjectId(user._id)}, {"emailConfirmation.sentEmail.sendTime": {$lt: new Date(Date.now() - 1000 * 60)}}]})
+    console.log(result.deletedCount, 'result.deletedCount')
+    return result.deletedCount;
   }
 
   async deleteUserAccount(id: ObjectId): Promise<boolean> {

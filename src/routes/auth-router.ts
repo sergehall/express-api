@@ -45,11 +45,10 @@ authRouter.get('/confirm-code/:code',
     }
   })
 
-authRouter.get('/resend-registration-code',
+authRouter.post('/resend-registration-code',
   async (req: Request, res: Response) => {
-    const result = await ioc.authService.updateAndSentConfirmationCode(req.params.code)
-    console.log(result, "result")
-    res.sendStatus(200)
+    const result = await ioc.authService.updateAndSentConfirmationCode(req.body.email, req.body.password)
+    res.send(`resend code to email:  ${result?.accountData?.email}`)
   })
 
 authRouter.delete('/logout',
