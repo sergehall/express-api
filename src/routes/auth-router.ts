@@ -45,8 +45,13 @@ authRouter.get('/confirm-code/:code',
     }
   })
 
-authRouter.post('/resend-registration-code',
+authRouter.post('/resend-registration-code/:todo',
   async (req: Request, res: Response) => {
+    if (req.params.todo === "todo") {
+      res.send("When you finish and then you will click on this link")
+    }
+    // need to finish, from postman I understand how to take the info to search for a query when
+    // I click the link in the email itself I do not know
     const result = await ioc.authService.updateAndSentConfirmationCode(req.body.email, req.body.password)
     res.send(`resend code to email:  ${result?.accountData?.email}`)
   })
