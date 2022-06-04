@@ -55,7 +55,6 @@ export const ioc = {
   postsController: postsController,
   feedbacksService: feedbacksService,
   feedbacksController: feedbacksController,
-  usersRepository: usersRepository,
   usersService: usersService,
   usersController: usersController,
   allDelBloggersService: allDelBloggersService,

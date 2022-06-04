@@ -7,8 +7,8 @@ const ck = require('ckey')
 describe('check functions UsersRepository', () => {
   const dbUrl = ck.ATLAS_URI
   const client = new MongoClient(dbUrl);
-  const db = client.db("usersTests")
-  const usersCollections = db.collection("users")
+  const usersCollections = client.db("users").collection("users")
+
   const newUser = {
     "_id": new ObjectId("629af2df7db075f7e812f3ce"),
     "id": "1654309943485",
@@ -22,7 +22,7 @@ describe('check functions UsersRepository', () => {
   beforeAll(async () => {
     try {
       await client.connect()
-      await client.db('tests').command({ping: 1})
+      await client.db('users').command({ping: 1})
 
     } catch (e) {
       console.log("Can't connection to Db")
@@ -68,11 +68,6 @@ describe('check functions UsersRepository', () => {
     expect(deleted.deletedCount).toBe(1)
     expect(deletedWrongId.deletedCount).toBe(0)
     expect.assertions(2);
-  });
-
-  it('rejects to octopus', async () => {
-    await expect(Promise.reject(new Error('octopus'))).rejects.toThrow('octopus');
-    expect.assertions(1);
   });
 
 })
