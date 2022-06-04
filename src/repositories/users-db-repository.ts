@@ -4,7 +4,7 @@ import {Pagination, UserDBType} from "../types/all_types";
 
 
 export class UsersRepository {
-  async createUser(user: UserDBType): Promise<UserDBType | null> {
+  async insertUser(user: UserDBType): Promise<UserDBType | null> {
     const result = await usersCollection.insertOne(user)
     if (result.acknowledged && result) {
       return user

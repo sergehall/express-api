@@ -23,7 +23,7 @@ export class UsersService {
       passwordHash,
       createdAt: new Date().toISOString()
     }
-    return this.usersRepository.createUser(newUser)
+    return this.usersRepository.insertUser(newUser)
   }
 
   async findUsers(pageNumber: number, pageSize: number, userName: string | null): Promise<Pagination> {
@@ -48,8 +48,7 @@ export class UsersService {
   }
 
   async _generateHash(password: string, salt: string) {
-    const hash = await bcrypt.hash(password, salt)
-    return hash
+    return await bcrypt.hash(password, salt)
   }
 
   async deleteUserById(id: string): Promise<Boolean> {

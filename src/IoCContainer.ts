@@ -45,7 +45,7 @@ const commentsService = new CommentsService(commentsRepository)
 const commentsController = new CommentsController(commentsService)
 
 const usersAccountRepository = new UsersAccountRepository()
-const authService = new AuthUsersAccountService(usersAccountRepository)
+const authUsersAccountService = new AuthUsersAccountService(usersAccountRepository)
 
 
 export const ioc = {
@@ -55,11 +55,12 @@ export const ioc = {
   postsController: postsController,
   feedbacksService: feedbacksService,
   feedbacksController: feedbacksController,
+  usersRepository: usersRepository,
   usersService: usersService,
   usersController: usersController,
   allDelBloggersService: allDelBloggersService,
   allDelBloggersController: allDelBloggersController,
   commentsService: commentsService,
   commentsController: commentsController,
-  authService: authService
+  authUsersAccountService: authUsersAccountService
 }
