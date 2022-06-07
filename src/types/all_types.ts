@@ -40,11 +40,11 @@ export type Pagination = {
 }
 
 export type CommentViewModel = {
-  id:	string
-  content:	string
-  userId:	string
-  userLogin:	string
-  addedAt:	string
+  id: string
+  content: string
+  userId: string
+  userLogin: string
+  addedAt: string
 }
 
 export type ReturnTypeObjectComment = {
@@ -100,7 +100,7 @@ export type UserAccountDBType = {
     isConfirmed: boolean
     sentEmail: [SentEmailType]
   }
-  registrationData : RegistrationDataType
+  registrationData: RegistrationDataType
 }
 
 export type RegistrationDataType = {
@@ -111,3 +111,14 @@ export type RegistrationDataType = {
 export type SentEmailType = {
   sendTime: Date
 }
+
+
+export type BlackListIPDBType = {
+  ip: string
+  countTimes: Array<{
+    createdAt: string
+  }>
+}
+
+
+

@@ -1,6 +1,7 @@
 import {MongoClient} from 'mongodb'
 const ck = require('ckey')
 
+
 // connect MongoClient to ATLAS_URI or local
 const dbUrl = ck.ATLAS_URI
 export const client = new MongoClient(dbUrl);

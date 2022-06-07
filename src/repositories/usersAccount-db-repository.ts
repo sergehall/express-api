@@ -5,11 +5,14 @@ import {ObjectId} from "mongodb";
 
 export class UsersAccountRepository {
   async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType | null> {
-    const result = await usersAccountCollection.insertOne(user)
-    if (result.acknowledged && result) {
-      return user
+    const found =  await usersAccountCollection.findOne({"accountData.email": user.accountData.email})
+    if (!found) {
+      const result = await usersAccountCollection.insertOne(user)
+      if (result.acknowledged && result) {
+        return user
+      } else return null
     }
-    return null
+    return user
   }
 
   async findByLoginOrEmail(loginOrEmail: string) {
