@@ -3,11 +3,12 @@ import {jwtService} from "../application/jwt-service";
 import {ioc} from "../IoCContainer";
 import requestIp from 'request-ip';
 import {checkoutIPFromBlackList} from "../middlewares/middleware-checkoutIPFromBlackList";
+import {checkoutContentType} from "../middlewares/checkout-content-type";
 
 
 export const authRouter = Router({})
 
-authRouter.post('/registration', checkoutIPFromBlackList,
+authRouter.post('/registration', checkoutIPFromBlackList, checkoutContentType,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourWithSameIp(clientIp)
