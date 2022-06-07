@@ -4,14 +4,19 @@ import {ObjectId} from "mongodb";
 
 
 export class UsersAccountRepository {
-  async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType | null> {
-    const found =  await usersAccountCollection.findOne({"accountData.email": user.accountData.email})
-    if (!found) {
-      const result = await usersAccountCollection.insertOne(user)
-      if (result.acknowledged && result) {
-        return user
-      } else return null
+  async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType> {
+    const found = await usersAccountCollection.findOne({"accountData.email": user.accountData.email})
+    if (found) {
+      await usersAccountCollection.updateOne({_id: new ObjectId(found._id)}, {$set:
+          {"accountData.id": user.accountData.id,
+            "accountData.passwordSalt": user.accountData.passwordSalt,
+            "accountData.passwordHash": user.accountData.passwordHash,
+            "accountData.createdAt": user.accountData.createdAt,
+            "emailConfirmation.confirmationCode": user.emailConfirmation.confirmationCode,
+            "emailConfirmation.expirationDate": user.emailConfirmation.expirationDate}})
+      return user
     }
+    await usersAccountCollection.insertOne(user)
     return user
   }
 
@@ -22,9 +27,11 @@ export class UsersAccountRepository {
   async getUserAccountByEmailCode(code: string, email: string) {
     return await usersAccountCollection.findOne({$and: [{"emailConfirmation.confirmationCode": code}, {"accountData.email": email}]})
   }
+
   async getUserAccountByCode(code: string) {
     return await usersAccountCollection.findOne({"emailConfirmation.confirmationCode": code})
   }
+
   async findByIpAndTime(ip: string | null) {
     return await usersAccountCollection.countDocuments({$and: [{"registrationData.ip": ip}, {"registrationData.createdAt": {$gt: new Date(Date.now() - 1000 * 60 * 60)}}]})
   }

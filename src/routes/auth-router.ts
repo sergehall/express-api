@@ -1,8 +1,8 @@
 import {Router, Request, Response} from "express";
 import {jwtService} from "../application/jwt-service";
 import {ioc} from "../IoCContainer";
-import {checkoutIPFromBlackList} from "../middlewares/middleware-checkoutIPFromBlackList";
 import requestIp from 'request-ip';
+import {checkoutIPFromBlackList} from "../middlewares/middleware-checkoutIPFromBlackList";
 
 
 export const authRouter = Router({})
@@ -12,7 +12,7 @@ authRouter.post('/registration', checkoutIPFromBlackList,
     const clientIp = requestIp.getClientIp(req);
     const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourWithSameIp(clientIp)
     if (countItWithIsConnectedFalse > 10) {
-      res.status(403).send('Too many attempts (countItWithIsConnectedFalse)')
+      res.status(403).send('Too many attempts')
       return
     }
     const user = await ioc.authUsersAccountService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp);
