@@ -3,7 +3,7 @@ import {jwtService} from "../application/jwt-service";
 import {ioc} from "../IoCContainer";
 import requestIp from 'request-ip';
 import {checkoutIPFromBlackList} from "../middlewares/middleware-checkoutIPFromBlackList";
-import {checkoutContentType} from "../middlewares/checkout-content-type";
+import {checkoutContentType} from "../middlewares/checkout-contentType";
 
 
 export const authRouter = Router({})
