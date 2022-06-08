@@ -13,7 +13,7 @@ export class AuthUsersAccountService {
   }
 
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
-    const newId = Math.round((+new Date() + +new Date()) / 2).toString();
+    const newId = uuid4();
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
 
@@ -37,14 +37,16 @@ export class AuthUsersAccountService {
         isConfirmed: false,
         sentEmail: [{sendTime: new Date()}]
       },
-      registrationData: {
+      registrationData: [{
         ip: clientIp,
-        createdAt: new Date()
-      }
+        createdAt: [new Date()]
+      }]
     }
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
     try{
-      await emailManagers.sendEmailConfirmationMessage(newUser)
+      if (createResult !== null) {
+        await emailManagers.sendEmailConfirmationMessage(newUser)
+      }
     }catch (e) {
       console.log(e)
       await this.usersAccountRepository.deleteUserAccount(newUser._id)
@@ -73,6 +75,7 @@ export class AuthUsersAccountService {
   }
 
   async confirmByCodeInParams(code: string): Promise<UserAccountDBType | null> {
+
     const user = await this.usersAccountRepository.getUserAccountByCode(code)
     if (user) {
       if (user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed) {
@@ -108,8 +111,12 @@ export class AuthUsersAccountService {
   }
 
   async updateAndSentConfirmationCode(email: string, password: string) {
+
     const user = await this.usersAccountRepository.findByLoginOrEmail(email)
     if (user === null) {
+      return null
+    }
+    if (user.emailConfirmation.sentEmail.length > 5) {
       return null
     }
     const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)

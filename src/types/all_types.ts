@@ -100,12 +100,12 @@ export type UserAccountDBType = {
     isConfirmed: boolean
     sentEmail: [SentEmailType]
   }
-  registrationData: RegistrationDataType
+  registrationData: Array<RegistrationDataType>
 }
 
 export type RegistrationDataType = {
   ip: string | null
-  createdAt: Date
+  createdAt: Array<Date>
 }
 
 export type SentEmailType = {

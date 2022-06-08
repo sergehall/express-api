@@ -26,7 +26,7 @@ export class UsersAccountRepository {
   }
 
   async findByIpAndTime(ip: string | null) {
-    return await usersAccountCollection.countDocuments({$and: [{"registrationData.ip": ip}, {"registrationData.createdAt": {$gt: new Date(Date.now() - 1000 * 60 * 60)}}]})
+    return await usersAccountCollection.countDocuments({$and: [{"registrationData.ip": ip}, {"registrationData.createdAt": {$gt: new Date(Date.now() - 1000 * 10)}}]})
   }
 
   async updateUserAccount(user: UserAccountDBType) {

@@ -4,16 +4,26 @@ import {ioc} from "../IoCContainer";
 import requestIp from 'request-ip';
 import {checkoutIPFromBlackList} from "../middlewares/middleware-checkoutIPFromBlackList";
 import {checkoutContentType} from "../middlewares/checkout-contentType";
+import {
+  bodyCode,
+  bodyEmail,
+  bodyLogin,
+  bodyPassword,
+  inputValidatorMiddleware
+} from "../middlewares/input-validator-middleware";
 
 
 export const authRouter = Router({})
 
-authRouter.post('/registration', checkoutIPFromBlackList, checkoutContentType,
+authRouter.post('/registration',
+  checkoutIPFromBlackList,
+  checkoutContentType,
+  bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourWithSameIp(clientIp)
-    if (countItWithIsConnectedFalse > 10) {
-      res.status(403).send('Too many attempts')
+    if (countItWithIsConnectedFalse > 5) {
+      res.status(403).send('5 emails were sent to confirm the code.')
       return
     }
     const user = await ioc.authUsersAccountService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp);
@@ -24,7 +34,42 @@ authRouter.post('/registration', checkoutIPFromBlackList, checkoutContentType,
       return
 
       }
-    res.status(400).send('User already exists or invalid data or something else');
+    res.status(400).send({
+      "errorsMessages": [
+        {
+          message: "That username is taken. Try another.",
+          field: "email"
+        }
+      ],
+      resultCode: 1
+    });
+    return
+  });
+
+authRouter.post('/registration-confirmation',
+  checkoutIPFromBlackList,
+  bodyCode, inputValidatorMiddleware,
+  async (req: Request, res: Response) => {
+    const clientIp = requestIp.getClientIp(req);
+    const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourWithSameIp(clientIp)
+    if (countItWithIsConnectedFalse > 5) {
+      res.status(429).send('More than 5 attempts from one IP-address during 10 seconds.')
+      return
+    }
+    const result = await ioc.authUsersAccountService.confirmByCodeInParams(req.body.code)
+    if (result && result.emailConfirmation.isConfirmed) {
+      res.status(204).send();
+      return
+    }
+    res.status(400).send({
+      "errorsMessages": [
+        {
+          message: "That code is not correct.",
+          field: "code"
+        }
+      ],
+      resultCode: 1
+    })
     return
   });
 
@@ -54,7 +99,7 @@ authRouter.post('/resend-registration-code',
     // I click the link in the email itself I do not know
     const result = await ioc.authUsersAccountService.updateAndSentConfirmationCode(req.body.email, req.body.password)
     if (result?.accountData?.email === undefined) {
-      res.status(400).send("Bad Request or isConfirmed is true");
+      res.status(400).send("Bad code or isConfirmed is true or more than 5 times sent email with code.");
       return
     }
     res.send(`Resend code to email:  ${result?.accountData?.email}`)
