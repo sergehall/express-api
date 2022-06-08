@@ -4,21 +4,10 @@ import {ObjectId} from "mongodb";
 
 
 export class UsersAccountRepository {
-  async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType> {
-    const foundToUpdate = await usersAccountCollection.findOne({"accountData.email": user.accountData.email})
-    if (foundToUpdate && !foundToUpdate.emailConfirmation.isConfirmed) {
-      await usersAccountCollection.updateOne({_id: new ObjectId(foundToUpdate._id)}, {$set:
-          {"accountData.id": user.accountData.id,
-            "accountData.passwordSalt": user.accountData.passwordSalt,
-            "accountData.passwordHash": user.accountData.passwordHash,
-            "accountData.createdAt": user.accountData.createdAt,
-            "emailConfirmation.confirmationCode": user.emailConfirmation.confirmationCode,
-            "emailConfirmation.expirationDate": user.emailConfirmation.expirationDate}})
-      return user
-    }
-    // we need to finalize what to send when the user already exists
-    if (foundToUpdate && foundToUpdate.emailConfirmation.isConfirmed) {
-      return foundToUpdate
+  async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType | null> {
+    const foundUser = await usersAccountCollection.findOne({"accountData.email": user.accountData.email})
+    if (foundUser) {
+      return null
     }
     await usersAccountCollection.insertOne(user)
     return user

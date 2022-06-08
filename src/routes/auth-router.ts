@@ -21,10 +21,11 @@ authRouter.post('/registration', checkoutIPFromBlackList, checkoutContentType,
     if (user) {
       res.status(200)
       res.send(user);
+      return
 
-    } else {
-      res.status(400).send('User already exists or invalid data or something else');
-    }
+      }
+    res.status(400).send('User already exists or invalid data or something else');
+    return
   });
 
 authRouter.post('/confirm-email',
