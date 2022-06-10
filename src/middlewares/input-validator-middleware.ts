@@ -22,7 +22,6 @@ export const postIdParamsValidation = param('postId').trim().isLength({
 }).withMessage("shortDescription must be >1 and <30 characters.")
 const bloggerIdBodyRegExp2 = /^\d+$/i
 export const  bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
-
 export const nameValidation = body("name").trim().isLength({
   min: 1,
   max: 15
@@ -47,8 +46,8 @@ export const bodyPassword = body(['password']).trim().isString().withMessage('Pa
 }).withMessage("bodyPassword must be >6 and <20 characters.")
 const emailRegExp = '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'
 export const bodyEmail= body(['email']).trim().matches(emailRegExp).withMessage("Email should be matched to pattern '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'").isString().withMessage('Email must be string')
-
 export const bodyCode = body(['code']).trim().isString().withMessage('Code must be string')
+
 // db
 export const MongoHasNotUpdated = {
   message: "Mongo database has not updated the data",
@@ -62,6 +61,7 @@ export const notFoundPostId = {
   message: "Invalid '/:postId' such post doesn't exist",
   field: "postId"
 }
+
 // comments
 export const notFoundCommentId = {
   message: "Invalid 'commentId' such comment doesn't exist",

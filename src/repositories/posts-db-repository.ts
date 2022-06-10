@@ -40,7 +40,7 @@ export class PostsRepository {
     };
   }
 
-  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination> {
+  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<Pagination> {
     let filter = {}
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
@@ -273,8 +273,10 @@ export class PostsRepository {
     }
   }
 
-  async deletedById(id: string): Promise<Boolean> {
+  async deletePostById(id: string): Promise<Boolean> {
     const result = await postsCollection.deleteOne({id: id})
+    // deleted all comments
+    await commentsCollection.deleteOne({postId: id})
     return result.deletedCount === 1
   }
 

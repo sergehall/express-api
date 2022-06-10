@@ -42,7 +42,7 @@ export const emailAdapter = {
       to: user.toString(),
       subject: "Recover password",
       html: `
-        Hello, to recover your password, please enter the following link::
+        Hello, to recover your password, please enter the following link:
         http://localhost:5000/recovery/${token}
         `
     })

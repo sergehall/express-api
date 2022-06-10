@@ -5,6 +5,7 @@ import {emailManagers} from "../managers/email-managers";
 import {UsersAccountRepository} from "../repositories/usersAccount-db-repository";
 import uuid4 from "uuid4";
 import add from "date-fns/add";
+import {ioc} from "../IoCContainer";
 
 
 export class AuthUsersAccountService {
@@ -13,14 +14,13 @@ export class AuthUsersAccountService {
   }
 
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
-    const newId = uuid4();
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
 
     const newUser: UserAccountDBType = {
       _id: new ObjectId(),
       accountData: {
-        id: newId,
+        id: uuid4(),
         login: login,
         email,
         passwordSalt,
@@ -45,7 +45,8 @@ export class AuthUsersAccountService {
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
     try{
       if (createResult !== null) {
-        await emailManagers.sendEmailConfirmationMessage(newUser)
+        await ioc.emailsToSentRepository.insertEmailToDB(newUser)
+        // await emailManagers.sendEmailConfirmationMessage(newUser)
       }
     }catch (e) {
       console.log(e)
@@ -56,8 +57,7 @@ export class AuthUsersAccountService {
   }
 
   async _generateHash(password: string, salt: string) {
-    const hash = await bcrypt.hash(password, salt)
-    return hash
+    return await bcrypt.hash(password, salt)
   }
 
   async confirmByEmail(code: string, email: string): Promise<UserAccountDBType | null> {
@@ -128,7 +128,7 @@ export class AuthUsersAccountService {
       if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.confirmationCode = uuid4()
-          await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
+          // await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
           await emailManagers.sendEmailConfirmationMessage(user)
           user.emailConfirmation.sentEmail.push({sendTime: new Date()})
           await this.usersAccountRepository.updateUserAccountConfirmationCode(user)

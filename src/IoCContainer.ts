@@ -19,6 +19,7 @@ import {CommentsController} from "./presentation/commentsController";
 import {UsersAccountRepository} from "./repositories/usersAccount-db-repository";
 import {AuthUsersAccountService} from "./domain/auth-usersAccount-service";
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
+import {EmailsToSentRepository} from "./repositories/emailsToSent-db-repository";
 
 
 const postsRepository = new PostsRepository()
@@ -49,7 +50,7 @@ const usersAccountRepository = new UsersAccountRepository()
 const authUsersAccountService = new AuthUsersAccountService(usersAccountRepository)
 
 const blackListIPRepository = new BlackListIPRepository()
-
+const emailsToSentRepository = new EmailsToSentRepository()
 
 export const ioc = {
   bloggersService: bloggersService,
@@ -65,5 +66,6 @@ export const ioc = {
   commentsService: commentsService,
   commentsController: commentsController,
   authUsersAccountService: authUsersAccountService,
-  blackListIPRepository: blackListIPRepository
+  blackListIPRepository: blackListIPRepository,
+  emailsToSentRepository: emailsToSentRepository
 }

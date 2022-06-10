@@ -10,6 +10,7 @@ import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
 import {usersRouter} from "./routes/users-router";
 import {commentsRouter} from "./routes/comments-router";
 import {emailRouter} from "./routes/email-router";
+import {emailSender} from "./demonEmailSender/emailSender";
 
 
 
@@ -23,8 +24,9 @@ app.use(jsonBodeMiddleware.json())
 const port = process.env.PORT || 5000
 
 
+app.set('view engine', 'ejs')
 app.get('/', (req: Request, res: Response) => {
-  res.send('Learning Node.js, Express, {api: [bloggers, posts, users, feedback]}');
+  res.render('index')
 })
 
 app.use('/posts', postsRouts)
@@ -48,3 +50,4 @@ const startApp = async () => {
 }
 
 startApp()
+emailSender()

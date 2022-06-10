@@ -28,9 +28,8 @@ export class BloggersController {
       const parseQueryData = parseQuery(req)
       const pageNumber: number = parseQueryData.pageNumber
       const pageSize: number = parseQueryData.pageSize
-      const searchNameTerm: string | null = parseQueryData.searchNameTerm
 
-      const foundPosts = await this.postsService.findPostsByBloggerId(id, pageNumber, pageSize, searchNameTerm);
+      const foundPosts = await this.postsService.findPostsByBloggerId(id, pageNumber, pageSize);
       res.send(foundPosts)
     } else {
       res.status(404)

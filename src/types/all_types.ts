@@ -84,6 +84,15 @@ export type PaginatorCommentViewModel = {
   items: Array<CommentViewModel>
 }
 
+export type RegistrationDataType = {
+  ip: string | null
+  createdAt: Array<Date>
+}
+
+export type SentEmailType = {
+  sendTime: Date
+}
+
 export type UserAccountDBType = {
   _id: ObjectId,
   accountData: {
@@ -103,15 +112,6 @@ export type UserAccountDBType = {
   registrationData: Array<RegistrationDataType>
 }
 
-export type RegistrationDataType = {
-  ip: string | null
-  createdAt: Array<Date>
-}
-
-export type SentEmailType = {
-  sendTime: Date
-}
-
 
 export type BlackListIPDBType = {
   ip: string
@@ -119,6 +119,7 @@ export type BlackListIPDBType = {
     createdAt: string
   }>
 }
+
 
 
 

@@ -16,8 +16,8 @@ export class PostsService {
   async findPosts(pageNumber: number, pageSize: number, title: string | null): Promise<Pagination>{
     return await this.postsRepository.findPosts(pageNumber, pageSize, title)
   }
-  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, searchNameTerm: string | null): Promise<Pagination>{
-    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize, searchNameTerm)
+  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<Pagination>{
+    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize)
   }
 
   async createPost(title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
@@ -40,7 +40,7 @@ export class PostsService {
   }
 
   async deletedById(id: string): Promise<Boolean> {
-    return await this.postsRepository.deletedById(id)
+    return await this.postsRepository.deletePostById(id)
   }
 
   async deletedAllPosts(): Promise<Boolean> {

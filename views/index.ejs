@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Front-end</title>
+</head>
+<body>
+<h1>Front-end</h1>
+
+<hr color="#ff0000"/>
+<button id="read_all_bloggers">read all bloggers</button>
+<hr>
+<button id="create_blogger">create</button>
+<label for="create_bloggerId"></label><input id="create_bloggerId" placeholder="new bloggerId"/>
+<label for="create_name"></label><input id="create_name" placeholder="new name"/>
+<label for="create_url"></label><input id="create_url" placeholder="new url"/>
+<hr>
+<button id="read_single_blogger">read blogger by id</button>
+<label for="read_bloggerId"></label><input id="read_bloggerId" placeholder="blogger id"/>
+<hr>
+<button id="update_blogger">update</button>
+<label for="update_bloggerId"></label><input id="update_bloggerId" placeholder="new blogger Id"/>
+<label for="update_name"></label><input id="update_name" placeholder="new name"/>
+<label for="update_url"></label><input id="update_url" placeholder="new url"/>
+<hr>
+<button id="delete_blogger">delete</button>
+<label for="delete_bloggerId"></label><input id="delete_bloggerId" placeholder="bloggerId"/>
+<hr>
+
+<hr color="#ff0000"/>
+<hr color="#0000dd"/>
+
+<button id="read_all_posts">read all posts</button>
+<hr>
+<button id="create_post">create</button>
+<label for="create_post_id"></label><input id="create_post_id" placeholder="new post id"/>
+<label for="create_title"></label><input id="create_title" placeholder="new title"/>
+<label for="create_short_Descr"></label><input id="create_short_Descr"
+                                               placeholder="new short description"/>
+<label for="create_content"></label><input id="create_content" placeholder="new content"/>
+<label for="bloggerPostId"></label><input id="bloggerPostId" placeholder="new blogger id"/>
+<hr>
+<button id="read_single_post">read single post by id</button>
+<label for="read_postId"></label><input id="read_postId" placeholder="read postId"/>
+<hr>
+<button id="read_posts_blogId">read all posts by bloggerId</button>
+<label for="read_all_posts_bloggerId"></label><input id="read_all_posts_bloggerId" placeholder="read all posts"/>
+<hr>
+<button id="update_post">update</button>
+<label for="update_postId"></label><input id="update_postId" placeholder="post id"/>
+<label for="update_title_postId"></label><input id="update_title_postId" placeholder="new title"/>
+<label for="update_short_Descr"></label><input id="update_short_Descr"
+                                               placeholder="new short description"/>
+<label for="update_content"></label><input id="update_content" placeholder="new content"/>
+<label for="update_newBloggerId"></label><input id="update_newBloggerId" placeholder="new bloggerId"/>
+
+<hr>
+<button id="delete_post">delete</button>
+<label for="delete_postId"></label><input id="delete_postId" placeholder="postId"/>
+<hr>
+<hr color="#0000dd"/>
+
+<div id="result"></div>
+<script>
+  read_all_posts.onclick = () => {
+    fetch('http://localhost:5000/posts')
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+  }
+
+  create_post.onclick = () => {
+    fetch('http://localhost:5000/posts', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: create_post_id.value,
+        title: create_title.value,
+        shortDescription: create_short_Descr.value,
+        content: create_content.value,
+        bloggerId: bloggerPostId.value
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+
+  }
+
+  read_single_post.onclick = () => {
+    fetch('http://localhost:5000/posts/' + read_postId.value)
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+  }
+  read_posts_blogId.onclick = () => {
+    fetch('http://localhost:5000/posts/bloggers/' + read_all_posts_bloggerId.value)
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+  }
+
+  update_post.onclick = () => {
+    fetch('http://localhost:5000/posts/' + update_postId.value, {
+      method: 'PUT',
+      body: JSON.stringify({
+        id: update_postId.value,
+        title: update_title_postId.value,
+        shortDescription: update_short_Descr.value,
+        content: update_content.value,
+        bloggerId: update_newBloggerId.value
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+  }
+
+  delete_post.onclick = () => {
+    fetch('http://localhost:5000/posts/' + delete_postId.value, {
+      method: 'DELETE',
+    })
+  }
+
+  read_all_bloggers.onclick = () => {
+    fetch('http://localhost:5000/bloggers')
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+  }
+
+  create_blogger.onclick = () => {
+    fetch('http://localhost:5000/bloggers', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: create_bloggerId.value,
+        name: create_name.value,
+        youtubeUrl: create_url.value
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+
+  }
+
+  read_single_blogger.onclick = () => {
+    fetch('http://localhost:5000/bloggers/' + read_bloggerId.value)
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+  }
+
+  update_blogger.onclick = () => {
+    fetch('http://localhost:5000/bloggers/' + update_bloggerId.value, {
+      method: 'PUT',
+      body: JSON.stringify({name: update_name.value, youtubeUrl: update_url.value}),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(res => res.json())
+      .then(data => result.innerHTML = JSON.stringify(data))
+  }
+
+  delete_blogger.onclick = () => {
+    fetch('http://localhost:5000/bloggers/' + delete_bloggerId.value, {
+      method: 'DELETE',
+    })
+  }
+</script>
+</body>
+</html>
