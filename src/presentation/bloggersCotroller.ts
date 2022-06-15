@@ -4,8 +4,6 @@ import {PostsService} from "../domain/posts-service";
 import {parseQuery} from "../middlewares/parse-query";
 
 
-
-
 export class BloggersController {
   constructor(private bloggersService: BloggersService, private postsService: PostsService ) {
   }
