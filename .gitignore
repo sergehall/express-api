@@ -3,4 +3,4 @@
 /node_modules/
 /.idea/
 /dist/
-globalConfig.json/
+globalConfig.json
