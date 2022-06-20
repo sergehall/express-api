@@ -45,8 +45,7 @@ authRouter.post('/registration',
           message: "That username is taken. Try another.",
           field: "email"
         }
-      ],
-      resultCode: 1
+      ]
     });
     return
   });
