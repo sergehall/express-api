@@ -18,9 +18,9 @@ export class UsersAccountRepository {
   }
 
   async findByLoginAndEmail(email: string, login: string ) {
-    console.log(email, login)
+    console.log('+++++', email, login, '++++++++++++++++++++++++++++')
     const foundUser = await usersAccountCollection.findOne({$or: [{"accountData.email": email}, {"accountData.login": login}]})
-    console.log(foundUser, "-----foundUser-----")
+    console.log(foundUser, "----- foundUser ------------------------")
     return foundUser
   }
 
