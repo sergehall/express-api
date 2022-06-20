@@ -40,7 +40,7 @@ authRouter.post('/registration',
     res.status(400).send({
       "errorsMessages": [
         {
-          message: "Error with authRouter.post('/registration',.......",
+          message: "Error with authRouter.post('/registration'...",
           field: "any"
         }
       ]
