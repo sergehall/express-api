@@ -14,13 +14,13 @@ export async function checkOutEmailOrLoginInDB(req: Request, res: Response, next
     }
     if (checkOutEmailInDB.accountData.email === email) {
       errorMessage = {
-        message: "Invalid email.",
+        message: "Email already exist.",
         field: "email"
       }
     }
     if (checkOutEmailInDB.accountData.login === login) {
       errorMessage = {
-        message: "Invalid login.",
+        message: "Login already exist",
         field: "login"
       }
     }
