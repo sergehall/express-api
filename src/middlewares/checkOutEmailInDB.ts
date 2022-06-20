@@ -12,7 +12,7 @@ export async function checkOutEmailOrLoginInDB(req: Request, res: Response, next
       next()
       return
     }
-
+    console.log('checkOutEmailInDB = ', checkOutEmailInDB)
     if (checkOutEmailInDB.accountData.email !== email) {
       errorMessage = {
         message: "Invalid email.",
