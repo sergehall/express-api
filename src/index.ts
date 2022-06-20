@@ -12,6 +12,7 @@ import {commentsRouter} from "./routes/comments-router";
 import {emailRouter} from "./routes/email-router";
 import {emailSender} from "./demons/emailSender";
 import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
+import {testingRouter} from "./routes/testing-router";
 
 
 
@@ -37,6 +38,7 @@ app.use('/auth', authRouter)
 app.use('/feedbacks', feedbacksRouter)
 app.use('/comments', commentsRouter)
 app.use('/email', emailRouter)
+app.use('/testing/', testingRouter)
 
 
 app.use('/deleted-bloggers', allDeletedBloggersRouts)
