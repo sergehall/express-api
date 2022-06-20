@@ -3,10 +3,10 @@ import {ioc} from "../IoCContainer";
 
 
 export async function checkOutEmailOrLoginInDB(req: Request, res: Response, next: NextFunction) {
-  const email = req.body.email
   const login = req.body.login
-  if (email) {
-    const checkOutEmailInDB = await ioc.authUsersAccountService.findByLoginOrEmail(email, login);
+  const email = req.body.email
+  if (email || login) {
+    const checkOutEmailInDB = await ioc.authUsersAccountService.findByLoginAndEmail(email, login);
     if (checkOutEmailInDB === null) {
       next()
       return

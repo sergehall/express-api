@@ -102,7 +102,7 @@ export class AuthUsersAccountService {
     return null   //user.accountData.passwordHash === passwordHash; // true or false if not match
   }
 
-  async findByLoginOrEmail(email: string, login: string): Promise<UserAccountDBType | null> {
+  async findByLoginAndEmail(email: string, login: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByLoginAndEmail(email, login)
   }
 

@@ -33,10 +33,8 @@ authRouter.post('/registration',
       return
     }
     const user = await ioc.authUsersAccountService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp);
-    console.log(user)
     if (user) {
-      res.status(204)
-      res.send("The user has been created and added to the database.");
+      res.status(204).send('The user has been created and added to the database.');
       return
       }
     res.status(400).send({

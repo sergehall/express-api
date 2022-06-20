@@ -17,7 +17,7 @@ export class UsersAccountRepository {
     return await usersAccountCollection.findOne({$or: [{"accountData.email": loginOrEmail}, {"accountData.login": loginOrEmail}]})
   }
 
-  async findByLoginAndEmail(login: string, email: string ) {
+  async findByLoginAndEmail(email: string, login: string ) {
     return await usersAccountCollection.findOne({$and: [{"accountData.email": email}, {"accountData.login": login}]})
   }
 
