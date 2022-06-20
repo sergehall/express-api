@@ -14,11 +14,13 @@ import {
 import {
   checkHowManyTimesUserLoginLast10secWithSameIp
 } from "../middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
+import {checkOutEmailOrLoginInDB} from "../middlewares/checkOutEmailInDB";
 
 
 export const authRouter = Router({})
 
 authRouter.post('/registration',
+  checkOutEmailOrLoginInDB,
   checkoutIPFromBlackList,
   checkoutContentType,
   bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
