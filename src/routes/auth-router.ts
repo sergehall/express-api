@@ -31,10 +31,10 @@ authRouter.post('/registration',
       return
     }
     const user = await ioc.authUsersAccountService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp);
-
+    console.log(user)
     if (user) {
       res.status(204)
-      res.send(user);
+      res.send();
       return
 
       }
