@@ -15,7 +15,7 @@ export async function checkOutEmailOrLoginInDB(req: Request, res: Response, next
       "errorsMessages": [
         {
           message: "That username is taken. Try another.",
-          field: "email"
+          field: "login"
         }
       ]
     });
