@@ -34,14 +34,14 @@ authRouter.post('/registration',
     }
     const user = await ioc.authUsersAccountService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp);
     if (user) {
-      res.status(204).send('The user has been created and added to the database.');
+      res.status(204).send('The user has been created.');
       return
       }
     res.status(400).send({
       "errorsMessages": [
         {
           message: "Error with authRouter.post('/registration'...",
-          field: "any"
+          field: "some"
         }
       ]
     });
