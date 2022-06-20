@@ -41,11 +41,10 @@ authRouter.post('/registration',
 
       }
     res.status(400).send({
-      // hardcode , if there is an email , do not return null
       "errorsMessages": [
         {
-          message: "That username is taken. Try another.",
-          field: "email"
+          message: "Error with authRouter.post('/registration',...",
+          field: "any"
         }
       ]
     });

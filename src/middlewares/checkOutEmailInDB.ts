@@ -10,7 +10,14 @@ export async function checkOutEmailOrLoginInDB(req: Request, res: Response, next
       next()
       return
     }
-    res.status(400).send('User with this email already exists!');
+    res.status(400).send({
+      "errorsMessages": [
+        {
+          message: "That username is taken. Try another.",
+          field: "email"
+        }
+      ]
+    });
     return
   }
 }
