@@ -5,7 +5,7 @@ import {BlackListIPDBType} from "../types/all_types";
 export class BlackListIPRepository {
   // accepts 5 registrations from the same IP and then rejects.
   async checkoutIPinBlackList(ip: string): Promise<BlackListIPDBType | null> {
-    const maxAttempts = 20;
+    const maxAttempts = 50;
     const foundUser = await blackListIPCollection.findOne({ip: ip})
     if (!foundUser) {
       const createdAt = (+(new Date)).toString()

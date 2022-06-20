@@ -39,7 +39,7 @@ export class AuthUsersAccountService {
       },
       registrationData: [{
         ip: clientIp,
-        createdAt: [new Date()]
+        createdAt: new Date()
       }]
     }
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
@@ -102,8 +102,8 @@ export class AuthUsersAccountService {
     return null   //user.accountData.passwordHash === passwordHash; // true or false if not match
   }
 
-  async checkHowManyTimesUserLoginLastHourWithSameIp(ip: string | null): Promise<number> {
-    return await this.usersAccountRepository.findByIpAndTime(ip)
+  async checkHowManyTimesUserLoginLastHourSentEmail(ip: string | null): Promise<number> {
+    return await this.usersAccountRepository.findByIpAndSentEmail(ip)
   }
 
   async deleteUserWithRottenCreatedAt(): Promise<number> {

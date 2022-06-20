@@ -11,6 +11,9 @@ import {
   bodyPassword,
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
+import {
+  checkHowManyTimesUserLoginLast10secWithSameIp
+} from "../middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
 
 
 export const authRouter = Router({})
@@ -19,9 +22,10 @@ authRouter.post('/registration',
   checkoutIPFromBlackList,
   checkoutContentType,
   bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
+  checkHowManyTimesUserLoginLast10secWithSameIp,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
-    const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourWithSameIp(clientIp)
+    const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
     if (countItWithIsConnectedFalse > 5) {
       res.status(403).send('5 emails were sent to confirm the code.')
       return
@@ -29,7 +33,7 @@ authRouter.post('/registration',
     const user = await ioc.authUsersAccountService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp);
 
     if (user) {
-      res.status(200)
+      res.status(204)
       res.send(user);
       return
 
@@ -52,8 +56,8 @@ authRouter.post('/registration-confirmation',
   bodyCode, inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
-    const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourWithSameIp(clientIp)
-    if (countItWithIsConnectedFalse > 5) {
+    const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
+    if (countItWithIsConnectedFalse > 2) {
       res.status(429).send('More than 5 attempts from one IP-address during 10 seconds.')
       return
     }

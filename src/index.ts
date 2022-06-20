@@ -10,7 +10,8 @@ import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
 import {usersRouter} from "./routes/users-router";
 import {commentsRouter} from "./routes/comments-router";
 import {emailRouter} from "./routes/email-router";
-import {emailSender} from "./demonEmailSender/emailSender";
+import {emailSender} from "./demons/emailSender";
+import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
 
 
 
@@ -51,3 +52,4 @@ const startApp = async () => {
 
 startApp()
 emailSender()
+clearingIpWithDateOlder11Sec()

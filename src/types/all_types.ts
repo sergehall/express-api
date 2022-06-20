@@ -86,7 +86,7 @@ export type PaginatorCommentViewModel = {
 
 export type RegistrationDataType = {
   ip: string | null
-  createdAt: Array<Date>
+  createdAt: Date
 }
 
 export type SentEmailType = {

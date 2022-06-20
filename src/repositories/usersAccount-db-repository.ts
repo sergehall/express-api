@@ -25,8 +25,8 @@ export class UsersAccountRepository {
     return await usersAccountCollection.findOne({"emailConfirmation.confirmationCode": code})
   }
 
-  async findByIpAndTime(ip: string | null) {
-    return await usersAccountCollection.countDocuments({$and: [{"registrationData.ip": ip}, {"registrationData.createdAt": {$gt: new Date(Date.now() - 1000 * 10)}}]})
+  async findByIpAndSentEmail(ip: string | null) {
+    return await usersAccountCollection.countDocuments({$and: [{"registrationData.ip": ip}, {"emailConfirmation.sentEmail.sendTime": {$gt: new Date(Date.now() - 1000 * 10)}}]})
   }
 
   async updateUserAccount(user: UserAccountDBType) {
