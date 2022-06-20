@@ -102,6 +102,10 @@ export class AuthUsersAccountService {
     return null   //user.accountData.passwordHash === passwordHash; // true or false if not match
   }
 
+  async findByLoginOrEmail(email: string): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findByLoginOrEmail(email)
+  }
+
   async checkHowManyTimesUserLoginLastHourSentEmail(ip: string | null): Promise<number> {
     return await this.usersAccountRepository.findByIpAndSentEmail(ip)
   }
