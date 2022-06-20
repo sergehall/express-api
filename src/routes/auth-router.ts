@@ -20,10 +20,10 @@ import {checkOutEmailOrLoginInDB} from "../middlewares/checkOutEmailInDB";
 export const authRouter = Router({})
 
 authRouter.post('/registration',
-  checkOutEmailOrLoginInDB,
   checkoutIPFromBlackList,
   checkoutContentType,
   bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
+  checkOutEmailOrLoginInDB,
   checkHowManyTimesUserLoginLast10secWithSameIp,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
