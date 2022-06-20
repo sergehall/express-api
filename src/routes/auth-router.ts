@@ -36,7 +36,7 @@ authRouter.post('/registration',
     console.log(user)
     if (user) {
       res.status(204)
-      res.send();
+      res.send("The user has been created and added to the database.");
       return
       }
     res.status(400).send({
