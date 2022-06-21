@@ -10,10 +10,14 @@ export function parseQuery(req: Request) {
   let userName: string | undefined | null = req.query.UserName?.toString()
   let searchTitle: string | undefined | null = req.query.SearchTitle?.toString()
   let code: string | undefined | null = req.query.Code?.toString()
+  let confirmationCode: string | undefined | null = req.query.ConfirmationCode?.toString()
 
   // default settings for searchNameTer, title, pageNumber, pageSize
   if (!searchNameTerm || searchNameTerm.length === 0) {
     searchNameTerm = null
+  }
+  if (!confirmationCode || confirmationCode.length === 0) {
+    confirmationCode = null
   }
   if (!code || code.length === 0) {
     code = null
@@ -40,6 +44,7 @@ export function parseQuery(req: Request) {
     title: title,
     userName: userName,
     searchTitle: searchTitle,
-    code: code
+    code: code,
+    confirmationCode: confirmationCode
   }
 }

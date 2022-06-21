@@ -68,6 +68,34 @@ authRouter.get('/confirm-registration',
     }
   })
 
+authRouter.post('/registration-email-resending',
+  bodyEmail, inputValidatorMiddleware,
+  checkHowManyTimesUserLoginLast10secWithSameIp,
+  async (req: Request, res: Response) => {
+    const parseQueryData = parseQuery(req)
+    const confirmationCode = parseQueryData.confirmationCode
+    const email = req.body.email
+
+    console.log(confirmationCode)
+    console.log(email)
+
+    const result = await ioc.authUsersAccountService.confirmByCodeInParams(req.body.code)
+    if (result && result.emailConfirmation.isConfirmed) {
+      res.status(204).send();
+      return
+    }
+    res.status(400).send({
+      "errorsMessages": [
+        {
+          message: "That code is not correct.",
+          field: "code"
+        }
+      ],
+      resultCode: 1
+    })
+    return
+  });
+
 authRouter.post('/registration-confirmation',
   checkoutIPFromBlackList,
   bodyCode, inputValidatorMiddleware,
@@ -96,7 +124,7 @@ authRouter.post('/registration-confirmation',
     return
   });
 
-authRouter.get('/registration-email-resend',
+authRouter.get('/resend-registration-email',
   checkHowManyTimesUserLoginLast10secWithSameIp,
   async (req: Request, res: Response) => {
     const parseQueryData = parseQuery(req)
