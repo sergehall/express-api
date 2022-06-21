@@ -30,7 +30,8 @@ export const emailAdapter = {
       subject: "Email confirmation",
       html: `
       <h1 style="color: dimgrey">Click on the link below to confirm your email address</h1>
-      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-code/${user.emailConfirmation.confirmationCode}\"> Push to confirm </a></div>
+       <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-registration?Code=${user.emailConfirmation.confirmationCode}\"> Push to confirm. /confirm-code?Code= </a></div>
+      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-code/${user.emailConfirmation.confirmationCode}\"> Push to confirm. /confirm-code/code </a></div>
       <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/resend-registration-code\"> Push to resend-registration-code </a></div>
       `
     })

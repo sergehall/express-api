@@ -63,7 +63,7 @@ export class AuthUsersAccountService {
   async confirmByEmail(code: string, email: string): Promise<UserAccountDBType | null> {
     const user = await this.usersAccountRepository.getUserAccountByEmailCode(code, email)
     if (user) {
-      if (user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed) {
+      if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.isConfirmed = true
           await this.usersAccountRepository.updateUserAccount(user)
@@ -78,7 +78,7 @@ export class AuthUsersAccountService {
 
     const user = await this.usersAccountRepository.getUserAccountByCode(code)
     if (user) {
-      if (user.emailConfirmation.confirmationCode === code && !user.emailConfirmation.isConfirmed) {
+      if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.isConfirmed = true
           await this.usersAccountRepository.updateUserAccount(user)

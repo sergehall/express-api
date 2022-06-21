@@ -15,6 +15,7 @@ import {
   checkHowManyTimesUserLoginLast10secWithSameIp
 } from "../middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
 import {checkOutEmailOrLoginInDB} from "../middlewares/checkOutEmailInDB";
+import {parseQuery} from "../middlewares/parse-query";
 
 
 export const authRouter = Router({})
@@ -51,10 +52,11 @@ authRouter.post('/registration',
 authRouter.post('/registration-confirmation',
   checkoutIPFromBlackList,
   bodyCode, inputValidatorMiddleware,
+  checkHowManyTimesUserLoginLast10secWithSameIp,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const  countItWithIsConnectedFalse = await ioc.authUsersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
-    if (countItWithIsConnectedFalse > 2) {
+    if (countItWithIsConnectedFalse > 5) {
       res.status(429).send('More than 5 attempts from one IP-address during 10 seconds.')
       return
     }
@@ -75,6 +77,18 @@ authRouter.post('/registration-confirmation',
     return
   });
 
+authRouter.post('/registration-email-resending',
+  async (req: Request, res: Response) => {
+    // need to finish, from postman I understand how to take the info to search for a query when
+    // I click the link in the email itself I do not know
+    const result = await ioc.authUsersAccountService.updateAndSentConfirmationCode(req.body.email, req.body.password)
+    if (result?.accountData?.email === undefined) {
+      res.status(400).send("Bad code or isConfirmed is true or more than 5 times sent email with code.");
+      return
+    }
+    res.send(`Resend code to email:  ${result?.accountData?.email}`)
+  })
+
 authRouter.post('/confirm-email',
   async (req: Request, res: Response) => {
     const result = await ioc.authUsersAccountService.confirmByEmail(req.body.confirmationCode, req.body.email)
@@ -82,6 +96,24 @@ authRouter.post('/confirm-email',
       res.status(201).send("Email confirmed by email and confirmationCode.");
     } else {
       res.sendStatus(400)
+    }
+  })
+
+authRouter.get('/confirm-registration',
+  async (req: Request, res: Response) => {
+    const parseQueryData = parseQuery(req)
+    const code = parseQueryData.code
+    if (code === null) {
+      res.sendStatus(400)
+      return
+    }
+    const result = await ioc.authUsersAccountService.confirmByCodeInParams(code)
+    if (result && result.emailConfirmation.isConfirmed) {
+      res.status(201).send("Email confirmed by params confirmationCode.");
+      return
+    } else {
+      res.sendStatus(400)
+      return
     }
   })
 
