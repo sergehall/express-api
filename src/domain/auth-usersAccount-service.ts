@@ -89,13 +89,26 @@ export class AuthUsersAccountService {
     return null
   }
 
+  // async checkCredentials(loginOrEmail: string, password: string) {
+  //   const user = await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
+  //   if (user === null) {
+  //     return null
+  //   }
+  //   const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
+  //   const result = passwordHash === user.accountData.passwordHash
+  //   if (result) {
+  //     return user
+  //   }
+  //   return null   //user.accountData.passwordHash === passwordHash; // true or false if not match
+  // }
+
   async checkCredentials(loginOrEmail: string, password: string) {
     const user = await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
     if (user === null) {
       return null
     }
-    const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
-    const result = passwordHash === user.accountData.passwordHash
+    // const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
+    const result = await bcrypt.compare(password, user.accountData.passwordHash)
     if (result) {
       return user
     }

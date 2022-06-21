@@ -14,6 +14,8 @@ export class EmailsToSentRepository {
 
   async findEmailByOldestDate(): Promise<UserAccountDBType | null> {
     // const oldestUser = await emailsToSentUsersAccountCollection.find().sort({ "emailConfirmation.sendTime" : 1 }).limit(1)
+    // const findOneAndDelete = await emailsToSentUsersAccountCollection.findOneAndDelete({})
+    // console.log(findOneAndDelete.ok, 'findOneAndDelete.ok')
     return await emailsToSentUsersAccountCollection.findOne({})
   }
 
