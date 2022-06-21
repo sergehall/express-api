@@ -106,12 +106,40 @@ export class AuthUsersAccountService {
     return await this.usersAccountRepository.findByLoginAndEmail(email, login)
   }
 
+  async findByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findByConfirmationCode(code)
+  }
+
   async checkHowManyTimesUserLoginLastHourSentEmail(ip: string | null): Promise<number> {
     return await this.usersAccountRepository.findByIpAndSentEmail(ip)
   }
 
   async deleteUserWithRottenCreatedAt(): Promise<number> {
     return await this.usersAccountRepository.findByIsConfirmedAndCreatedAt()
+  }
+
+  async updateAndSentConfirmationCodeByEmail(email: string) {
+
+    const user = await this.usersAccountRepository.findByLoginOrEmail(email)
+    if (user === null) {
+      return null
+    }
+    if (user.emailConfirmation.sentEmail.length > 5) {
+      return null
+    }
+    if (user) {
+      if (!user.emailConfirmation.isConfirmed) {
+        if (user.emailConfirmation.expirationDate > new Date()) {
+          user.emailConfirmation.confirmationCode = uuid4()
+          await emailManagers.sendEmailConfirmationMessage(user)
+          user.emailConfirmation.sentEmail.push({sendTime: new Date()})
+          await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
+          // await this.usersAccountRepository.deleteSendTimeOlderMinute(user)
+          return user
+        }
+      }
+    }
+    return null
   }
 
   async updateAndSentConfirmationCode(email: string, password: string) {

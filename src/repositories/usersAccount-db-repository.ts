@@ -23,6 +23,12 @@ export class UsersAccountRepository {
     console.log("--------", foundUser?.accountData.email, foundUser?.accountData.login)
     return foundUser
   }
+  async findByConfirmationCode(code: string,) {
+    console.log('++++++++', code, "code")
+    const foundUser = await usersAccountCollection.findOne({$and: [{"emailConfirmation.confirmationCode": code}, {"emailConfirmation.isConfirmed": false}]})
+    console.log("--------", foundUser?.emailConfirmation.confirmationCode, "confirmationCode")
+    return foundUser
+  }
 
   async getUserAccountByEmailCode(code: string, email: string) {
     return await usersAccountCollection.findOne({$and: [{"emailConfirmation.confirmationCode": code}, {"accountData.email": email}]})
