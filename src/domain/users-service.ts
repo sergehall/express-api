@@ -39,8 +39,7 @@ export class UsersService {
     if (user === null) {
       return null
     }
-    const passwordHash = await this._generateHash(password, user.passwordSalt)
-    const result = passwordHash === user.passwordHash
+    const result = await bcrypt.compare(password, user.passwordHash)
     if (result) {
       return user
     }
