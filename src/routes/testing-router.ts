@@ -16,5 +16,6 @@ testingRouter
     await usersCollection.deleteMany({})
     await usersAccountCollection.deleteMany({})
     await usersIPLast10secCollection.deleteMany({})
-    res.status(204).send()
+    res.status(200).send()
+    return
   })
