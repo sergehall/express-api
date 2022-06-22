@@ -14,7 +14,6 @@ export class EmailsToSentRepository {
 
   async findEmailByOldestDate(): Promise<UserEmailConfirmationCode | null> {
     const foundData = await emailsToSentUsersAccountCollection.find({}).sort({ "createdAt" : 1 }).limit(1).toArray()
-    console.log(foundData[0], '++++++')
     if(foundData.length === 0) {
       return null
     }

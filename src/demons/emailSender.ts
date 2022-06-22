@@ -5,10 +5,13 @@ export const emailSender = async () => {
   setTimeout(async () => {
     const emailAndCode =  await ioc.emailsToSentRepository.findEmailByOldestDate()
     if (emailAndCode !== null) {
-      await emailAdapter.sendEmailConfirmationMessage(emailAndCode)
-      await ioc.emailsToSentRepository.deleteInsertedEmailAfterSent(emailAndCode)
+      console.log(emailAndCode, '++++++')
+      const sentEmail = await emailAdapter.sendEmailConfirmationMessage(emailAndCode)
+        await ioc.emailsToSentRepository.deleteInsertedEmailAfterSent(emailAndCode)
+      if(sentEmail.accepted.length !== 0) {
+        await emailSender()
+      }
     }
-    emailSender()
   }, 5000)
 }
 
