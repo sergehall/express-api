@@ -8,7 +8,7 @@ export class BlackListIPRepository {
     const maxAttempts = 50;
     const foundUser = await blackListIPCollection.findOne({ip: ip})
     if (!foundUser) {
-      const createdAt = (+(new Date)).toString()
+      const createdAt = new Date
       const newIp = {
         ip,
         countTimes: [{
@@ -21,7 +21,7 @@ export class BlackListIPRepository {
     const updatedUserCountTimes = {
       ...foundUser,
       ip,
-      countTimes: [...foundUser.countTimes, ...[{createdAt: (+(new Date)).toString()}]]
+      countTimes: [...foundUser.countTimes, ...[{createdAt: new Date}]]
     }
 
     if (foundUser.countTimes.length < maxAttempts) {

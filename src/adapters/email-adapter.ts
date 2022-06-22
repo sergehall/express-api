@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import {UserAccountDBType} from "../types/all_types";
+import {UserEmailConfirmationCode} from "../types/all_types";
 
 const ck = require('ckey')
 
@@ -23,16 +23,16 @@ export const emailAdapter = {
     })
   },
 
-  async sendEmailConfirmationMessage(user: UserAccountDBType) {
+  async sendEmailConfirmationMessage(user: UserEmailConfirmationCode) {
     return await transporter.sendMail({
       from: 'Email confirmation message <ck.NODEMAILER_EMAIL>',
-      to: user.accountData.email,
+      to: user.email,
       subject: "Email confirmation",
       html: `
       <h1 style="color: dimgrey">Click on the link below to confirm your email address</h1>
-       <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-registration?Code=${user.emailConfirmation.confirmationCode}\"> Push to confirm. /confirm-code?Code= </a></div>
-      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-code/${user.emailConfirmation.confirmationCode}\"> Push to confirm. /confirm-code/code </a></div>
-      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/resend-registration-email?Code=${user.emailConfirmation.confirmationCode}\"> Push to /registration-email-resend?Code= </a></div>
+       <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-registration?Code=${user.confirmationCode}\"> Push to confirm. /confirm-code?Code= </a></div>
+      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-code/${user.confirmationCode}\"> Push to confirm. /confirm-code/code </a></div>
+      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/resend-registration-email?Code=${user.confirmationCode}\"> Push to /registration-email-resend?Code= </a></div>
       `
     })
   },

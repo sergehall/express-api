@@ -44,7 +44,12 @@ export class UsersAccountService {
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
     try{
       if (createResult !== null) {
-        await ioc.emailsToSentRepository.insertEmailToDB(newUser)
+        const newDataUserEmailConfirmationCode = {
+          email: newUser.accountData.email,
+          confirmationCode: newUser.emailConfirmation.confirmationCode,
+          createdAt: new Date()
+        }
+        await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
         // await emailManagers.sendEmailConfirmationMessage(newUser)
       }
     }catch (e) {
@@ -130,7 +135,17 @@ export class UsersAccountService {
       if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.confirmationCode = uuid4()
-          await ioc.emailsToSentRepository.insertEmailToDB(user)
+          user.emailConfirmation.expirationDate = add(new Date(),
+            {
+              hours: 1,
+              minutes: 5
+            })
+          const newDataUserEmailConfirmationCode = {
+            email: user.accountData.email,
+            confirmationCode: user.emailConfirmation.confirmationCode,
+            createdAt: new Date()
+          }
+          await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
           user.emailConfirmation.sentEmail.push({sendTime: new Date()})
           await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
           return user
@@ -158,7 +173,17 @@ export class UsersAccountService {
       if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.confirmationCode = uuid4()
-          await ioc.emailsToSentRepository.insertEmailToDB(user)
+          user.emailConfirmation.expirationDate = add(new Date(),
+            {
+              hours: 1,
+              minutes: 5
+            })
+          const newDataUserEmailConfirmationCode = {
+            email: user.accountData.email,
+            confirmationCode: user.emailConfirmation.confirmationCode,
+            createdAt: new Date()
+          }
+          await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
           user.emailConfirmation.sentEmail.push({sendTime: new Date()})
           await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
           return user

@@ -116,8 +116,14 @@ export type UserAccountDBType = {
 export type BlackListIPDBType = {
   ip: string
   countTimes: Array<{
-    createdAt: string
+    createdAt: Date
   }>
+}
+
+export type UserEmailConfirmationCode = {
+  email: string
+  confirmationCode: string
+  createdAt: Date
 }
 
 
