@@ -42,8 +42,7 @@ export class UsersAccountRepository {
   }
 
   async updateUserAccountConfirmationCode(user: UserAccountDBType) {
-    // return await usersAccountCollection.updateOne({_id: new ObjectId(user._id)}, {$set: user})
-    return await usersAccountCollection.findOneAndUpdate({"accountData.email": user.accountData.email},{$set: {user}})
+    return await usersAccountCollection.findOneAndUpdate({"accountData.email": user.accountData.email},{$set: user})
   }
 
   async deleteSendTimeOlderMinute(user: UserAccountDBType): Promise<number> {
