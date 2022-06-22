@@ -20,6 +20,33 @@ import {parseQuery} from "../middlewares/parse-query";
 
 export const authRouter = Router({})
 
+authRouter.post('/registration-confirmation',
+  checkoutIPFromBlackList,
+  bodyCode, inputValidatorMiddleware,
+  checkHowManyTimesUserLoginLast10secWithSameIp,
+  async (req: Request, res: Response) => {
+    const clientIp = requestIp.getClientIp(req);
+    const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
+    if (countItWithIsConnectedFalse > 5) {
+      res.status(429).send('More than 5 emails sent.')
+      return
+    }
+    const result = await ioc.usersAccountService.confirmByCodeInParams(req.body.code)
+    if (result && result.emailConfirmation.isConfirmed) {
+      res.status(204).send();
+      return
+    }
+    res.status(400).send({
+      "errorsMessages": [
+        {
+          message: "That code is not correct",
+          field: "code"
+        }
+      ]
+    })
+    return
+  });
+
 authRouter.post('/registration',
   checkoutIPFromBlackList,
   checkoutContentType,
@@ -87,34 +114,6 @@ authRouter.post('/registration-email-resending',
         }
       ]
     });
-    return
-  });
-
-authRouter.post('/registration-confirmation',
-  checkoutIPFromBlackList,
-  bodyCode, inputValidatorMiddleware,
-  checkHowManyTimesUserLoginLast10secWithSameIp,
-  async (req: Request, res: Response) => {
-    const clientIp = requestIp.getClientIp(req);
-    const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
-    if (countItWithIsConnectedFalse > 5) {
-      res.status(429).send('More than 5 emails sent.')
-      return
-    }
-    const result = await ioc.usersAccountService.confirmByCodeInParams(req.body.code)
-    if (result && result.emailConfirmation.isConfirmed) {
-      res.status(204).send();
-      return
-    }
-    res.status(400).send({
-      "errorsMessages": [
-        {
-          message: "That code is not correct.",
-          field: "code"
-        }
-      ],
-      resultCode: 1
-    })
     return
   });
 
