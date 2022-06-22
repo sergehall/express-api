@@ -3,10 +3,10 @@ import {ioc} from "../IoCContainer";
 
 export const emailSender = async () => {
   setTimeout(async () => {
-    const email =  await ioc.emailsToSentRepository.findEmailByOldestDate()
-    if (email !== null) {
-      await emailAdapter.sendEmailConfirmationMessage(email)
-      await ioc.emailsToSentRepository.deleteInsertedEmailAfterSent(email)
+    const emailAndCode =  await ioc.emailsToSentRepository.findEmailByOldestDate()
+    if (emailAndCode !== null) {
+      await emailAdapter.sendEmailConfirmationMessage(emailAndCode)
+      await ioc.emailsToSentRepository.deleteInsertedEmailAfterSent(emailAndCode)
     }
     emailSender()
   }, 5000)

@@ -3,23 +3,22 @@ import {UserEmailConfirmationCode} from "../types/all_types";
 
 
 export class EmailsToSentRepository {
-  async insertEmailToDB(userData: UserEmailConfirmationCode): Promise<UserEmailConfirmationCode> {
-    // const foundUser = await emailsToSentUsersAccountCollection.findOne({"accountData.email": user.accountData.email})
+  async insertEmailToDB(userData: UserEmailConfirmationCode): Promise<Boolean> {
     const email = userData.email
-    const updateUser = await emailsToSentUsersAccountCollection.findOneAndUpdate({"email": email},{$setOnInsert: {userData}}, { upsert: true })
-    if (updateUser){
-      console.log(userData)
-      return userData
-    }
-    await emailsToSentUsersAccountCollection.insertOne(userData)
-    return userData
+    const confirmationCode = userData.confirmationCode
+    const createdAt = userData.createdAt
+
+    const findOneAndReplaceData = await emailsToSentUsersAccountCollection.findOneAndReplace({"email": email}, {"email": email, "confirmationCode": confirmationCode, "createdAt": createdAt},  {upsert: true})
+    return findOneAndReplaceData.ok === 1
   }
 
   async findEmailByOldestDate(): Promise<UserEmailConfirmationCode | null> {
-    // const oldestUser = await emailsToSentUsersAccountCollection.find().sort({ "emailConfirmation.sendTime" : 1 }).limit(1)
-    // const findOneAndDelete = await emailsToSentUsersAccountCollection.findOneAndDelete({})
-    // console.log(findOneAndDelete.ok, 'findOneAndDelete.ok')
-    return await emailsToSentUsersAccountCollection.findOne({})
+    const foundData = await emailsToSentUsersAccountCollection.find({}).sort({ "createdAt" : 1 }).limit(1).toArray()
+    console.log(foundData[0], '++++++')
+    if(foundData.length === 0) {
+      return null
+    }
+    return foundData[0]
   }
 
 

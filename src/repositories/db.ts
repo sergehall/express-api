@@ -9,7 +9,7 @@ import {
 } from "../types/all_types";
 
 
-const db = client.db("users")
+export const db = client.db("users")
 export const bloggersCollection = db.collection<BloggerType>("bloggers")
 export const postsCollection = db.collection<PostsType>("posts")
 export const usersCollection = db.collection<UserDBType>("users")

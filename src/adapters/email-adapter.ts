@@ -23,16 +23,16 @@ export const emailAdapter = {
     })
   },
 
-  async sendEmailConfirmationMessage(user: UserEmailConfirmationCode) {
+  async sendEmailConfirmationMessage(emailAndCode: UserEmailConfirmationCode) {
     return await transporter.sendMail({
       from: 'Email confirmation message <ck.NODEMAILER_EMAIL>',
-      to: user.email,
+      to: emailAndCode.email,
       subject: "Email confirmation",
       html: `
       <h1 style="color: dimgrey">Click on the link below to confirm your email address</h1>
-       <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-registration?Code=${user.confirmationCode}\"> Push to confirm. /confirm-code?Code= </a></div>
-      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-code/${user.confirmationCode}\"> Push to confirm. /confirm-code/code </a></div>
-      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/resend-registration-email?Code=${user.confirmationCode}\"> Push to /registration-email-resend?Code= </a></div>
+       <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-registration?Code=${emailAndCode.confirmationCode}\"> Push to confirm. /confirm-code?Code= </a></div>
+      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-code/${emailAndCode.confirmationCode}\"> Push to confirm. /confirm-code/code </a></div>
+      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/resend-registration-email?Code=${emailAndCode.confirmationCode}\"> Push to /registration-email-resend?Code= </a></div>
       `
     })
   },

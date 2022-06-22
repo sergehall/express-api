@@ -1,7 +1,11 @@
 import {Router, Request, Response} from "express"
 import {
-  blackListIPCollection, emailsToSentUsersAccountCollection,
-  usersAccountCollection, usersCollection,
+  blackListIPCollection,
+  bloggersCollection, commentsCollection,
+  emailsToSentUsersAccountCollection,
+  postsCollection,
+  usersAccountCollection,
+  usersCollection,
   usersIPLast10secCollection
 } from "../repositories/db";
 
@@ -16,6 +20,9 @@ testingRouter
     await usersCollection.deleteMany({})
     await usersAccountCollection.deleteMany({})
     await usersIPLast10secCollection.deleteMany({})
+    await bloggersCollection.deleteMany({})
+    await postsCollection.deleteMany({})
+    await commentsCollection.deleteMany({})
     await emailsToSentUsersAccountCollection.deleteMany({})
     res.status(204).send()
     return

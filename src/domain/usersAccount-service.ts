@@ -50,7 +50,7 @@ export class UsersAccountService {
           createdAt: new Date()
         }
         await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
-        // await emailManagers.sendEmailConfirmationMessage(newUser)
+
       }
     }catch (e) {
       console.log(e)
