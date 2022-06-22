@@ -28,7 +28,7 @@ authRouter.post('/registration',
   checkHowManyTimesUserLoginLast10secWithSameIp,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
-    const  countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
+    const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
     if (countItWithIsConnectedFalse > 5) {
       res.status(403).send('5 emails were sent to confirm the code.')
       return
@@ -37,7 +37,7 @@ authRouter.post('/registration',
     if (user) {
       res.sendStatus(204);
       return
-      }
+    }
     res.status(400).send({
       "errorsMessages": [
         {
@@ -73,18 +73,20 @@ authRouter.post('/registration-email-resending',
   checkHowManyTimesUserLoginLast10secWithSameIp,
   async (req: Request, res: Response) => {
     const email: string = req.body.email
-    const user = await ioc.usersAccountService.findByEmail(email)
-    if(user === null) {
-      res.status(400).send();
-      return
-    }
-    const result = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(user.accountData.email)
-    if (result) {
-      console.log(`Resend code to email:  ${result?.accountData?.email}`);
+    const userResult = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(email)
+    if (userResult) {
+      console.log(`Resend code to email:  ${userResult?.accountData?.email}`);
       res.status(204).send()
       return
     }
-    res.status(400).send("Some error in '/registration-email-resending");
+    res.status(400).send({
+      "errorsMessages": [
+        {
+          "message": "Check the entered email.",
+          "field": "email"
+        }
+      ]
+    });
     return
   });
 
@@ -94,7 +96,7 @@ authRouter.post('/registration-confirmation',
   checkHowManyTimesUserLoginLast10secWithSameIp,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
-    const  countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
+    const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
     if (countItWithIsConnectedFalse > 5) {
       res.status(429).send('More than 5 emails sent.')
       return

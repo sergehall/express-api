@@ -89,19 +89,6 @@ export class UsersAccountService {
     return null
   }
 
-  // async checkCredentials(loginOrEmail: string, password: string) {
-  //   const user = await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
-  //   if (user === null) {
-  //     return null
-  //   }
-  //   const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
-  //   const result = passwordHash === user.accountData.passwordHash
-  //   if (result) {
-  //     return user
-  //   }
-  //   return null   //user.accountData.passwordHash === passwordHash; // true or false if not match
-  // }
-
   async checkCredentials(loginOrEmail: string, password: string) {
     const user = await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
     if (user === null) {
@@ -118,11 +105,6 @@ export class UsersAccountService {
   async findByLoginAndEmail(email: string, login: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByLoginAndEmail(email, login)
   }
-
-  async findByEmail(email: string): Promise<UserAccountDBType | null> {
-    return await this.usersAccountRepository.findByEmail(email)
-  }
-
 
   async findByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByConfirmationCode(code)

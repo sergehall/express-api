@@ -22,14 +22,5 @@ export const jwtService = {
 export const jwtServiceUsersAccount = {
   async createJWT(user: UserAccountDBType) {
     return jwt.sign({userId: user._id}, ck.JWT_SECRET, {expiresIn: '1h'})
-  },
-
-  async getUserIdByToken(token: string) {
-    try {
-      const result: any = jwt.verify(token, ck.JWT_SECRET)
-      return new ObjectId(result.userId)
-    } catch (err) {
-      return null
-    }
   }
 }
