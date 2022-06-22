@@ -20,6 +20,11 @@ export class UsersAccountRepository {
   async findByLoginAndEmail(email: string, login: string ) {
     return await usersAccountCollection.findOne({$or: [{"accountData.email": email}, {"accountData.login": login}]})
   }
+
+  async findByEmail(email: string ) {
+    return await usersAccountCollection.findOne({"accountData.email": email})
+  }
+
   async findByConfirmationCode(code: string,) {
     return await usersAccountCollection.findOne({$and: [{"emailConfirmation.confirmationCode": code}, {"emailConfirmation.isConfirmed": false}]})
   }

@@ -8,7 +8,7 @@ import add from "date-fns/add";
 import {ioc} from "../IoCContainer";
 
 
-export class AuthUsersAccountService {
+export class UsersAccountService {
   constructor(private usersAccountRepository: UsersAccountRepository) {
     this.usersAccountRepository = usersAccountRepository
   }
@@ -118,6 +118,11 @@ export class AuthUsersAccountService {
   async findByLoginAndEmail(email: string, login: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByLoginAndEmail(email, login)
   }
+
+  async findByEmail(email: string): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findByEmail(email)
+  }
+
 
   async findByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByConfirmationCode(code)

@@ -7,7 +7,7 @@ export async function checkOutEmailOrLoginInDB(req: Request, res: Response, next
   const login = req.body.login;
   let errorMessage = {};
   if (email || login) {
-    const checkOutEmailInDB = await ioc.authUsersAccountService.findByLoginAndEmail(email, login);
+    const checkOutEmailInDB = await ioc.usersAccountService.findByLoginAndEmail(email, login);
     if (checkOutEmailInDB === null) {
       next()
       return
