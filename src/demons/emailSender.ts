@@ -9,6 +9,6 @@ export const emailSender = async () => {
       await ioc.emailsToSentRepository.deleteInsertedEmailAfterSent(user)
     }
     emailSender()
-  }, 3000)
+  }, 5000)
 }
 

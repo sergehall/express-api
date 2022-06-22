@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {UserAccountDBType} from "../types/all_types";
-import {emailManagers} from "../managers/email-managers";
 import {UsersAccountRepository} from "../repositories/usersAccount-db-repository";
 import uuid4 from "uuid4";
 import add from "date-fns/add";
@@ -131,10 +130,9 @@ export class UsersAccountService {
       if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.confirmationCode = uuid4()
-          await emailManagers.sendEmailConfirmationMessage(user)
+          await ioc.emailsToSentRepository.insertEmailToDB(user)
           user.emailConfirmation.sentEmail.push({sendTime: new Date()})
           await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
-          // await this.usersAccountRepository.deleteSendTimeOlderMinute(user)
           return user
         }
       }
@@ -160,11 +158,9 @@ export class UsersAccountService {
       if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.confirmationCode = uuid4()
-          // await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
-          await emailManagers.sendEmailConfirmationMessage(user)
+          await ioc.emailsToSentRepository.insertEmailToDB(user)
           user.emailConfirmation.sentEmail.push({sendTime: new Date()})
           await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
-          // await this.usersAccountRepository.deleteSendTimeOlderMinute(user)
           return user
         }
       }

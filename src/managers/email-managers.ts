@@ -1,5 +1,5 @@
 import {emailAdapter} from "../adapters/email-adapter";
-import {UserAccountDBType} from "../types/all_types";
+
 
 
 export const emailManagers = {
@@ -8,9 +8,6 @@ export const emailManagers = {
   },
   async sendEmailRecoveryPassword(user: object, token: string) {
     await emailAdapter.sendEmailRecoveryPassword(user, token);
-  },
-  async sendEmailConfirmationMessage(user: UserAccountDBType) {
-    await emailAdapter.sendEmailConfirmationMessage(user);
   },
   async doSomethingElse() {
     // save to repository
