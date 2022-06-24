@@ -7,8 +7,8 @@ import {checkoutContentType} from "../middlewares/checkout-contentType";
 import {
   bodyCode,
   bodyEmail,
-  bodyLogin,
-  bodyPassword,
+  bodyLogin, bodyLoginUsersAccount,
+  bodyPassword, bodyPasswordUsersAccount,
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import {
@@ -104,9 +104,9 @@ authRouter.post('/registration-email-resending',
   });
 
 authRouter.post('/login',
-  bodyLogin, bodyPassword, inputValidatorMiddleware,
-  checkHowManyTimesUserLoginLast10secWithSameIpLog,
+  bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
   checkCredentialsLoginPass,
+  checkHowManyTimesUserLoginLast10secWithSameIpLog,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     const token = await jwtServiceUsersAccount.createJWT({_id: new ObjectId(userReqHedObjId)})
