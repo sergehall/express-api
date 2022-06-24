@@ -52,6 +52,9 @@ export class PostsController {
       const postId: string = req.params.postId;
       const content: string = req.body.content;
       const  user  = req.user
+      console.log("postId", "content")
+      console.log("postId = ", postId, "content = ", content)
+      console.log(user)
 
       if (user === null) {
         res.status(401)
