@@ -125,7 +125,6 @@ authRouter.get('/confirm-registration',
       return
     }
     const result = await ioc.usersAccountService.confirmByCodeInParams(code)
-    console.log(code, "code")
     if (result && result.emailConfirmation.isConfirmed) {
       res.status(201).send("Email confirmed by query ?Code=.");
       return
