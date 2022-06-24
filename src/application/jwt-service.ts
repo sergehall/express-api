@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import {ObjectId} from "mongodb";
-import {UserAccountDBType, UserDBType} from "../types/all_types";
+import {UserDBType, UserObjectId} from "../types/all_types";
 
 const ck = require('ckey')
 
@@ -20,7 +20,7 @@ export const jwtService = {
 }
 
 export const jwtServiceUsersAccount = {
-  async createJWT(user: UserAccountDBType) {
-    return jwt.sign({userId: user._id}, ck.JWT_SECRET, {expiresIn: '1h'})
+  async createJWT(userObjectId: UserObjectId) {
+    return jwt.sign({userId: userObjectId._id}, ck.JWT_SECRET, {expiresIn: '1h'})
   }
 }

@@ -19,6 +19,8 @@ import {
 } from "../middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
 import {checkOutEmailOrLoginInDB} from "../middlewares/checkOutEmailInDB";
 import {parseQuery} from "../middlewares/parse-query";
+import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPass";
+import {ObjectId} from "mongodb";
 
 
 export const authRouter = Router({})
@@ -42,7 +44,7 @@ authRouter.post('/registration-confirmation',
     res.status(400).send({
       "errorsMessages": [
         {
-          message: "That code is not correct",
+          message: "That code is not correct or account already confirmed",
           field: "code"
         }
       ]
@@ -85,7 +87,7 @@ authRouter.post('/registration-email-resending',
   async (req: Request, res: Response) => {
     const email: string = req.body.email
     const userResult = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(email)
-    if (userResult) {
+    if (userResult !== null) {
       console.log(`Resend code to email:  ${userResult?.accountData?.email}`);
       res.status(204).send()
       return
@@ -103,24 +105,25 @@ authRouter.post('/registration-email-resending',
 
 authRouter.post('/login',
   bodyLogin, bodyPassword, inputValidatorMiddleware,
+  checkCredentialsLoginPass,
   checkHowManyTimesUserLoginLast10secWithSameIpLog,
   async (req: Request, res: Response) => {
-    const user = await ioc.usersAccountService.checkCredentials(req.body.login, req.body.password)
-    if (user !== null) {
-      const token = await jwtServiceUsersAccount.createJWT(user)
-      res.send({
+    const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
+    const token = await jwtServiceUsersAccount.createJWT({_id: new ObjectId(userReqHedObjId)})
+    if(token) {
+      res.status(200).send({
         "token": token
       })
-    } else {
-      res.status(401).send({
-        "errorsMessages": [
-          {
-            message: "Check the entered password or login.",
-            field: "password or login"
-          }
-        ]
-      })
+      return
     }
+    res.status(401).send({
+      "errorsMessages": [
+        {
+          message: "Login or password is wrong",
+          field: "Login or Password"
+        }
+      ]
+    })
   })
 
 authRouter.get('/confirm-registration',

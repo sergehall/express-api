@@ -91,7 +91,7 @@ export const inputValidatorMiddleware = (req: Request, res: Response, next: Next
           message: e.msg,
           field: e.param
         }
-      }), resultCode: 1
+      })
     });
   } else {
     next()

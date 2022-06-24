@@ -126,6 +126,7 @@ export type UserEmailConfirmationCode = {
   createdAt: Date
 }
 
-
-
+export type UserObjectId = {
+  _id: ObjectId,
+}
 
