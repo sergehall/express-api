@@ -87,19 +87,19 @@ authRouter.post('/registration-email-resending',
   async (req: Request, res: Response) => {
     const email: string = req.body.email
     const userResult = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(email)
-    if (userResult !== null) {
-      console.log(`Resend code to email:  ${userResult?.accountData?.email}`);
-      res.status(204).send()
+    if (userResult === null) {
+      res.status(400).send({
+        "errorsMessages": [
+          {
+            "message": "Check the entered email.",
+            "field": "email"
+          }
+        ]
+      });
       return
     }
-    res.status(400).send({
-      "errorsMessages": [
-        {
-          "message": "Check the entered email.",
-          "field": "email"
-        }
-      ]
-    });
+    console.log(`Resend code to email:  ${userResult?.accountData?.email}`);
+    res.sendStatus(204)
     return
   });
 
