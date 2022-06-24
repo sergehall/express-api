@@ -9,7 +9,7 @@ export function parseQuery(req: Request) {
   let title: string | undefined | null = req.query.Title?.toString()
   let userName: string | undefined | null = req.query.UserName?.toString()
   let searchTitle: string | undefined | null = req.query.SearchTitle?.toString()
-  let code: string | undefined | null = req.query.Code?.toString()
+  let code: string | undefined | null = req.query.code?.toString()
   let confirmationCode: string | undefined | null = req.query.ConfirmationCode?.toString()
 
   // default settings for searchNameTer, title, pageNumber, pageSize
