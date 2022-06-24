@@ -105,25 +105,15 @@ authRouter.post('/registration-email-resending',
 
 authRouter.post('/login',
   bodyLogin, bodyPassword, inputValidatorMiddleware,
-  checkCredentialsLoginPass,
   checkHowManyTimesUserLoginLast10secWithSameIpLog,
+  checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     const token = await jwtServiceUsersAccount.createJWT({_id: new ObjectId(userReqHedObjId)})
-    if(token) {
-      res.status(200).send({
-        "token": token
-      })
-      return
-    }
-    res.status(401).send({
-      "errorsMessages": [
-        {
-          message: "Login or password is wrong",
-          field: "Login or Password"
-        }
-      ]
+    res.status(200).send({
+      "token": token
     })
+    return
   })
 
 authRouter.get('/confirm-registration',

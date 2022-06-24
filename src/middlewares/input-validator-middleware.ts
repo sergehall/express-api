@@ -45,7 +45,7 @@ export const bodyPassword = body(['password']).trim().isString().withMessage('Pa
   max: 20
 }).withMessage("bodyPassword must be >6 and <20 characters.")
 const emailRegExp = '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'
-export const bodyEmail= body(['email']).trim().matches(emailRegExp).withMessage("Email should be matched to pattern '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'").isString().withMessage('Email must be string')
+export const bodyEmail= body(['email']).matches(emailRegExp).withMessage("Email should be matched to pattern '^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'")
 export const bodyCode = body(['code']).trim().isString().withMessage('Code must be string')
 
 // db
