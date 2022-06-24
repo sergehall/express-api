@@ -18,6 +18,10 @@ export const feedbacksCollection = db.collection<FeedbackDBType>("feedbacks")
 export const commentsCollection = db.collection<CommentsDBType>("comments")
 export const blackListIPCollection = db.collection<BlackListIPDBType>("blackListIP")
 export const deletedBloggersPostsCollection = db.collection<AllDeletedPosts>("deletedBloggersPosts")
-export const usersIPLast10secCollection = db.collection<RegistrationDataType>("usersIPLast10sec")
 export const emailsToSentUsersAccountCollection = db.collection<UserEmailConfirmationCode>("emailsToSent")
+
+export const usersIPLast10secCollectionRegConf = db.collection<RegistrationDataType>("usersIPLast10secRegConf")
+export const usersIPLast10secCollectionReg = db.collection<RegistrationDataType>("usersIPLast10secReg")
+export const usersIPLast10secCollectionLog = db.collection<RegistrationDataType>("usersIPLast10secRLog")
+export const usersIPLast10secCollectionRegEmailRes = db.collection<RegistrationDataType>("usersIPLast10secRegEmailRes")
 

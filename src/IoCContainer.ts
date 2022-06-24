@@ -21,7 +21,7 @@ import {UsersAccountService} from "./domain/usersAccount-service";
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {EmailsToSentRepository} from "./repositories/emailsToSent-db-repository";
 import {
-  UsersIPLast10secRepository,
+  UsersIPLast10secRepositories,
 } from "./repositories/usersIPlast10sec-bd-repository";
 
 
@@ -55,7 +55,7 @@ const usersAccountService = new UsersAccountService(usersAccountRepository)
 const blackListIPRepository = new BlackListIPRepository()
 const emailsToSentRepository = new EmailsToSentRepository()
 
-const usersIPLast10secRepository = new UsersIPLast10secRepository()
+const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
 
 export const ioc = {
   bloggersService: bloggersService,
@@ -73,5 +73,5 @@ export const ioc = {
   usersAccountService: usersAccountService,
   blackListIPRepository: blackListIPRepository,
   emailsToSentRepository: emailsToSentRepository,
-  usersIPLast10secRepository: usersIPLast10secRepository
+  usersIPLast10secRepositories: usersIPLast10secRepositories
 }

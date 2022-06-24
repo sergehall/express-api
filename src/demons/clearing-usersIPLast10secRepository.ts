@@ -1,9 +1,16 @@
-import {usersIPLast10secCollection} from "../repositories/db";
+import {
+  usersIPLast10secCollectionLog,
+  usersIPLast10secCollectionReg,
+  usersIPLast10secCollectionRegConf, usersIPLast10secCollectionRegEmailRes
+} from "../repositories/db";
 
 export const clearingIpWithDateOlder11Sec = async () => {
   // runs every 2 minutes
   setTimeout(async () => {
-    await usersIPLast10secCollection.deleteMany({$and: [{"createdAt": {$lte: new Date(Date.now() - 1000 * 10)}}]})
-    clearingIpWithDateOlder11Sec()
-  }, 120000)
+    await usersIPLast10secCollectionRegConf.deleteMany({"createdAt": {$lte: new Date(Date.now() - 1000 * 10)}})
+    await usersIPLast10secCollectionReg.deleteMany({"createdAt": {$lte: new Date(Date.now() - 1000 * 10)}})
+    await usersIPLast10secCollectionLog.deleteMany({"createdAt": {$lte: new Date(Date.now() - 1000 * 10)}})
+    await usersIPLast10secCollectionRegEmailRes.deleteMany({"createdAt": {$lte: new Date(Date.now() - 1000 * 10)}})
+    await clearingIpWithDateOlder11Sec()
+  }, 60000)
 }

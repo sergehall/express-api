@@ -5,7 +5,10 @@ import {parseQuery} from "../middlewares/parse-query";
 
 
 export class BloggersController {
-  constructor(private bloggersService: BloggersService, private postsService: PostsService ) {
+  constructor(private bloggersService: BloggersService,
+              private postsService: PostsService ) {
+    this.bloggersService = bloggersService
+    this.postsService = postsService
   }
   async getAllBloggers(req: Request, res: Response) {
 

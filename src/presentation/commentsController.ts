@@ -5,6 +5,7 @@ import {CommentsService} from "../domain/comments-service";
 
 export class CommentsController {
   constructor(private commentsService: CommentsService) {
+    this.commentsService = commentsService
   }
   async getCommentById(req: Request, res: Response) {
     try {

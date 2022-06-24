@@ -12,7 +12,10 @@ import {
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import {
-  checkHowManyTimesUserLoginLast10secWithSameIp
+  checkHowManyTimesUserLoginLast10secWithSameIpLog,
+  checkHowManyTimesUserLoginLast10secWithSameIpReg,
+  checkHowManyTimesUserLoginLast10secWithSameIpRegConf,
+  checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes
 } from "../middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
 import {checkOutEmailOrLoginInDB} from "../middlewares/checkOutEmailInDB";
 import {parseQuery} from "../middlewares/parse-query";
@@ -23,7 +26,7 @@ export const authRouter = Router({})
 authRouter.post('/registration-confirmation',
   checkoutIPFromBlackList,
   bodyCode, inputValidatorMiddleware,
-  checkHowManyTimesUserLoginLast10secWithSameIp,
+  checkHowManyTimesUserLoginLast10secWithSameIpRegConf,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
@@ -33,7 +36,7 @@ authRouter.post('/registration-confirmation',
     }
     const result = await ioc.usersAccountService.confirmByCodeInParams(req.body.code)
     if (result && result.emailConfirmation.isConfirmed) {
-      res.status(204).send();
+      res.sendStatus(204)
       return
     }
     res.status(400).send({
@@ -52,7 +55,7 @@ authRouter.post('/registration',
   checkoutContentType,
   bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
   checkOutEmailOrLoginInDB,
-  checkHowManyTimesUserLoginLast10secWithSameIp,
+  checkHowManyTimesUserLoginLast10secWithSameIpReg,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
@@ -76,28 +79,9 @@ authRouter.post('/registration',
     return
   });
 
-authRouter.get('/confirm-registration',
-  async (req: Request, res: Response) => {
-    const parseQueryData = parseQuery(req)
-    const code = parseQueryData.code
-    if (code === null) {
-      res.sendStatus(400)
-      return
-    }
-    const result = await ioc.usersAccountService.confirmByCodeInParams(code)
-    console.log(code, "code")
-    if (result && result.emailConfirmation.isConfirmed) {
-      res.status(201).send("Email confirmed by query ?Code=.");
-      return
-    } else {
-      res.sendStatus(400)
-      return
-    }
-  })
-
 authRouter.post('/registration-email-resending',
   bodyEmail, inputValidatorMiddleware,
-  checkHowManyTimesUserLoginLast10secWithSameIp,
+  checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
   async (req: Request, res: Response) => {
     const email: string = req.body.email
     const userResult = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(email)
@@ -119,7 +103,7 @@ authRouter.post('/registration-email-resending',
 
 authRouter.post('/login',
   bodyLogin, bodyPassword, inputValidatorMiddleware,
-  checkHowManyTimesUserLoginLast10secWithSameIp,
+  checkHowManyTimesUserLoginLast10secWithSameIpLog,
   async (req: Request, res: Response) => {
     const user = await ioc.usersAccountService.checkCredentials(req.body.login, req.body.password)
     if (user !== null) {
@@ -139,8 +123,27 @@ authRouter.post('/login',
     }
   })
 
+authRouter.get('/confirm-registration',
+  async (req: Request, res: Response) => {
+    const parseQueryData = parseQuery(req)
+    const code = parseQueryData.code
+    if (code === null) {
+      res.sendStatus(400)
+      return
+    }
+    const result = await ioc.usersAccountService.confirmByCodeInParams(code)
+    console.log(code, "code")
+    if (result && result.emailConfirmation.isConfirmed) {
+      res.status(201).send("Email confirmed by query ?Code=.");
+      return
+    } else {
+      res.sendStatus(400)
+      return
+    }
+  })
+
 authRouter.get('/resend-registration-email',
-  checkHowManyTimesUserLoginLast10secWithSameIp,
+  checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
   async (req: Request, res: Response) => {
     const parseQueryData = parseQuery(req)
     const code = parseQueryData.code
