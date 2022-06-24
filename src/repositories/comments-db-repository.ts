@@ -41,6 +41,7 @@ export class CommentsRepository {
   async updateCommentById(commentId: string, content: string): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filterToUpdate = {"allComments.id": commentId}
+    console.log(filterToUpdate, 'filterToUpdate')
     let resultCode = 0
 
     const result = await commentsCollection.updateOne(filterToUpdate,{$set: {"allComments.$.content": content}})

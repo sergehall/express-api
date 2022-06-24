@@ -65,4 +65,7 @@ export class UsersAccountRepository {
     const result = await usersAccountCollection.deleteMany({$and: [{"emailConfirmation.isConfirmed": false}, {"registrationData.createdAt": {$lt: new Date(Date.now() - 1000 * 60)}}]}) // We delete users who have not confirmed their email within 1 hour = - 1000 * 60 * 60
     return result.deletedCount
   }
+  async findUserByObjectId(userObjectId: ObjectId): Promise<UserAccountDBType | null> {
+    return await usersAccountCollection.findOne({_id: userObjectId})
+  }
 }

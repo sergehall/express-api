@@ -1,8 +1,6 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
 import {parseQuery} from "../middlewares/parse-query";
-import {PaginatorCommentViewModel, UserDBType} from "../types/all_types";
-
 
 export class PostsController {
   constructor(private postsService: PostsService) {
@@ -53,13 +51,15 @@ export class PostsController {
     try {
       const postId: string = req.params.postId;
       const content: string = req.body.content;
-      const  user: UserDBType = req.user
+      const  user  = req.user
+
       if (user === null) {
         res.status(401)
         res.send()
         return
       }
       const newPost = await this.postsService.createNewCommentByPostId(postId, content, user)
+
 
       if (newPost.resultCode === 0) {
         res.status(201)

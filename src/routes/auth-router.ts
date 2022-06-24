@@ -37,18 +37,18 @@ authRouter.post('/registration-confirmation',
       return
     }
     const result = await ioc.usersAccountService.confirmByCodeInParams(req.body.code)
-    if (result && result.emailConfirmation.isConfirmed) {
-      res.sendStatus(204)
+    if(result === null) {
+      res.status(400).send({
+        "errorsMessages": [
+          {
+            message: "That code is not correct or account already confirmed",
+            field: "code"
+          }
+        ]
+      })
       return
     }
-    res.status(400).send({
-      "errorsMessages": [
-        {
-          message: "That code is not correct or account already confirmed",
-          field: "code"
-        }
-      ]
-    })
+    res.sendStatus(204)
     return
   });
 
@@ -91,7 +91,7 @@ authRouter.post('/registration-email-resending',
       res.status(400).send({
         "errorsMessages": [
           {
-            "message": "Check the entered email.",
+            "message": "Check the entered email or isConfirmed already true.",
             "field": "email"
           }
         ]

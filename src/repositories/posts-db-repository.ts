@@ -4,8 +4,7 @@ import {
   Pagination, PaginatorCommentViewModel,
   PostsType,
   ReturnTypeObjectComment,
-  ReturnTypeObjectPosts,
-  UserDBType,
+  ReturnTypeObjectPosts, UserAccountDBType,
 } from "../types/all_types";
 import {
   MongoHasNotUpdated,
@@ -109,7 +108,7 @@ export class PostsRepository {
     }
   }
 
-  async createNewCommentByPostId(postId: string, content: string, user: UserDBType): Promise<ReturnTypeObjectComment> {
+  async createNewCommentByPostId(postId: string, content: string, user: UserAccountDBType): Promise<ReturnTypeObjectComment> {
     let errorsArray: ArrayErrorsType = [];
     const newCommentId = Math.round((+new Date() + +new Date()) / 2).toString();
     const addedAt = (new Date()).toISOString()
@@ -118,8 +117,8 @@ export class PostsRepository {
     const newComment = {
       id: newCommentId,
       content: content,
-      userId: user.id,
-      userLogin: user.login,
+      userId: user.accountData.id,
+      userLogin: user.accountData.login,
       addedAt: addedAt
     }
 

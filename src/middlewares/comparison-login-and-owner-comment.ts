@@ -1,13 +1,13 @@
-import {UserDBType} from "../types/all_types";
+import {UserAccountDBType} from "../types/all_types";
 import {Request, Response, NextFunction} from "express";
 import {commentsCollection} from "../repositories/db";
 
 
 export const comparingLoginAndOwnersComment = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user: UserDBType = req.user
-    const userLogin = user.login
-    const userId = user.id
+    const user: UserAccountDBType = req.user
+    const userLogin = user.accountData.login
+    const userId = user.accountData.id
     const commentId: string = req.params.commentId;
     const filterToUpdate = {"allComments.id": commentId}
 
@@ -27,5 +27,6 @@ export const comparingLoginAndOwnersComment = async (req: Request, res: Response
   } catch (e) {
     console.log(e)
     res.sendStatus(401)
+    return
   }
 }

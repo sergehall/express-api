@@ -4,7 +4,9 @@ import {
   contentCommentValidation, inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import {comparingLoginAndOwnersComment} from "../middlewares/comparison-login-and-owner-comment";
-import {authCheckUserAuthorization} from "../middlewares/auth-Basic-User-authorization";
+import {
+  authCheckUserAuthorizationForUserAccount
+} from "../middlewares/auth-Basic-User-authorization";
 
 
 export const commentsRouter = Router({})
@@ -12,8 +14,8 @@ export const commentsRouter = Router({})
 commentsRouter.get('/:commentId',
   ioc.commentsController.getCommentById.bind(ioc.commentsController))
 
-  .put('/:commentId', authCheckUserAuthorization, comparingLoginAndOwnersComment, contentCommentValidation, inputValidatorMiddleware,
+  .put('/:commentId', authCheckUserAuthorizationForUserAccount, comparingLoginAndOwnersComment, contentCommentValidation, inputValidatorMiddleware,
     ioc.commentsController.updateCommentsById.bind(ioc.commentsController))
 
-  .delete('/:commentId', authCheckUserAuthorization, comparingLoginAndOwnersComment,
+  .delete('/:commentId', authCheckUserAuthorizationForUserAccount, comparingLoginAndOwnersComment,
     ioc.commentsController.deleteCommentsById.bind(ioc.commentsController))

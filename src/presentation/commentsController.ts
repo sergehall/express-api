@@ -49,6 +49,7 @@ export class CommentsController {
 
     if (deletedComments.errorsMessages.length === 0) {
       res.sendStatus(204)
+      return
     }
     res.send()
     return

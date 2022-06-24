@@ -10,7 +10,7 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {ioc} from "../IoCContainer";
 import {
-  authCheckUserAuthorization,
+  authCheckUserAuthorizationForUserAccount,
   authMiddlewareBasicAuthorization
 } from "../middlewares/auth-Basic-User-authorization";
 
@@ -45,5 +45,6 @@ postsRouts.get('/',
   .get('/:postId/comments', postIdParamsValidation, inputValidatorMiddleware,
     ioc.postsController.getCommentsByPostId.bind(ioc.postsController))
 
-  .post('/:postId/comments', authCheckUserAuthorization, contentCommentValidation, inputValidatorMiddleware,
+  .post('/:postId/comments', authCheckUserAuthorizationForUserAccount,
+    contentCommentValidation, inputValidatorMiddleware,
     ioc.postsController.createNewCommentByPostId.bind(ioc.postsController))

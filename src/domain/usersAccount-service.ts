@@ -121,6 +121,9 @@ export class UsersAccountService {
   async deleteUserWithRottenCreatedAt(): Promise<number> {
     return await this.usersAccountRepository.findByIsConfirmedAndCreatedAt()
   }
+  async findUserByObjectId(userObjectId: ObjectId): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findUserByObjectId(userObjectId)
+  }
 
   async updateAndSentConfirmationCodeByEmail(email: string) {
 

@@ -3,8 +3,7 @@ import {
   Pagination, PaginatorCommentViewModel,
   PostsType,
   ReturnTypeObjectComment,
-  ReturnTypeObjectPosts,
-  UserDBType
+  ReturnTypeObjectPosts, UserAccountDBType,
 } from "../types/all_types";
 
 
@@ -24,7 +23,7 @@ export class PostsService {
     return await this.postsRepository.createPost(title, shortDescription, content, bloggerId)
   }
 
-  async createNewCommentByPostId(postId: string, content: string, user: UserDBType): Promise<ReturnTypeObjectComment> {
+  async createNewCommentByPostId(postId: string, content: string, user: UserAccountDBType): Promise<ReturnTypeObjectComment> {
     return await this.postsRepository.createNewCommentByPostId(postId, content, user)
   }
 
