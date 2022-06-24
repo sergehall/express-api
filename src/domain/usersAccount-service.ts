@@ -131,7 +131,7 @@ export class UsersAccountService {
     if (user === null) {
       return null
     }
-    if (user.emailConfirmation.sentEmail.length > 20) {
+    if (user.emailConfirmation.sentEmail.length > 10) {
       return null
     }
     if (user) {

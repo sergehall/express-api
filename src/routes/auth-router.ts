@@ -86,10 +86,8 @@ authRouter.post('/registration-email-resending',
   checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
   async (req: Request, res: Response) => {
     const email: string = req.body.email
-    console.log("email: ", email)
     const userResult = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(email)
     if (userResult === null) {
-      console.log("userResult: ", userResult)
       res.status(400).send({
         "errorsMessages": [
           {
