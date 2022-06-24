@@ -105,8 +105,8 @@ authRouter.post('/registration-email-resending',
 
 authRouter.post('/login',
   bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
-  checkCredentialsLoginPass,
   checkHowManyTimesUserLoginLast10secWithSameIpLog,
+  checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     const token = await jwtServiceUsersAccount.createJWT({_id: new ObjectId(userReqHedObjId)})
