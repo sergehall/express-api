@@ -140,7 +140,7 @@ authRouter.get('/resend-registration-email',
     const parseQueryData = parseQuery(req)
     const code = parseQueryData.code
     if (code === null) {
-      res.status(400).send("query param is empty")
+      res.status(400).send("Query param is empty")
       return
     }
     const user = await ioc.usersAccountService.findByConfirmationCode(code)
