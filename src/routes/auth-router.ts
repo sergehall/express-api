@@ -134,11 +134,12 @@ authRouter.get('/confirm-registration',
     }
   })
 
-authRouter.get('/resend-registration-email',
+authRouter.get('/resend-registration-email/',
   checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
   async (req: Request, res: Response) => {
     const parseQueryData = parseQuery(req)
     const code = parseQueryData.code
+    console.log(code, "code")
     if (code === null) {
       res.status(400).send("Query param is empty")
       return
