@@ -116,6 +116,24 @@ authRouter.post('/login',
     return
   })
 
+authRouter.get('/resend-registration-email/',
+  checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
+  async (req: Request, res: Response) => {
+    const parseQueryData = parseQuery(req)
+    const code = parseQueryData.code
+    if (code === null) {
+      res.status(400).send("Query param is empty")
+      return
+    }
+    const user = await ioc.usersAccountService.findByConfirmationCode(code)
+    if (user === null) {
+      res.status(400).send("Bad code or isConfirmed is true.")
+      return
+    }
+    const result = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(user.accountData.email)
+    res.send(`Resend code to email:  ${result?.accountData?.email}`)
+  })
+
 authRouter.get('/confirm-registration',
   async (req: Request, res: Response) => {
     const parseQueryData = parseQuery(req)
@@ -132,24 +150,6 @@ authRouter.get('/confirm-registration',
       res.sendStatus(400)
       return
     }
-  })
-
-authRouter.post('/resend-registration-email/',
-  checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
-  async (req: Request, res: Response) => {
-    const parseQueryData = parseQuery(req)
-    const code = parseQueryData.code
-    if (code === null) {
-      res.status(400).send("Query param is empty")
-      return
-    }
-    const user = await ioc.usersAccountService.findByConfirmationCode(code)
-    if (user === null) {
-      res.status(400).send("Bad code or isConfirmed is true.")
-      return
-    }
-    const result = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(user.accountData.email)
-    res.send(`Resend code to email:  ${result?.accountData?.email}`)
   })
 
 authRouter.post('/confirm-email',
