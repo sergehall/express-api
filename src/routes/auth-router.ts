@@ -134,12 +134,11 @@ authRouter.get('/confirm-registration',
     }
   })
 
-authRouter.get('/resend-registration-email/',
+authRouter.post('/resend-registration-email/',
   checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
   async (req: Request, res: Response) => {
     const parseQueryData = parseQuery(req)
     const code = parseQueryData.code
-    console.log(code, "code")
     if (code === null) {
       res.status(400).send("Query param is empty")
       return
@@ -179,18 +178,4 @@ authRouter.delete('/logout',
     res.send(`Total, did not confirm registration user were deleted = ${result}`)
   })
 
-
-// for usersService
-// authRouter.post('/login',
-//   async (req: Request, res: Response) => {
-//     const user = await ioc.usersService.checkCredentials(req.body.login, req.body.password)
-//     if (user !== null) {
-//       const token = await jwtService.createJWT(user)
-//       res.send({
-//         "token": token
-//       })
-//     } else {
-//       res.sendStatus(401)
-//     }
-//   })
 
