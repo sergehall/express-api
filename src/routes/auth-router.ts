@@ -172,18 +172,6 @@ authRouter.get('/confirm-code/:code',
     }
   })
 
-authRouter.post('/resend-registration-code',
-  async (req: Request, res: Response) => {
-    // need to finish, from postman I understand how to take the info to search for a query when
-    // I click the link in the email itself I do not know
-    const result = await ioc.usersAccountService.updateAndSentConfirmationCode(req.body.email, req.body.password)
-    if (result?.accountData?.email === undefined) {
-      res.status(400).send("Bad code or isConfirmed is true or more than 5 times sent email with code.");
-      return
-    }
-    res.send(`Resend code to email:  ${result?.accountData?.email}`)
-  })
-
 authRouter.delete('/logout',
   async (req: Request, res: Response) => {
     const result = await ioc.usersAccountService.deleteUserWithRottenCreatedAt()

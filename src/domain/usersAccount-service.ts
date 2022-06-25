@@ -157,42 +157,4 @@ export class UsersAccountService {
     }
     return null
   }
-
-  async updateAndSentConfirmationCode(email: string, password: string) {
-
-    const user = await this.usersAccountRepository.findByLoginOrEmail(email)
-    if (user === null) {
-      return null
-    }
-    if (user.emailConfirmation.sentEmail.length > 5) {
-      return null
-    }
-    const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
-    const result = passwordHash === user.accountData.passwordHash
-    if (result === null) {
-      return null
-    }
-    if (user) {
-      if (!user.emailConfirmation.isConfirmed) {
-        if (user.emailConfirmation.expirationDate > new Date()) {
-          user.emailConfirmation.confirmationCode = uuid4()
-          user.emailConfirmation.expirationDate = add(new Date(),
-            {
-              hours: 1,
-              minutes: 5
-            })
-          const newDataUserEmailConfirmationCode = {
-            email: user.accountData.email,
-            confirmationCode: user.emailConfirmation.confirmationCode,
-            createdAt: new Date()
-          }
-          await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
-          user.emailConfirmation.sentEmail.push({sendTime: new Date()})
-          await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
-          return user
-        }
-      }
-    }
-    return null
-  }
 }
