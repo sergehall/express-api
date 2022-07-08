@@ -15,8 +15,6 @@ import {
 } from "../middlewares/auth-Basic-User-authorization";
 
 
-
-
 export const postsRouts = Router({})
 
 postsRouts.get('/',

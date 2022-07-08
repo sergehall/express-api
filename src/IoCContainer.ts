@@ -57,6 +57,7 @@ const emailsToSentRepository = new EmailsToSentRepository()
 
 const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
 
+
 export const ioc = {
   bloggersService: bloggersService,
   bloggersController: bloggersController,
@@ -73,5 +74,5 @@ export const ioc = {
   usersAccountService: usersAccountService,
   blackListIPRepository: blackListIPRepository,
   emailsToSentRepository: emailsToSentRepository,
-  usersIPLast10secRepositories: usersIPLast10secRepositories
+  usersIPLast10secRepositories: usersIPLast10secRepositories,
 }
