@@ -13,6 +13,7 @@ export class UsersAccountService {
   }
 
   async createUser(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
+    console.log("----", login, email, password, clientIp, "--------------")
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
 
@@ -41,7 +42,8 @@ export class UsersAccountService {
         createdAt: new Date()
       }]
     }
-    return await this.usersAccountRepository.createUserAccount(newUser)
+    const result = await this.usersAccountRepository.createUserAccount(newUser)
+    return result
   }
 
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
