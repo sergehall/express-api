@@ -19,11 +19,11 @@ export const authMiddlewareBasicAuthorization = (req: Request, res: Response, ne
 }
 
 export const authCheckUserAuthorization = async (req: Request, res: Response, next: NextFunction) => {
+
   if (!req.headers.authorization) {
     res.sendStatus(401)
     return
   }
-
   const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
   const userId = await jwtService.getUserIdByToken(token)
   if (userId === null) {
@@ -39,7 +39,6 @@ export const authCheckUserAuthorizationForUserAccount = async (req: Request, res
     res.sendStatus(401)
     return
   }
-
   const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
   const userId = await jwtService.getUserIdByToken(token)
   if (userId === null) {

@@ -23,7 +23,9 @@ import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPas
 import {ObjectId} from "mongodb";
 import jwt_decode from "jwt-decode";
 import {payloadType} from "../types/all_types";
-import {checkRefreshTokenInBlackList} from "../middlewares/check-refresh-token";
+import {
+  authCheckUserAuthorizationForUserAccount
+} from "../middlewares/auth-Basic-User-authorization";
 
 
 export const authRouter = Router({})
@@ -114,7 +116,6 @@ authRouter.post('/login',
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
-    // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
     res.cookie("refreshToken", refreshToken, {httpOnly: true})
     res.status(200).send({
       "accessToken": accessToken
@@ -123,7 +124,7 @@ authRouter.post('/login',
   })
 
 authRouter.post('/refresh-token',
-  checkRefreshTokenInBlackList,
+  jwtService.checkRefreshTokenInBlackList,
   async (req: Request, res: Response) => {
     try {
       const payload: payloadType = jwt_decode(req.cookies.refreshToken);
@@ -143,7 +144,7 @@ authRouter.post('/refresh-token',
   })
 
 authRouter.post('/logout',
-  checkRefreshTokenInBlackList,
+  jwtService.checkRefreshTokenInBlackList,
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
     const insertToken = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
@@ -151,10 +152,9 @@ authRouter.post('/logout',
   })
 
 authRouter.get("/me",
-  checkRefreshTokenInBlackList,
+  authCheckUserAuthorizationForUserAccount,
   async (req: Request, res: Response) => {
-    const payload: payloadType = jwt_decode(req.cookies.refreshToken);
-    const user = await ioc.usersAccountService.findUserByObjectId(new ObjectId(payload.userId))
+    const user = req.user
     if (user) {
       return res.status(200).send({
         email: user.accountData.email,
@@ -165,6 +165,23 @@ authRouter.get("/me",
     }
     return res.sendStatus(401)
   })
+
+// authRouter.get("/me",
+//   authCheckUserAuthorization,
+//   jwtService.checkRefreshTokenInBlackList,
+//   async (req: Request, res: Response) => {
+//     const payload: payloadType = jwt_decode(req.cookies.refreshToken);
+//     const user = await ioc.usersAccountService.findUserByObjectId(new ObjectId(payload.userId))
+//     if (user) {
+//       return res.status(200).send({
+//         email: user.accountData.email,
+//         login: user.accountData.login,
+//         userId: user.accountData.id
+//
+//       })
+//     }
+//     return res.sendStatus(401)
+//   })
 
 authRouter.get('/resend-registration-email/',
   checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
