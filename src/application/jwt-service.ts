@@ -1,17 +1,31 @@
 import jwt from 'jsonwebtoken'
 import {ObjectId} from "mongodb";
-import {UserDBType, UserObjectId} from "../types/all_types";
+import {UserObjectId} from "../types/all_types";
 
 const ck = require('ckey')
 
 export const jwtService = {
-  async createJWT(user: UserDBType) {
-    return jwt.sign({userId: user._id}, ck.JWT_SECRET, {expiresIn: '1h'})
+
+  async createUsersAccountJWT(userObjectId: UserObjectId) {
+    return jwt.sign({userId: userObjectId._id}, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
+  },
+
+  async createUsersAccountRefreshJWT(userObjectId: UserObjectId) {
+    return jwt.sign({userId: userObjectId._id}, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
+  },
+
+  async verifyRefreshJWT(token: string) {
+    try {
+      const result: any = jwt.verify(token, ck.REFRESH_SECRET_KEY)
+      return new ObjectId(result.userId)
+    } catch (e) {
+      return null
+    }
   },
 
   async getUserIdByToken(token: string) {
     try {
-      const result: any = jwt.verify(token, ck.JWT_SECRET)
+      const result: any = jwt.verify(token, ck.ACCESS_SECRET_KEY)
       return new ObjectId(result.userId)
     } catch (err) {
       return null
@@ -19,8 +33,3 @@ export const jwtService = {
   }
 }
 
-export const jwtServiceUsersAccount = {
-  async createJWT(userObjectId: UserObjectId) {
-    return jwt.sign({userId: userObjectId._id}, ck.JWT_SECRET, {expiresIn: '1h'})
-  }
-}

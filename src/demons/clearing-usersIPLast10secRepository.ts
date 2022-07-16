@@ -1,7 +1,8 @@
 import {
   usersIPLast10secCollectionLog,
   usersIPLast10secCollectionReg,
-  usersIPLast10secCollectionRegConf, usersIPLast10secCollectionRegEmailRes
+  usersIPLast10secCollectionRegConf,
+  usersIPLast10secCollectionRegEmailRes
 } from "../repositories/db";
 
 export const clearingIpWithDateOlder11Sec = async () => {

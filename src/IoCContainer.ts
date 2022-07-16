@@ -23,6 +23,9 @@ import {EmailsToSentRepository} from "./repositories/emailsToSent-db-repository"
 import {
   UsersIPLast10secRepositories,
 } from "./repositories/usersIPlast10sec-bd-repository";
+import {
+  BlackListRefreshTokenJWTRepository
+} from "./repositories/blackListRefreshTokenJWT-db-repository";
 
 
 const postsRepository = new PostsRepository()
@@ -57,6 +60,8 @@ const emailsToSentRepository = new EmailsToSentRepository()
 
 const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
 
+const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepository()
+
 
 export const ioc = {
   bloggersService: bloggersService,
@@ -75,4 +80,5 @@ export const ioc = {
   blackListIPRepository: blackListIPRepository,
   emailsToSentRepository: emailsToSentRepository,
   usersIPLast10secRepositories: usersIPLast10secRepositories,
+  blackListRefreshTokenJWTRepository: blackListRefreshTokenJWTRepository,
 }

@@ -127,6 +127,15 @@ export type UserEmailConfirmationCode = {
 }
 
 export type UserObjectId = {
-  _id: ObjectId,
+  _id: ObjectId
 }
 
+export type BlackListRefreshTokenJWT = {
+  refreshToken: string
+}
+
+export type payloadType = {
+  userId: string
+  iat: number
+  exp: number
+}

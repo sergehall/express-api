@@ -1,6 +1,6 @@
 import {Router, Request, Response} from "express"
 import {
-  blackListIPCollection,
+  blackListIPCollection, blackListRefreshTokenJWTCollection,
   bloggersCollection,
   commentsCollection,
   emailsToSentUsersAccountCollection,
@@ -31,6 +31,7 @@ testingRouter
     await bloggersCollection.deleteMany({})
     await postsCollection.deleteMany({})
     await commentsCollection.deleteMany({})
+    await blackListRefreshTokenJWTCollection.deleteMany({})
     res.status(204).send()
     return
   })

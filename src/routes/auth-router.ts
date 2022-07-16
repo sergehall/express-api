@@ -1,5 +1,5 @@
 import {Router, Request, Response} from "express";
-import {jwtServiceUsersAccount} from "../application/jwt-service";
+import {jwtService} from "../application/jwt-service";
 import {ioc} from "../IoCContainer";
 import requestIp from 'request-ip';
 import {checkoutIPFromBlackList} from "../middlewares/middleware-checkoutIPFromBlackList";
@@ -21,6 +21,11 @@ import {checkOutEmailOrLoginInDB} from "../middlewares/checkOutEmailInDB";
 import {parseQuery} from "../middlewares/parse-query";
 import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPass";
 import {ObjectId} from "mongodb";
+import jwt_decode from "jwt-decode";
+import {payloadType} from "../types/all_types";
+import {
+  CheckRefreshTokenInBlackList,
+} from "../middlewares/check-refresh-token";
 
 
 export const authRouter = Router({})
@@ -37,7 +42,7 @@ authRouter.post('/registration-confirmation',
       return
     }
     const result = await ioc.usersAccountService.confirmByCodeInParams(req.body.code)
-    if(result === null) {
+    if (result === null) {
       res.status(400).send({
         "errorsMessages": [
           {
@@ -109,11 +114,58 @@ authRouter.post('/login',
   checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
-    const token = await jwtServiceUsersAccount.createJWT({_id: new ObjectId(userReqHedObjId)})
+    const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
+    const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
+    // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+    res.cookie("refreshToken", refreshToken, {httpOnly: true})
     res.status(200).send({
-      "token": token
+      "accessToken": accessToken
     })
     return
+  })
+
+authRouter.post('/refresh-token',
+  CheckRefreshTokenInBlackList,
+  async (req: Request, res: Response) => {
+    try {
+      const payload: payloadType = jwt_decode(req.cookies.refreshToken);
+      const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(payload.userId)})
+      const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(payload.userId)})
+      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", refreshToken, {httpOnly: true})
+      res.status(200).send({accessToken: accessToken})
+      return
+
+    } catch (e) {
+      console.log(e)
+      res.status(401).send({error: e})
+      return
+    }
+
+  })
+
+authRouter.post('/logout',
+  CheckRefreshTokenInBlackList,
+  async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken
+    const insertToken = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
+    return res.sendStatus(204)
+  })
+
+authRouter.get("/me",
+  CheckRefreshTokenInBlackList,
+  async (req: Request, res: Response) => {
+    const payload: payloadType = jwt_decode(req.cookies.refreshToken);
+    const user = await ioc.usersAccountService.findUserByObjectId(new ObjectId(payload.userId))
+    if (user) {
+      return res.status(200).send({
+        email: user.accountData.email,
+        login: user.accountData.login,
+        userId: user.accountData.id
+
+      })
+    }
+    return res.sendStatus(401)
   })
 
 authRouter.get('/resend-registration-email/',
@@ -172,7 +224,7 @@ authRouter.get('/confirm-code/:code',
     }
   })
 
-authRouter.delete('/logout',
+authRouter.delete('/logoutRottenCreatedAt',
   async (req: Request, res: Response) => {
     const result = await ioc.usersAccountService.deleteUserWithRottenCreatedAt()
     res.send(`Total, did not confirm registration user were deleted = ${result}`)

@@ -13,6 +13,7 @@ import {emailRouter} from "./routes/email-router";
 import {emailSender} from "./demons/emailSender";
 import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
 import {testingRouter} from "./routes/testing-router";
+import cookieParser from "cookie-parser"
 
 
 
@@ -22,6 +23,9 @@ app.use(corsMiddleware)
 
 const jsonBodeMiddleware = bodyParser
 app.use(jsonBodeMiddleware.json())
+app.use(cookieParser())
+
+
 
 const port = process.env.PORT || 5000
 
