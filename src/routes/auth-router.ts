@@ -116,7 +116,7 @@ authRouter.post('/login',
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
-    res.cookie("refreshToken", refreshToken, {httpOnly: true})
+    res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
     res.status(200).send({
       "accessToken": accessToken
     })
@@ -130,8 +130,7 @@ authRouter.post('/refresh-token',
       const payload: payloadType = jwt_decode(req.cookies.refreshToken);
       const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(payload.userId)})
       const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(payload.userId)})
-      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-      res.cookie("refreshToken", refreshToken, {httpOnly: true})
+      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: accessToken})
       return
 
@@ -165,23 +164,6 @@ authRouter.get("/me",
     }
     return res.sendStatus(401)
   })
-
-// authRouter.get("/me",
-//   authCheckUserAuthorization,
-//   jwtService.checkRefreshTokenInBlackList,
-//   async (req: Request, res: Response) => {
-//     const payload: payloadType = jwt_decode(req.cookies.refreshToken);
-//     const user = await ioc.usersAccountService.findUserByObjectId(new ObjectId(payload.userId))
-//     if (user) {
-//       return res.status(200).send({
-//         email: user.accountData.email,
-//         login: user.accountData.login,
-//         userId: user.accountData.id
-//
-//       })
-//     }
-//     return res.sendStatus(401)
-//   })
 
 authRouter.get('/resend-registration-email/',
   checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
