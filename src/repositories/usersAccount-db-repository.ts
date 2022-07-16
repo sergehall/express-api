@@ -13,6 +13,11 @@ export class UsersAccountRepository {
     return user
   }
 
+  async findAllUsers() {
+    const result = await usersAccountCollection.find({}).toArray();
+    return result
+  }
+
   async findByLoginOrEmail(loginOrEmail: string) {
     return await usersAccountCollection.findOne({$or: [{"accountData.email": loginOrEmail}, {"accountData.login": loginOrEmail}]})
   }

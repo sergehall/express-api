@@ -11,21 +11,23 @@ import requestIp from "request-ip";
 export const usersRouter = Router({});
 
 usersRouter.get('/',
-  ioc.usersController.getUsers.bind(ioc.usersController))
-
+  async (req: Request, res: Response) => {
+    const allUsers = await ioc.usersAccountService.getAllUsers()
+    return res.status(200).send(allUsers)
+  })
 
   .post('/',
-  bodyLogin, bodyPassword, inputValidatorMiddleware,
-  authMiddlewareBasicAuthorization,
-  async (req: Request, res: Response) => {
-    const clientIp = requestIp.getClientIp(req);
+    bodyLogin, bodyPassword, inputValidatorMiddleware,
+    authMiddlewareBasicAuthorization,
+    async (req: Request, res: Response) => {
+      const clientIp = requestIp.getClientIp(req);
 
-    const user = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
-    console.log(user, "user")
-    if (!user) {
-      return res.sendStatus(400);
-    }
-    return res.sendStatus(201);
-  });
+      const user = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
+      console.log(user, "user")
+      if (!user) {
+        return res.sendStatus(400);
+      }
+      return res.status(201).send({"id": user.accountData.id, "login": user.accountData.login});
+    });
 
 

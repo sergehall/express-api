@@ -12,6 +12,10 @@ export class UsersAccountService {
     this.usersAccountRepository = usersAccountRepository
   }
 
+  async getAllUsers() {
+    return  await this.usersAccountRepository.findAllUsers()
+  }
+
   async createUser(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
     console.log("----", login, email, password, clientIp, "--------------")
     const passwordSalt = await bcrypt.genSalt(10)
