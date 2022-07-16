@@ -12,6 +12,38 @@ export class UsersAccountService {
     this.usersAccountRepository = usersAccountRepository
   }
 
+  async createUser(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
+    const passwordSalt = await bcrypt.genSalt(10)
+    const passwordHash = await this._generateHash(password, passwordSalt)
+
+    const newUser: UserAccountDBType = {
+      _id: new ObjectId(),
+      accountData: {
+        id: uuid4(),
+        login: login,
+        email,
+        passwordSalt,
+        passwordHash,
+        createdAt: new Date()
+      },
+      emailConfirmation: {
+        confirmationCode: uuid4(),
+        expirationDate: add(new Date(),
+          {
+            hours: 1,
+            minutes: 5
+          }),
+        isConfirmed: false,
+        sentEmail: [{sendTime: new Date()}]
+      },
+      registrationData: [{
+        ip: clientIp,
+        createdAt: new Date()
+      }]
+    }
+    return await this.usersAccountRepository.createUserAccount(newUser)
+  }
+
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
@@ -42,7 +74,7 @@ export class UsersAccountService {
       }]
     }
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
-    try{
+    try {
       if (createResult !== null) {
         const newDataUserEmailConfirmationCode = {
           email: newUser.accountData.email,
@@ -52,7 +84,7 @@ export class UsersAccountService {
         await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
 
       }
-    }catch (e) {
+    } catch (e) {
       console.log(e)
       await this.usersAccountRepository.deleteUserAccount(newUser._id)
       return null
@@ -98,7 +130,6 @@ export class UsersAccountService {
     if (user === null) {
       return null
     }
-    console.log(user, 'user')
     // const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
     const result = await bcrypt.compare(password, user.accountData.passwordHash)
     if (result) {
@@ -122,6 +153,7 @@ export class UsersAccountService {
   async deleteUserWithRottenCreatedAt(): Promise<number> {
     return await this.usersAccountRepository.findByIsConfirmedAndCreatedAt()
   }
+
   async findUserByObjectId(userObjectId: ObjectId): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findUserByObjectId(userObjectId)
   }

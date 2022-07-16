@@ -114,7 +114,6 @@ authRouter.post('/login',
   checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
-    console.log(userReqHedObjId, 'userReqHedObjId')
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
     // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})

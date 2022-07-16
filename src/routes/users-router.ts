@@ -1,28 +1,26 @@
-import {Router} from "express";
+import {Request, Response, Router} from "express";
 import {ioc} from "../IoCContainer";
 import {
   bodyLogin,
   bodyPassword,
-  checkoutMongoDbId,
-  inputValidatorMiddleware, userIdParamsValidation
+  inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import {authMiddlewareBasicAuthorization} from "../middlewares/auth-Basic-User-authorization";
-
+import requestIp from "request-ip";
 
 export const usersRouter = Router({});
 
-usersRouter.get('/',
-  ioc.usersController.getUsers.bind(ioc.usersController))
+usersRouter.post('/',
+  bodyLogin, bodyPassword, inputValidatorMiddleware,
+  authMiddlewareBasicAuthorization,
+  async (req: Request, res: Response) => {
+    const clientIp = requestIp.getClientIp(req);
+    const user = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
 
-  .get('/:mongoId', checkoutMongoDbId,
-    ioc.usersController.getUserByMongoDbId.bind(ioc.usersController))
-
-  .post('/', authMiddlewareBasicAuthorization,
-    bodyLogin, bodyPassword, inputValidatorMiddleware,
-    ioc.usersController.createNewUser.bind(ioc.usersController))
-
-  .delete('/:userId', authMiddlewareBasicAuthorization,
-    userIdParamsValidation, inputValidatorMiddleware,
-    ioc.usersController.deleteUserById.bind(ioc.usersController))
+    if (user) {
+      return res.sendStatus(201);
+    }
+    return res.sendStatus(400);
+  });
 
 
