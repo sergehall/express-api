@@ -19,13 +19,13 @@ import {
 } from "../middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
 import {checkOutEmailOrLoginInDB} from "../middlewares/checkOutEmailInDB";
 import {parseQuery} from "../middlewares/parse-query";
-import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPass";
 import {ObjectId} from "mongodb";
 import jwt_decode from "jwt-decode";
 import {payloadType} from "../types/all_types";
 import {
   authCheckUserAuthorizationForUserAccount
 } from "../middlewares/auth-Basic-User-authorization";
+import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPass";
 
 
 export const authRouter = Router({})
@@ -111,8 +111,10 @@ authRouter.post('/registration-email-resending',
 authRouter.post('/login',
   bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
   checkHowManyTimesUserLoginLast10secWithSameIpLog,
+  checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
+    console.log(userReqHedObjId, 'userReqHedObjId')
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
     // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
