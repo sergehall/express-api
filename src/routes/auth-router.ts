@@ -111,12 +111,12 @@ authRouter.post('/registration-email-resending',
 authRouter.post('/login',
   bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
   checkHowManyTimesUserLoginLast10secWithSameIpLog,
-  checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
-    res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+    // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+    res.cookie("refreshToken", refreshToken, {httpOnly: true})
     res.status(200).send({
       "accessToken": accessToken
     })
@@ -130,7 +130,8 @@ authRouter.post('/refresh-token',
       const payload: payloadType = jwt_decode(req.cookies.refreshToken);
       const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(payload.userId)})
       const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(payload.userId)})
-      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", refreshToken, {httpOnly: true})
       res.status(200).send({accessToken: accessToken})
       return
 
