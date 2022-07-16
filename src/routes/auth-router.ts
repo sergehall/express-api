@@ -23,9 +23,7 @@ import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPas
 import {ObjectId} from "mongodb";
 import jwt_decode from "jwt-decode";
 import {payloadType} from "../types/all_types";
-import {
-  CheckRefreshTokenInBlackList,
-} from "../middlewares/check-refresh-token";
+import {checkRefreshTokenInBlackList} from "../middlewares/check-refresh-token";
 
 
 export const authRouter = Router({})
@@ -125,7 +123,7 @@ authRouter.post('/login',
   })
 
 authRouter.post('/refresh-token',
-  CheckRefreshTokenInBlackList,
+  checkRefreshTokenInBlackList,
   async (req: Request, res: Response) => {
     try {
       const payload: payloadType = jwt_decode(req.cookies.refreshToken);
@@ -145,7 +143,7 @@ authRouter.post('/refresh-token',
   })
 
 authRouter.post('/logout',
-  CheckRefreshTokenInBlackList,
+  checkRefreshTokenInBlackList,
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
     const insertToken = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
@@ -153,7 +151,7 @@ authRouter.post('/logout',
   })
 
 authRouter.get("/me",
-  CheckRefreshTokenInBlackList,
+  checkRefreshTokenInBlackList,
   async (req: Request, res: Response) => {
     const payload: payloadType = jwt_decode(req.cookies.refreshToken);
     const user = await ioc.usersAccountService.findUserByObjectId(new ObjectId(payload.userId))

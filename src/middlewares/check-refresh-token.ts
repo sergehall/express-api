@@ -4,7 +4,7 @@ import {ObjectId} from "mongodb";
 import {ioc} from "../IoCContainer";
 
 
-export const CheckRefreshTokenInBlackList = async (req: Request, res: Response, next: NextFunction) => {
+export const checkRefreshTokenInBlackList = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.cookies.refreshToken
     const userId: ObjectId | null = await jwtService.verifyRefreshJWT(token);
