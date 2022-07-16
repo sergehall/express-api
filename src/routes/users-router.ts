@@ -10,7 +10,11 @@ import requestIp from "request-ip";
 
 export const usersRouter = Router({});
 
-usersRouter.post('/',
+usersRouter.get('/',
+  ioc.usersController.getUsers.bind(ioc.usersController))
+
+
+  .post('/',
   bodyLogin, bodyPassword, inputValidatorMiddleware,
   authMiddlewareBasicAuthorization,
   async (req: Request, res: Response) => {
