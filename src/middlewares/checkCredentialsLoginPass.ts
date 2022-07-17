@@ -2,10 +2,7 @@ import  {Request, Response, NextFunction} from "express";
 import {ioc} from "../IoCContainer";
 
 export const checkCredentialsLoginPass = async (req: Request, res: Response, next: NextFunction) => {
-  console.log("checkCredentialsLoginPass", req.body.login, req.body.email)
   const user = await ioc.usersAccountService.checkCredentials(req.body.login, req.body.password)
-  console.log("checkCredentials Pass!!", user)
-
   if (user === null) {
     res.status(401).send({
       "errorsMessages": [

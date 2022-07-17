@@ -114,14 +114,9 @@ authRouter.post('/login',
   checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
-    console.log("login-----", req.body.login, req.body.email, userReqHedObjId)
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
-    console.log("accessToken", accessToken)
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
-    console.log("refreshToken", refreshToken)
     res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-    // res.cookie("refreshToken", refreshToken, {httpOnly: true})
-    console.log("accessToken refreshToken --------")
     return res.status(200).send({
       "accessToken": accessToken
     })
@@ -139,7 +134,6 @@ authRouter.post('/refresh-token',
       const insertRefreshTokenToBlackList = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
 
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
-      // res.cookie("refreshToken", refreshToken, {httpOnly: true})
       res.status(200).send({accessToken: newAccessToken})
       return
 

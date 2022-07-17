@@ -12,10 +12,6 @@ export class UsersAccountService {
     this.usersAccountRepository = usersAccountRepository
   }
 
-  async getAllUsers() {
-    return  await this.usersAccountRepository.findAllUsers()
-  }
-
   async createUser(user: UserDBType, clientIp: string | null): Promise<UserAccountDBType | null> {
     const login = user.login
     const email = user.email
