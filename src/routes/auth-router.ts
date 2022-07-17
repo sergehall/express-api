@@ -119,8 +119,8 @@ authRouter.post('/login',
     console.log("accessToken", accessToken)
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
     console.log("refreshToken", refreshToken)
-    // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-    res.cookie("refreshToken", refreshToken, {httpOnly: true})
+    res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+    // res.cookie("refreshToken", refreshToken, {httpOnly: true})
     console.log("accessToken refreshToken --------")
     return res.status(200).send({
       "accessToken": accessToken
@@ -134,8 +134,8 @@ authRouter.post('/refresh-token',
       const payload: payloadType = jwt_decode(req.cookies.refreshToken);
       const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(payload.userId)})
       const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(payload.userId)})
-      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-      res.cookie("refreshToken", refreshToken, {httpOnly: true})
+      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", refreshToken, {httpOnly: true})
       res.status(200).send({accessToken: accessToken})
       return
 
