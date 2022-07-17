@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
-import {UserAccountDBType} from "../types/all_types";
+import {UserAccountDBType, UserDBType} from "../types/all_types";
 import {UsersAccountRepository} from "../repositories/usersAccount-db-repository";
 import uuid4 from "uuid4";
 import add from "date-fns/add";
@@ -16,9 +16,11 @@ export class UsersAccountService {
     return  await this.usersAccountRepository.findAllUsers()
   }
 
-  async createUser(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
-    const passwordSalt = await bcrypt.genSalt(10)
-    const passwordHash = await this._generateHash(password, passwordSalt)
+  async createUser(user: UserDBType, clientIp: string | null): Promise<UserAccountDBType | null> {
+    const login = user.login
+    const email = user.email
+    const passwordSalt = user.passwordSalt
+    const passwordHash = user.passwordHash
 
     const newUser: UserAccountDBType = {
       _id: new ObjectId(),

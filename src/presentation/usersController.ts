@@ -48,7 +48,9 @@ export class UsersController {
       console.log("createNewUser", req.body.login, req.body.email, req.body.password)
       const clientIp = requestIp.getClientIp(req);
       const newUsers = await ioc.usersService.createUser(req.body.login, req.body.email, req.body.password)
-      const userAccountForTest6 = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
+      if (newUsers) {
+        const userAccountForTest6 = await ioc.usersAccountService.createUser(newUsers, clientIp);
+      }
       if (newUsers) {
         const userReturn = {
           id: newUsers.id,
