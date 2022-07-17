@@ -41,7 +41,7 @@ export const jwtService = {
       console.log(token)
       const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(token)
       const userId: ObjectId | null = await jwtService.verifyRefreshJWT(token);
-      console.log("1------", "token", tokenInBlackList, userId)
+      console.log("1------", "token", typeof tokenInBlackList, userId)
       if (tokenInBlackList || userId === null) {
         return res.sendStatus(401)
       }
