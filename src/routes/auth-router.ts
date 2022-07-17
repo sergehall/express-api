@@ -128,7 +128,7 @@ authRouter.post('/login',
   })
 
 authRouter.post('/refresh-token',
-  jwtService.checkRefreshTokenInBlackList,
+  jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     try {
       const payload: payloadType = jwt_decode(req.cookies.refreshToken);
@@ -147,7 +147,7 @@ authRouter.post('/refresh-token',
   })
 
 authRouter.post('/logout',
-  jwtService.checkRefreshTokenInBlackList,
+  jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
     const insertToken = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)

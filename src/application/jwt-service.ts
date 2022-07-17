@@ -35,17 +35,20 @@ export const jwtService = {
     }
   },
 
-  async checkRefreshTokenInBlackList(req: Request, res: Response, next: NextFunction) {
+  async checkRefreshTokenInBlackListAndVerify(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.cookies.refreshToken
+      const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(token)
+      console.log("1------", "token")
+      if (tokenInBlackList) {
+        return res.sendStatus(401)
+      }
+      console.log("2------", "token")
       const userId: ObjectId | null = await jwtService.verifyRefreshJWT(token);
       if (!userId) {
         return res.sendStatus(401)
       }
-      const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(token)
-      if (tokenInBlackList) {
-        return res.sendStatus(401)
-      }
+      console.log("3------", "token")
       next()
       return
     } catch (e) {
