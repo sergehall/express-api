@@ -113,8 +113,8 @@ authRouter.post('/login',
   checkHowManyTimesUserLoginLast10secWithSameIpLog,
   checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
-    console.log("------", req.body.login, req.body.email)
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
+    console.log("login-----", req.body.login, req.body.email, userReqHedObjId)
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
     // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
