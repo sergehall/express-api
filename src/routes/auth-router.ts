@@ -121,6 +121,7 @@ authRouter.post('/login',
     console.log("refreshToken", refreshToken)
     // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
     res.cookie("refreshToken", refreshToken, {httpOnly: true})
+    console.log("accessToken refreshToken --------")
     return res.status(200).send({
       "accessToken": accessToken
     })

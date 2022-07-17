@@ -13,7 +13,6 @@ import {emailSender} from "./demons/emailSender";
 import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
 import {testingRouter} from "./routes/testing-router";
 import cookieParser from "cookie-parser"
-// import {usersRouterNew} from "./routes/users-routerNew";
 import {usersRouter} from "./routes/users-router";
 
 
