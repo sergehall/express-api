@@ -9,7 +9,7 @@ export const checkCredentialsLoginPass = async (req: Request, res: Response, nex
     res.status(401).send({
       "errorsMessages": [
         {
-          message: "Login or password is wrong",
+          message: "Login or password is wrong!",
           field: "Login or Password"
         }
       ]
