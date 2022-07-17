@@ -7,13 +7,13 @@ import {bloggersRouts} from "./routes/bloggers-router";
 import {postsRouts} from "./routes/posts-router";
 import {feedbacksRouter} from "./routes/feedbacks-router";
 import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
-import {usersRouterOld} from "./routes/users-routerOld";
 import {commentsRouter} from "./routes/comments-router";
 import {emailRouter} from "./routes/email-router";
 import {emailSender} from "./demons/emailSender";
 import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
 import {testingRouter} from "./routes/testing-router";
 import cookieParser from "cookie-parser"
+import {usersRouterNew} from "./routes/users-routerNew";
 import {usersRouter} from "./routes/users-router";
 
 
@@ -38,8 +38,8 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/posts', postsRouts)
 app.use('/bloggers', bloggersRouts)
-app.use('/usersOld', usersRouterOld)
 app.use('/users', usersRouter)
+app.use('/usersNew', usersRouterNew)
 app.use('/auth', authRouter)
 app.use('/feedbacks', feedbacksRouter)
 app.use('/comments', commentsRouter)

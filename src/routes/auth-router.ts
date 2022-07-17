@@ -26,6 +26,7 @@ import {
   authCheckUserAuthorizationForUserAccount
 } from "../middlewares/auth-Basic-User-authorization";
 import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPass";
+import {body} from "express-validator";
 
 
 export const authRouter = Router({})
@@ -113,6 +114,7 @@ authRouter.post('/login',
   checkHowManyTimesUserLoginLast10secWithSameIpLog,
   checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
+    console.log("------", req.body.login, req.body.email)
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})

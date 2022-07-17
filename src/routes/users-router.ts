@@ -1,33 +1,28 @@
-import {Request, Response, Router} from "express";
+import {Router} from "express";
 import {ioc} from "../IoCContainer";
 import {
   bodyLogin,
   bodyPassword,
-  inputValidatorMiddleware
+  checkoutMongoDbId,
+  inputValidatorMiddleware, userIdParamsValidation
 } from "../middlewares/input-validator-middleware";
 import {authMiddlewareBasicAuthorization} from "../middlewares/auth-Basic-User-authorization";
-import requestIp from "request-ip";
+
 
 export const usersRouter = Router({});
 
 usersRouter.get('/',
-  async (req: Request, res: Response) => {
-    const allUsers = await ioc.usersAccountService.getAllUsers()
-    return res.status(200).send(allUsers)
-  })
+  ioc.usersController.getUsers.bind(ioc.usersController))
 
-  .post('/',
+  .get('/:mongoId', checkoutMongoDbId,
+    ioc.usersController.getUserByMongoDbId.bind(ioc.usersController))
+
+  .post('/', authMiddlewareBasicAuthorization,
     bodyLogin, bodyPassword, inputValidatorMiddleware,
-    authMiddlewareBasicAuthorization,
-    async (req: Request, res: Response) => {
-      const clientIp = requestIp.getClientIp(req);
+    ioc.usersController.createNewUser.bind(ioc.usersController))
 
-      const user = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
-      console.log(user, "user")
-      if (!user) {
-        return res.sendStatus(400);
-      }
-      return res.status(201).send({"id": user.accountData.id, "login": user.accountData.login});
-    });
+  .delete('/:userId', authMiddlewareBasicAuthorization,
+    userIdParamsValidation, inputValidatorMiddleware,
+    ioc.usersController.deleteUserById.bind(ioc.usersController))
 
 
