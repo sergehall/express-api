@@ -38,13 +38,14 @@ export const jwtService = {
   async checkRefreshTokenInBlackListAndVerify(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.cookies.refreshToken
+      console.log(token)
       const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(token)
       const userId: ObjectId | null = await jwtService.verifyRefreshJWT(token);
-      console.log("1------", "token", token)
+      console.log("1------", "token", tokenInBlackList, userId)
       if (tokenInBlackList || userId === null) {
         return res.sendStatus(401)
       }
-      console.log("2------", "token", token)
+      console.log("2------", "token")
       next()
       return
     } catch (e) {
