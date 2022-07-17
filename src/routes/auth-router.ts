@@ -116,13 +116,14 @@ authRouter.post('/login',
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     console.log("login-----", req.body.login, req.body.email, userReqHedObjId)
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
+    console.log("accessToken", accessToken)
     const refreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(userReqHedObjId)})
+    console.log("refreshToken", refreshToken)
     // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
     res.cookie("refreshToken", refreshToken, {httpOnly: true})
-    res.status(200).send({
+    return res.status(200).send({
       "accessToken": accessToken
     })
-    return
   })
 
 authRouter.post('/refresh-token',
@@ -139,8 +140,7 @@ authRouter.post('/refresh-token',
 
     } catch (e) {
       console.log(e)
-      res.status(401).send({error: e})
-      return
+      return res.status(401).send({error: e})
     }
 
   })
