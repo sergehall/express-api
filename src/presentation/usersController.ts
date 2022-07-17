@@ -4,6 +4,7 @@ import {UsersService} from "../domain/users-service";
 import {ioc} from "../IoCContainer";
 import {MongoHasNotUpdated} from "../middlewares/input-validator-middleware";
 import {parseQuery} from "../middlewares/parse-query";
+import requestIp from "request-ip";
 
 
 export class UsersController {
@@ -44,7 +45,10 @@ export class UsersController {
   }
   async createNewUser(req: Request, res: Response) {
     try {
+      console.log("createNewUser", req.body.login, req.body.email, req.body.password)
+      const clientIp = requestIp.getClientIp(req);
       const newUsers = await ioc.usersService.createUser(req.body.login, req.body.email, req.body.password)
+      const userAccountForTest6 = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
       if (newUsers) {
         const userReturn = {
           id: newUsers.id,

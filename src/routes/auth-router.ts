@@ -26,7 +26,6 @@ import {
   authCheckUserAuthorizationForUserAccount
 } from "../middlewares/auth-Basic-User-authorization";
 import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPass";
-import {body} from "express-validator";
 
 
 export const authRouter = Router({})
