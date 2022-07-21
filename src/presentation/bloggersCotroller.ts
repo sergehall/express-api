@@ -1,7 +1,7 @@
 import {BloggersService} from "../domain/bloggers-service";
 import {Request, Response} from "express";
 import {PostsService} from "../domain/posts-service";
-import {parseQuery} from "../middlewares/parse-query";
+import {ioc} from "../IoCContainer";
 
 
 export class BloggersController {
@@ -13,7 +13,7 @@ export class BloggersController {
 
   async getAllBloggers(req: Request, res: Response) {
 
-    const parseQueryData = parseQuery(req)
+    const parseQueryData = await ioc.parseQuery.parse(req)
     const pageNumber = parseQueryData.pageNumber
     const pageSize = parseQueryData.pageSize
     const searchNameTerm = parseQueryData.searchNameTerm
@@ -27,7 +27,7 @@ export class BloggersController {
     const id: string = req.params.bloggerId;
     const foundBlogger = await this.bloggersService.getBloggerById(id);
     if (foundBlogger.errorsMessages.length === 0) {
-      const parseQueryData = parseQuery(req)
+      const parseQueryData = await ioc.parseQuery.parse(req)
       const pageNumber: number = parseQueryData.pageNumber
       const pageSize: number = parseQueryData.pageSize
 

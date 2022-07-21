@@ -2,8 +2,7 @@ import {ObjectId} from "mongodb";
 import {Request, Response} from "express";
 import {UsersService} from "../domain/users-service";
 import {ioc} from "../IoCContainer";
-import {MongoHasNotUpdated} from "../middlewares/input-validator-middleware";
-import {parseQuery} from "../middlewares/parse-query";
+import {MongoHasNotUpdated} from "../middlewares/errorsMessages";
 import requestIp from "request-ip";
 
 
@@ -12,7 +11,7 @@ export class UsersController {
   }
   async getUsers(req: Request, res: Response) {
     try {
-      const parseQueryData = parseQuery(req)
+      const parseQueryData = await ioc.parseQuery.parse(req)
       const pageNumber: number = parseQueryData.pageNumber
       const pageSize: number = parseQueryData.pageSize
       const userName: string | null = parseQueryData.userName
@@ -45,7 +44,6 @@ export class UsersController {
   }
   async createNewUser(req: Request, res: Response) {
     try {
-      console.log("createNewUser", req.body.login, req.body.email, req.body.password)
       const clientIp = requestIp.getClientIp(req);
       const newUsers = await ioc.usersService.createUser(req.body.login, req.body.email, req.body.password)
       if (newUsers) {

@@ -1,4 +1,5 @@
 import {bloggersCollection, commentsCollection, postsCollection,} from "./db";
+import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/errorsMessages";
 import {
   ArrayErrorsType,
   Pagination, PaginatorCommentViewModel,
@@ -6,11 +7,7 @@ import {
   ReturnTypeObjectComment,
   ReturnTypeObjectPosts, UserAccountDBType,
 } from "../types/all_types";
-import {
-  MongoHasNotUpdated,
-  notFoundBloggerId,
-  notFoundPostId
-} from "../middlewares/input-validator-middleware";
+
 
 
 export class PostsRepository {

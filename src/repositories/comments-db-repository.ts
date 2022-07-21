@@ -5,7 +5,7 @@ import {
 import {
   MongoHasNotUpdated, notDeletedComment,
   notFoundCommentId
-} from "../middlewares/input-validator-middleware";
+} from "../middlewares/errorsMessages";
 
 
 

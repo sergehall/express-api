@@ -9,20 +9,17 @@ import {feedbacksRouter} from "./routes/feedbacks-router";
 import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
 import {commentsRouter} from "./routes/comments-router";
 import {emailRouter} from "./routes/email-router";
-import {emailSender} from "./demons/emailSender";
-import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
 import {testingRouter} from "./routes/testing-router";
 import cookieParser from "cookie-parser"
 import {usersRouter} from "./routes/users-router";
+import {emailSender} from "./demons/emailSender";
+import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
 
 
 
 const app = express()
-const corsMiddleware = cors()
-app.use(corsMiddleware)
-
-const jsonBodeMiddleware = bodyParser
-app.use(jsonBodeMiddleware.json())
+app.use(cors())
+app.use(bodyParser.json())
 app.use(cookieParser())
 
 
@@ -38,13 +35,11 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/posts', postsRouts)
 app.use('/bloggers', bloggersRouts)
 app.use('/users', usersRouter)
-// app.use('/usersNew', usersRouterNew)
 app.use('/auth', authRouter)
 app.use('/feedbacks', feedbacksRouter)
 app.use('/comments', commentsRouter)
 app.use('/email', emailRouter)
 app.use('/testing/', testingRouter)
-
 
 app.use('/deleted-bloggers', allDeletedBloggersRouts)
 

@@ -2,8 +2,6 @@ import {Router, Request, Response} from "express";
 import {jwtService} from "../application/jwt-service";
 import {ioc} from "../IoCContainer";
 import requestIp from 'request-ip';
-import {checkoutIPFromBlackList} from "../middlewares/middleware-checkoutIPFromBlackList";
-import {checkoutContentType} from "../middlewares/checkout-contentType";
 import {
   bodyCode,
   bodyEmail,
@@ -11,29 +9,17 @@ import {
   bodyPassword, bodyPasswordUsersAccount,
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
-import {
-  checkHowManyTimesUserLoginLast10secWithSameIpLog,
-  checkHowManyTimesUserLoginLast10secWithSameIpReg,
-  checkHowManyTimesUserLoginLast10secWithSameIpRegConf,
-  checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes
-} from "../middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
-import {checkOutEmailOrLoginInDB} from "../middlewares/checkOutEmailInDB";
-import {parseQuery} from "../middlewares/parse-query";
 import {ObjectId} from "mongodb";
 import jwt_decode from "jwt-decode";
 import {payloadType} from "../types/all_types";
-import {
-  authCheckUserAuthorizationForUserAccount
-} from "../middlewares/auth-Basic-User-authorization";
-import {checkCredentialsLoginPass} from "../middlewares/checkCredentialsLoginPass";
 
 
 export const authRouter = Router({})
 
 authRouter.post('/registration-confirmation',
-  checkoutIPFromBlackList,
+  ioc.checkoutIPFromBlackList.check,
   bodyCode, inputValidatorMiddleware,
-  checkHowManyTimesUserLoginLast10secWithSameIpRegConf,
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegConf,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
@@ -58,11 +44,11 @@ authRouter.post('/registration-confirmation',
   });
 
 authRouter.post('/registration',
-  checkoutIPFromBlackList,
-  checkoutContentType,
+  ioc.checkoutIPFromBlackList.check,
+  ioc.checkoutContentType.appJson,
   bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
-  checkOutEmailOrLoginInDB,
-  checkHowManyTimesUserLoginLast10secWithSameIpReg,
+  ioc.checkOutEmailOrLoginInDB.checkOut,
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpReg,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
@@ -88,7 +74,7 @@ authRouter.post('/registration',
 
 authRouter.post('/registration-email-resending',
   bodyEmail, inputValidatorMiddleware,
-  checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
   async (req: Request, res: Response) => {
     const email: string = req.body.email
     const userResult = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(email)
@@ -110,8 +96,8 @@ authRouter.post('/registration-email-resending',
 
 authRouter.post('/login',
   bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
-  checkHowManyTimesUserLoginLast10secWithSameIpLog,
-  checkCredentialsLoginPass,
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpLog,
+  ioc.checkCredentialsLoginPass.checkCredentials,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
     const accessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(userReqHedObjId)})
@@ -132,7 +118,6 @@ authRouter.post('/refresh-token',
       const newAccessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(payload.userId)})
       const newRefreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(payload.userId)})
       const insertRefreshTokenToBlackList = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
-
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})
       return
@@ -153,7 +138,7 @@ authRouter.post('/logout',
   })
 
 authRouter.get("/me",
-  authCheckUserAuthorizationForUserAccount,
+  ioc.authCheckUserAuthorizationForUserAccount.authCheck,
   async (req: Request, res: Response) => {
     const user = req.user
     if (user) {
@@ -168,9 +153,9 @@ authRouter.get("/me",
   })
 
 authRouter.get('/resend-registration-email/',
-  checkHowManyTimesUserLoginLast10secWithSameIpRegEmailRes,
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
   async (req: Request, res: Response) => {
-    const parseQueryData = parseQuery(req)
+    const parseQueryData = await ioc.parseQuery.parse(req)
     const code = parseQueryData.code
     if (code === null) {
       res.status(400).send("Query param is empty")
@@ -187,7 +172,7 @@ authRouter.get('/resend-registration-email/',
 
 authRouter.get('/confirm-registration',
   async (req: Request, res: Response) => {
-    const parseQueryData = parseQuery(req)
+    const parseQueryData = await ioc.parseQuery.parse(req)
     const code = parseQueryData.code
     if (code === null) {
       res.sendStatus(400)

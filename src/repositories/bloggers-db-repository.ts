@@ -6,7 +6,7 @@ import {
   ReturnTypeObjectBloggers,
   Pagination
 } from "../types/all_types";
-import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/input-validator-middleware";
+import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/errorsMessages";
 
 
 export class BloggersRepository {

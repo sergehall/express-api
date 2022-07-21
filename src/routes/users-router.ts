@@ -3,10 +3,9 @@ import {ioc} from "../IoCContainer";
 import {
   bodyLogin,
   bodyPassword,
-  checkoutMongoDbId,
-  inputValidatorMiddleware, userIdParamsValidation
+  inputValidatorMiddleware,
+  userIdParamsValidation
 } from "../middlewares/input-validator-middleware";
-import {authMiddlewareBasicAuthorization} from "../middlewares/auth-Basic-User-authorization";
 
 
 export const usersRouter = Router({});
@@ -14,14 +13,14 @@ export const usersRouter = Router({});
 usersRouter.get('/',
   ioc.usersController.getUsers.bind(ioc.usersController))
 
-  .get('/:mongoId', checkoutMongoDbId,
+  .get('/:mongoId', ioc.checkoutMongoDbId.checkOut,
     ioc.usersController.getUserByMongoDbId.bind(ioc.usersController))
 
-  .post('/', authMiddlewareBasicAuthorization,
+  .post('/', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     bodyLogin, bodyPassword, inputValidatorMiddleware,
     ioc.usersController.createNewUser.bind(ioc.usersController))
 
-  .delete('/:userId', authMiddlewareBasicAuthorization,
+  .delete('/:userId', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     userIdParamsValidation, inputValidatorMiddleware,
     ioc.usersController.deleteUserById.bind(ioc.usersController))
 

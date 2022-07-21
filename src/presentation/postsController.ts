@@ -1,6 +1,6 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
-import {parseQuery} from "../middlewares/parse-query";
+import {ioc} from "../IoCContainer";
 
 export class PostsController {
   constructor(private postsService: PostsService) {
@@ -8,7 +8,7 @@ export class PostsController {
 
   async getAllPosts(req: Request, res: Response) {
 
-    const parseQueryData = parseQuery(req)
+    const parseQueryData = await ioc.parseQuery.parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
     const title: string | null = parseQueryData.title
@@ -97,7 +97,7 @@ export class PostsController {
   async getCommentsByPostId(req: Request, res: Response) {
     try {
       const postId = req.params.postId;
-      const parseQueryData = parseQuery(req)
+      const parseQueryData = await ioc.parseQuery.parse(req)
       const pageNumber = parseQueryData.pageNumber
       const pageSize = parseQueryData.pageSize
 

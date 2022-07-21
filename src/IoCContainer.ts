@@ -26,42 +26,63 @@ import {
 import {
   BlackListRefreshTokenJWTRepository
 } from "./repositories/blackListRefreshTokenJWT-db-repository";
+import {AuthCheckUserAuthorizationForUserAccount} from "./middlewares/check-Auth-User";
+import {AuthMiddlewareBasicAuthorization} from "./middlewares/auth-Basic-User";
+import {CheckCredentialsLoginPass} from "./middlewares/checkCredentialsLoginPass";
+import {
+  CheckHowManyTimesUserLoginLast10sec
+} from "./middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
+import {CheckoutContentType} from "./middlewares/checkout-contentType";
+import {CheckOutEmailOrLoginInDB} from "./middlewares/checkOutEmailInDB";
+import {ComparingLoginAndOwnersComment} from "./middlewares/comparison-login-and-owner-comment";
+import {CheckoutIPFromBlackList} from "./middlewares/middleware-checkoutIPFromBlackList";
+import {CheckoutMongoDbId} from "./middlewares/checkoutMongoDbId";
+import {ParseQuery} from "./middlewares/parse-query";
 
 
+// posts
 const postsRepository = new PostsRepository()
 const postsService = new PostsService(postsRepository)
 const postsController = new PostsController(postsService)
-
+// bloggers
 const bloggersRepository = new BloggersRepository()
 const bloggersService = new BloggersService(bloggersRepository)
 const bloggersController = new BloggersController(bloggersService, postsService)
-
+// users
 const usersRepository = new UsersRepository()
 const usersService = new UsersService(usersRepository)
 const usersController = new UsersController(usersService)
-
+// feedbacks
 const feedbacksRepository = new FeedbacksRepository()
 const feedbacksService = new FeedbacksService(feedbacksRepository)
 const feedbacksController = new FeedbacksController(feedbacksService)
-
+// allDeletedBloggers
 const allDeletedBloggersPostsRepository = new AllDeletedBloggersPostsRepository()
 const allDelBloggersService = new AllDelBloggersService(allDeletedBloggersPostsRepository)
 const allDelBloggersController = new AllDelBloggersController(allDelBloggersService)
-
+// comments
 const commentsRepository = new CommentsRepository()
 const commentsService = new CommentsService(commentsRepository)
 const commentsController = new CommentsController(commentsService)
-
+// usersAccount
 const usersAccountRepository = new UsersAccountRepository()
 const usersAccountService = new UsersAccountService(usersAccountRepository)
-
+// middleware
+const authCheckUserAuthorizationForUserAccount = new AuthCheckUserAuthorizationForUserAccount()
+const authMiddlewareBasicAuthorization = new AuthMiddlewareBasicAuthorization()
+const checkCredentialsLoginPass = new CheckCredentialsLoginPass()
+const checkHowManyTimesUserLoginLast10sec = new CheckHowManyTimesUserLoginLast10sec()
+const checkoutContentType = new CheckoutContentType()
+const checkOutEmailOrLoginInDB = new CheckOutEmailOrLoginInDB()
+const comparingLoginAndOwnersComment = new ComparingLoginAndOwnersComment()
+const checkoutIPFromBlackList = new CheckoutIPFromBlackList()
+const checkoutMongoDbId = new CheckoutMongoDbId()
+const parseQuery = new ParseQuery()
+// Repositories
 const blackListIPRepository = new BlackListIPRepository()
 const emailsToSentRepository = new EmailsToSentRepository()
-
 const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
-
 const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepository()
-
 
 export const ioc = {
   bloggersService: bloggersService,
@@ -81,4 +102,14 @@ export const ioc = {
   emailsToSentRepository: emailsToSentRepository,
   usersIPLast10secRepositories: usersIPLast10secRepositories,
   blackListRefreshTokenJWTRepository: blackListRefreshTokenJWTRepository,
+  authCheckUserAuthorizationForUserAccount: authCheckUserAuthorizationForUserAccount,
+  authMiddlewareBasicAuthorization: authMiddlewareBasicAuthorization,
+  checkCredentialsLoginPass: checkCredentialsLoginPass,
+  checkHowManyTimesUserLoginLast10sec: checkHowManyTimesUserLoginLast10sec,
+  checkoutContentType: checkoutContentType,
+  checkOutEmailOrLoginInDB: checkOutEmailOrLoginInDB,
+  comparingLoginAndOwnersComment: comparingLoginAndOwnersComment,
+  checkoutIPFromBlackList: checkoutIPFromBlackList,
+  checkoutMongoDbId: checkoutMongoDbId,
+  parseQuery: parseQuery
 }

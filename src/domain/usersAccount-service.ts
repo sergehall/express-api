@@ -133,7 +133,6 @@ export class UsersAccountService {
     if (user === null) {
       return null
     }
-    // const passwordHash = await this._generateHash(password, user.accountData.passwordSalt)
     const result = await bcrypt.compare(password, user.accountData.passwordHash)
     if (result) {
       return user

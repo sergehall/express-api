@@ -9,7 +9,6 @@ import {
   titleValidation,
   validatorUrl,
 } from "../middlewares/input-validator-middleware";
-import {authMiddlewareBasicAuthorization} from "../middlewares/auth-Basic-User-authorization";
 
 
 
@@ -19,28 +18,28 @@ export const bloggersRouts = Router({})
 bloggersRouts.get('/',
   ioc.bloggersController.getAllBloggers.bind(ioc.bloggersController))
 
-  .post('/', authMiddlewareBasicAuthorization,
+  .post('/', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     nameValidation, validatorUrl, inputValidatorMiddleware,
     ioc.bloggersController.createNewBlogger.bind(ioc.bloggersController))
 
   .get('/:bloggerId', bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.getBloggerById.bind(ioc.bloggersController))
 
-  .put('/:bloggerId', authMiddlewareBasicAuthorization,
+  .put('/:bloggerId', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     bloggerIdParamsValidation, nameValidation, validatorUrl, inputValidatorMiddleware,
     ioc.bloggersController.updateBloggerById.bind(ioc.bloggersController))
 
-  .delete('/', authMiddlewareBasicAuthorization,
+  .delete('/', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     ioc.bloggersController.deleteAllBloggers.bind(ioc.bloggersController))
 
-  .delete('/:bloggerId', authMiddlewareBasicAuthorization,
+  .delete('/:bloggerId', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.deleteBloggerById.bind(ioc.bloggersController))
 
   .get('/:bloggerId/posts', bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.getAllPostByBloggerId.bind(ioc.bloggersController))
 
-  .post('/:bloggerId/posts', authMiddlewareBasicAuthorization,
+  .post('/:bloggerId/posts', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     bloggerIdParamsValidation, titleValidation, shortDescriptionValidation,
     contentValidation, inputValidatorMiddleware,
     ioc.bloggersController.createPostByBloggerId.bind(ioc.bloggersController))

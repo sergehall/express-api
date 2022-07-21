@@ -9,10 +9,6 @@ import {
   contentCommentValidation
 } from "../middlewares/input-validator-middleware";
 import {ioc} from "../IoCContainer";
-import {
-  authCheckUserAuthorizationForUserAccount,
-  authMiddlewareBasicAuthorization
-} from "../middlewares/auth-Basic-User-authorization";
 
 
 export const postsRouts = Router({})
@@ -20,7 +16,7 @@ export const postsRouts = Router({})
 postsRouts.get('/',
   ioc.postsController.getAllPosts.bind(ioc.postsController))
 
-  .post('/', authMiddlewareBasicAuthorization,
+  .post('/', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     titleValidation, shortDescriptionValidation, contentValidation,
     bloggerIdBodyValidator, inputValidatorMiddleware,
     ioc.postsController.createNewPost.bind(ioc.postsController))
@@ -28,21 +24,21 @@ postsRouts.get('/',
   .get('/:postId', postIdParamsValidation, inputValidatorMiddleware,
     ioc.postsController.getPostById.bind(ioc.postsController))
 
-  .put('/:postId', authMiddlewareBasicAuthorization,
+  .put('/:postId', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     postIdParamsValidation, titleValidation, shortDescriptionValidation,
     contentValidation, bloggerIdBodyValidator, inputValidatorMiddleware,
     ioc.postsController.updatePostById.bind(ioc.postsController))
 
-  .delete('/:postId', authMiddlewareBasicAuthorization,
+  .delete('/:postId', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     postIdParamsValidation, inputValidatorMiddleware,
     ioc.postsController.deletePostById.bind(ioc.postsController))
 
-  .delete('/', authMiddlewareBasicAuthorization,
+  .delete('/', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     ioc.postsController.deleteAllPosts.bind(ioc.postsController))
 
   .get('/:postId/comments', postIdParamsValidation, inputValidatorMiddleware,
     ioc.postsController.getCommentsByPostId.bind(ioc.postsController))
 
-  .post('/:postId/comments', authCheckUserAuthorizationForUserAccount,
+  .post('/:postId/comments', ioc.authCheckUserAuthorizationForUserAccount.authCheck,
     contentCommentValidation, inputValidatorMiddleware,
     ioc.postsController.createNewCommentByPostId.bind(ioc.postsController))
