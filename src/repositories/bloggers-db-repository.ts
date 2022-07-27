@@ -1,4 +1,4 @@
-import {bloggersCollection} from "./db";
+
 import {
   ArrayErrorsType,
   BloggerType,
@@ -7,6 +7,7 @@ import {
   Pagination
 } from "../types/all_types";
 import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/errorsMessages";
+import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 
 
 export class BloggersRepository {
@@ -16,13 +17,13 @@ export class BloggersRepository {
       filter = {name: {$regex: searchNameTerm}}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await bloggersCollection.find(filter, {
+    const result = await MyModelBloggers.find(filter, {
       projection: {
         _id: false
       }
-    }).limit(pageSize).skip(startIndex).toArray()
+    }).limit(pageSize).skip(startIndex)
 
-    const totalCount = await bloggersCollection.countDocuments(filter)
+    const totalCount = await MyModelBloggers.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)
 
     return {
@@ -44,9 +45,9 @@ export class BloggersRepository {
       youtubeUrl: youtubeUrl
     }
 
-    const result = await bloggersCollection.insertOne(newBlogger)
+    const result = await MyModelBloggers.create(newBlogger)
 
-    if (!result.insertedId) {
+    if (!result._id) {
       errorsArray.push(MongoHasNotUpdated)
       return {
         data: newBlogger,
@@ -68,7 +69,7 @@ export class BloggersRepository {
 
   async getBloggerById(id: string): Promise<ReturnTypeObjectBloggers> {
     const errorsArray: ArrayErrorsType = [];
-    const blogger: BloggerType | null = await bloggersCollection.findOne({id: id}, {
+    const blogger: BloggerType | null = await MyModelBloggers.findOne({id: id}, {
       projection: {
         _id: false
       }
@@ -100,7 +101,7 @@ export class BloggersRepository {
       youtubeUrl: youtubeUrl
     }
 
-    const result = await bloggersCollection.updateOne({id: id}, {
+    const result = await MyModelBloggers.updateOne({id: id}, {
       $set: {
         name: name,
         youtubeUrl: youtubeUrl
@@ -126,7 +127,7 @@ export class BloggersRepository {
   }
 
   async deletedBloggerById(id: string): Promise<boolean> {
-    const result = await bloggersCollection.deleteOne({id: id})
+    const result = await MyModelBloggers.deleteOne({id: id})
     return result.deletedCount !== 0
     //   if (!id) {
     //     return false
@@ -156,7 +157,7 @@ export class BloggersRepository {
   }
 
   async deletedAllBloggers(): Promise<boolean> {
-    const result = await bloggersCollection.deleteMany({})
+    const result = await MyModelBloggers.deleteMany({})
     return result.acknowledged
   }
 }

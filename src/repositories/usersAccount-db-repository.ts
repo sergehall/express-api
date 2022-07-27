@@ -1,58 +1,58 @@
-import {usersAccountCollection} from "./db";
 import {UserAccountDBType} from "../types/all_types";
 import {ObjectId} from "mongodb";
+import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 
 
 export class UsersAccountRepository {
+
   async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType | null> {
-    const foundUser = await usersAccountCollection.findOne({"accountData.email": user.accountData.email})
+    const foundUser = await MyModelUserAccount.findOne({"accountData.email": user.accountData.email})
     if (foundUser) {
       return null
     }
-    await usersAccountCollection.insertOne(user)
+    const result = await MyModelUserAccount.create(user)
     return user
   }
 
   async findAllUsers() {
-    const result = await usersAccountCollection.find({}).toArray();
-    return result
+    return await MyModelUserAccount.find({}).lean();
   }
 
-  async findByLoginOrEmail(loginOrEmail: string) {
-    return await usersAccountCollection.findOne({$or: [{"accountData.email": loginOrEmail}, {"accountData.login": loginOrEmail}]})
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
+    return await MyModelUserAccount.findOne({$or: [{"accountData.email": loginOrEmail}, {"accountData.login": loginOrEmail}]});
   }
 
-  async findByLoginAndEmail(email: string, login: string ) {
-    return await usersAccountCollection.findOne({$or: [{"accountData.email": email}, {"accountData.login": login}]})
+  async findByLoginAndEmail(email: string, login: string): Promise<UserAccountDBType | null> {
+    return await MyModelUserAccount.findOne({$or: [{"accountData.email": email}, {"accountData.login": login}]})
   }
 
-  async findByConfirmationCode(code: string,) {
-    return await usersAccountCollection.findOne({$and: [{"emailConfirmation.confirmationCode": code}, {"emailConfirmation.isConfirmed": false}]})
+  async findByConfirmationCode(code: string,): Promise<UserAccountDBType | null> {
+    return await MyModelUserAccount.findOne({$and: [{"emailConfirmation.confirmationCode": code}, {"emailConfirmation.isConfirmed": false}]})
   }
 
-  async getUserAccountByEmailCode(code: string, email: string) {
-    return await usersAccountCollection.findOne({$and: [{"emailConfirmation.confirmationCode": code}, {"accountData.email": email}]})
+  async getUserAccountByEmailCode(code: string, email: string): Promise<UserAccountDBType | null> {
+    return await MyModelUserAccount.findOne({$and: [{"emailConfirmation.confirmationCode": code}, {"accountData.email": email}]})
   }
 
-  async getUserAccountByCode(code: string) {
-    return await usersAccountCollection.findOne({"emailConfirmation.confirmationCode": code})
+  async getUserAccountByCode(code: string): Promise<UserAccountDBType | null>{
+    return await MyModelUserAccount.findOne({"emailConfirmation.confirmationCode": code})
   }
 
   async findByIpAndSentEmail(ip: string | null) {
-    return await usersAccountCollection.countDocuments({$and: [{"registrationData.ip": ip}, {"emailConfirmation.sentEmail.sendTime": {$gt: new Date(Date.now() - 1000 * 10)}}]})
+    return await MyModelUserAccount.countDocuments({$and: [{"registrationData.ip": ip}, {"emailConfirmation.sentEmail.sendTime": {$gt: new Date(Date.now() - 1000 * 10)}}]})
   }
 
   async updateUserAccount(user: UserAccountDBType) {
-    return await usersAccountCollection.updateOne({_id: new ObjectId(user._id)}, {$set: user})
+    return await MyModelUserAccount.updateOne({_id: new ObjectId(user._id)}, {$set: user})
   }
 
   async updateUserAccountConfirmationCode(user: UserAccountDBType) {
-    return await usersAccountCollection.findOneAndUpdate({"accountData.email": user.accountData.email},{$set: user})
+    return await MyModelUserAccount.findOneAndUpdate({"accountData.email": user.accountData.email}, {$set: user})
   }
 
   async deleteSendTimeOlderMinute(user: UserAccountDBType): Promise<number> {
     // redo it so that it does not delete the entire user
-    const result = await usersAccountCollection.deleteMany({$and: [{_id: new ObjectId(user._id)}, {"emailConfirmation.sentEmail.sendTime": {$lt: new Date(Date.now() - 1000 * 60)}}]})
+    const result = await MyModelUserAccount.deleteMany({$and: [{_id: new ObjectId(user._id)}, {"emailConfirmation.sentEmail.sendTime": {$lt: new Date(Date.now() - 1000 * 60)}}]})
     console.log(result.deletedCount, 'result.deletedCount')
     return result.deletedCount;
   }
@@ -62,15 +62,16 @@ export class UsersAccountRepository {
     if (id) {
       filter = {_id: id}
     }
-    const result = await usersAccountCollection.deleteOne(filter)
+    const result = await MyModelUserAccount.deleteOne(filter)
     return result.acknowledged && result.deletedCount === 1;
   }
 
   async findByIsConfirmedAndCreatedAt(): Promise<number> {
-    const result = await usersAccountCollection.deleteMany({$and: [{"emailConfirmation.isConfirmed": false}, {"registrationData.createdAt": {$lt: new Date(Date.now() - 1000 * 60)}}]}) // We delete users who have not confirmed their email within 1 hour = - 1000 * 60 * 60
+    const result = await MyModelUserAccount.deleteMany({$and: [{"emailConfirmation.isConfirmed": false}, {"registrationData.createdAt": {$lt: new Date(Date.now() - 1000 * 60)}}]}) // We delete users who have not confirmed their email within 1 hour = - 1000 * 60 * 60
     return result.deletedCount
   }
+
   async findUserByObjectId(userObjectId: ObjectId): Promise<UserAccountDBType | null> {
-    return await usersAccountCollection.findOne({_id: userObjectId})
+    return await MyModelUserAccount.findOne({_id: userObjectId})
   }
 }

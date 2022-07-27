@@ -1,12 +1,12 @@
-import {blackListIPCollection} from "./db";
 import {BlackListIPDBType} from "../types/all_types";
+import {MyModelBlackListIP} from "../mongoose/BlackListIPSchemaModel";
 
 
 export class BlackListIPRepository {
   // accepts 5 registrations from the same IP and then rejects.
   async checkoutIPinBlackList(ip: string): Promise<BlackListIPDBType | null> {
     const maxAttempts = 50;
-    const foundUser = await blackListIPCollection.findOne({ip: ip})
+    const foundUser = await MyModelBlackListIP.findOne({ip: ip})
     if (!foundUser) {
       const createdAt = new Date
       const newIp = {
@@ -15,7 +15,7 @@ export class BlackListIPRepository {
           createdAt: createdAt
         }]
       }
-      await blackListIPCollection.insertOne(newIp)
+      await MyModelBlackListIP.create(newIp)
       return newIp;
     }
     const updatedUserCountTimes = {
@@ -25,7 +25,7 @@ export class BlackListIPRepository {
     }
 
     if (foundUser.countTimes.length < maxAttempts) {
-      await blackListIPCollection.updateOne({ip: ip}, {$set: updatedUserCountTimes})
+      await MyModelBlackListIP.updateOne({ip: ip}, {$set: updatedUserCountTimes})
       return updatedUserCountTimes
     } else {
       return null

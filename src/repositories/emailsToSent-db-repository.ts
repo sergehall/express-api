@@ -1,5 +1,5 @@
-import {emailsToSentUsersAccountCollection} from "./db";
 import {UserEmailConfirmationCode} from "../types/all_types";
+import {MyModelEmailsToSent} from "../mongoose/EmailsToSentSchemaModel";
 
 
 export class EmailsToSentRepository {
@@ -8,12 +8,12 @@ export class EmailsToSentRepository {
     const confirmationCode = userData.confirmationCode
     const createdAt = userData.createdAt
 
-    const findOneAndReplaceData = await emailsToSentUsersAccountCollection.findOneAndReplace({"email": email}, {"email": email, "confirmationCode": confirmationCode, "createdAt": createdAt},  {upsert: true})
-    return findOneAndReplaceData.ok === 1
+    const findOneAndReplaceData = await MyModelEmailsToSent.findOneAndReplace({"email": email}, {"email": email, "confirmationCode": confirmationCode, "createdAt": createdAt},  {upsert: true})
+    return  findOneAndReplaceData !== null;
   }
 
   async findEmailByOldestDate(): Promise<UserEmailConfirmationCode | null> {
-    const foundData = await emailsToSentUsersAccountCollection.find({}).sort({ "createdAt" : 1 }).limit(1).toArray()
+    const foundData = await MyModelEmailsToSent.find().sort({  "createdAt": 1 }).limit(1)
     if(foundData.length === 0) {
       return null
     }
@@ -26,7 +26,7 @@ export class EmailsToSentRepository {
     if (data.email) {
       filter = {email: data.email}
     }
-    const result = await emailsToSentUsersAccountCollection.deleteOne(filter)
+    const result = await MyModelEmailsToSent.deleteOne(filter)
     return result.acknowledged && result.deletedCount === 1;
   }
 

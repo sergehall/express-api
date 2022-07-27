@@ -14,7 +14,7 @@ export class UsersAccountService {
 
   async createUser(user: UserDBType, clientIp: string | null): Promise<UserAccountDBType | null> {
     const login = user.login
-    const email = user.email
+    const email = user.email === undefined ? null : user.email
     const passwordSalt = user.passwordSalt
     const passwordHash = user.passwordHash
 
@@ -23,7 +23,7 @@ export class UsersAccountService {
       accountData: {
         id: uuid4(),
         login: login,
-        email,
+        email: email,
         passwordSalt,
         passwordHash,
         createdAt: new Date()
@@ -43,8 +43,7 @@ export class UsersAccountService {
         createdAt: new Date()
       }]
     }
-    const result = await this.usersAccountRepository.createUserAccount(newUser)
-    return result
+    return await this.usersAccountRepository.createUserAccount(newUser)
   }
 
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
@@ -56,7 +55,7 @@ export class UsersAccountService {
       accountData: {
         id: uuid4(),
         login: login,
-        email,
+        email: email,
         passwordSalt,
         passwordHash,
         createdAt: new Date()
@@ -76,12 +75,18 @@ export class UsersAccountService {
         createdAt: new Date()
       }]
     }
+
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
+
     try {
       if (createResult !== null) {
+        const copy = {...createResult}
+        if (!copy.accountData.email) {
+          return null
+        }
         const newDataUserEmailConfirmationCode = {
-          email: newUser.accountData.email,
-          confirmationCode: newUser.emailConfirmation.confirmationCode,
+          email: copy.accountData.email,
+          confirmationCode: copy.emailConfirmation.confirmationCode,
           createdAt: new Date()
         }
         await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
@@ -105,7 +110,10 @@ export class UsersAccountService {
       if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date()) {
           user.emailConfirmation.isConfirmed = true
-          await this.usersAccountRepository.updateUserAccount(user)
+          const result = await this.usersAccountRepository.updateUserAccount(user)
+          if (result.matchedCount !== 1) {
+            return null
+          }
           return user
         }
       }
@@ -163,7 +171,7 @@ export class UsersAccountService {
   async updateAndSentConfirmationCodeByEmail(email: string) {
 
     const user = await this.usersAccountRepository.findByLoginOrEmail(email)
-    if (user === null) {
+    if (!user || !user.accountData.email) {
       return null
     }
     if (user.emailConfirmation.sentEmail.length > 10) {

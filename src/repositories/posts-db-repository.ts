@@ -1,4 +1,3 @@
-import {bloggersCollection, commentsCollection, postsCollection,} from "./db";
 import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/errorsMessages";
 import {
   ArrayErrorsType,
@@ -7,6 +6,9 @@ import {
   ReturnTypeObjectComment,
   ReturnTypeObjectPosts, UserAccountDBType,
 } from "../types/all_types";
+import {MyModelPosts} from "../mongoose/PostsSchemaModel";
+import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
+import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 
 
 
@@ -18,13 +20,13 @@ export class PostsRepository {
       filter = {title: {$regex: title}}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await postsCollection.find(filter, {
+    const result = await MyModelPosts.find(filter, {
       projection: {
         _id: false
       }
-    }).limit(pageSize).skip(startIndex).toArray()
+    }).limit(pageSize).skip(startIndex).lean()
 
-    const totalCount = await postsCollection.countDocuments(filter)
+    const totalCount = await MyModelPosts.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)
 
     return {
@@ -42,13 +44,13 @@ export class PostsRepository {
       filter = {bloggerId: bloggerId}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await postsCollection.find(filter, {
+    const result = await MyModelPosts.find(filter, {
       projection: {
         _id: false
       }
-    }).limit(pageSize).skip(startIndex).toArray()
+    }).limit(pageSize).skip(startIndex).lean()
 
-    const totalCount = await postsCollection.countDocuments(filter)
+    const totalCount = await MyModelPosts.countDocuments(filter)
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 
@@ -65,7 +67,7 @@ export class PostsRepository {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = Math.round((+new Date() + +new Date()) / 2).toString();
 
-    const foundBloggerId = await bloggersCollection.findOne({id: bloggerId})
+    const foundBloggerId = await MyModelBloggers.findOne({id: bloggerId})
     if (!foundBloggerId) {
       errorsArray.push(notFoundBloggerId)
     }
@@ -80,9 +82,9 @@ export class PostsRepository {
         bloggerId: bloggerId,
         bloggerName: nameBloggerId
       }
-      const result = await postsCollection.insertOne(newPost)
+      const result = await MyModelPosts.create(newPost)
 
-      if (!result.acknowledged) {
+      if (!result) {
         errorsArray.push(MongoHasNotUpdated)
       }
       return {
@@ -119,7 +121,7 @@ export class PostsRepository {
       addedAt: addedAt
     }
 
-    const foundPost = await postsCollection.findOne(filter)
+    const foundPost = await MyModelPosts.findOne(filter)
     if (!foundPost) {
       errorsArray.push(notFoundPostId)
       return {
@@ -130,17 +132,17 @@ export class PostsRepository {
     }
 
     const filterComments = {postId: postId}
-    const foundComments = await commentsCollection.findOne(filterComments)
+    const foundComments = await MyModelComments.findOne(filterComments)
     if (!foundComments) {
-      const insertNewComment = await commentsCollection.insertOne({
+      const insertNewComment = await MyModelComments.create({
         postId: postId,
         allComments: [newComment]
       })
-      if (!insertNewComment.insertedId) {
+      if (!insertNewComment) {
         errorsArray.push(MongoHasNotUpdated)
       }
     } else {
-      const result = await commentsCollection.updateOne(
+      const result = await MyModelComments.updateOne(
         {postId: postId},
         {
           $push: {allComments: newComment}
@@ -166,7 +168,7 @@ export class PostsRepository {
   }
 
   async getPostById(id: string): Promise<PostsType | null> {
-    const post: PostsType | null = await postsCollection.findOne({id: id}, {
+    const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
       projection: {
         _id: false
       }
@@ -182,7 +184,7 @@ export class PostsRepository {
     let startIndex = (pageNumber - 1) * pageSize
     const filter = {postId: id}
 
-    let foundPost = await postsCollection.findOne({id: id})
+    let foundPost = await MyModelPosts.findOne({id: id})
     if (foundPost === null) {
       return {
         pagesCount: 0,
@@ -193,7 +195,7 @@ export class PostsRepository {
       };
     }
 
-    let totalCount = await commentsCollection.findOne(filter)
+    let totalCount = await MyModelComments.findOne(filter)
       .then(comments => comments?.allComments.length)
 
     if (!totalCount) {
@@ -202,7 +204,7 @@ export class PostsRepository {
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 
-    let comments = await commentsCollection.findOne(filter, {
+    let comments = await MyModelComments.findOne(filter, {
       projection: {
         _id: false
       }
@@ -224,8 +226,8 @@ export class PostsRepository {
   }
 
   async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
-    const searchPost = await postsCollection.findOne({id: id});
-    const searchBlogger = await bloggersCollection.findOne({id: bloggerId})
+    const searchPost = await MyModelPosts.findOne({id: id});
+    const searchBlogger = await MyModelBloggers.findOne({id: bloggerId})
     const errorsArray: ArrayErrorsType = [];
 
     if (!searchPost) {
@@ -235,7 +237,7 @@ export class PostsRepository {
       errorsArray.push(notFoundBloggerId)
     }
     if (searchPost && searchBlogger) {
-      const result = await postsCollection.updateOne({id: id}, {
+      const result = await MyModelPosts.updateOne({id: id}, {
         $set: {
           title: title,
           shortDescription: shortDescription,
@@ -270,14 +272,14 @@ export class PostsRepository {
   }
 
   async deletePostById(id: string): Promise<Boolean> {
-    const result = await postsCollection.deleteOne({id: id})
+    const result = await MyModelPosts.deleteOne({id: id})
     // deleted all comments
-    await commentsCollection.deleteOne({postId: id})
+    await MyModelComments.deleteOne({postId: id})
     return result.deletedCount === 1
   }
 
   async deletedAllPosts(): Promise<Boolean> {
-    const result = await postsCollection.deleteMany({})
+    const result = await MyModelPosts.deleteMany({})
     return result.acknowledged
   }
 }

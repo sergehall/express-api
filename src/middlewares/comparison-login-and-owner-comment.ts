@@ -1,6 +1,6 @@
 import {UserAccountDBType} from "../types/all_types";
 import {Request, Response, NextFunction} from "express";
-import {commentsCollection} from "../repositories/db";
+import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 
 
 export class ComparingLoginAndOwnersComment {
@@ -12,7 +12,7 @@ export class ComparingLoginAndOwnersComment {
       const commentId: string = req.params.commentId;
       const filterToUpdate = {"allComments.id": commentId}
 
-      const foundPostWithComments = await commentsCollection.findOne(filterToUpdate)
+      const foundPostWithComments = await MyModelComments.findOne(filterToUpdate)
       if (foundPostWithComments) {
         const postWithComments = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
         if (postWithComments.userId === userId && postWithComments.userLogin === userLogin) {

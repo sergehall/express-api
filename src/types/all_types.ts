@@ -64,16 +64,11 @@ export type UserDBType = {
 }
 
 export type FeedbackDBType = {
-  _id: object,
+  _id: ObjectId,
   allFeedbacks: Array<{
-    commentId: object,
+    commentId: ObjectId,
     comment: string
   }>
-}
-
-export type CommentsDBType = {
-  postId: string
-  allComments: Array<CommentViewModel>
 }
 
 export type PaginatorCommentViewModel = {
@@ -98,7 +93,7 @@ export type UserAccountDBType = {
   accountData: {
     id: string
     login: string
-    email: string
+    email: string | null
     passwordHash: string
     passwordSalt: string
     createdAt: Date

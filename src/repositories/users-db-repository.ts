@@ -1,12 +1,13 @@
-import {usersCollection} from "./db";
 import {ObjectId} from "mongodb";
 import {Pagination, UserDBType} from "../types/all_types";
+import {MyModelUser} from "../mongoose/UsersSchemaModel";
 
 
 export class UsersRepository {
+
   async insertUser(user: UserDBType): Promise<UserDBType | null> {
-    const result = await usersCollection.insertOne(user)
-    if (result.acknowledged && result) {
+    const result = await MyModelUser.create(user)
+    if (result._id) {
       return user
     }
     return null
@@ -19,7 +20,7 @@ export class UsersRepository {
     }
 
     const startIndex = (pageNumber - 1) * pageSize
-    const user = await usersCollection.find(filter, {
+    const user = await MyModelUser.find(filter, {
       projection: {
         _id: false,
         email: false,
@@ -27,9 +28,9 @@ export class UsersRepository {
         passwordHash: false,
         createdAt: false
       }
-    }).limit(pageSize).skip(startIndex).toArray()
+    }).limit(pageSize).skip(startIndex).lean()
 
-    const totalCount = await usersCollection.countDocuments(filter)
+    const totalCount = await MyModelUser.countDocuments(filter)
 
     const pagesCount = Math.ceil(totalCount / pageSize)
     return {
@@ -42,7 +43,7 @@ export class UsersRepository {
   }
 
   async findUserById(id: ObjectId): Promise<UserDBType | null> {
-    let user = await usersCollection.findOne({_id: id})
+    let user = await MyModelUser.findOne({_id: id})
     if (user) {
       return user
     }
@@ -50,11 +51,11 @@ export class UsersRepository {
   }
 
   async findByLoginOrEmail(loginOrEmail: string) {
-    return await usersCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+    return await MyModelUser.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
   }
 
   async deletedUserById(id: string): Promise<boolean> {
-    const result = await usersCollection.deleteOne({id: id})
+    const result = await MyModelUser.deleteOne({id: id})
     return result.deletedCount !== 0
   }
 }

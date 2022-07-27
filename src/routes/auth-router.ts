@@ -117,7 +117,7 @@ authRouter.post('/refresh-token',
 
       const newAccessToken = await jwtService.createUsersAccountJWT({_id: new ObjectId(payload.userId)})
       const newRefreshToken = await jwtService.createUsersAccountRefreshJWT({_id: new ObjectId(payload.userId)})
-      const insertRefreshTokenToBlackList = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
+      const insertRefreshTokenToBlackList: string = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})
       return
@@ -162,7 +162,7 @@ authRouter.get('/resend-registration-email/',
       return
     }
     const user = await ioc.usersAccountService.findByConfirmationCode(code)
-    if (user === null) {
+    if (user === null || !user.accountData.email) {
       res.status(400).send("Bad code or isConfirmed is true.")
       return
     }

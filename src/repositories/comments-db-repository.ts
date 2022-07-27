@@ -1,4 +1,3 @@
-import {commentsCollection} from "./db";
 import {
   ArrayErrorsType, ReturnTypeObjectComment,
 } from "../types/all_types";
@@ -6,6 +5,7 @@ import {
   MongoHasNotUpdated, notDeletedComment,
   notFoundCommentId
 } from "../middlewares/errorsMessages";
+import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 
 
 
@@ -15,7 +15,7 @@ export class CommentsRepository {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
 
-    const foundPostWithComments = await commentsCollection.findOne(filter, {
+    const foundPostWithComments = await MyModelComments.findOne(filter, {
       projection: {
         _id: false
       }
@@ -44,7 +44,7 @@ export class CommentsRepository {
     console.log(filterToUpdate, 'filterToUpdate')
     let resultCode = 0
 
-    const result = await commentsCollection.updateOne(filterToUpdate,{$set: {"allComments.$.content": content}})
+    const result = await MyModelComments.updateOne(filterToUpdate,{$set: {"allComments.$.content": content}})
 
     if (result.modifiedCount === 0 && result.matchedCount == 0) {
       errorsArray.push(MongoHasNotUpdated)
@@ -65,7 +65,7 @@ export class CommentsRepository {
     const errorsArray: ArrayErrorsType = [];
     const filterToDelete = {"allComments.id": commentId}
 
-    const resultDeleted = await commentsCollection.findOneAndUpdate(filterToDelete, {
+    const resultDeleted = await MyModelComments.findOneAndUpdate(filterToDelete, {
       $pull: {
         allComments: {
           id: commentId
@@ -73,7 +73,7 @@ export class CommentsRepository {
       }
     })
 
-    if (resultDeleted.ok === 0) {
+    if (!resultDeleted) {
       errorsArray.push(notDeletedComment)
       return {
         data: null,
