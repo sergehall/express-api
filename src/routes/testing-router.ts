@@ -18,6 +18,7 @@ export const testingRouter = Router({})
 
 testingRouter
   .delete("/all-data", async (req: Request, res: Response) => {
+      console.log('/testing/all-data 1')
     await MyModelEmailsToSent.deleteMany({})
     await MyModelBlackListIP.deleteMany({})
     await MyModelUser.deleteMany({})
