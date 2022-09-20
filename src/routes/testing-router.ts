@@ -11,6 +11,8 @@ import {MyModeLast10secReg} from "../mongoose/Last10secRegModel";
 import {MyModeLast10secRegConf} from "../mongoose/Last10secRegConfModel";
 import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
+import {MyModelBlogPosts} from "../mongoose/PostsBlogSchemaModel";
+import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 
 export const testingRouter = Router({})
@@ -18,7 +20,6 @@ export const testingRouter = Router({})
 
 testingRouter
   .delete("/all-data", async (req: Request, res: Response) => {
-      console.log('/testing/all-data 1')
     await MyModelEmailsToSent.deleteMany({})
     await MyModelBlackListIP.deleteMany({})
     await MyModelUser.deleteMany({})
@@ -31,6 +32,8 @@ testingRouter
     await MyModelPosts.deleteMany({})
     await MyModelComments.deleteMany({})
     await MyModelBlackListRefreshTokenJWT.deleteMany({})
+    await MyModelBlogPosts.deleteMany({})
+    await MyModelBlogs.deleteMany({})
     res.status(204).send()
     return
   })

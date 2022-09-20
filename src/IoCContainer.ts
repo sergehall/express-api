@@ -38,6 +38,9 @@ import {ComparingLoginAndOwnersComment} from "./middlewares/comparison-login-and
 import {CheckoutIPFromBlackList} from "./middlewares/middleware-checkoutIPFromBlackList";
 import {CheckoutMongoDbId} from "./middlewares/checkoutMongoDbId";
 import {ParseQuery} from "./middlewares/parse-query";
+import {BlogsRepository} from "./repositories/blogs-db-repository";
+import {BlogsController} from "./presentation/blogsController";
+import {BlogsService} from "./domain/blogs-service";
 
 
 // posts
@@ -83,21 +86,35 @@ const blackListIPRepository = new BlackListIPRepository()
 const emailsToSentRepository = new EmailsToSentRepository()
 const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
 const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepository()
+// Blogs
+const blogsRepository = new BlogsRepository()
+const blogsService = new BlogsService(blogsRepository)
+const blogsController = new BlogsController(blogsService)
 
 export const ioc = {
   bloggersService: bloggersService,
   bloggersController: bloggersController,
+
   postsService: postsService,
   postsController: postsController,
+
   feedbacksService: feedbacksService,
   feedbacksController: feedbacksController,
+
   usersService: usersService,
   usersController: usersController,
-  allDelBloggersService: allDelBloggersService,
-  allDelBloggersController: allDelBloggersController,
+
   commentsService: commentsService,
   commentsController: commentsController,
+
+  allDelBloggersService: allDelBloggersService,
+  allDelBloggersController: allDelBloggersController,
+
+  blogsService: blogsService,
+  blogsController: blogsController,
+
   usersAccountService: usersAccountService,
+
   blackListIPRepository: blackListIPRepository,
   emailsToSentRepository: emailsToSentRepository,
   usersIPLast10secRepositories: usersIPLast10secRepositories,
@@ -111,5 +128,5 @@ export const ioc = {
   comparingLoginAndOwnersComment: comparingLoginAndOwnersComment,
   checkoutIPFromBlackList: checkoutIPFromBlackList,
   checkoutMongoDbId: checkoutMongoDbId,
-  parseQuery: parseQuery
+  parseQuery: parseQuery,
 }

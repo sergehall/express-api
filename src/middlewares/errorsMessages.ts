@@ -21,3 +21,9 @@ export const notDeletedComment = {
   message: "comment not deleted",
   field: "notDeleted"
 }
+
+// Blog
+export const notFoundBlogId = {
+  message: "Invalid '/:blogId' such blog doesn't exist",
+  field: "blogId"
+}

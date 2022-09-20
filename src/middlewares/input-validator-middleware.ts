@@ -14,11 +14,11 @@ export const shortDescriptionValidation = body("shortDescription").trim().isLeng
 export const contentValidation = body("content").trim().isLength({
   min: 1,
   max: 1000
-}).withMessage("content must be >1 and <100 characters.")
+}).withMessage("content must be >1 and <1000 characters.")
 export const postIdParamsValidation = param('postId').isNumeric().isLength({
   min: 1,
   max: 100
-}).withMessage("shortDescription must be number.")
+}).withMessage("postIdParamsValidation must be number.")
 const bloggerIdBodyRegExp2 = /^\d+$/i
 export const bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
 export const nameValidation = body("name").trim().isLength({
@@ -54,6 +54,23 @@ export const contentCommentValidation = body("content").trim().isLength({
   min: 20,
   max: 300
 }).withMessage("content must be >20 and <300 characters.")
+
+// Blog
+export const nameBlogValidation = body("name").trim().isString()
+export const youtubeUrlBlogValidation = body("youtubeUrl").trim().isString()
+export const titleBlogValidation = body("title").trim().isString().isLength({
+  min: 1,
+  max: 30
+}).withMessage("title must be >1 and <30 characters.")
+export const shortDescriptionBlogValidation = body("shortDescription").trim().isLength({
+  min: 1,
+  max: 100
+}).withMessage("shortDescription must be >1 and <1000 characters.")
+export const contentBlogValidation = body("content").trim().isLength({
+  min: 1,
+  max: 1000
+}).withMessage("content must be >1 and <1000 characters.")
+export const blogIdParamsValidation = param('blogId').isString()
 
 
 export const inputValidatorMiddleware = (req: Request, res: Response, next: NextFunction) => {

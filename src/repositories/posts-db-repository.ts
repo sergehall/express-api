@@ -45,9 +45,7 @@ export class PostsRepository {
     }
     const startIndex = (pageNumber - 1) * pageSize
     const result = await MyModelPosts.find(filter, {
-      projection: {
         _id: false
-      }
     }).limit(pageSize).skip(startIndex).lean()
 
     const totalCount = await MyModelPosts.countDocuments(filter)

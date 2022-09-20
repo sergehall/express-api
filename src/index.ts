@@ -14,6 +14,7 @@ import cookieParser from "cookie-parser"
 import {usersRouter} from "./routes/users-router";
 import {emailSender} from "./demons/emailSender";
 import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
+import {blogsRouts} from "./routes/blogs-router";
 
 
 
@@ -33,6 +34,7 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.use('/posts', postsRouts)
+app.use('/blogs', blogsRouts)
 app.use('/bloggers', bloggersRouts)
 app.use('/users', usersRouter)
 app.use('/auth', authRouter)

@@ -24,10 +24,39 @@ export type PostsType = {
   bloggerName: string
 }
 export type ReturnTypeObjectPosts = {
-  data: PostsType,
-  errorsMessages: Array<ErrorType>,
+  data: PostsType
+  errorsMessages: Array<ErrorType>
   resultCode: number
 }
+
+export type TypeBlog = {
+  id: string
+  name: string
+  youtubeUrl: string
+  createdAt: Date
+}
+export type ReturnTypeObjectBlog = {
+  data: TypeBlog
+  errorsMessages: Array<ErrorType>
+  resultCode: number
+}
+
+export type TypeObjectBlogPost = {
+  id: string
+  title: string
+  shortDescription: string
+  content: string
+  blogId: string
+  blogName: string
+  createdAt: string
+}
+export type ReturnTypeObjectBlogPost = {
+  data: TypeObjectBlogPost | null
+  errorsMessages: Array<ErrorType>
+  resultCode: number
+}
+
+
 export type BloggerIdAndArrayPosts = [bloggerIdKey: string, posts: Array<PostsType>]
 export type AllDeletedPosts = Array<BloggerIdAndArrayPosts>
 

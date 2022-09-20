@@ -3,14 +3,17 @@ import {Request} from "express";
 export class ParseQuery {
   async parse(req: Request) {
 
-    let pageNumber: number = parseInt(<string>req.query.PageNumber)
-    let pageSize: number = parseInt(<string>req.query.PageSize)
-    let searchNameTerm: string | undefined | null = req.query.SearchNameTerm?.toString()
-    let title: string | undefined | null = req.query.Title?.toString()
-    let userName: string | undefined | null = req.query.UserName?.toString()
-    let searchTitle: string | undefined | null = req.query.SearchTitle?.toString()
+    let pageNumber: number = parseInt(<string>req.query.pageNumber)
+    let pageSize: number = parseInt(<string>req.query.pageSize)
+    let searchNameTerm: string | undefined | null = req.query.searchNameTerm?.toString()
+    let title: string | undefined | null = req.query.title?.toString()
+    let userName: string | undefined | null = req.query.userName?.toString()
+    let searchTitle: string | undefined | null = req.query.searchTitle?.toString()
     let code: string | undefined | null = req.query.code?.toString()
-    let confirmationCode: string | undefined | null = req.query.ConfirmationCode?.toString()
+    let confirmationCode: string | undefined | null = req.query.confirmationCode?.toString()
+    let sortBy: string | undefined | null = req.query.sortBy?.toString()
+    let sortDirection: string | undefined | null = req.query.sortDirection?.toString()
+
 
     // default settings for searchNameTer, title, pageNumber, pageSize
     if (!searchNameTerm || searchNameTerm.length === 0) {
@@ -37,6 +40,14 @@ export class ParseQuery {
     if (isNaN(pageSize)) {
       pageSize = 10
     }
+    if(!sortBy || sortBy.length === 0) {
+      sortBy = null
+    }
+
+    if(!sortDirection || sortDirection.length === 0) {
+      sortDirection = null
+    }
+
     return {
       pageNumber: pageNumber,
       pageSize: pageSize,
@@ -45,7 +56,9 @@ export class ParseQuery {
       userName: userName,
       searchTitle: searchTitle,
       code: code,
-      confirmationCode: confirmationCode
+      confirmationCode: confirmationCode,
+      sortBy: sortBy,
+      sortDirection: sortDirection
     }
   }
 }
