@@ -161,7 +161,13 @@ export class PostsRepository {
       }
     }
     return {
-      data: newComment,
+      data: {
+        id: newCommentId,
+        content: content,
+        userId: user.accountData.id,
+        userLogin: user.accountData.login,
+        createdAt: createdAt
+      },
       errorsMessages: errorsArray,
       resultCode: 0
     }
