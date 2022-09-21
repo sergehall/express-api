@@ -9,6 +9,8 @@ import {
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
+import uuid4 from "uuid4";
+import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 
 
@@ -59,11 +61,11 @@ export class PostsRepository {
     };
   }
 
-  async createPost(title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
+  async createPost(title: string, shortDescription: string, content: string, blogId: string, createdAt: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
-    const newPostId = Math.round((+new Date() + +new Date()) / 2).toString();
+    const newPostId = uuid4().toString()
 
-    const foundBloggerId = await MyModelBloggers.findOne({id: bloggerId})
+    const foundBloggerId = await MyModelBlogs.findOne({id: blogId})
     if (!foundBloggerId) {
       errorsArray.push(notFoundBloggerId)
     }
@@ -75,8 +77,9 @@ export class PostsRepository {
         title: title,
         shortDescription: shortDescription,
         content: content,
-        bloggerId: bloggerId,
-        bloggerName: nameBloggerId
+        blogId: blogId,
+        bloggerName: nameBloggerId,
+        createdAt: createdAt
       }
       const result = await MyModelPosts.create(newPost)
 
@@ -95,8 +98,9 @@ export class PostsRepository {
         title: title,
         shortDescription: shortDescription,
         content: content,
-        bloggerId: bloggerId,
-        bloggerName: ""
+        blogId: blogId,
+        bloggerName: "",
+        createdAt: createdAt
       },
       errorsMessages: errorsArray,
       resultCode: 1
@@ -217,10 +221,14 @@ export class PostsRepository {
     };
   }
 
-  async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
-    const searchPost = await MyModelPosts.findOne({id: id});
-    const searchBlogger = await MyModelBloggers.findOne({id: bloggerId})
+  async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectPosts> {
+    const searchPost = await MyModelPosts.findOne({id: id},{
+      _id: false,
+      __v: false,
+    }).lean();
+    const searchBlogger = await MyModelBloggers.findOne({id: blogId})
     const errorsArray: ArrayErrorsType = [];
+    const createdAt = (new Date()).toISOString()
 
     if (!searchPost) {
       errorsArray.push(notFoundPostId)
@@ -231,11 +239,13 @@ export class PostsRepository {
     if (searchPost && searchBlogger) {
       const result = await MyModelPosts.updateOne({id: id}, {
         $set: {
+          id: id,
           title: title,
           shortDescription: shortDescription,
           content: content,
-          bloggerId: bloggerId,
-          bloggerName: searchBlogger.name
+          blogId: blogId,
+          bloggerName: searchBlogger.name,
+          createdAt: createdAt
         }
       })
       if (result.matchedCount === 0) {
@@ -249,15 +259,36 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          bloggerId: bloggerId,
-          bloggerName: ""
+          blogId: blogId,
+          bloggerName: "",
+          createdAt: createdAt
+        },
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+
+    const foundUpdatedPost = await MyModelPosts.findOne({id: id},{
+      _id: false,
+    }).lean();
+
+    if(foundUpdatedPost === null) {
+      return {
+        data: {
+          id: null,
+          title: title,
+          shortDescription: shortDescription,
+          content: content,
+          blogId: blogId,
+          bloggerName: "",
+          createdAt: createdAt
         },
         errorsMessages: errorsArray,
         resultCode: 1
       }
     }
     return {
-      data: searchPost,
+      data: foundUpdatedPost,
       errorsMessages: errorsArray,
       resultCode: 0
     }

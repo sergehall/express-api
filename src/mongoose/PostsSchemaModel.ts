@@ -3,12 +3,13 @@ import mongoose, {Document} from 'mongoose';
 const Schema = mongoose.Schema
 
 interface PostsType extends Document{
-  id: string | null;
-  title: string;
-  shortDescription: string;
-  content: string;
-  bloggerId: string;
-  bloggerName: string;
+  id: string | null
+  title: string
+  shortDescription: string
+  content: string
+  blogId: string
+  bloggerName: string
+  createdAt: string
 }
 
 const PostsSchema = new Schema({
@@ -28,11 +29,15 @@ const PostsSchema = new Schema({
     type: String,
     required: [true, 'Id is required']
   },
-  bloggerId: {
+  blogId: {
     type: String,
     required: [true, 'Id is required']
   },
   bloggerName: {
+    type: String,
+    required: [true, 'Id is required']
+  },
+  createdAt: {
     type: String,
     required: [true, 'Id is required']
   }

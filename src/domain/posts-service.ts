@@ -19,8 +19,8 @@ export class PostsService {
     return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize)
   }
 
-  async createPost(title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
-    return await this.postsRepository.createPost(title, shortDescription, content, bloggerId)
+  async createPost(title: string, shortDescription: string, content: string, bloggerId: string, createdAt: string): Promise<ReturnTypeObjectPosts> {
+    return await this.postsRepository.createPost(title, shortDescription, content, bloggerId, createdAt)
   }
 
   async createNewCommentByPostId(postId: string, content: string, user: UserAccountDBType): Promise<ReturnTypeObjectComment> {

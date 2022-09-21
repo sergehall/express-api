@@ -20,8 +20,9 @@ export type PostsType = {
   title: string
   shortDescription: string
   content: string
-  bloggerId: string
+  blogId: string
   bloggerName: string
+  createdAt: string
 }
 export type ReturnTypeObjectPosts = {
   data: PostsType

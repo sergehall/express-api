@@ -19,8 +19,9 @@ export const postIdParamsValidation = param('postId').isNumeric().isLength({
   min: 1,
   max: 100
 }).withMessage("postIdParamsValidation must be number.")
-const bloggerIdBodyRegExp2 = /^\d+$/i
-export const bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
+// const bloggerIdBodyRegExp2 = /^\d+$/i
+// export const bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
+export const bloggerIdBodyValidator = body('blogId').isString()
 export const nameValidation = body("name").trim().isLength({
   min: 1,
   max: 15

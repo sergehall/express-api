@@ -4,8 +4,8 @@ export const MongoHasNotUpdated = {
   field: "MongoDb"
 }
 export const notFoundBloggerId = {
-  message: "Invalid 'bloggerId' such blogger doesn't exist",
-  field: "bloggerId"
+  message: "Invalid 'blogId' such blogger doesn't exist",
+  field: "blogId"
 }
 
 export const notFoundPostId = {

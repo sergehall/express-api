@@ -22,9 +22,10 @@ export class PostsController {
       const title: string = req.body.title;
       const shortDescription: string = req.body.shortDescription;
       const content: string = req.body.content;
-      const bloggerId: string = req.body.bloggerId
+      const blogId: string = req.body.blogId
+      const createdAt = (new Date()).toISOString()
 
-      const newPost = await this.postsService.createPost(title, shortDescription, content, bloggerId)
+      const newPost = await this.postsService.createPost(title, shortDescription, content, blogId, createdAt)
 
       if (newPost.resultCode === 0) {
         res.status(201)
@@ -33,8 +34,9 @@ export class PostsController {
           title: newPost.data.title,
           shortDescription: newPost.data.shortDescription,
           content: newPost.data.content,
-          bloggerId: newPost.data.bloggerId,
-          bloggerName: newPost.data.bloggerName
+          blogId: newPost.data.blogId,
+          blogName: newPost.data.bloggerName,
+          createdAt: newPost.data.createdAt
         })
       } else {
         res.status(400)
