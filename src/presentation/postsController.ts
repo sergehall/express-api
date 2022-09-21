@@ -137,7 +137,7 @@ export class PostsController {
       res.status(400)
       const errorsMessages = updatedPost.errorsMessages
       const resultCode = updatedPost.resultCode
-      res.send({errorsMessages, resultCode})
+      return res.send({errorsMessages, resultCode})
 
     } catch (error) {
       console.log(error)

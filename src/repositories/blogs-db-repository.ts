@@ -1,4 +1,4 @@
-import {ArrayErrorsType, Pagination} from "../types/all_types";
+import {ArrayErrorsType, Pagination, ReturnTypeObjectBlog, TypeBlog} from "../types/all_types";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
 import {MongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
@@ -128,6 +128,120 @@ export class BlogsRepository {
       errorsMessages: errorsArray,
       resultCode: 0
     }
+  }
+
+  async findAllPostsByBlog(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string): Promise<Pagination | null> {
+    let startIndex = (pageNumber - 1) * pageSize
+    const filter = {blogId: blogId}
+
+    const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
+    if (foundPostsBlog === null) {
+      return null
+    }
+
+    let totalCount = await MyModelBlogPosts.findOne(filter)
+      .then(posts => posts?.allPosts.length)
+
+    if (!totalCount) {
+      totalCount = 0
+    }
+
+    const pagesCount = Math.ceil(totalCount / pageSize)
+
+    let posts = await MyModelBlogPosts.findOne(filter, {
+      _id: false
+    })
+      .then(posts => posts?.allPosts.slice(startIndex, startIndex + pageSize))
+
+    if (!posts) {
+      posts = []
+    }
+
+
+    let desc = -1
+    let asc = 1
+    let field: string = "createdAt"
+
+    if (!sortDirection || sortDirection !== "asc") {
+      desc = 1
+      asc = -1
+    }
+
+    if (sortBy || sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
+      field = sortBy
+    }
+
+    // sort array posts
+    function byField(field: string) {
+      return (a: any, b: any) => a[field] > b[field] ? asc : desc;
+    }
+
+    posts.sort(byField(field))
+
+    return {
+      pagesCount: pagesCount,
+      page: pageNumber,
+      pageSize: pageSize,
+      totalCount: totalCount,
+      items: posts
+    };
+  }
+
+  async findBlogById(id: string): Promise<TypeBlog | null> {
+    const foundBlog = await MyModelBlogs.findOne({id: id}, {
+      _id: false,
+      __v: false,
+    }).lean()
+
+    if (!foundBlog) {
+      return null
+    }
+    return foundBlog
+  }
+
+  async updatedBlogById(name: string, youtubeUrl: string, id: string): Promise<ReturnTypeObjectBlog> {
+    const errorsArray: ArrayErrorsType = [];
+    const createdAt = (new Date()).toISOString()
+
+    const searchBlog = await MyModelBlogs.findOne({id: id})
+    if (!searchBlog) {
+      errorsArray.push(notFoundBlogId)
+    }
+    const updatedBlog = await MyModelBlogs.updateOne({id: id}, {
+      $set: {
+        id: id,
+        name: name,
+        youtubeUrl: youtubeUrl,
+        createdAt: createdAt
+      }
+    }).lean()
+
+    if (updatedBlog.matchedCount === 0) {
+      errorsArray.push(MongoHasNotUpdated)
+    }
+    const foundBlog = await MyModelBlogs.findOne({id: id}, {
+      _id: false,
+      __v: false,
+    }).lean()
+
+    if (errorsArray.length !== 0 || !foundBlog) {
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+
+    return {
+      data: foundBlog,
+      errorsMessages: errorsArray,
+      resultCode: 0
+    }
+  }
+
+  async deletedBlogById(id: string): Promise<Boolean> {
+    const result = await MyModelBlogs.deleteOne({id: id})
+    return result.deletedCount === 1
   }
 }
 

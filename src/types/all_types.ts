@@ -36,7 +36,7 @@ export type TypeBlog = {
   createdAt: Date
 }
 export type ReturnTypeObjectBlog = {
-  data: TypeBlog
+  data: TypeBlog | null
   errorsMessages: Array<ErrorType>
   resultCode: number
 }
@@ -55,7 +55,6 @@ export type ReturnTypeObjectBlogPost = {
   errorsMessages: Array<ErrorType>
   resultCode: number
 }
-
 
 export type BloggerIdAndArrayPosts = [bloggerIdKey: string, posts: Array<PostsType>]
 export type AllDeletedPosts = Array<BloggerIdAndArrayPosts>

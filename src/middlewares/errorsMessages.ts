@@ -7,6 +7,7 @@ export const notFoundBloggerId = {
   message: "Invalid 'bloggerId' such blogger doesn't exist",
   field: "bloggerId"
 }
+
 export const notFoundPostId = {
   message: "Invalid '/:postId' such post doesn't exist",
   field: "postId"

@@ -21,9 +21,7 @@ export class PostsRepository {
     }
     const startIndex = (pageNumber - 1) * pageSize
     const result = await MyModelPosts.find(filter, {
-      projection: {
         _id: false
-      }
     }).limit(pageSize).skip(startIndex).lean()
 
     const totalCount = await MyModelPosts.countDocuments(filter)
@@ -167,9 +165,7 @@ export class PostsRepository {
 
   async getPostById(id: string): Promise<PostsType | null> {
     const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
-      projection: {
         _id: false
-      }
     })
     if (post) {
       return post
@@ -203,9 +199,7 @@ export class PostsRepository {
     const pagesCount = Math.ceil(totalCount / pageSize)
 
     let comments = await MyModelComments.findOne(filter, {
-      projection: {
         _id: false
-      }
     })
       .then(comments => comments?.allComments.slice(startIndex, startIndex + pageSize))
 
