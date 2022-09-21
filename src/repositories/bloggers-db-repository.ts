@@ -70,9 +70,7 @@ export class BloggersRepository {
   async getBloggerById(id: string): Promise<ReturnTypeObjectBloggers> {
     const errorsArray: ArrayErrorsType = [];
     const blogger: BloggerType | null = await MyModelBloggers.findOne({id: id}, {
-      projection: {
         _id: false
-      }
     })
     if (!blogger) {
       errorsArray.push(notFoundBloggerId)

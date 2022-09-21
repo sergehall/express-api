@@ -15,10 +15,7 @@ export const contentValidation = body("content").trim().isLength({
   min: 1,
   max: 1000
 }).withMessage("content must be >1 and <1000 characters.")
-export const postIdParamsValidation = param('postId').isNumeric().isLength({
-  min: 1,
-  max: 100
-}).withMessage("postIdParamsValidation must be number.")
+export const postIdParamsValidation = param('postId').isString().withMessage("postIdParamsValidation must be string.")
 // const bloggerIdBodyRegExp2 = /^\d+$/i
 // export const bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
 export const bloggerIdBodyValidator = body('blogId').isString()

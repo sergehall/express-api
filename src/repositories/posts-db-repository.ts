@@ -109,7 +109,7 @@ export class PostsRepository {
 
   async createNewCommentByPostId(postId: string, content: string, user: UserAccountDBType): Promise<ReturnTypeObjectComment> {
     let errorsArray: ArrayErrorsType = [];
-    const newCommentId = Math.round((+new Date() + +new Date()) / 2).toString();
+    const newCommentId = uuid4().toString()
     const createdAt = (new Date()).toISOString()
     const filter = {id: postId}
 
@@ -210,7 +210,7 @@ export class PostsRepository {
 
     let comments = await MyModelComments.findOne(filter, {
         _id: false
-    })
+    }).lean()
       .then(comments => comments?.allComments.slice(startIndex, startIndex + pageSize))
 
 
@@ -218,12 +218,17 @@ export class PostsRepository {
       comments = []
     }
 
+    // @ts-ignore
+    const commentsDelMongoId = comments.map(({_id, ...rest}) => {
+      return rest;
+    });
+
     return {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: comments
+      items: commentsDelMongoId
     };
   }
 
