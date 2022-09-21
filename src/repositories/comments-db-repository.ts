@@ -16,9 +16,7 @@ export class CommentsRepository {
     const filter = {"allComments.id": commentId}
 
     const foundPostWithComments = await MyModelComments.findOne(filter, {
-      projection: {
         _id: false
-      }
     })
 
     const comment = foundPostWithComments?.allComments.filter(i => i.id === commentId)[0]
