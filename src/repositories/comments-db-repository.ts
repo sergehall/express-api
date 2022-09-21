@@ -17,7 +17,7 @@ export class CommentsRepository {
 
     const foundPostWithComments = await MyModelComments.findOne(filter, {
         _id: false
-    })
+    }).lean()
 
     const comment = foundPostWithComments?.allComments.filter(i => i.id === commentId)[0]
 
@@ -29,6 +29,10 @@ export class CommentsRepository {
         resultCode: 1
       }
     }
+
+    // @ts-ignore
+    delete comment._id
+    
     return {
       data: comment,
       errorsMessages: errorsArray,
