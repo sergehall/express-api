@@ -73,7 +73,7 @@ export type CommentViewModel = {
   content: string
   userId: string
   userLogin: string
-  addedAt: string
+  createdAt: string
 }
 
 export type ReturnTypeObjectComment = {
@@ -105,7 +105,7 @@ export type PaginatorCommentViewModel = {
   page: number
   pageSize: number
   totalCount: number
-  items: Array<CommentViewModel>
+  items: Array<CommentViewModel> | []
 }
 
 export type RegistrationDataType = {

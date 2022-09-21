@@ -9,7 +9,7 @@ interface CommentsType extends Document {
     content: string;
     userId: string;
     userLogin: string;
-    addedAt: string;
+    createdAt: string;
   }>
 }
 
@@ -36,7 +36,7 @@ const CommentsSchema = new Schema({
         type: String,
         required: [true, 'Id is required']
       },
-      addedAt: {
+      createdAt: {
         type: String,
         required: [true, 'Id is required']
       }

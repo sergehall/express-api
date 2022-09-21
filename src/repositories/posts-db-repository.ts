@@ -110,7 +110,7 @@ export class PostsRepository {
   async createNewCommentByPostId(postId: string, content: string, user: UserAccountDBType): Promise<ReturnTypeObjectComment> {
     let errorsArray: ArrayErrorsType = [];
     const newCommentId = Math.round((+new Date() + +new Date()) / 2).toString();
-    const addedAt = (new Date()).toISOString()
+    const createdAt = (new Date()).toISOString()
     const filter = {id: postId}
 
     const newComment = {
@@ -118,7 +118,7 @@ export class PostsRepository {
       content: content,
       userId: user.accountData.id,
       userLogin: user.accountData.login,
-      addedAt: addedAt
+      createdAt: createdAt
     }
 
     const foundPost = await MyModelPosts.findOne(filter)
