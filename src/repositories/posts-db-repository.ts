@@ -227,7 +227,7 @@ export class PostsRepository {
     let asc = 1
     let field = "createdAt"
 
-    if (!sortDirection || sortDirection !== "asc") {
+    if (sortDirection === "asc") {
       desc = 1
       asc = -1
     }
