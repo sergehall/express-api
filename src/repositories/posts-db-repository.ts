@@ -187,9 +187,6 @@ export class PostsRepository {
     let startIndex = (pageNumber - 1) * pageSize
     const filter = {postId: postId}
 
-    console.log("sortBy = ", sortBy)
-    console.log("sortDirection = ", sortDirection)
-
     let foundPost = await MyModelPosts.findOne({id: postId})
     if (foundPost === null) {
       return {
@@ -218,16 +215,10 @@ export class PostsRepository {
       desc = -1
       asc = 1
     }
-
     if (sortBy === "userId" || sortBy === "userLogin" || sortBy === "content") {
       field = sortBy
     }
 
-    console.log("field = ", field)
-    console.log("asc = ", asc)
-    console.log("desc = ", desc)
-
-    // comments.sort(byField(field, asc, desc))
     // sort array comments
     function byField(field: string, asc: number, desc: number) {
       return (a: any, b: any) => a[field] > b[field] ? asc : desc;
@@ -236,7 +227,6 @@ export class PostsRepository {
     let comments = await MyModelComments.findOne(filter, {
       _id: false, 'allComments._id': false
     }).lean()
-      // .then(comments => comments?.allComments.slice(startIndex, startIndex + pageSize))
     .then(comments => comments?.allComments.sort(byField(field, asc, desc)))
 
     if (!comments) {
@@ -271,15 +261,14 @@ export class PostsRepository {
     //   return (a: any, b: any) => a[field] > b[field] ? asc : desc;
     // }
 
-    comments.slice(startIndex, startIndex + pageSize)
-
+    const commentsSlice = comments.slice(startIndex, startIndex + pageSize)
 
     return {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: comments
+      items: commentsSlice
     };
   }
 

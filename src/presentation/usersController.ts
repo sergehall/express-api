@@ -9,6 +9,7 @@ import requestIp from "request-ip";
 export class UsersController {
   constructor(private usersService: UsersService) {
   }
+
   async getUsers(req: Request, res: Response) {
     try {
       const parseQueryData = await ioc.parseQuery.parse(req)
@@ -17,7 +18,7 @@ export class UsersController {
       const userName: string | null = parseQueryData.userName
 
       const getUsers = await this.usersService.findUsers(pageNumber, pageSize, userName)
-      if(!getUsers) {
+      if (!getUsers) {
         res.status(404).send()
       } else {
         res.send(getUsers)
@@ -32,7 +33,7 @@ export class UsersController {
     try {
       const mongoId = new ObjectId(req.params.mongoId)
       const getUser = await this.usersService.findUser(mongoId)
-      if(!getUser) {
+      if (!getUser) {
         res.status(404).send()
       } else {
         res.send(getUser)
@@ -42,12 +43,23 @@ export class UsersController {
       return res.sendStatus(500)
     }
   }
+
   async createNewUser(req: Request, res: Response) {
     try {
       const clientIp = requestIp.getClientIp(req);
       const newUsers = await ioc.usersService.createUser(req.body.login, req.body.email, req.body.password)
       if (newUsers) {
         const userAccountForTest6 = await ioc.usersAccountService.createUser(newUsers, clientIp);
+        if (!userAccountForTest6) {
+          return res.status(400).send({
+            "errorsMessages": [
+              {
+                "message": " incorrect values",
+                "field": "login or password"
+              }
+            ]
+          })
+        }
       }
       if (newUsers) {
         const userReturn = {
@@ -59,11 +71,12 @@ export class UsersController {
       }
       res.status(501).send({MongoHasNotUpdated})
 
-    }catch (e) {
+    } catch (e) {
       console.log(e)
       return res.sendStatus(500)
     }
   }
+
   async deleteUserById(req: Request, res: Response) {
     try {
       const id = req.params.userId
@@ -74,7 +87,7 @@ export class UsersController {
       } else {
         res.sendStatus(404)
       }
-    }catch (e) {
+    } catch (e) {
       console.log(e)
       res.sendStatus(500)
     }
