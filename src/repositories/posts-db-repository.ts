@@ -13,7 +13,6 @@ import uuid4 from "uuid4";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 
-
 export class PostsRepository {
 
   async findPosts(pageNumber: number, pageSize: number, title: string | null): Promise<Pagination> {
@@ -23,7 +22,7 @@ export class PostsRepository {
     }
     const startIndex = (pageNumber - 1) * pageSize
     const result = await MyModelPosts.find(filter, {
-        _id: false
+      _id: false
     }).limit(pageSize).skip(startIndex).lean()
 
     const totalCount = await MyModelPosts.countDocuments(filter)
@@ -45,7 +44,7 @@ export class PostsRepository {
     }
     const startIndex = (pageNumber - 1) * pageSize
     const result = await MyModelPosts.find(filter, {
-        _id: false
+      _id: false
     }).limit(pageSize).skip(startIndex).lean()
 
     const totalCount = await MyModelPosts.countDocuments(filter)
@@ -175,7 +174,7 @@ export class PostsRepository {
 
   async getPostById(id: string): Promise<PostsType | null> {
     const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
-        _id: false
+      _id: false
     })
     if (post) {
       return post
@@ -209,7 +208,7 @@ export class PostsRepository {
     const pagesCount = Math.ceil(totalCount / pageSize)
 
     let comments = await MyModelComments.findOne(filter, {
-        _id: false
+      _id: false
     }).lean()
       .then(comments => comments?.allComments.slice(startIndex, startIndex + pageSize))
 
@@ -242,7 +241,7 @@ export class PostsRepository {
 
     // sort array comments
     function byField(field: string) {
-        return (a: any, b: any) => a[field] > b[field] ? asc: desc;
+      return (a: any, b: any) => a[field] > b[field] ? asc : desc;
 
     }
 
@@ -258,7 +257,7 @@ export class PostsRepository {
   }
 
   async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectPosts> {
-    const searchPost = await MyModelPosts.findOne({id: id},{
+    const searchPost = await MyModelPosts.findOne({id: id}, {
       _id: false,
       __v: false,
     }).lean();
@@ -304,11 +303,11 @@ export class PostsRepository {
       }
     }
 
-    const foundUpdatedPost = await MyModelPosts.findOne({id: id},{
+    const foundUpdatedPost = await MyModelPosts.findOne({id: id}, {
       _id: false,
     }).lean();
 
-    if(foundUpdatedPost === null) {
+    if (foundUpdatedPost === null) {
       return {
         data: {
           id: null,
