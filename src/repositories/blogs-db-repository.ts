@@ -172,11 +172,11 @@ export class BlogsRepository {
     }
 
     // sort array posts
-    function byField(field: string) {
+    function byField(field: string, asc: number, desc: number) {
       return (a: any, b: any) => a[field] > b[field] ? asc : desc;
     }
 
-    posts.sort(byField(field))
+    posts.sort(byField(field, asc, desc))
 
     return {
       pagesCount: pagesCount,

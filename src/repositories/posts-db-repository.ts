@@ -187,6 +187,9 @@ export class PostsRepository {
     let startIndex = (pageNumber - 1) * pageSize
     const filter = {postId: postId}
 
+    console.log("sortBy = ", sortBy)
+    console.log("sortDirection = ", sortDirection)
+
     let foundPost = await MyModelPosts.findOne({id: postId})
     if (foundPost === null) {
       return {
@@ -240,12 +243,12 @@ export class PostsRepository {
     console.log("desc = ", desc)
 
     // sort array comments
-    function byField(field: string) {
+    function byField(field: string, asc: number, desc: number) {
       return (a: any, b: any) => a[field] > b[field] ? asc : desc;
 
     }
 
-    allCommentsDelMongoId.sort(byField(field))
+    allCommentsDelMongoId.sort(byField(field, asc, desc))
 
     return {
       pagesCount: pagesCount,
