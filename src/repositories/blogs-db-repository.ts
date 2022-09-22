@@ -158,16 +158,16 @@ export class BlogsRepository {
     }
 
 
-    let desc = -1
-    let asc = 1
-    let field: string = "createdAt"
+    let desc = 1
+    let asc = -1
+    let field = "createdAt"
 
     if (!sortDirection || sortDirection !== "asc") {
-      desc = 1
-      asc = -1
+      desc = -1
+      asc = 1
     }
 
-    if (sortBy || sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
+    if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
       field = sortBy
     }
 
