@@ -225,13 +225,13 @@ export class PostsRepository {
       return rest;
     });
 
-    let desc = -1
-    let asc = 1
+    let desc = 1
+    let asc = -1
     let field = "createdAt"
 
     if (sortDirection === "asc") {
-      desc = 1
-      asc = -1
+      desc = -1
+      asc = 1
     }
 
     if (sortBy === "userId" || sortBy === "userLogin" || sortBy === "content") {
