@@ -213,7 +213,7 @@ export class PostsRepository {
     let comments = await MyModelComments.findOne(filter, {
       _id: false
     }).lean()
-      .then(comments => comments?.allComments.slice(startIndex, startIndex + pageSize))
+      .then(comments => comments?.allComments.sort(byField(field, asc, desc)).slice(startIndex, startIndex + pageSize))
 
 
     if (!comments) {
@@ -242,13 +242,11 @@ export class PostsRepository {
     console.log("asc = ", asc)
     console.log("desc = ", desc)
 
+    // allCommentsDelMongoId.sort(byField(field, asc, desc))
     // sort array comments
     function byField(field: string, asc: number, desc: number) {
       return (a: any, b: any) => a[field] > b[field] ? asc : desc;
-
     }
-
-    allCommentsDelMongoId.sort(byField(field, asc, desc))
 
     return {
       pagesCount: pagesCount,
