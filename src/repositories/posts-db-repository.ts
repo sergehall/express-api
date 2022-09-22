@@ -241,7 +241,7 @@ export class PostsRepository {
     console.log("desc = ", desc)
     // sort array comments
     function byField(field: string) {
-      return (a: any, b: any) => a[field] > b[field] ? asc : desc;
+      return (a: any, b: any) => a[field] > b[field] ? desc: asc;
     }
 
     allCommentsDelMongoId.sort(byField(field))
