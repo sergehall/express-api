@@ -236,6 +236,9 @@ export class PostsRepository {
       field = sortBy
     }
 
+    console.log("field = ", field)
+    console.log("asc = ", asc)
+    console.log("desc = ", desc)
     // sort array comments
     function byField(field: string) {
       return (a: any, b: any) => a[field] > b[field] ? asc : desc;
