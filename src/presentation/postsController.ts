@@ -102,8 +102,11 @@ export class PostsController {
       const parseQueryData = await ioc.parseQuery.parse(req)
       const pageNumber = parseQueryData.pageNumber
       const pageSize = parseQueryData.pageSize
+      const sortBy: string | null = parseQueryData.sortBy
+      const sortDirection: string | null = parseQueryData.sortDirection
 
-      const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize);
+
+      const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection);
       if (getPost.pageSize === 0) {
         return res.status(404).send()
 

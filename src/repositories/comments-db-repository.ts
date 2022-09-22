@@ -32,7 +32,7 @@ export class CommentsRepository {
 
     // @ts-ignore
     delete comment._id
-    
+
     return {
       data: comment,
       errorsMessages: errorsArray,

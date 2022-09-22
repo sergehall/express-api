@@ -30,8 +30,8 @@ export class PostsService {
   async getPostById(id: string): Promise<PostsType | null >{
     return await this.postsRepository.getPostById(id)
   }
-  async getCommentsByPostId(id: string, pageNumber: number, pageSize: number): Promise<PaginatorCommentViewModel>{
-    return await this.postsRepository.getCommentsByPostId(id, pageNumber, pageSize,)
+  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<PaginatorCommentViewModel>{
+    return await this.postsRepository.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection)
   }
 
   async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnTypeObjectPosts> {
