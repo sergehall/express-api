@@ -131,7 +131,6 @@ export class BlogsRepository {
   }
 
   async findAllPostsByBlog(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string): Promise<Pagination | null> {
-    let startIndex = (pageNumber - 1) * pageSize
     const filter = {blogId: blogId}
 
     const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
@@ -147,16 +146,6 @@ export class BlogsRepository {
     }
 
     const pagesCount = Math.ceil(totalCount / pageSize)
-
-    let posts = await MyModelBlogPosts.findOne(filter, {
-      _id: false
-    })
-      .then(posts => posts?.allPosts.slice(startIndex, startIndex + pageSize))
-
-    if (!posts) {
-      posts = []
-    }
-
 
     let desc = 1
     let asc = -1
@@ -176,14 +165,24 @@ export class BlogsRepository {
       return (a: any, b: any) => a[field] > b[field] ? asc : desc;
     }
 
-    posts.sort(byField(field, asc, desc))
+    let posts = await MyModelBlogPosts.findOne(filter, {
+      _id: false
+    })
+      .then(posts => posts?.allPosts.sort(byField(field, asc, desc)))
+
+    if (!posts) {
+      posts = []
+    }
+
+    let startIndex = (pageNumber - 1) * pageSize
+    const postsSlice = posts.slice(startIndex, startIndex + pageSize)
 
     return {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: posts
+      items: postsSlice
     };
   }
 

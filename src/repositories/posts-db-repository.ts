@@ -184,7 +184,6 @@ export class PostsRepository {
   }
 
   async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<PaginatorCommentViewModel> {
-    let startIndex = (pageNumber - 1) * pageSize
     const filter = {postId: postId}
 
     let foundPost = await MyModelPosts.findOne({id: postId})
@@ -233,34 +232,7 @@ export class PostsRepository {
       comments = []
     }
 
-    // @ts-ignore
-    // const allCommentsDelMongoId = comments.map(({_id, ...rest}) => {
-    //   return rest;
-    // });
-
-    // let desc = 1
-    // let asc = -1
-    // let field = "createdAt"
-    //
-    // if (sortDirection === "asc") {
-    //   desc = -1
-    //   asc = 1
-    // }
-    //
-    // if (sortBy === "userId" || sortBy === "userLogin" || sortBy === "content") {
-    //   field = sortBy
-    // }
-    //
-    // console.log("field = ", field)
-    // console.log("asc = ", asc)
-    // console.log("desc = ", desc)
-    //
-    // // comments.sort(byField(field, asc, desc))
-    // // sort array comments
-    // function byField(field: string, asc: number, desc: number) {
-    //   return (a: any, b: any) => a[field] > b[field] ? asc : desc;
-    // }
-
+    let startIndex = (pageNumber - 1) * pageSize
     const commentsSlice = comments.slice(startIndex, startIndex + pageSize)
 
     return {

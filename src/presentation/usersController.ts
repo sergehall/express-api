@@ -51,6 +51,7 @@ export class UsersController {
       if (newUsers) {
         const userAccountForTest6 = await ioc.usersAccountService.createUser(newUsers, clientIp);
         if (!userAccountForTest6) {
+          const delUserById = await ioc.usersService.deleteUserById(newUsers.id)
           return res.status(400).send({
             "errorsMessages": [
               {

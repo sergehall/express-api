@@ -43,10 +43,8 @@ export class UsersAccountService {
         createdAt: new Date()
       }]
     }
-    const createdNewUserAccount = await this.usersAccountRepository.createUserAccount(newUser)
-    console.log(createdNewUserAccount, "1")
 
-    return createdNewUserAccount
+    return await this.usersAccountRepository.createUserAccount(newUser)
   }
 
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
