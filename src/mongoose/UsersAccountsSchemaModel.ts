@@ -33,7 +33,6 @@ const UserAccountSchema = new Schema({
     id: {
       type: String,
       required: [true, 'Id is required'],
-      unique: true
     },
     login: {
       type: String,

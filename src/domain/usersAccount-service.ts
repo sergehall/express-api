@@ -43,7 +43,6 @@ export class UsersAccountService {
         createdAt: new Date()
       }]
     }
-
     return await this.usersAccountRepository.createUserAccount(newUser)
   }
 

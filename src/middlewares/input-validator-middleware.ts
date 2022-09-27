@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {body, param, validationResult} from "express-validator";
+import {body, check, param, validationResult} from "express-validator";
 
 
 // posts and bloggers validator
@@ -71,6 +71,7 @@ export const contentBlogValidation = body("content").trim().isLength({
 export const blogIdParamsValidation = param('blogId').isString()
 export const idParamsValidation = param('id').isString()
 
+export const likeStatusValidator = check('likeStatus').isIn(["None", "Like", "Dislike"])
 
 export const inputValidatorMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);

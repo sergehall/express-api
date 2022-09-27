@@ -1,4 +1,8 @@
-import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/errorsMessages";
+import {
+  MongoHasNotUpdated,
+  notFoundBloggerId,
+  notFoundPostId
+} from "../middlewares/errorsMessages";
 import {
   ArrayErrorsType,
   Pagination, PaginatorCommentViewModel,
@@ -6,11 +10,12 @@ import {
   ReturnTypeObjectComment,
   ReturnTypeObjectPosts, UserAccountDBType,
 } from "../types/all_types";
-import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import uuid4 from "uuid4";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
+import {MyModelPosts} from "../mongoose/PostsSchemaModel";
+import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 
 
 export class PostsRepository {
@@ -67,42 +72,57 @@ export class PostsRepository {
     const foundBloggerId = await MyModelBlogs.findOne({id: blogId})
     if (!foundBloggerId) {
       errorsArray.push(notFoundBloggerId)
+      return {
+        data: {
+          id: "",
+          title: title,
+          shortDescription: shortDescription,
+          content: content,
+          blogId: blogId,
+          bloggerName: "",
+          createdAt: createdAt
+        },
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
     }
 
-    if (foundBloggerId) {
-      const nameBloggerId = foundBloggerId.name
-      const newPost = {
-        id: newPostId,
-        title: title,
-        shortDescription: shortDescription,
-        content: content,
-        blogId: blogId,
-        bloggerName: nameBloggerId,
-        createdAt: createdAt
-      }
-      const result = await MyModelPosts.create(newPost)
+    const nameBloggerId = foundBloggerId.name
+    const newPost = {
+      id: newPostId,
+      title: title,
+      shortDescription: shortDescription,
+      content: content,
+      blogId: blogId,
+      bloggerName: nameBloggerId,
+      createdAt: createdAt
+    }
 
-      if (!result) {
-        errorsArray.push(MongoHasNotUpdated)
-      }
+
+    try {
+      const result = await MyModelPosts.create(newPost)
       return {
         data: newPost,
         errorsMessages: errorsArray,
         resultCode: 0
       }
-    }
-    return {
-      data: {
-        id: newPostId,
-        title: title,
-        shortDescription: shortDescription,
-        content: content,
-        blogId: blogId,
-        bloggerName: "",
-        createdAt: createdAt
-      },
-      errorsMessages: errorsArray,
-      resultCode: 1
+
+    } catch (e) {
+      console.log(e)
+      errorsArray.push(MongoHasNotUpdated)
+      return {
+        data: {
+          id: "",
+          title: title,
+          shortDescription: shortDescription,
+          content: content,
+          blogId: blogId,
+          bloggerName: "",
+          createdAt: createdAt
+        },
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
     }
   }
 
@@ -226,7 +246,7 @@ export class PostsRepository {
     let comments = await MyModelComments.findOne(filter, {
       _id: false, 'allComments._id': false
     }).lean()
-    .then(comments => comments?.allComments.sort(byField(field, asc, desc)))
+      .then(comments => comments?.allComments.sort(byField(field, asc, desc)))
 
     if (!comments) {
       comments = []
@@ -268,7 +288,6 @@ export class PostsRepository {
           content: content,
           blogId: blogId,
           bloggerName: searchBlogger.name,
-          createdAt: createdAt
         }
       })
       if (result.matchedCount === 0) {
@@ -278,13 +297,13 @@ export class PostsRepository {
     if (errorsArray.length !== 0 || !searchPost) {
       return {
         data: {
-          id: null,
+          id: "",
           title: title,
           shortDescription: shortDescription,
           content: content,
           blogId: blogId,
           bloggerName: "",
-          createdAt: createdAt
+          createdAt: createdAt,
         },
         errorsMessages: errorsArray,
         resultCode: 1
@@ -298,13 +317,13 @@ export class PostsRepository {
     if (foundUpdatedPost === null) {
       return {
         data: {
-          id: null,
+          id: "",
           title: title,
           shortDescription: shortDescription,
           content: content,
           blogId: blogId,
           bloggerName: "",
-          createdAt: createdAt
+          createdAt: createdAt,
         },
         errorsMessages: errorsArray,
         resultCode: 1
@@ -327,5 +346,52 @@ export class PostsRepository {
   async deletedAllPosts(): Promise<Boolean> {
     const result = await MyModelPosts.deleteMany({})
     return result.acknowledged
+  }
+
+  async changeLikeStatusPost(user: UserAccountDBType, postId: string, likeStatus: string): Promise<Boolean> {
+    const userId = user.accountData.id
+    const createdAt = (new Date()).toISOString()
+
+    const newLikeStatus = {
+      postId: postId,
+      userId: user.accountData.id,
+      likeStatus: likeStatus,
+      createdAt: createdAt,
+    }
+
+    try {
+      const findPostInPostDB = await MyModelPosts.findOne({id: postId})
+      if (!findPostInPostDB) {
+        return false
+      }
+
+      const currentLikeStatus = await MyModelLikeStatusPostsId.findOne(
+        {
+          $and:
+            [{postId: postId},
+              {userId: userId}]
+        }).lean()
+
+      if (currentLikeStatus && currentLikeStatus.likeStatus === likeStatus) {
+        return true
+      }
+
+      if (!currentLikeStatus) {
+        const createNewLikeStatus = await MyModelLikeStatusPostsId.create(newLikeStatus)
+        return true
+      }
+      const updateLikeStatus = await MyModelLikeStatusPostsId.findOneAndUpdate(
+        {
+          $and:
+            [{postId: postId},
+              {userId: userId}]
+        },
+        {likeStatus: likeStatus}).lean()
+      return true
+
+    } catch (e) {
+      console.log(e)
+      return false
+    }
   }
 }

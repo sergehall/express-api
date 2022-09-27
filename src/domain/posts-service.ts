@@ -45,4 +45,8 @@ export class PostsService {
   async deletedAllPosts(): Promise<Boolean> {
     return await this.postsRepository.deletedAllPosts()
   }
+
+  async changeLikeStatusPost(user: UserAccountDBType, postId: string, likeStatus: string): Promise<Boolean> {
+    return await this.postsRepository.changeLikeStatusPost(user, postId, likeStatus)
+  }
 }

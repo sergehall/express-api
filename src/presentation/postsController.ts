@@ -1,6 +1,7 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
+import {UserAccountDBType} from "../types/all_types";
 
 export class PostsController {
   constructor(private postsService: PostsService) {
@@ -53,7 +54,7 @@ export class PostsController {
     try {
       const postId: string = req.params.postId;
       const content: string = req.body.content;
-      const  user  = req.user
+      const user = req.user
 
       if (user === null) {
         res.status(401)
@@ -172,4 +173,16 @@ export class PostsController {
       res.sendStatus(404)
     }
   }
+
+  async likeStatusPostId(req: Request, res: Response) {
+    const likeStatus = req.body.likeStatus
+    const postId: string = req.params.postId;
+    const user: UserAccountDBType = req.user
+    const likeStatusPost = await this.postsService.changeLikeStatusPost(user, postId, likeStatus);
+    if (!likeStatusPost) {
+      return res.sendStatus(404)
+    }
+    return res.sendStatus(204)
+  }
+
 }

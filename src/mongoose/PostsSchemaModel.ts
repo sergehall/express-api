@@ -2,8 +2,8 @@ import mongoose, {Document} from 'mongoose';
 
 const Schema = mongoose.Schema
 
-interface PostsType extends Document{
-  id: string | null
+interface PostsType extends Document {
+  id: string
   title: string
   shortDescription: string
   content: string
@@ -15,7 +15,7 @@ interface PostsType extends Document{
 const PostsSchema = new Schema({
   id: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'Id is required'],
   },
   title: {
     type: String,
@@ -43,4 +43,4 @@ const PostsSchema = new Schema({
   }
 })
 
-export const MyModelPosts =  mongoose.model<PostsType>("posts", PostsSchema, 'Posts')
+export const MyModelPosts = mongoose.model<PostsType>("posts", PostsSchema, 'Posts')

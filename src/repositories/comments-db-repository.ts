@@ -8,7 +8,6 @@ import {
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 
 
-
 export class CommentsRepository {
 
   async findCommentById(commentId: string): Promise<ReturnTypeObjectComment> {
@@ -16,7 +15,7 @@ export class CommentsRepository {
     const filter = {"allComments.id": commentId}
 
     const foundPostWithComments = await MyModelComments.findOne(filter, {
-        _id: false
+      _id: false
     }).lean()
 
     const comment = foundPostWithComments?.allComments.filter(i => i.id === commentId)[0]
@@ -30,8 +29,8 @@ export class CommentsRepository {
       }
     }
 
-    // @ts-ignore
-    delete comment._id
+    // // @ts-ignore
+    // delete comment._id
 
     return {
       data: comment,
@@ -45,7 +44,7 @@ export class CommentsRepository {
     const filterToUpdate = {"allComments.id": commentId}
     let resultCode = 0
 
-    const result = await MyModelComments.updateOne(filterToUpdate,{$set: {"allComments.$.content": content}})
+    const result = await MyModelComments.updateOne(filterToUpdate, {$set: {"allComments.$.content": content}})
 
     if (result.modifiedCount === 0 && result.matchedCount == 0) {
       errorsArray.push(MongoHasNotUpdated)

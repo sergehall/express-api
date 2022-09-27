@@ -6,12 +6,13 @@ import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 export class UsersAccountRepository {
 
   async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType | null> {
-    const foundUser = await MyModelUserAccount.findOne({"accountData.email": user.accountData.email})
-    if (foundUser) {
+    try {
+      const result = await MyModelUserAccount.create(user)
+      return user
+    } catch (e: any) {
+      console.log(e.toString())
       return null
     }
-    const result = await MyModelUserAccount.create(user)
-    return user
   }
 
   async findAllUsers() {
@@ -50,7 +51,7 @@ export class UsersAccountRepository {
   }
 
   async updateUserAccount(user: UserAccountDBType) {
-    const  result = await MyModelUserAccount.updateOne({_id: new ObjectId(user._id)}, {$set: user})
+    const result = await MyModelUserAccount.updateOne({_id: new ObjectId(user._id)}, {$set: user})
     return result
   }
 

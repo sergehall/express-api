@@ -15,8 +15,9 @@ export type ReturnTypeObjectBloggers = {
   errorsMessages: Array<ErrorType>,
   resultCode: number
 }
+
 export type PostsType = {
-  id: string | null
+  id: string
   title: string
   shortDescription: string
   content: string
@@ -24,6 +25,7 @@ export type PostsType = {
   bloggerName: string
   createdAt: string
 }
+
 export type ReturnTypeObjectPosts = {
   data: PostsType
   errorsMessages: Array<ErrorType>
