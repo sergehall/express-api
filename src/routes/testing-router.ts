@@ -13,6 +13,7 @@ import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
 import {MyModelBlogPosts} from "../mongoose/PostsBlogSchemaModel";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
+import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 
 
 export const testingRouter = Router({})
@@ -34,6 +35,7 @@ testingRouter
     await MyModelBlackListRefreshTokenJWT.deleteMany({})
     await MyModelBlogPosts.deleteMany({})
     await MyModelBlogs.deleteMany({})
+    await MyModelLikeStatusPostsId.deleteMany({})
     res.status(204).send()
     return
   })
