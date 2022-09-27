@@ -21,9 +21,20 @@ export type PostsType = {
   title: string
   shortDescription: string
   content: string
-  blogId: string
+  bloggerId: string
   bloggerName: string
   createdAt: string
+  extendedLikesInfo: {
+    likesCount: number,
+    dislikesCount: number,
+    myStatus: string,
+    newestLikes:
+      {
+        addedAt: string,
+        userId: string,
+        login: string
+      }[]
+  }
 }
 
 export type ReturnTypeObjectPosts = {

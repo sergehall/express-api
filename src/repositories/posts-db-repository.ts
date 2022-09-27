@@ -16,6 +16,7 @@ import uuid4 from "uuid4";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
+import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 
 
 export class PostsRepository {
@@ -78,9 +79,15 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          blogId: blogId,
+          bloggerId: blogId,
           bloggerName: "",
-          createdAt: createdAt
+          createdAt: createdAt,
+          extendedLikesInfo: {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: "",
+            newestLikes: []
+          }
         },
         errorsMessages: errorsArray,
         resultCode: 1
@@ -88,21 +95,32 @@ export class PostsRepository {
     }
 
     const nameBloggerId = foundBloggerId.name
+
     const newPost = {
       id: newPostId,
       title: title,
       shortDescription: shortDescription,
       content: content,
-      blogId: blogId,
+      bloggerId: blogId,
       bloggerName: nameBloggerId,
-      createdAt: createdAt
+      createdAt: createdAt,
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: "None",
+        newestLikes: []
+      }
     }
 
-
     try {
-      const result = await MyModelPosts.create(newPost)
+      const createNewPost = await MyModelPosts.create(newPost)
+
+      if (!createNewPost) {
+        throw true
+      }
+
       return {
-        data: newPost,
+        data: createNewPost,
         errorsMessages: errorsArray,
         resultCode: 0
       }
@@ -116,9 +134,19 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          blogId: blogId,
+          bloggerId: blogId,
           bloggerName: "",
-          createdAt: createdAt
+          createdAt: createdAt,
+          extendedLikesInfo: {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: "",
+            newestLikes: [{
+              addedAt: "",
+              userId: "",
+              login: ""
+            }]
+          }
         },
         errorsMessages: errorsArray,
         resultCode: 1
@@ -194,8 +222,31 @@ export class PostsRepository {
 
   async getPostById(id: string): Promise<PostsType | null> {
     const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
-      _id: false
-    })
+      _id: false,
+      __v: false
+    }).lean()
+
+    const lastThreeLikesArray = await MyModelThreeLastLikesPost.findOne({postId: id}, {
+      _id: false,
+      __v: false
+    }).lean()
+
+
+    if (lastThreeLikesArray && post) {
+      const withoutObjId = []
+      for (let i of lastThreeLikesArray.threeNewestLikes) {
+        withoutObjId.push({
+          addedAt: i.addedAt,
+          userId: i.userId,
+          login: i.login
+        })
+      }
+
+      post.extendedLikesInfo.newestLikes = withoutObjId
+
+      return post
+    }
+
     if (post) {
       return post
     } else {
@@ -206,7 +257,8 @@ export class PostsRepository {
   async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<PaginatorCommentViewModel> {
     const filter = {postId: postId}
 
-    let foundPost = await MyModelPosts.findOne({id: postId})
+    let foundPost = await MyModelPosts.findOne({id: postId}).lean()
+
     if (foundPost === null) {
       return {
         pagesCount: 0,
@@ -289,7 +341,8 @@ export class PostsRepository {
           blogId: blogId,
           bloggerName: searchBlogger.name,
         }
-      })
+      }).lean()
+
       if (result.matchedCount === 0) {
         errorsArray.push(MongoHasNotUpdated)
       }
@@ -301,9 +354,21 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          blogId: blogId,
+          bloggerId: blogId,
           bloggerName: "",
           createdAt: createdAt,
+          extendedLikesInfo: {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: "",
+            newestLikes: [
+              {
+                addedAt: "",
+                userId: "",
+                login: ""
+              }
+            ]
+          }
         },
         errorsMessages: errorsArray,
         resultCode: 1
@@ -321,9 +386,22 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          blogId: blogId,
+          bloggerId: blogId,
           bloggerName: "",
           createdAt: createdAt,
+          extendedLikesInfo: {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: "",
+            newestLikes: [
+              {
+                addedAt: "",
+                userId: "",
+                login: ""
+              }
+            ]
+          }
+
         },
         errorsMessages: errorsArray,
         resultCode: 1
@@ -372,8 +450,51 @@ export class PostsRepository {
               {userId: userId}]
         }).lean()
 
-      if (currentLikeStatus && currentLikeStatus.likeStatus === likeStatus) {
-        return true
+      // if (currentLikeStatus && currentLikeStatus.likeStatus === likeStatus) {
+      //   return true
+      // }
+
+      const postThreeLastLikesArray = await MyModelThreeLastLikesPost.findOneAndUpdate(
+        {postId: postId}).lean()
+
+      if (likeStatus === 'Like') {
+        const newestLike = {
+          addedAt: createdAt,
+          userId: user.accountData.id,
+          login: user.accountData.login
+        }
+        if (!postThreeLastLikesArray) {
+          const addLikeToThreeLastLikesArray = await MyModelThreeLastLikesPost.create({
+            postId: postId,
+            threeNewestLikes: [newestLike]
+          })
+        }
+
+        if (postThreeLastLikesArray && postThreeLastLikesArray.threeNewestLikes.length < 3) {
+          const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
+            {postId: postId},
+            {$push: {"threeNewestLikes": newestLike}})
+
+        } else if (postThreeLastLikesArray && postThreeLastLikesArray.threeNewestLikes.length === 3) {
+          console.log(newestLike, "newestLike")
+
+          const sortArray = postThreeLastLikesArray.threeNewestLikes.sort(function (a, b) {
+            const addedAtA = a.addedAt
+            const addedAtB = b.addedAt
+            if (addedAtA < addedAtB) //sort the rows in ascending order
+              return -1
+            if (addedAtA > addedAtB)
+              return 1
+            return 0
+          })
+
+          sortArray.push(newestLike)
+          console.log(sortArray)
+
+          const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
+            {postId: postId},
+            {$set: {"threeNewestLikes": sortArray.slice(1)}})
+        }
       }
 
       if (!currentLikeStatus) {
@@ -388,7 +509,6 @@ export class PostsRepository {
         },
         {likeStatus: likeStatus}).lean()
       return true
-
     } catch (e) {
       console.log(e)
       return false

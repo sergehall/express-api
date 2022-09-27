@@ -30,14 +30,16 @@ export class PostsController {
 
       if (newPost.resultCode === 0) {
         res.status(201)
+
         res.send({
           id: newPost.data.id,
           title: newPost.data.title,
           shortDescription: newPost.data.shortDescription,
           content: newPost.data.content,
-          blogId: newPost.data.blogId,
+          blogId: newPost.data.bloggerId,
           blogName: newPost.data.bloggerName,
-          createdAt: newPost.data.createdAt
+          createdAt: newPost.data.createdAt,
+          extendedLikesInfo: newPost.data.extendedLikesInfo
         })
       } else {
         res.status(400)

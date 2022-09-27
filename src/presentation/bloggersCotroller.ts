@@ -56,7 +56,7 @@ export class BloggersController {
           title: createPosts.data.title,
           shortDescription: createPosts.data.shortDescription,
           content: createPosts.data.content,
-          blogId: createPosts.data.blogId,
+          blogId: createPosts.data.bloggerId,
           bloggerName: createPosts.data.bloggerName,
           createdAt: createPosts.data.createdAt
         })

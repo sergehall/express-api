@@ -7,15 +7,26 @@ interface PostsType extends Document {
   title: string
   shortDescription: string
   content: string
-  blogId: string
+  bloggerId: string
   bloggerName: string
   createdAt: string
+  extendedLikesInfo: {
+    likesCount: number,
+    dislikesCount: number,
+    myStatus: string,
+    newestLikes:
+      {
+        addedAt: string,
+        userId: string,
+        login: string
+      }[]
+  }
 }
 
 const PostsSchema = new Schema({
   id: {
     type: String,
-    required: [true, 'Id is required'],
+    required: [true, 'Id is required!!!'],
   },
   title: {
     type: String,
@@ -29,7 +40,7 @@ const PostsSchema = new Schema({
     type: String,
     required: [true, 'Id is required']
   },
-  blogId: {
+  bloggerId: {
     type: String,
     required: [true, 'Id is required']
   },
@@ -40,6 +51,37 @@ const PostsSchema = new Schema({
   createdAt: {
     type: String,
     required: [true, 'Id is required']
+  },
+  extendedLikesInfo: {
+    likesCount: {
+      type: String,
+      required: [true, 'Id is required']
+    },
+    dislikesCount: {
+      type: String,
+      required: [true, 'Id is required']
+    },
+    myStatus: {
+      type: String,
+      required: [true, 'Id is required']
+    },
+    newestLikes: {
+      type: Array({
+        addedAt: {
+          type: String,
+          required: [true, 'Id is required']
+        },
+        userId: {
+          type: String,
+          required: [true, 'Id is required']
+        },
+        login: {
+          type: String,
+          required: [true, 'Id is required']
+        }
+      }),
+      validate: (v: any) => Array.isArray(v)
+    }
   }
 })
 
