@@ -4,7 +4,7 @@ import {
   notFoundPostId
 } from "../middlewares/errorsMessages";
 import {
-  ArrayErrorsType,
+  ArrayErrorsType, LastTreeLikes,
   Pagination, PaginatorCommentViewModel,
   PostsType,
   ReturnTypeObjectComment,
@@ -17,6 +17,7 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
+import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 
 
 export class PostsRepository {
@@ -226,12 +227,30 @@ export class PostsRepository {
       __v: false
     }).lean()
 
+    if (post) {
+      // getting likes and like count
+      const countLikes = await MyModelLikeStatusPostsId.countDocuments({
+        $and:
+          [{postId: id},
+            {likeStatus: "Like"}]
+      }).lean()
+      console.log(countLikes, "countLikes")
+      post.extendedLikesInfo.likesCount = countLikes
+      // getting likes and dislike count
+      const countDislikes = await MyModelLikeStatusPostsId.countDocuments({
+        $and:
+          [{postId: id},
+            {likeStatus: "Dislike"}]
+      }).lean()
+      console.log(countDislikes, "countDislikes")
+      post.extendedLikesInfo.dislikesCount = countDislikes
+    }
+
+    // getting 3 last likes
     const lastThreeLikesArray = await MyModelThreeLastLikesPost.findOne({postId: id}, {
       _id: false,
       __v: false
     }).lean()
-
-
     if (lastThreeLikesArray && post) {
       const withoutObjId = []
       for (let i of lastThreeLikesArray.threeNewestLikes) {
@@ -241,12 +260,10 @@ export class PostsRepository {
           login: i.login
         })
       }
-
       post.extendedLikesInfo.newestLikes = withoutObjId
 
       return post
     }
-
     if (post) {
       return post
     } else {
@@ -361,13 +378,7 @@ export class PostsRepository {
             likesCount: 0,
             dislikesCount: 0,
             myStatus: "",
-            newestLikes: [
-              {
-                addedAt: "",
-                userId: "",
-                login: ""
-              }
-            ]
+            newestLikes: []
           }
         },
         errorsMessages: errorsArray,
@@ -393,13 +404,7 @@ export class PostsRepository {
             likesCount: 0,
             dislikesCount: 0,
             myStatus: "",
-            newestLikes: [
-              {
-                addedAt: "",
-                userId: "",
-                login: ""
-              }
-            ]
+            newestLikes: []
           }
 
         },
@@ -450,35 +455,55 @@ export class PostsRepository {
               {userId: userId}]
         }).lean()
 
-      // if (currentLikeStatus && currentLikeStatus.likeStatus === likeStatus) {
-      //   return true
-      // }
+      if (!currentLikeStatus) {
+        const addLikeToLikeStatusPost = await MyModelLikeStatusPostsId.create(newLikeStatus)
+      }
 
-      const postThreeLastLikesArray = await MyModelThreeLastLikesPost.findOneAndUpdate(
-        {postId: postId}).lean()
+      const postInThreeLastLikes = await MyModelThreeLastLikesPost.findOne(
+        {
+          $and:
+            [{postId: postId},
+              {"threeNewestLikes.userId": userId}]
+        }).lean()
+
+      if (currentLikeStatus && currentLikeStatus.likeStatus === likeStatus && postInThreeLastLikes) {
+        return true
+      }
 
       if (likeStatus === 'Like') {
-        const newestLike = {
+        const newestLikeToThreeLastLikes = {
           addedAt: createdAt,
           userId: user.accountData.id,
           login: user.accountData.login
         }
-        if (!postThreeLastLikesArray) {
-          const addLikeToThreeLastLikesArray = await MyModelThreeLastLikesPost.create({
-            postId: postId,
-            threeNewestLikes: [newestLike]
-          })
-        }
+        const updateCurrentLikeInLikeStatusPosts = await MyModelLikeStatusPostsId.findOneAndUpdate(
+          {
+            $and:
+              [{postId: postId},
+                {userId: userId}]
+          },
+          {likeStatus: likeStatus}).lean()
 
-        if (postThreeLastLikesArray && postThreeLastLikesArray.threeNewestLikes.length < 3) {
+        const checkPostLastLikes = await MyModelThreeLastLikesPost.findOne({postId: postId}).lean()
+        console.log(checkPostLastLikes, postInThreeLastLikes, "---------")
+        if (!checkPostLastLikes) {
+          const createThreeLastLikesArray = await MyModelThreeLastLikesPost.create({
+            postId: postId,
+            threeNewestLikes: [newestLikeToThreeLastLikes]
+          })
+          return true
+        }
+        console.log(postInThreeLastLikes, postInThreeLastLikes?.threeNewestLikes.length, "1------")
+
+        if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length < 3) {
+
           const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
             {postId: postId},
-            {$push: {"threeNewestLikes": newestLike}})
+            {$push: {"threeNewestLikes": newestLikeToThreeLastLikes}})
+          return true
 
-        } else if (postThreeLastLikesArray && postThreeLastLikesArray.threeNewestLikes.length === 3) {
-          console.log(newestLike, "newestLike")
-
-          const sortArray = postThreeLastLikesArray.threeNewestLikes.sort(function (a, b) {
+        } else if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length  === 3) {
+          const sortArray = checkPostLastLikes.threeNewestLikes.sort(function (a, b) {
             const addedAtA = a.addedAt
             const addedAtB = b.addedAt
             if (addedAtA < addedAtB) //sort the rows in ascending order
@@ -488,19 +513,17 @@ export class PostsRepository {
             return 0
           })
 
-          sortArray.push(newestLike)
-          console.log(sortArray)
+          sortArray.push(newestLikeToThreeLastLikes)
 
           const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
             {postId: postId},
             {$set: {"threeNewestLikes": sortArray.slice(1)}})
+          return true
         }
+        return false
       }
 
-      if (!currentLikeStatus) {
-        const createNewLikeStatus = await MyModelLikeStatusPostsId.create(newLikeStatus)
-        return true
-      }
+      // if likeStatus: Dislike or None
       const updateLikeStatus = await MyModelLikeStatusPostsId.findOneAndUpdate(
         {
           $and:
@@ -508,7 +531,105 @@ export class PostsRepository {
               {userId: userId}]
         },
         {likeStatus: likeStatus}).lean()
+
+      const findLikeInThreeLast = await MyModelThreeLastLikesPost.findOne(
+        {
+          $and:
+            [{postId: postId},
+              {"threeNewestLikes.userId": userId}]
+        }).lean()
+
+      console.log(findLikeInThreeLast?.threeNewestLikes, "threeNewestLikes")
+
+      if (findLikeInThreeLast) {
+        // get array likes by postId
+        let findNewestLikeArray = await MyModelLikeStatusPostsId.find({
+          $and:
+            [{postId: postId},
+              {likeStatus: "Like"}]
+        }).sort(createdAt).lean()
+
+        if (!findNewestLikeArray) {
+          findNewestLikeArray = []
+        }
+
+        async function findLikeNoInThreeLast(findNewestLikeArray: any) {
+
+          while (true) {
+            const newestLike = findNewestLikeArray.pop()
+            const likeNoInThreeLast = await MyModelThreeLastLikesPost.findOne({"threeNewestLikes.userId": newestLike.userId}).lean()
+            if (!likeNoInThreeLast) {
+              return newestLike
+            }
+          }
+        }
+
+        const findNewestLike: LastTreeLikes = await findLikeNoInThreeLast(findNewestLikeArray)
+
+        const gettingLoginNewestLike = await MyModelUserAccount.findOne({"accountData.id": findNewestLike.userId}).lean()
+        if (!gettingLoginNewestLike) {
+          return false
+        }
+
+        if (findNewestLikeArray.length !== 0) {
+          const newestLikeAfterDislike = {
+            addedAt: findNewestLike.createdAt,
+            userId: findNewestLike.userId,
+            login: gettingLoginNewestLike.accountData.login
+          }
+
+          // if (findNewestLikeArray && findNewestLikeArray.length < 3) {
+          //   const pushToThreeLast = await MyModelThreeLastLikesPost.findOneAndUpdate(
+          //     {postId: postId},
+          //     {$push: {"threeNewestLikes": newestLikeAfterDislike}})
+          //   return true
+          //
+          // } else if (findNewestLikeArray && findNewestLikeArray.length === 3) {
+          //   console.log(newestLikeAfterDislike, "newestLikeAfterDislike")
+          //   const sortArray = findNewestLikeArray.sort(function (a, b) {
+          //     const addedAtA = a.addedAt
+          //     const addedAtB = b.addedAt
+          //     if (addedAtA < addedAtB) //sort the rows in ascending order
+          //       return -1
+          //     if (addedAtA > addedAtB)
+          //       return 1
+          //     return 0
+          //   })
+          //
+          //   sortArray.push(newestLikeAfterDislike)
+          //
+          //   const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
+          //     {postId: postId},
+          //     {$set: {"threeNewestLikes": sortArray.slice(1)}})
+          //   return true
+          // }
+
+        } else {
+
+        }
+
+        const delLikeInTreeLast = await MyModelThreeLastLikesPost.findOneAndUpdate({
+            $and:
+              [{postId: postId},
+                {"threeNewestLikes.userId": userId}]
+          },
+          {})
+
+        // const updateLikeInThreeLast = await MyModelThreeLastLikesPost.findOneAndUpdate(
+        //   {"threeNewestLikes.userId": userId},
+        //   {
+        //     $set: {
+        //       "threeNewestLikes.userId": {
+        //         addedAt: findNewestLike.createdAt,
+        //         userId: userId,
+        //         login: gettingLoginNewestLike.accountData.login
+        //       }
+        //     }
+        //   })
+      }
+
       return true
+
     } catch (e) {
       console.log(e)
       return false

@@ -15,7 +15,12 @@ export type ReturnTypeObjectBloggers = {
   errorsMessages: Array<ErrorType>,
   resultCode: number
 }
-
+export type LastTreeLikes = {
+  postId: string
+  userId: string
+  likeStatus: string
+  createdAt: string
+}
 export type PostsType = {
   id: string
   title: string

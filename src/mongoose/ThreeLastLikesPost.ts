@@ -4,11 +4,11 @@ const Schema = mongoose.Schema
 
 interface ThreeLastLikesPostType extends Document {
   postId: string
-  threeNewestLikes: Array<{
+  threeNewestLikes: {
     addedAt: string,
     userId: string,
     login: string
-  }>
+  }[]
 }
 
 const ThreeLastLikesPostSchema = new Schema({
