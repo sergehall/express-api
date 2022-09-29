@@ -227,24 +227,45 @@ export class PostsRepository {
       __v: false
     }).lean()
 
-    if (post) {
-      // getting likes and like count
-      const countLikes = await MyModelLikeStatusPostsId.countDocuments({
-        $and:
-          [{postId: id},
-            {likeStatus: "Like"}]
-      }).lean()
-      console.log(countLikes, "countLikes")
-      post.extendedLikesInfo.likesCount = countLikes
-      // getting likes and dislike count
-      const countDislikes = await MyModelLikeStatusPostsId.countDocuments({
-        $and:
-          [{postId: id},
-            {likeStatus: "Dislike"}]
-      }).lean()
-      console.log(countDislikes, "countDislikes")
-      post.extendedLikesInfo.dislikesCount = countDislikes
+    if (!post) {
+      return null
     }
+
+    // getting likes and like count
+    const countLikes = await MyModelLikeStatusPostsId.countDocuments({
+      $and:
+        [{postId: id},
+          {likeStatus: "Like"}]
+    }).lean()
+    console.log(countLikes, "countLikes")
+    post.extendedLikesInfo.likesCount = countLikes
+
+    // getting likes and dislike count
+    const countDislikes = await MyModelLikeStatusPostsId.countDocuments({
+      $and:
+        [{postId: id},
+          {likeStatus: "Dislike"}]
+    }).lean()
+    console.log(countDislikes, "countDislikes")
+    post.extendedLikesInfo.dislikesCount = countDislikes
+
+    // getting the status of the post owner
+    const bloggerIdInPost = await MyModelPosts.findOne({id: id}).lean()
+    if(!bloggerIdInPost) {
+      return null
+    }
+    console.log(bloggerIdInPost, "getBloggerId")
+    const statusPostOwner = await MyModelLikeStatusPostsId.findOne({
+      $and:
+        [{postId: id},
+          {userId: bloggerIdInPost.bloggerId}]
+    }).lean()
+    console.log(statusPostOwner, "statusPostOwner")
+    if(!statusPostOwner) {
+      return null
+    }
+
+    post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
 
     // getting 3 last likes
     const lastThreeLikesArray = await MyModelThreeLastLikesPost.findOne({postId: id}, {
@@ -466,7 +487,10 @@ export class PostsRepository {
               {"threeNewestLikes.userId": userId}]
         }).lean()
 
-      if (currentLikeStatus && currentLikeStatus.likeStatus === likeStatus && postInThreeLastLikes) {
+      if (currentLikeStatus
+        && currentLikeStatus.likeStatus === "Like"
+        && likeStatus === "Like"
+        && postInThreeLastLikes) {
         return true
       }
 
@@ -485,7 +509,6 @@ export class PostsRepository {
           {likeStatus: likeStatus}).lean()
 
         const checkPostLastLikes = await MyModelThreeLastLikesPost.findOne({postId: postId}).lean()
-        console.log(checkPostLastLikes, postInThreeLastLikes, "---------")
         if (!checkPostLastLikes) {
           const createThreeLastLikesArray = await MyModelThreeLastLikesPost.create({
             postId: postId,
@@ -493,7 +516,6 @@ export class PostsRepository {
           })
           return true
         }
-        console.log(postInThreeLastLikes, postInThreeLastLikes?.threeNewestLikes.length, "1------")
 
         if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length < 3) {
 
@@ -502,7 +524,7 @@ export class PostsRepository {
             {$push: {"threeNewestLikes": newestLikeToThreeLastLikes}})
           return true
 
-        } else if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length  === 3) {
+        } else if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length === 3) {
           const sortArray = checkPostLastLikes.threeNewestLikes.sort(function (a, b) {
             const addedAtA = a.addedAt
             const addedAtB = b.addedAt
@@ -539,94 +561,47 @@ export class PostsRepository {
               {"threeNewestLikes.userId": userId}]
         }).lean()
 
-      console.log(findLikeInThreeLast?.threeNewestLikes, "threeNewestLikes")
-
-      if (findLikeInThreeLast) {
-        // get array likes by postId
-        let findNewestLikeArray = await MyModelLikeStatusPostsId.find({
-          $and:
-            [{postId: postId},
-              {likeStatus: "Like"}]
-        }).sort(createdAt).lean()
-
-        if (!findNewestLikeArray) {
-          findNewestLikeArray = []
-        }
-
-        async function findLikeNoInThreeLast(findNewestLikeArray: any) {
-
-          while (true) {
-            const newestLike = findNewestLikeArray.pop()
-            const likeNoInThreeLast = await MyModelThreeLastLikesPost.findOne({"threeNewestLikes.userId": newestLike.userId}).lean()
-            if (!likeNoInThreeLast) {
-              return newestLike
-            }
-          }
-        }
-
-        const findNewestLike: LastTreeLikes = await findLikeNoInThreeLast(findNewestLikeArray)
-
-        const gettingLoginNewestLike = await MyModelUserAccount.findOne({"accountData.id": findNewestLike.userId}).lean()
-        if (!gettingLoginNewestLike) {
-          return false
-        }
-
-        if (findNewestLikeArray.length !== 0) {
-          const newestLikeAfterDislike = {
-            addedAt: findNewestLike.createdAt,
-            userId: findNewestLike.userId,
-            login: gettingLoginNewestLike.accountData.login
-          }
-
-          // if (findNewestLikeArray && findNewestLikeArray.length < 3) {
-          //   const pushToThreeLast = await MyModelThreeLastLikesPost.findOneAndUpdate(
-          //     {postId: postId},
-          //     {$push: {"threeNewestLikes": newestLikeAfterDislike}})
-          //   return true
-          //
-          // } else if (findNewestLikeArray && findNewestLikeArray.length === 3) {
-          //   console.log(newestLikeAfterDislike, "newestLikeAfterDislike")
-          //   const sortArray = findNewestLikeArray.sort(function (a, b) {
-          //     const addedAtA = a.addedAt
-          //     const addedAtB = b.addedAt
-          //     if (addedAtA < addedAtB) //sort the rows in ascending order
-          //       return -1
-          //     if (addedAtA > addedAtB)
-          //       return 1
-          //     return 0
-          //   })
-          //
-          //   sortArray.push(newestLikeAfterDislike)
-          //
-          //   const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
-          //     {postId: postId},
-          //     {$set: {"threeNewestLikes": sortArray.slice(1)}})
-          //   return true
-          // }
-
-        } else {
-
-        }
-
-        const delLikeInTreeLast = await MyModelThreeLastLikesPost.findOneAndUpdate({
-            $and:
-              [{postId: postId},
-                {"threeNewestLikes.userId": userId}]
-          },
-          {})
-
-        // const updateLikeInThreeLast = await MyModelThreeLastLikesPost.findOneAndUpdate(
-        //   {"threeNewestLikes.userId": userId},
-        //   {
-        //     $set: {
-        //       "threeNewestLikes.userId": {
-        //         addedAt: findNewestLike.createdAt,
-        //         userId: userId,
-        //         login: gettingLoginNewestLike.accountData.login
-        //       }
-        //     }
-        //   })
+      if (!findLikeInThreeLast) {
+        return true
       }
+
+      // get array likes by postId
+      let findNewestLikeArray = await MyModelLikeStatusPostsId.find({
+        $and:
+          [{postId: postId},
+            {likeStatus: "Like"}]
+      }).sort(createdAt).lean()
+
+      if (!findNewestLikeArray) {
+        findNewestLikeArray = []
+      }
+
+      async function findLikeNoInThreeLast(findNewestLikeArray: any) {
+
+        while (true) {
+          const newestLike = findNewestLikeArray.pop()
+          const likeNoInThreeLast = await MyModelThreeLastLikesPost.findOne({"threeNewestLikes.userId": newestLike.userId}).lean()
+          if (!likeNoInThreeLast) {
+            return newestLike
+          }
+        }
+      }
+
+      const findNewestLike: LastTreeLikes = await findLikeNoInThreeLast(findNewestLikeArray)
+
+      const gettingLoginNewestLike = await MyModelUserAccount.findOne({"accountData.id": findNewestLike.userId}).lean()
+      if (!gettingLoginNewestLike) {
+        return false
+      }
+
+      const updatedThreeLastLikes = await MyModelThreeLastLikesPost.updateOne({
+          "threeNewestLikes.userId": userId
+        },
+        {
+          "threeNewestLikes.$.addedAt": findNewestLike.createdAt,
+          "threeNewestLikes.$.userId": findNewestLike.userId,
+          "threeNewestLikes.$.login": gettingLoginNewestLike.accountData.login
+        })
 
       return true
 
