@@ -227,12 +227,9 @@ export class PostsRepository {
       __v: false
     }).lean()
 
-    console.log(post)
-
     if (!post) {
       return null
     }
-
     // getting likes and like count
     const countLikes = await MyModelLikeStatusPostsId.countDocuments({
       $and:
@@ -459,7 +456,7 @@ export class PostsRepository {
 
     const newLikeStatus = {
       postId: postId,
-      userId: user.accountData.id,
+      userId: userId,
       likeStatus: likeStatus,
       createdAt: createdAt,
     }
@@ -573,14 +570,14 @@ export class PostsRepository {
             {likeStatus: "Like"}]
       }).sort(createdAt).lean()
 
-      if (!findNewestLikeArray) {
-        findNewestLikeArray = []
-      }
-
       async function findLikeNoInThreeLast(findNewestLikeArray: any) {
 
         while (true) {
           const newestLike = findNewestLikeArray.pop()
+          console.log(newestLike)
+          if (newestLike === undefined) {
+            break
+          }
           const likeNoInThreeLast = await MyModelThreeLastLikesPost.findOne({"threeNewestLikes.userId": newestLike.userId}).lean()
           if (!likeNoInThreeLast) {
             return newestLike
@@ -589,6 +586,23 @@ export class PostsRepository {
       }
 
       const findNewestLike: LastTreeLikes = await findLikeNoInThreeLast(findNewestLikeArray)
+
+      if (!findNewestLikeArray && findLikeInThreeLast || findNewestLike === undefined) {
+        const removeLikeFromThreeLastLikes = await MyModelThreeLastLikesPost.findOne({
+          $and:
+            [{postId: postId},
+              {"threeNewestLikes.userId": userId}]
+        }).lean()
+
+        if (removeLikeFromThreeLastLikes) {
+          const delLikesFromThreeLast = removeLikeFromThreeLastLikes.threeNewestLikes.filter(i => i.userId !== userId)
+          const updateThreeLastLikes = await MyModelThreeLastLikesPost.findOneAndUpdate(
+            {postId: postId},
+            {threeNewestLikes: delLikesFromThreeLast}
+          )
+          return true
+        }
+      }
 
       const gettingLoginNewestLike = await MyModelUserAccount.findOne({"accountData.id": findNewestLike.userId}).lean()
       if (!gettingLoginNewestLike) {
