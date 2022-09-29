@@ -27,8 +27,8 @@ export class PostsService {
     return await this.postsRepository.createNewCommentByPostId(postId, content, user)
   }
 
-  async getPostById(id: string): Promise<PostsType | null >{
-    return await this.postsRepository.getPostById(id)
+  async getPostById(id: string, user: UserAccountDBType | null): Promise<PostsType | null >{
+    return await this.postsRepository.getPostById(id, user)
   }
   async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<PaginatorCommentViewModel>{
     return await this.postsRepository.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection)

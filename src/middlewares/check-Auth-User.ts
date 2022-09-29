@@ -18,4 +18,21 @@ export class AuthCheckUserAuthorizationForUserAccount {
     next()
     return
   }
+
+  async noneStatus(req: Request, res: Response, next: NextFunction) {
+    if (!req.headers.authorization) {
+      req.user = null
+      next()
+      return
+    }
+    const token = req.headers.authorization.split(' ')[1]
+    const userId = await jwtService.getUserIdByToken(token)
+    if (userId === null) {
+      res.sendStatus(401)
+      return
+    }
+    req.user = await ioc.usersAccountService.findUserByObjectId(userId)
+    next()
+    return
+  }
 }

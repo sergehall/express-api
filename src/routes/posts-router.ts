@@ -23,6 +23,7 @@ postsRouts.get('/',
     ioc.postsController.createNewPost.bind(ioc.postsController))
 
   .get('/:postId',
+    ioc.authCheckUserAuthorizationForUserAccount.noneStatus,
     postIdParamsValidation,
     inputValidatorMiddleware,
     ioc.postsController.getPostById.bind(ioc.postsController))

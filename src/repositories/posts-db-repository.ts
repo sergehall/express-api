@@ -221,11 +221,13 @@ export class PostsRepository {
     }
   }
 
-  async getPostById(id: string): Promise<PostsType | null> {
+  async getPostById(id: string, user: UserAccountDBType | null): Promise<PostsType | null> {
     const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
       _id: false,
       __v: false
     }).lean()
+
+    console.log(post)
 
     if (!post) {
       return null
@@ -250,22 +252,21 @@ export class PostsRepository {
     post.extendedLikesInfo.dislikesCount = countDislikes
 
     // getting the status of the post owner
-    const bloggerIdInPost = await MyModelPosts.findOne({id: id}).lean()
-    if(!bloggerIdInPost) {
-      return null
-    }
-    console.log(bloggerIdInPost, "getBloggerId")
-    const statusPostOwner = await MyModelLikeStatusPostsId.findOne({
-      $and:
-        [{postId: id},
-          {userId: bloggerIdInPost.bloggerId}]
-    }).lean()
-    console.log(statusPostOwner, "statusPostOwner")
-    if(!statusPostOwner) {
-      return null
-    }
+    if (!user) {
+      post.extendedLikesInfo.myStatus = "None"
+    } else {
+      const statusPostOwner = await MyModelLikeStatusPostsId.findOne({
+        $and:
+          [{postId: id},
+            {userId: user.accountData.id}]
+      }).lean()
+      console.log(statusPostOwner, "statusPostOwner")
+      if (!statusPostOwner) {
+        return null
+      }
 
-    post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
+      post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
+    }
 
     // getting 3 last likes
     const lastThreeLikesArray = await MyModelThreeLastLikesPost.findOne({postId: id}, {
