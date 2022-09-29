@@ -38,7 +38,7 @@ export class BloggersRepository {
   async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
     const errorsArray: ArrayErrorsType = [];
 
-    const newBlogId = (+new Date()).toString() + (+new Date()).toString()
+    const newBlogId = (+new Date()).toString()
     const newBlogger = {
       id: newBlogId,
       name: name,
