@@ -22,10 +22,10 @@ export const testingRouter = Router({})
 
 testingRouter
   .delete("/all-data", async (req: Request, res: Response) => {
+    await MyModelUserAccount.deleteMany({})
+    await MyModelUser.deleteMany({})
     await MyModelEmailsToSent.deleteMany({})
     await MyModelBlackListIP.deleteMany({})
-    await MyModelUser.deleteMany({})
-    await MyModelUserAccount.deleteMany({})
     await MyModeLast10secRegConf.deleteMany({})
     await MyModeLast10secReg.deleteMany({})
     await MyModeLast10secLog.deleteMany({})

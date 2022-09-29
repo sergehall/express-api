@@ -1,4 +1,3 @@
-
 import {
   ArrayErrorsType,
   BloggerType,
@@ -38,9 +37,9 @@ export class BloggersRepository {
   async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
     const errorsArray: ArrayErrorsType = [];
 
-    const newId = Math.round((+new Date()+ +new Date())/2).toString();
+    const newBlogId = (+new Date()).toString() + (+new Date()).toString()
     const newBlogger = {
-      id: newId,
+      id: newBlogId,
       name: name,
       youtubeUrl: youtubeUrl
     }
@@ -57,11 +56,7 @@ export class BloggersRepository {
     }
 
     return {
-      data: {
-        id: newBlogger.id,
-        name: newBlogger.name,
-        youtubeUrl: newBlogger.youtubeUrl
-      },
+      data: newBlogger,
       errorsMessages: errorsArray,
       resultCode: 0
     }
@@ -70,7 +65,8 @@ export class BloggersRepository {
   async getBloggerById(id: string): Promise<ReturnTypeObjectBloggers> {
     const errorsArray: ArrayErrorsType = [];
     const blogger: BloggerType | null = await MyModelBloggers.findOne({id: id}, {
-        _id: false
+      _id: false,
+      __v: false
     })
     if (!blogger) {
       errorsArray.push(notFoundBloggerId)
