@@ -7,6 +7,7 @@ import {
 } from "../types/all_types";
 import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/errorsMessages";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
+import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 
 export class BloggersRepository {
@@ -44,9 +45,16 @@ export class BloggersRepository {
       youtubeUrl: youtubeUrl
     }
 
+    const newBlog = {
+      id: newBlogId,
+      name: name,
+      youtubeUrl: youtubeUrl,
+      createdAt: (new Date()).toISOString()
+    }
     const result = await MyModelBloggers.create(newBlogger)
+    const result2 = await MyModelBlogs.create(newBlog)
 
-    if (!result._id) {
+    if (!result._id || !result2._id) {
       errorsArray.push(MongoHasNotUpdated)
       return {
         data: newBlogger,

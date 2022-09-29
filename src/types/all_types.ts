@@ -52,7 +52,7 @@ export type TypeBlog = {
   id: string
   name: string
   youtubeUrl: string
-  createdAt: Date
+  createdAt: string
 }
 export type ReturnTypeObjectBlog = {
   data: TypeBlog | null

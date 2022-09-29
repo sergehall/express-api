@@ -6,7 +6,7 @@ interface BlogsType extends Document{
   id: string;
   name: string;
   youtubeUrl: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 
@@ -24,7 +24,7 @@ const BlogsSchema = new Schema({
     required: [true, 'Id is required']
   },
   createdAt: {
-    type: Date,
+    type: String,
     required: [true, 'Id is required']
   }
 })
