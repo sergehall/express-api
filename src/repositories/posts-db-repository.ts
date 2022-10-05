@@ -233,7 +233,6 @@ export class PostsRepository {
         [{postId: id},
           {likeStatus: "Like"}]
     }).lean()
-    console.log(countLikes, "countLikes")
     post.extendedLikesInfo.likesCount = countLikes
 
     // getting likes and dislike count
@@ -242,7 +241,6 @@ export class PostsRepository {
         [{postId: id},
           {likeStatus: "Dislike"}]
     }).lean()
-    console.log(countDislikes, "countDislikes")
     post.extendedLikesInfo.dislikesCount = countDislikes
 
     // getting the status of the post owner
@@ -254,7 +252,6 @@ export class PostsRepository {
           [{postId: id},
             {userId: user.accountData.id}]
       }).lean()
-      console.log(statusPostOwner, "statusPostOwner")
       if (!statusPostOwner) {
         return null
       }
