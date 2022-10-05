@@ -14,7 +14,7 @@ export class AuthCheckUserAuthorizationForUserAccount {
       res.sendStatus(401)
       return
     }
-    req.user = await ioc.usersAccountService.findUserByObjectId(userId)
+    req.user = await ioc.usersAccountService.findUserByUserId(userId)
     next()
     return
   }
@@ -31,7 +31,7 @@ export class AuthCheckUserAuthorizationForUserAccount {
       res.sendStatus(401)
       return
     }
-    req.user = await ioc.usersAccountService.findUserByObjectId(userId)
+    req.user = await ioc.usersAccountService.findUserByUserId(userId)
     next()
     return
   }

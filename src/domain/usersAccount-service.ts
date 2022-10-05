@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt'
-import {ObjectId} from "mongodb";
 import {UserAccountDBType, UserDBType} from "../types/all_types";
 import {UsersAccountRepository} from "../repositories/usersAccount-db-repository";
 import uuid4 from "uuid4";
@@ -165,8 +164,8 @@ export class UsersAccountService {
     return await this.usersAccountRepository.findByIsConfirmedAndCreatedAt()
   }
 
-  async findUserByObjectId(userObjectId: ObjectId): Promise<UserAccountDBType | null> {
-    return await this.usersAccountRepository.findUserByObjectId(userObjectId)
+  async findUserByUserId(userId: string): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findUserByUserId(userId)
   }
 
   async updateAndSentConfirmationCodeByEmail(email: string) {

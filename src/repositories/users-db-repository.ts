@@ -1,4 +1,3 @@
-import {ObjectId} from "mongodb";
 import {Pagination, UserDBType} from "../types/all_types";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
 
@@ -42,8 +41,8 @@ export class UsersRepository {
     }
   }
 
-  async findUserById(id: ObjectId): Promise<UserDBType | null> {
-    let user = await MyModelUser.findOne({_id: id})
+  async findUserById(id: string): Promise<UserDBType | null> {
+    let user = await MyModelUser.findOne({id: id})
     if (user) {
       return user
     }

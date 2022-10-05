@@ -1,5 +1,4 @@
 import {UserAccountDBType} from "../types/all_types";
-import {ObjectId} from "mongodb";
 import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 
 
@@ -81,8 +80,8 @@ export class UsersAccountRepository {
     return result.deletedCount
   }
 
-  async findUserByObjectId(userObjectId: ObjectId): Promise<UserAccountDBType | null> {
-    const result: UserAccountDBType | null = await MyModelUserAccount.findOne({_id: userObjectId})
+  async findUserByUserId(userId: string): Promise<UserAccountDBType | null> {
+    const result: UserAccountDBType | null = await MyModelUserAccount.findOne({"accountData.id": userId})
     return result
   }
 }

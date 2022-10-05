@@ -14,7 +14,7 @@ usersRouter.get('/',
   ioc.usersController.getUsers.bind(ioc.usersController))
 
   .get('/:mongoId', ioc.checkoutMongoDbId.checkOut,
-    ioc.usersController.getUserByMongoDbId.bind(ioc.usersController))
+    ioc.usersController.getUserByUserId.bind(ioc.usersController))
 
   .post('/', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     bodyLogin, bodyPassword, inputValidatorMiddleware,

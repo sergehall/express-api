@@ -102,7 +102,7 @@ authRouter.post('/login',
     console.log(userReqHedObjId, "userReqHedObjId")
     const accessToken = await jwtService.createUsersAccountJWT({id: userReqHedObjId})
     console.log(accessToken, "accessToken")
-    const refreshToken = await jwtService.createUsersAccountRefreshJWT({id:  userReqHedObjId})
+    const refreshToken = await jwtService.createUsersAccountRefreshJWT({id: userReqHedObjId})
     console.log(refreshToken, "refreshToken")
     res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
     return res.status(200).send({

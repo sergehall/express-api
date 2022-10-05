@@ -1,4 +1,3 @@
-import {ObjectId} from "mongodb";
 import {Request, Response} from "express";
 import {UsersService} from "../domain/users-service";
 import {ioc} from "../IoCContainer";
@@ -29,10 +28,10 @@ export class UsersController {
     }
   }
 
-  async getUserByMongoDbId(req: Request, res: Response) {
+  async getUserByUserId(req: Request, res: Response) {
     try {
-      const mongoId = new ObjectId(req.params.mongoId)
-      const getUser = await this.usersService.findUser(mongoId)
+      const userId = req.params.mongoId
+      const getUser = await this.usersService.findUser(userId)
       if (!getUser) {
         res.status(404).send()
       } else {

@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt'
-import {ObjectId} from "mongodb";
 import {Pagination, UserDBType} from "../types/all_types";
 import {UsersRepository} from "../repositories/users-db-repository";
 import uuid4 from "uuid4";
@@ -30,8 +29,8 @@ export class UsersService {
     return await this.usersRepository.findUsers(pageNumber, pageSize, userName)
   }
 
-  async findUser(mongoId: ObjectId): Promise<UserDBType | null> {
-    return await this.usersRepository.findUserById(mongoId)
+  async findUser(userId: string): Promise<UserDBType | null> {
+    return await this.usersRepository.findUserById(userId)
   }
 
   async checkCredentials(loginOrEmail: string, password: string) {

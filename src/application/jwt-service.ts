@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import {ObjectId} from "mongodb";
 import {UserObjectId} from "../types/all_types";
 import {NextFunction, Request, Response} from "express";
 import {ioc} from "../IoCContainer";
@@ -19,7 +18,7 @@ export const jwtService = {
   async verifyRefreshJWT(token: string) {
     try {
       const result: any = jwt.verify(token, ck.REFRESH_SECRET_KEY)
-      return result.userId
+      return result.userId.id
     } catch (e) {
       return null
     }
@@ -28,7 +27,7 @@ export const jwtService = {
   async getUserIdByToken(token: string) {
     try {
       const result: any = jwt.verify(token, ck.ACCESS_SECRET_KEY)
-      return result.userId
+      return result.userId.id
     } catch (err) {
       return null
     }
@@ -38,7 +37,7 @@ export const jwtService = {
     try {
       const token = req.cookies.refreshToken
       const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(token)
-      const userId: ObjectId | null = await jwtService.verifyRefreshJWT(token);
+      const userId: string | null = await jwtService.verifyRefreshJWT(token);
       if (tokenInBlackList || userId === null) {
         return res.sendStatus(401)
       }
