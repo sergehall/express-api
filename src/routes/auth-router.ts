@@ -99,11 +99,8 @@ authRouter.post('/login',
   ioc.checkCredentialsLoginPass.checkCredentials,
   async (req: Request, res: Response) => {
     const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
-    console.log(userReqHedObjId, "userReqHedObjId")
-    const accessToken = await jwtService.createUsersAccountJWT({id: userReqHedObjId})
-    console.log(accessToken, "accessToken")
-    const refreshToken = await jwtService.createUsersAccountRefreshJWT({id: userReqHedObjId})
-    console.log(refreshToken, "refreshToken")
+    const accessToken = await jwtService.createUsersAccountJWT(userReqHedObjId)
+    const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
     res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
     return res.status(200).send({
       "accessToken": accessToken
@@ -117,8 +114,8 @@ authRouter.post('/refresh-token',
       const payload: payloadType = jwt_decode(req.cookies.refreshToken);
       const refreshToken = req.cookies.refreshToken
 
-      const newAccessToken = await jwtService.createUsersAccountJWT({id: payload.userId})
-      const newRefreshToken = await jwtService.createUsersAccountRefreshJWT({id: payload.userId})
+      const newAccessToken = await jwtService.createUsersAccountJWT(payload.userId)
+      const newRefreshToken = await jwtService.createUsersAccountRefreshJWT(payload.userId)
       const insertRefreshTokenToBlackList: string = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})

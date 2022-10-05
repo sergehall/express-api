@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import {UserObjectId} from "../types/all_types";
 import {NextFunction, Request, Response} from "express";
 import {ioc} from "../IoCContainer";
 
@@ -7,18 +6,18 @@ const ck = require('ckey')
 
 export const jwtService = {
 
-  async createUsersAccountJWT(userObjectId: UserObjectId) {
-    return jwt.sign({userId: userObjectId}, ck.ACCESS_SECRET_KEY, {expiresIn: '30m'})
+  async createUsersAccountJWT(userId: string) {
+    return jwt.sign({userId: userId}, ck.ACCESS_SECRET_KEY, {expiresIn: '30m'})
   }, // 10s
 
-  async createUsersAccountRefreshJWT(userObjectId: UserObjectId) {
-    return jwt.sign({userId: userObjectId}, ck.REFRESH_SECRET_KEY, {expiresIn: '30s'})
+  async createUsersAccountRefreshJWT(userId: string) {
+    return jwt.sign({userId: userId}, ck.REFRESH_SECRET_KEY, {expiresIn: '30s'})
   },
 
   async verifyRefreshJWT(token: string) {
     try {
       const result: any = jwt.verify(token, ck.REFRESH_SECRET_KEY)
-      return result.userId.id
+      return result.userId
     } catch (e) {
       return null
     }
@@ -27,7 +26,7 @@ export const jwtService = {
   async getUserIdByToken(token: string) {
     try {
       const result: any = jwt.verify(token, ck.ACCESS_SECRET_KEY)
-      return result.userId.id
+      return result.userId
     } catch (err) {
       return null
     }
