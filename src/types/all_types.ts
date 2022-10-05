@@ -101,7 +101,6 @@ export type ReturnTypeObjectComment = {
 }
 
 export type UserDBType = {
-  _id: object,
   id: string
   login: string
   email: string,

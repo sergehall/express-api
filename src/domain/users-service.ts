@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 import {ObjectId} from "mongodb";
 import {Pagination, UserDBType} from "../types/all_types";
 import {UsersRepository} from "../repositories/users-db-repository";
+import uuid4 from "uuid4";
 
 
 export class UsersService {
@@ -10,12 +11,11 @@ export class UsersService {
   }
 
   async createUser(login: string, email: string, password: string): Promise<UserDBType | null> {
-    const newId = Math.round((+new Date() + +new Date()) / 2).toString();
+    const newId = uuid4().toString();
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
 
     const newUser: UserDBType = {
-      _id: new ObjectId(),
       id: newId,
       login: login,
       email,

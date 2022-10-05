@@ -15,13 +15,14 @@ export class UsersAccountService {
   async createUser(user: UserDBType, clientIp: string | null): Promise<UserAccountDBType | null> {
     const login = user.login
     const email = user.email === undefined ? null : user.email
+    const id = user.id
     const passwordSalt = user.passwordSalt
     const passwordHash = user.passwordHash
 
     const newUser: UserAccountDBType = {
       _id: new ObjectId(),
       accountData: {
-        id: uuid4(),
+        id: id,
         login: login,
         email: email,
         passwordSalt,

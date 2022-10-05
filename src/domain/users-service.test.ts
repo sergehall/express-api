@@ -14,7 +14,6 @@ describe('tests UsersService', () => {
     const passwordHash = await bcrypt.hash(userFromBody.password, passwordSalt)
 
     const newUser: UserDBType = {
-      _id: new ObjectId(),
       id: newId,
       login: userFromBody.login,
       email: userFromBody.email,
