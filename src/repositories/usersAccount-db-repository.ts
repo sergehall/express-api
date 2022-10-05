@@ -52,7 +52,7 @@ export class UsersAccountRepository {
   }
 
   async updateUserAccount(user: UserAccountDBType) {
-    const result = await MyModelUserAccount.updateOne({_id: new ObjectId(user._id)}, {$set: user})
+    const result = await MyModelUserAccount.updateOne({"accountData.id": user.accountData.id}, {$set: user})
     return result
   }
 
@@ -63,14 +63,14 @@ export class UsersAccountRepository {
 
   async deleteSendTimeOlderMinute(user: UserAccountDBType): Promise<number> {
     // redo it so that it does not delete the entire user
-    const result = await MyModelUserAccount.deleteMany({$and: [{_id: new ObjectId(user._id)}, {"emailConfirmation.sentEmail.sendTime": {$lt: new Date(Date.now() - 1000 * 60)}}]})
+    const result = await MyModelUserAccount.deleteMany({$and: [{"accountData.id": user.accountData.id}, {"emailConfirmation.sentEmail.sendTime": {$lt: new Date(Date.now() - 1000 * 60)}}]})
     return result.deletedCount;
   }
 
-  async deleteUserAccount(id: ObjectId): Promise<boolean> {
+  async deleteUserAccount(id: string): Promise<boolean> {
     let filter = {}
     if (id) {
-      filter = {_id: id}
+      filter = {"accountData.id": id}
     }
     const result = await MyModelUserAccount.deleteOne(filter)
     return result.acknowledged && result.deletedCount === 1;

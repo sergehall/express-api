@@ -135,7 +135,6 @@ export type SentEmailType = {
 }
 
 export type UserAccountDBType = {
-  _id: ObjectId,
   accountData: {
     id: string
     login: string

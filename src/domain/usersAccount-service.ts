@@ -20,7 +20,6 @@ export class UsersAccountService {
     const passwordHash = user.passwordHash
 
     const newUser: UserAccountDBType = {
-      _id: new ObjectId(),
       accountData: {
         id: id,
         login: login,
@@ -53,9 +52,8 @@ export class UsersAccountService {
     const passwordHash = await this._generateHash(password, passwordSalt)
 
     const newUser: UserAccountDBType = {
-      _id: new ObjectId(),
       accountData: {
-        id: uuid4(),
+        id: uuid4().toString(),
         login: login,
         email: email,
         passwordSalt,
@@ -97,7 +95,7 @@ export class UsersAccountService {
       }
     } catch (e) {
       console.log(e)
-      await this.usersAccountRepository.deleteUserAccount(newUser._id)
+      await this.usersAccountRepository.deleteUserAccount(newUser.accountData.id)
       return null
     }
     return createResult

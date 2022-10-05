@@ -16,7 +16,7 @@ export class CheckCredentialsLoginPass {
       })
       return
     }
-    req.headers.foundId = `${user._id}`
+    req.headers.foundId = `${user.accountData.id}`
     next()
   }
 }
