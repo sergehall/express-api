@@ -30,7 +30,21 @@ export class PostsController {
 
       if (newPost.resultCode === 0) {
         res.status(201)
-        return res.send(newPost.data)
+        return res.send({
+          id: newPost.data.id,
+          title: newPost.data.title,
+          shortDescription: newPost.data.shortDescription,
+          content: newPost.data.content,
+          bloggerId: newPost.data.bloggerId,
+          bloggerName: newPost.data.bloggerName,
+          addedAt: newPost.data.addedAt,
+          extendedLikesInfo: {
+            likesCount: Number(newPost.data.extendedLikesInfo.likesCount),
+            dislikesCount: Number(newPost.data.extendedLikesInfo.dislikesCount),
+            myStatus: newPost.data.extendedLikesInfo.myStatus,
+            newestLikes: newPost.data.extendedLikesInfo.newestLikes
+          }
+        })
       } else {
         res.status(400)
         const errorsMessages = newPost.errorsMessages

@@ -118,15 +118,8 @@ export class PostsRepository {
       if (!createNewPost) {
         throw true
       }
-      const getNewPostFromDB = await MyModelPosts.findOne({id: createNewPost.id}, {
-        _id: false,
-        __v: false
-      }).lean()
-      if (!getNewPostFromDB) {
-        throw true
-      }
       return {
-        data: getNewPostFromDB,
+        data: createNewPost,
         errorsMessages: errorsArray,
         resultCode: 0
       }
