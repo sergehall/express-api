@@ -51,14 +51,20 @@ export class BloggersController {
 
       if (createPosts.errorsMessages.length === 0) {
         res.status(201)
-        res.send({
+        return res.send({
           id: createPosts.data.id,
           title: createPosts.data.title,
           shortDescription: createPosts.data.shortDescription,
           content: createPosts.data.content,
-          blogId: createPosts.data.bloggerId,
+          bloggerId: createPosts.data.bloggerId,
           bloggerName: createPosts.data.bloggerName,
-          addedAt: createPosts.data.addedAt
+          addedAt: createPosts.data.addedAt,
+          extendedLikesInfo: {
+            likesCount: Number(createPosts.data.extendedLikesInfo.likesCount),
+            dislikesCount: Number(createPosts.data.extendedLikesInfo.dislikesCount),
+            myStatus: createPosts.data.extendedLikesInfo.myStatus,
+            newestLikes: createPosts.data.extendedLikesInfo.newestLikes
+          }
         })
       }
       res.status(404)
