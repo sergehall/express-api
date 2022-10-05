@@ -6,7 +6,8 @@ import {
   shortDescriptionValidation,
   titleValidation,
   bloggerIdBodyValidator,
-  contentCommentValidation, likeStatusValidator, bloggerIdBodyValidator2
+  contentCommentValidation,
+  likeStatusValidator,
 } from "../middlewares/input-validator-middleware";
 import {ioc} from "../IoCContainer";
 
@@ -31,7 +32,7 @@ postsRouts.get('/',
   .put('/:postId',
     ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     postIdParamsValidation, titleValidation, shortDescriptionValidation,
-    contentValidation, bloggerIdBodyValidator2,
+    contentValidation, bloggerIdBodyValidator,
     inputValidatorMiddleware,
     ioc.postsController.updatePostById.bind(ioc.postsController))
 
