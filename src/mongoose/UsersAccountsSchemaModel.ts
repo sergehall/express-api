@@ -1,11 +1,9 @@
 import mongoose, {Document} from 'mongoose';
-import {ObjectId} from "mongodb";
 
 
 const Schema = mongoose.Schema
 
 interface UserAccountType extends Document {
-  _id: ObjectId;
   accountData: {
     id: string;
     login: string;
@@ -28,7 +26,6 @@ interface UserAccountType extends Document {
 
 
 const UserAccountSchema = new Schema({
-  _id: Schema.Types.ObjectId,
   accountData: {
     id: {
       type: String,

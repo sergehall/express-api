@@ -2,7 +2,6 @@ import mongoose, {Document} from 'mongoose';
 import {ObjectId} from "mongodb";
 
 interface UserType extends Document {
-  _id: ObjectId;
   id: string;
   login: string;
   email: string;
@@ -14,10 +13,6 @@ interface UserType extends Document {
 const Schema = mongoose.Schema
 
 const UserSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'Id is required']
-  },
   id: {
     type: String,
     required: [true, 'Id is required'],
