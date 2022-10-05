@@ -41,13 +41,13 @@ export class BloggersController {
 
   async createPostByBloggerId(req: Request, res: Response) {
     try {
-      const createdAt = (new Date()).toISOString()
+      const addedAt = (new Date()).toISOString()
       const bloggerId: string = req.params.bloggerId;
       const title: string = req.body.title
       const shortDescription: string = req.body.shortDescription
       const content: string = req.body.content
 
-      const createPosts = await this.postsService.createPost(title, shortDescription, content, bloggerId, createdAt)
+      const createPosts = await this.postsService.createPost(title, shortDescription, content, bloggerId, addedAt)
 
       if (createPosts.errorsMessages.length === 0) {
         res.status(201)
@@ -58,7 +58,7 @@ export class BloggersController {
           content: createPosts.data.content,
           blogId: createPosts.data.bloggerId,
           bloggerName: createPosts.data.bloggerName,
-          createdAt: createPosts.data.createdAt
+          addedAt: createPosts.data.addedAt
         })
       }
       res.status(404)

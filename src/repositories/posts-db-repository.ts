@@ -28,7 +28,8 @@ export class PostsRepository {
     }
     const startIndex = (pageNumber - 1) * pageSize
     const result = await MyModelPosts.find(filter, {
-      _id: false
+      _id: false,
+      __v: false
     }).limit(pageSize).skip(startIndex).lean()
 
     const totalCount = await MyModelPosts.countDocuments(filter)
@@ -66,7 +67,7 @@ export class PostsRepository {
     };
   }
 
-  async createPost(title: string, shortDescription: string, content: string, bloggerId: string, createdAt: string): Promise<ReturnTypeObjectPosts> {
+  async createPost(title: string, shortDescription: string, content: string, bloggerId: string, addedAt: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
     const foundBloggerId = await MyModelBloggers.findOne({id: bloggerId})
@@ -80,7 +81,7 @@ export class PostsRepository {
           content: content,
           bloggerId: bloggerId,
           bloggerName: "",
-          createdAt: createdAt,
+          addedAt: addedAt,
           extendedLikesInfo: {
             likesCount: 0,
             dislikesCount: 0,
@@ -102,7 +103,7 @@ export class PostsRepository {
       content: content,
       bloggerId: bloggerId,
       bloggerName: nameBloggerId,
-      createdAt: createdAt,
+      addedAt: addedAt,
       extendedLikesInfo: {
         likesCount: 0,
         dislikesCount: 0,
@@ -117,9 +118,15 @@ export class PostsRepository {
       if (!createNewPost) {
         throw true
       }
-
+      const getNewPostFromDB = await MyModelPosts.findOne({id: createNewPost.id}, {
+        _id: false,
+        __v: false
+      }).lean()
+      if (!getNewPostFromDB) {
+        throw true
+      }
       return {
-        data: createNewPost,
+        data: getNewPostFromDB,
         errorsMessages: errorsArray,
         resultCode: 0
       }
@@ -135,7 +142,7 @@ export class PostsRepository {
           content: content,
           bloggerId: bloggerId,
           bloggerName: "",
-          createdAt: createdAt,
+          addedAt: addedAt,
           extendedLikesInfo: {
             likesCount: 0,
             dislikesCount: 0,
@@ -390,7 +397,7 @@ export class PostsRepository {
           content: content,
           bloggerId: blogId,
           bloggerName: "",
-          createdAt: createdAt,
+          addedAt: createdAt,
           extendedLikesInfo: {
             likesCount: 0,
             dislikesCount: 0,
@@ -416,7 +423,7 @@ export class PostsRepository {
           content: content,
           bloggerId: blogId,
           bloggerName: "",
-          createdAt: createdAt,
+          addedAt: createdAt,
           extendedLikesInfo: {
             likesCount: 0,
             dislikesCount: 0,

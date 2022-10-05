@@ -9,7 +9,7 @@ interface PostsType extends Document {
   content: string
   bloggerId: string
   bloggerName: string
-  createdAt: string
+  addedAt: string
   extendedLikesInfo: {
     likesCount: number,
     dislikesCount: number,
@@ -48,7 +48,7 @@ const PostsSchema = new Schema({
     type: String,
     required: [true, 'Id is required']
   },
-  createdAt: {
+  addedAt: {
     type: String,
     required: [true, 'Id is required']
   },
