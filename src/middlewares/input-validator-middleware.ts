@@ -19,7 +19,7 @@ export const postIdParamsValidation = param('postId').isString().withMessage("po
 // const bloggerIdBodyRegExp2 = /^\d+$/i
 // export const bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
 // export const bloggerIdBodyValidator = body('blogId').isString().withMessage("bloggerIdBodyValidator")
-export const bloggerIdBodyValidator = body('blogId').isString().withMessage("bloggerIdBodyValidator1")
+export const bloggerIdBodyValidator1 = body('blogId').isString().withMessage("bloggerIdBodyValidator1")
 export const bloggerIdBodyValidator2 = body('blogId').isString().withMessage("bloggerIdBodyValidator2")
 
 
@@ -27,7 +27,7 @@ export const nameValidation = body("name").trim().isLength({
   min: 1,
   max: 15
 }).withMessage("Name must be >1 and <15 characters.")
-export const bloggerIdParamsValidation = param('bloggerId').trim().isInt().withMessage('param bloggerId must be Int')
+export const bloggerIdParamsValidation = param('bloggerId').isString().withMessage('param bloggerId must string')
 const userIdBodyRegExp = /^\d+$/i
 export const userIdParamsValidation = param('userId').matches(userIdBodyRegExp).withMessage('param userId must be Int')
 const youtubeUrlRegExp = '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'
@@ -72,7 +72,7 @@ export const contentBlogValidation = body("content").trim().isLength({
   min: 1,
   max: 1000
 }).withMessage("content must be >1 and <1000 characters.")
-export const blogIdParamsValidation = param('blogId').isString()
+export const blogIdParamsValidation = param('blogId').isString().withMessage("blogIdParamsValidation5")
 export const idParamsValidation = param('id').isString()
 
 export const likeStatusValidator = check('likeStatus').isIn(["None", "Like", "Dislike"])
