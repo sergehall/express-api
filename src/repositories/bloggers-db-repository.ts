@@ -51,10 +51,10 @@ export class BloggersRepository {
       youtubeUrl: youtubeUrl,
       createdAt: (new Date()).toISOString()
     }
-    const result = await MyModelBloggers.create(newBlogger)
-    const result2 = await MyModelBlogs.create(newBlog)
+    const resultBloggers = await MyModelBloggers.create(newBlogger)
+    const resultBlogs = await MyModelBlogs.create(newBlog)
 
-    if (!result._id || !result2._id) {
+    if (!resultBloggers._id || !resultBlogs._id) {
       errorsArray.push(MongoHasNotUpdated)
       return {
         data: newBlogger,

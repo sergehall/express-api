@@ -69,7 +69,6 @@ export class PostsRepository {
   async createPost(title: string, shortDescription: string, content: string, bloggerId: string, createdAt: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
-
     const foundBloggerId = await MyModelBloggers.findOne({id: bloggerId})
     if (!foundBloggerId) {
       errorsArray.push(notFoundBloggerId)
