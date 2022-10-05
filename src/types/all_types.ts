@@ -167,7 +167,7 @@ export type UserEmailConfirmationCode = {
 }
 
 export type UserObjectId = {
-  _id: ObjectId
+  id: string
 }
 
 export type BlackListRefreshTokenJWT = {

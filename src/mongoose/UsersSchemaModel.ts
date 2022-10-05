@@ -1,5 +1,4 @@
 import mongoose, {Document} from 'mongoose';
-import {ObjectId} from "mongodb";
 
 interface UserType extends Document {
   id: string;

@@ -9,17 +9,17 @@ const ck = require('ckey')
 export const jwtService = {
 
   async createUsersAccountJWT(userObjectId: UserObjectId) {
-    return jwt.sign({userId: userObjectId._id}, ck.ACCESS_SECRET_KEY, {expiresIn: '30m'})
+    return jwt.sign({userId: userObjectId}, ck.ACCESS_SECRET_KEY, {expiresIn: '30m'})
   }, // 10s
 
   async createUsersAccountRefreshJWT(userObjectId: UserObjectId) {
-    return jwt.sign({userId: userObjectId._id}, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
+    return jwt.sign({userId: userObjectId}, ck.REFRESH_SECRET_KEY, {expiresIn: '30s'})
   },
 
   async verifyRefreshJWT(token: string) {
     try {
       const result: any = jwt.verify(token, ck.REFRESH_SECRET_KEY)
-      return new ObjectId(result.userId)
+      return result.userId
     } catch (e) {
       return null
     }
@@ -28,7 +28,7 @@ export const jwtService = {
   async getUserIdByToken(token: string) {
     try {
       const result: any = jwt.verify(token, ck.ACCESS_SECRET_KEY)
-      return new ObjectId(result.userId)
+      return result.userId
     } catch (err) {
       return null
     }
