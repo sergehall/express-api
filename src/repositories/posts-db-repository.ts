@@ -13,7 +13,6 @@ import {
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import uuid4 from "uuid4";
-import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
@@ -67,11 +66,11 @@ export class PostsRepository {
     };
   }
 
-  async createPost(title: string, shortDescription: string, content: string, blogId: string, createdAt: string): Promise<ReturnTypeObjectPosts> {
+  async createPost(title: string, shortDescription: string, content: string, bloggerId: string, createdAt: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
 
-    const foundBloggerId = await MyModelBlogs.findOne({id: blogId})
+    const foundBloggerId = await MyModelBloggers.findOne({id: bloggerId})
     if (!foundBloggerId) {
       errorsArray.push(notFoundBloggerId)
       return {
@@ -80,7 +79,7 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          bloggerId: blogId,
+          bloggerId: bloggerId,
           bloggerName: "",
           createdAt: createdAt,
           extendedLikesInfo: {
@@ -102,7 +101,7 @@ export class PostsRepository {
       title: title,
       shortDescription: shortDescription,
       content: content,
-      bloggerId: blogId,
+      bloggerId: bloggerId,
       bloggerName: nameBloggerId,
       createdAt: createdAt,
       extendedLikesInfo: {
@@ -135,7 +134,7 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          bloggerId: blogId,
+          bloggerId: bloggerId,
           bloggerName: "",
           createdAt: createdAt,
           extendedLikesInfo: {

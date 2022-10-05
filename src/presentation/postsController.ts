@@ -23,10 +23,10 @@ export class PostsController {
       const title: string = req.body.title;
       const shortDescription: string = req.body.shortDescription;
       const content: string = req.body.content;
-      const blogId: string = req.body.blogId
+      const bloggerId: string = req.body.bloggerId
       const createdAt = (new Date()).toISOString()
 
-      const newPost = await this.postsService.createPost(title, shortDescription, content, blogId, createdAt)
+      const newPost = await this.postsService.createPost(title, shortDescription, content, bloggerId, createdAt)
 
       if (newPost.resultCode === 0) {
         res.status(201)
