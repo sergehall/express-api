@@ -43,7 +43,6 @@ export class BloggersRepository {
       name: name,
       youtubeUrl: youtubeUrl
     }
-    console.log(newBlogger, "newBlogger-------createNewBlogger")
 
     const resultBloggers = await MyModelBloggers.create(newBlogger)
     if (!resultBloggers._id) {

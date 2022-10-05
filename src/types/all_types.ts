@@ -166,10 +166,6 @@ export type UserEmailConfirmationCode = {
   createdAt: Date
 }
 
-export type UserObjectId = {
-  id: string
-}
-
 export type BlackListRefreshTokenJWT = {
   refreshToken: string
 }

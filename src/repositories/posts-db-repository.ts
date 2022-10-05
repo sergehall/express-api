@@ -277,6 +277,10 @@ export class PostsRepository {
           login: i.login
         })
       }
+      withoutObjId.sort(function (a: any, b: any) {
+        return a.addedAt - b.addedAt
+      })
+
       post.extendedLikesInfo.newestLikes = withoutObjId
 
       return post
