@@ -43,6 +43,7 @@ export class UsersAccountService {
         createdAt: new Date()
       }]
     }
+    console.log(newUser, 'newUser.........createUser/UsersAccountService')
     return await this.usersAccountRepository.createUserAccount(newUser)
   }
 
@@ -77,6 +78,7 @@ export class UsersAccountService {
     }
 
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
+    console.log(createResult, 'createResult............createUserRegistration')
 
     try {
       if (createResult !== null) {
