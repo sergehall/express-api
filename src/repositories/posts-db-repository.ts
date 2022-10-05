@@ -1,14 +1,13 @@
+import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/errorsMessages";
 import {
-  MongoHasNotUpdated,
-  notFoundBloggerId,
-  notFoundPostId
-} from "../middlewares/errorsMessages";
-import {
-  ArrayErrorsType, LastTreeLikes,
-  Pagination, PaginatorCommentViewModel,
+  ArrayErrorsType,
+  LastTreeLikes,
+  Pagination,
+  PaginatorCommentViewModel,
   PostsType,
   ReturnTypeObjectComment,
-  ReturnTypeObjectPosts, UserAccountDBType,
+  ReturnTypeObjectPosts,
+  UserAccountDBType,
 } from "../types/all_types";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
@@ -277,11 +276,18 @@ export class PostsRepository {
           login: i.login
         })
       }
-      withoutObjId.sort(function (a: any, b: any) {
-        return a.addedAt - b.addedAt
-      })
 
-      post.extendedLikesInfo.newestLikes = withoutObjId
+      // NewestLikes sorted in descending
+      post.extendedLikesInfo.newestLikes = withoutObjId.sort(function (a: any, b: any) {
+        if (a.addedAt < b.addedAt) {
+          return 1;
+        }
+
+        if (a.addedAt > b.addedAt) {
+          return -1;
+        }
+        return 0;
+      })
 
       return post
     }
