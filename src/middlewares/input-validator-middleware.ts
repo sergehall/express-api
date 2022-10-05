@@ -19,7 +19,7 @@ export const postIdParamsValidation = param('postId').isString().withMessage("po
 // const bloggerIdBodyRegExp2 = /^\d+$/i
 // export const bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
 // export const bloggerIdBodyValidator = body('blogId').isString().withMessage("bloggerIdBodyValidator")
-export const bloggerIdBodyValidator1 = body('blogId').isString().withMessage("bloggerIdBodyValidator1")
+export const bloggerIdBodyValidator = body('blogId').isString().withMessage("bloggerIdBodyValidator1")
 export const bloggerIdBodyValidator2 = body('blogId').isString().withMessage("bloggerIdBodyValidator2")
 
 
