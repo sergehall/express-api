@@ -20,7 +20,8 @@ import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 
 export class PostsRepository {
 
-  async findPosts(pageNumber: number, pageSize: number, title: string | null): Promise<Pagination> {
+  async findPosts(pageNumber: number, pageSize: number, title: string | null, user: UserAccountDBType | null): Promise<Pagination> {
+
     let filter = {}
     if (title !== null) {
       filter = {title: {$regex: title}}
@@ -30,6 +31,80 @@ export class PostsRepository {
       _id: false,
       __v: false
     }).limit(pageSize).skip(startIndex).lean()
+
+
+    let allPosts = []
+    for (let i in result) {
+      console.log(result[i].id)
+      const id = result[i].id
+      const post: PostsType = result[i]
+      // const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
+      //   _id: false,
+      //   __v: false
+      // }).lean()
+      //
+      // if (!post) {
+      //   break
+      // }
+      // getting likes and count
+      const countLikes = await MyModelLikeStatusPostsId.countDocuments({
+        $and:
+          [{postId: id},
+            {likeStatus: "Like"}]
+      }).lean()
+      post.extendedLikesInfo.likesCount = countLikes
+
+      // getting dislikes and count
+      const countDislikes = await MyModelLikeStatusPostsId.countDocuments({
+        $and:
+          [{postId: id},
+            {likeStatus: "Dislike"}]
+      }).lean()
+      post.extendedLikesInfo.dislikesCount = countDislikes
+
+      // getting the status of the post owner
+      if (!user) {
+        post.extendedLikesInfo.myStatus = "None"
+      } else {
+        const statusPostOwner = await MyModelLikeStatusPostsId.findOne({
+          $and:
+            [{postId: id},
+              {userId: user.accountData.id}]
+        }).lean()
+        if (!statusPostOwner) {
+          break
+        }
+        post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
+      }
+
+      // getting 3 last likes
+      const lastThreeLikesArray = await MyModelThreeLastLikesPost.findOne({postId: id}, {
+        _id: false,
+        __v: false
+      }).lean()
+      if (lastThreeLikesArray && post) {
+        const withoutObjId = []
+        for (let i of lastThreeLikesArray.threeNewestLikes) {
+          withoutObjId.push({
+            addedAt: i.addedAt,
+            userId: i.userId,
+            login: i.login
+          })
+        }
+
+        // NewestLikes sorted in descending
+        post.extendedLikesInfo.newestLikes = withoutObjId.sort(function (a: any, b: any) {
+          if (a.addedAt < b.addedAt) {
+            return 1;
+          }
+          if (a.addedAt > b.addedAt) {
+            return -1;
+          }
+          return 0;
+        })
+        allPosts.push(post)
+      }
+    }
 
     const totalCount = await MyModelPosts.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)
@@ -227,7 +302,7 @@ export class PostsRepository {
     if (!post) {
       return null
     }
-    // getting likes and like count
+    // getting likes and count
     const countLikes = await MyModelLikeStatusPostsId.countDocuments({
       $and:
         [{postId: id},
@@ -235,7 +310,7 @@ export class PostsRepository {
     }).lean()
     post.extendedLikesInfo.likesCount = countLikes
 
-    // getting likes and dislike count
+    // getting dislikes and count
     const countDislikes = await MyModelLikeStatusPostsId.countDocuments({
       $and:
         [{postId: id},

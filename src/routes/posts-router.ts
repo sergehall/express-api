@@ -15,6 +15,7 @@ import {ioc} from "../IoCContainer";
 export const postsRouts = Router({})
 
 postsRouts.get('/',
+  ioc.authCheckUserAuthorizationForUserAccount.noneStatus,
   ioc.postsController.getAllPosts.bind(ioc.postsController))
 
   .post('/',

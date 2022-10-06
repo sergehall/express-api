@@ -13,8 +13,9 @@ export class PostsController {
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
     const title: string | null = parseQueryData.title
+    const user: UserAccountDBType | null = req.user
 
-    const foundPosts = await this.postsService.findPosts(pageNumber, pageSize, title);
+    const foundPosts = await this.postsService.findPosts(pageNumber, pageSize, title, user);
     res.send(foundPosts)
   }
 

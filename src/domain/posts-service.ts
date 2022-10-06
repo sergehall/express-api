@@ -12,8 +12,8 @@ export class PostsService {
     this.postsRepository = postsRepository
   }
 
-  async findPosts(pageNumber: number, pageSize: number, title: string | null): Promise<Pagination>{
-    return await this.postsRepository.findPosts(pageNumber, pageSize, title)
+  async findPosts(pageNumber: number, pageSize: number, title: string | null, user: UserAccountDBType | null): Promise<Pagination>{
+    return await this.postsRepository.findPosts(pageNumber, pageSize, title, user)
   }
   async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<Pagination>{
     return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize)

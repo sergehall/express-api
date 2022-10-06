@@ -10,7 +10,7 @@ export class AuthCheckUserAuthorizationForUserAccount {
     }
     const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
     const userId = await jwtService.getUserIdByToken(token)
-    if (userId === null) {
+    if (!userId) {
       res.sendStatus(401)
       return
     }
