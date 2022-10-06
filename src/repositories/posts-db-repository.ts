@@ -279,7 +279,6 @@ export class PostsRepository {
         if (a.addedAt < b.addedAt) {
           return 1;
         }
-
         if (a.addedAt > b.addedAt) {
           return -1;
         }
