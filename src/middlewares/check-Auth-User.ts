@@ -16,12 +16,10 @@ export class AuthCheckUserAuthorizationForUserAccount {
     }
     req.user = await ioc.usersAccountService.findUserByUserId(userId)
     next()
-    return
   }
 
   async noneStatus(req: Request, res: Response, next: NextFunction) {
     if (!req.headers.authorization) {
-      req.user = null
       next()
       return
     }

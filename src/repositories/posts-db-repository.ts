@@ -32,35 +32,21 @@ export class PostsRepository {
       __v: false
     }).limit(pageSize).skip(startIndex).lean()
 
-
-    let allPosts = []
     for (let i in result) {
-      console.log(result[i].id)
       const id = result[i].id
       const post: PostsType = result[i]
-      // const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
-      //   _id: false,
-      //   __v: false
-      // }).lean()
-      //
-      // if (!post) {
-      //   break
-      // }
-      // getting likes and count
-      const countLikes = await MyModelLikeStatusPostsId.countDocuments({
+      post.extendedLikesInfo.likesCount = await MyModelLikeStatusPostsId.countDocuments({
         $and:
           [{postId: id},
             {likeStatus: "Like"}]
       }).lean()
-      post.extendedLikesInfo.likesCount = countLikes
 
       // getting dislikes and count
-      const countDislikes = await MyModelLikeStatusPostsId.countDocuments({
+      post.extendedLikesInfo.dislikesCount = await MyModelLikeStatusPostsId.countDocuments({
         $and:
           [{postId: id},
             {likeStatus: "Dislike"}]
       }).lean()
-      post.extendedLikesInfo.dislikesCount = countDislikes
 
       // getting the status of the post owner
       if (!user) {
@@ -71,10 +57,9 @@ export class PostsRepository {
             [{postId: id},
               {userId: user.accountData.id}]
         }).lean()
-        if (!statusPostOwner) {
-          break
+        if (statusPostOwner) {
+          post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
         }
-        post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
       }
 
       // getting 3 last likes
@@ -102,7 +87,6 @@ export class PostsRepository {
           }
           return 0;
         })
-        allPosts.push(post)
       }
     }
 
@@ -293,7 +277,7 @@ export class PostsRepository {
     }
   }
 
-  async getPostById(id: string, user: UserAccountDBType | null): Promise<PostsType | null> {
+  async getPostById(id: string, user: UserAccountDBType | null | undefined): Promise<PostsType | null> {
     const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
       _id: false,
       __v: false
@@ -303,35 +287,34 @@ export class PostsRepository {
       return null
     }
     // getting likes and count
-    const countLikes = await MyModelLikeStatusPostsId.countDocuments({
+    post.extendedLikesInfo.likesCount = await MyModelLikeStatusPostsId.countDocuments({
       $and:
         [{postId: id},
           {likeStatus: "Like"}]
     }).lean()
-    post.extendedLikesInfo.likesCount = countLikes
 
     // getting dislikes and count
-    const countDislikes = await MyModelLikeStatusPostsId.countDocuments({
+    post.extendedLikesInfo.dislikesCount = await MyModelLikeStatusPostsId.countDocuments({
       $and:
         [{postId: id},
           {likeStatus: "Dislike"}]
     }).lean()
-    post.extendedLikesInfo.dislikesCount = countDislikes
 
     // getting the status of the post owner
-    if (!user) {
-      post.extendedLikesInfo.myStatus = "None"
-    } else {
+    if (user) {
       const statusPostOwner = await MyModelLikeStatusPostsId.findOne({
         $and:
           [{postId: id},
             {userId: user.accountData.id}]
       }).lean()
-      if (!statusPostOwner) {
-        return null
-      }
 
-      post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
+      if (!statusPostOwner) {
+        post.extendedLikesInfo.myStatus = "None"
+      } else {
+        post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
+      }
+    } else {
+      post.extendedLikesInfo.myStatus = "None"
     }
 
     // getting 3 last likes
@@ -359,14 +342,10 @@ export class PostsRepository {
         }
         return 0;
       })
-
-      return post
-    }
-    if (post) {
-      return post
     } else {
-      return null
+      post.extendedLikesInfo.newestLikes = []
     }
+    return post
   }
 
   async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<PaginatorCommentViewModel> {
@@ -559,7 +538,7 @@ export class PostsRepository {
         }).lean()
 
       if (!currentLikeStatus) {
-        const addLikeToLikeStatusPost = await MyModelLikeStatusPostsId.create(newLikeStatus)
+        await MyModelLikeStatusPostsId.create(newLikeStatus)
       }
 
       const postInThreeLastLikes = await MyModelThreeLastLikesPost.findOne(
