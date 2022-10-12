@@ -1,6 +1,6 @@
 import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/errorsMessages";
 import {
-  ArrayErrorsType,
+  ArrayErrorsType, CommentViewModel,
   LastTreeLikes,
   Pagination,
   PaginatorCommentViewModel,
@@ -162,15 +162,20 @@ export class PostsRepository {
   async createNewCommentByPostId(postId: string, content: string, user: UserAccountDBType): Promise<ReturnTypeObjectComment> {
     let errorsArray: ArrayErrorsType = [];
     const newCommentId = uuid4().toString()
-    const createdAt = (new Date()).toISOString()
+    const addedAt = (new Date()).toISOString()
     const filter = {id: postId}
 
-    const newComment = {
+    const newComment: CommentViewModel = {
       id: newCommentId,
       content: content,
       userId: user.accountData.id,
       userLogin: user.accountData.login,
-      createdAt: createdAt
+      addedAt: addedAt,
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: "None"
+      }
     }
 
     const foundPost = await MyModelPosts.findOne(filter)
@@ -213,13 +218,7 @@ export class PostsRepository {
       }
     }
     return {
-      data: {
-        id: newCommentId,
-        content: content,
-        userId: user.accountData.id,
-        userLogin: user.accountData.login,
-        createdAt: createdAt
-      },
+      data: newComment,
       errorsMessages: errorsArray,
       resultCode: 0
     }
@@ -404,8 +403,6 @@ export class PostsRepository {
   async changeLikeStatusPost(user: UserAccountDBType, postId: string, likeStatus: string): Promise<Boolean> {
     const userId = user.accountData.id
     const createdAt = (new Date()).toISOString()
-    console.log("------------------------------changeLikeStatusPost-----------------------------------")
-    console.log(userId, "userId-----------")
 
     const newLikeStatus = {
       postId: postId,
@@ -413,11 +410,9 @@ export class PostsRepository {
       likeStatus: likeStatus,
       createdAt: createdAt,
     }
-    console.log(newLikeStatus, "newLikeStatus-----------")
 
     try {
       const findPostInPostDB = await MyModelPosts.findOne({id: postId})
-      console.log(findPostInPostDB, "findPostInPostDB-----------")
 
       if (!findPostInPostDB) {
         return false
@@ -476,7 +471,6 @@ export class PostsRepository {
           const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
             {postId: postId},
             {$push: {"threeNewestLikes": newestLikeToThreeLastLikes}})
-          console.log(result, "result1-----------")
           return true
 
         } else if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length === 3) {
@@ -508,7 +502,6 @@ export class PostsRepository {
               {userId: userId}]
         },
         {likeStatus: likeStatus}).lean()
-      console.log(updateLikeStatus, "updateLikeStatus----------")
       const findLikeInThreeLast = await MyModelThreeLastLikesPost.findOne(
         {
           $and:
@@ -562,7 +555,6 @@ export class PostsRepository {
       }
 
       const gettingLoginNewestLike = await MyModelUserAccount.findOne({"accountData.id": findNewestLike.userId}).lean()
-      console.log(gettingLoginNewestLike, "gettingLoginNewestLike---------")
       if (!gettingLoginNewestLike) {
         return false
       }

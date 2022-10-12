@@ -1,11 +1,12 @@
 import {
-  ArrayErrorsType, ReturnTypeObjectComment,
+  ArrayErrorsType, ReturnTypeObjectComment, UserAccountDBType,
 } from "../types/all_types";
 import {
   MongoHasNotUpdated, notDeletedComment,
   notFoundCommentId
 } from "../middlewares/errorsMessages";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
+import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 
 
 export class CommentsRepository {
@@ -28,9 +29,6 @@ export class CommentsRepository {
         resultCode: 1
       }
     }
-
-    // // @ts-ignore
-    // delete comment._id
 
     return {
       data: comment,
@@ -85,6 +83,47 @@ export class CommentsRepository {
       data: null,
       errorsMessages: errorsArray,
       resultCode: 0
+    }
+  }
+
+  async changeLikeStatusComment(user: UserAccountDBType, commentId: string, likeStatus: string): Promise<Boolean> {
+    const userId = user.accountData.id
+    const createdAt = (new Date()).toISOString()
+
+    const newLikeStatus = {
+      commentId: commentId,
+      userId: userId,
+      likeStatus: likeStatus,
+      createdAt: createdAt,
+    }
+    try {
+      const filter = {"allComments.id": commentId}
+      const findCommentInDB = await MyModelComments.findOne(filter)
+      if (!findCommentInDB) {
+        return false
+      }
+      const currentLikeStatus = await MyModelLikeStatusCommentId.findOne(
+        {
+          $and:
+            [{commentId: commentId},
+              {userId: userId}]
+        }).lean()
+      if (!currentLikeStatus) {
+        const createNewLikeStatusCommentId = await MyModelLikeStatusCommentId.create(newLikeStatus)
+        return true
+      }
+      const updateLikeStatusCommentId = await MyModelLikeStatusCommentId.findOneAndUpdate(
+        {
+          $and:
+            [{commentId: commentId},
+              {userId: userId}]
+        },
+        {$set: {likeStatus: likeStatus}}).lean()
+
+      return true
+    } catch (e) {
+      console.log(e)
+      return false
     }
   }
 

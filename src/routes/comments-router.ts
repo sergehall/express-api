@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {ioc} from "../IoCContainer";
 import {
-  contentCommentValidation, inputValidatorMiddleware
+  contentCommentValidation, inputValidatorMiddleware, likeStatusValidator
 } from "../middlewares/input-validator-middleware";
 
 
@@ -15,6 +15,12 @@ commentsRouter.get('/:commentId',
     ioc.comparingLoginAndOwnersComment.comparing,
     contentCommentValidation, inputValidatorMiddleware,
     ioc.commentsController.updateCommentsById.bind(ioc.commentsController))
+
+  .put('/:commentId/like-status',
+    ioc.authCheckUserAuthorizationForUserAccount.authCheck,
+    likeStatusValidator,
+    inputValidatorMiddleware,
+    ioc.commentsController.likeStatusCommentId.bind(ioc.commentsController))
 
   .delete('/:commentId',
     ioc.authCheckUserAuthorizationForUserAccount.authCheck,

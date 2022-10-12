@@ -91,7 +91,12 @@ export type CommentViewModel = {
   content: string
   userId: string
   userLogin: string
-  createdAt: string
+  addedAt: string
+  likesInfo: {
+    likesCount: number
+    dislikesCount: number
+    myStatus: string
+  }
 }
 
 export type ReturnTypeObjectComment = {

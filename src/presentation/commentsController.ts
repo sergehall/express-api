@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {ReturnTypeObjectComment} from "../types/all_types";
+import {ReturnTypeObjectComment, UserAccountDBType} from "../types/all_types";
 import {CommentsService} from "../domain/comments-service";
 
 
@@ -41,6 +41,18 @@ export class CommentsController {
       console.log(error)
       return res.sendStatus(500)
     }
+  }
+
+  async likeStatusCommentId(req: Request, res: Response) {
+    const likeStatus = req.body.likeStatus
+    const commentId: string = req.params.commentId;
+    const user: UserAccountDBType = req.user
+
+    const likeStatusComment = await this.commentsService.changeLikeStatusComment(user, commentId, likeStatus);
+    if (!likeStatusComment) {
+      return res.sendStatus(404)
+    }
+    return res.sendStatus(204)
   }
 
   async deleteCommentsById(req: Request, res: Response) {

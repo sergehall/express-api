@@ -4,13 +4,18 @@ const Schema = mongoose.Schema
 
 interface CommentsType extends Document {
   postId: string;
-  allComments: Array<{
-    id: string;
-    content: string;
-    userId: string;
-    userLogin: string;
-    createdAt: string;
-  }>
+  allComments: {
+    id: string
+    content: string
+    userId: string
+    userLogin: string
+    addedAt: string
+    likesInfo: {
+      likesCount: number
+      dislikesCount: number
+      myStatus: string
+    }
+  }[]
 }
 
 const CommentsSchema = new Schema({
@@ -36,9 +41,23 @@ const CommentsSchema = new Schema({
         type: String,
         required: [true, 'Id is required']
       },
-      createdAt: {
+      addedAt: {
         type: String,
         required: [true, 'Id is required']
+      },
+      likesInfo: {
+        likesCount: {
+          type: Number,
+          required: [true, 'Id is required']
+        },
+        dislikesCount: {
+          type: Number,
+          required: [true, 'Id is required']
+        },
+        myStatus: {
+          type: String,
+          required: [true, 'Id is required']
+        }
       }
     }),
     validate: (v: any) => Array.isArray(v)
