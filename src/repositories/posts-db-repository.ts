@@ -16,6 +16,7 @@ import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
+import {ioc} from "../IoCContainer";
 
 
 export class PostsRepository {
@@ -32,63 +33,7 @@ export class PostsRepository {
       __v: false
     }).limit(pageSize).skip(startIndex).lean()
 
-    for (let i in result) {
-      const id = result[i].id
-      const post: PostsType = result[i]
-      post.extendedLikesInfo.likesCount = await MyModelLikeStatusPostsId.countDocuments({
-        $and:
-          [{postId: id},
-            {likeStatus: "Like"}]
-      }).lean()
-
-      // getting dislikes and count
-      post.extendedLikesInfo.dislikesCount = await MyModelLikeStatusPostsId.countDocuments({
-        $and:
-          [{postId: id},
-            {likeStatus: "Dislike"}]
-      }).lean()
-
-      // getting the status of the post owner
-      if (!user) {
-        post.extendedLikesInfo.myStatus = "None"
-      } else {
-        const statusPostOwner = await MyModelLikeStatusPostsId.findOne({
-          $and:
-            [{postId: id},
-              {userId: user.accountData.id}]
-        }).lean()
-        if (statusPostOwner) {
-          post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
-        }
-      }
-
-      // getting 3 last likes
-      const lastThreeLikesArray = await MyModelThreeLastLikesPost.findOne({postId: id}, {
-        _id: false,
-        __v: false
-      }).lean()
-      if (lastThreeLikesArray && post) {
-        const withoutObjId = []
-        for (let i of lastThreeLikesArray.threeNewestLikes) {
-          withoutObjId.push({
-            addedAt: i.addedAt,
-            userId: i.userId,
-            login: i.login
-          })
-        }
-
-        // NewestLikes sorted in descending
-        post.extendedLikesInfo.newestLikes = withoutObjId.sort(function (a: any, b: any) {
-          if (a.addedAt < b.addedAt) {
-            return 1;
-          }
-          if (a.addedAt > b.addedAt) {
-            return -1;
-          }
-          return 0;
-        })
-      }
-    }
+    await ioc.preparationPostsForReturn.preparationPostsForReturn(result, user)
 
     const totalCount = await MyModelPosts.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)
@@ -102,15 +47,18 @@ export class PostsRepository {
     };
   }
 
-  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<Pagination> {
+  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountDBType | null): Promise<Pagination> {
     let filter = {}
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
     }
     const startIndex = (pageNumber - 1) * pageSize
     const result = await MyModelPosts.find(filter, {
-      _id: false
+      _id: false,
+      __v: false
     }).limit(pageSize).skip(startIndex).lean()
+
+    await ioc.preparationPostsForReturn.preparationPostsForReturn(result, user)
 
     const totalCount = await MyModelPosts.countDocuments(filter)
 
@@ -277,7 +225,7 @@ export class PostsRepository {
     }
   }
 
-  async getPostById(id: string, user: UserAccountDBType | null | undefined): Promise<PostsType | null> {
+  async getPostById(id: string, user: UserAccountDBType | null): Promise<PostsType | null> {
     const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
       _id: false,
       __v: false
@@ -286,65 +234,10 @@ export class PostsRepository {
     if (!post) {
       return null
     }
-    // getting likes and count
-    post.extendedLikesInfo.likesCount = await MyModelLikeStatusPostsId.countDocuments({
-      $and:
-        [{postId: id},
-          {likeStatus: "Like"}]
-    }).lean()
+    const result = [post]
 
-    // getting dislikes and count
-    post.extendedLikesInfo.dislikesCount = await MyModelLikeStatusPostsId.countDocuments({
-      $and:
-        [{postId: id},
-          {likeStatus: "Dislike"}]
-    }).lean()
+    await ioc.preparationPostsForReturn.preparationPostsForReturn(result, user)
 
-    // getting the status of the post owner
-    if (user) {
-      const statusPostOwner = await MyModelLikeStatusPostsId.findOne({
-        $and:
-          [{postId: id},
-            {userId: user.accountData.id}]
-      }).lean()
-
-      if (!statusPostOwner) {
-        post.extendedLikesInfo.myStatus = "None"
-      } else {
-        post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
-      }
-    } else {
-      post.extendedLikesInfo.myStatus = "None"
-    }
-
-    // getting 3 last likes
-    const lastThreeLikesArray = await MyModelThreeLastLikesPost.findOne({postId: id}, {
-      _id: false,
-      __v: false
-    }).lean()
-    if (lastThreeLikesArray && post) {
-      const withoutObjId = []
-      for (let i of lastThreeLikesArray.threeNewestLikes) {
-        withoutObjId.push({
-          addedAt: i.addedAt,
-          userId: i.userId,
-          login: i.login
-        })
-      }
-
-      // NewestLikes sorted in descending
-      post.extendedLikesInfo.newestLikes = withoutObjId.sort(function (a: any, b: any) {
-        if (a.addedAt < b.addedAt) {
-          return 1;
-        }
-        if (a.addedAt > b.addedAt) {
-          return -1;
-        }
-        return 0;
-      })
-    } else {
-      post.extendedLikesInfo.newestLikes = []
-    }
     return post
   }
 

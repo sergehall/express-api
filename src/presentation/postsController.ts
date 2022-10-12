@@ -93,7 +93,7 @@ export class PostsController {
   async getPostById(req: Request, res: Response) {
     try {
       const postId = req.params.postId;
-      const user: UserAccountDBType | null | undefined = req.user
+      const user: UserAccountDBType | null = req.user
       const getPost = await this.postsService.getPostById(postId, user);
       if (!getPost) {
         res.status(404).send()

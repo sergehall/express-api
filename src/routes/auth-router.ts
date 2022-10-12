@@ -10,7 +10,7 @@ import {
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import jwt_decode from "jwt-decode";
-import {payloadType} from "../types/all_types";
+import {PayloadType} from "../types/all_types";
 
 
 export const authRouter = Router({})
@@ -111,7 +111,7 @@ authRouter.post('/refresh-token',
   jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     try {
-      const payload: payloadType = jwt_decode(req.cookies.refreshToken);
+      const payload: PayloadType = jwt_decode(req.cookies.refreshToken);
       const refreshToken = req.cookies.refreshToken
 
       const newAccessToken = await jwtService.createUsersAccountJWT(payload.userId)

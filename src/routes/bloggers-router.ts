@@ -36,7 +36,8 @@ bloggersRouts.get('/',
     bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.deleteBloggerById.bind(ioc.bloggersController))
 
-  .get('/:bloggerId/posts', bloggerIdParamsValidation, inputValidatorMiddleware,
+  .get('/:bloggerId/posts',   ioc.authCheckUserAuthorizationForUserAccount.noneStatus,
+    bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.getAllPostByBloggerId.bind(ioc.bloggersController))
 
   .post('/:bloggerId/posts', ioc.authMiddlewareBasicAuthorization.authBasicCheck,

@@ -17,10 +17,10 @@ export class BloggersRepository {
     }
     const startIndex = (pageNumber - 1) * pageSize
     const result = await MyModelBloggers.find(filter, {
-      projection: {
-        _id: false
-      }
+      _id: false,
+      __v: false
     }).limit(pageSize).skip(startIndex)
+
 
     const totalCount = await MyModelBloggers.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)

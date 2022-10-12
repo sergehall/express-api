@@ -170,8 +170,31 @@ export type BlackListRefreshTokenJWT = {
   refreshToken: string
 }
 
-export type payloadType = {
+export type PayloadType = {
   userId: string
   iat: number
   exp: number
 }
+
+export type PostsExtLikesInfo = {
+  id: string
+  title: string
+  shortDescription: string
+  content: string
+  bloggerId: string
+  bloggerName: string
+  addedAt: string
+  extendedLikesInfo: {
+    likesCount: number,
+    dislikesCount: number,
+    myStatus: string,
+    newestLikes:
+      {
+        addedAt: string,
+        userId: string,
+        login: string
+      }[]
+  }
+}
+
+export type ArrayPostsExtLikesInfo = PostsExtLikesInfo[]

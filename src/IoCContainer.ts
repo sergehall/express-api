@@ -41,6 +41,7 @@ import {ParseQuery} from "./middlewares/parse-query";
 import {BlogsRepository} from "./repositories/blogs-db-repository";
 import {BlogsController} from "./presentation/blogsController";
 import {BlogsService} from "./domain/blogs-service";
+import {PreparationPosts} from "./repositories/preparation-posts";
 
 
 // posts
@@ -90,6 +91,8 @@ const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepositor
 const blogsRepository = new BlogsRepository()
 const blogsService = new BlogsService(blogsRepository)
 const blogsController = new BlogsController(blogsService)
+// PostsExtLikesInfo
+const preparationPostsForReturn = new PreparationPosts()
 
 export const ioc = {
   bloggersService: bloggersService,
@@ -114,6 +117,8 @@ export const ioc = {
   blogsController: blogsController,
 
   usersAccountService: usersAccountService,
+
+  preparationPostsForReturn: preparationPostsForReturn,
 
   blackListIPRepository: blackListIPRepository,
   emailsToSentRepository: emailsToSentRepository,

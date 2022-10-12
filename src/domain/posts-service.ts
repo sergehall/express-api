@@ -15,8 +15,8 @@ export class PostsService {
   async findPosts(pageNumber: number, pageSize: number, title: string | null, user: UserAccountDBType | null): Promise<Pagination>{
     return await this.postsRepository.findPosts(pageNumber, pageSize, title, user)
   }
-  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number): Promise<Pagination>{
-    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize)
+  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountDBType | null): Promise<Pagination>{
+    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize, user)
   }
 
   async createPost(title: string, shortDescription: string, content: string, bloggerId: string, addedAt: string): Promise<ReturnTypeObjectPosts> {
@@ -27,7 +27,7 @@ export class PostsService {
     return await this.postsRepository.createNewCommentByPostId(postId, content, user)
   }
 
-  async getPostById(id: string, user: UserAccountDBType | null | undefined): Promise<PostsType | null >{
+  async getPostById(id: string, user: UserAccountDBType | null): Promise<PostsType | null >{
     return await this.postsRepository.getPostById(id, user)
   }
   async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<PaginatorCommentViewModel>{
