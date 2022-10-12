@@ -11,15 +11,68 @@ import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 
 export class CommentsRepository {
 
-  async findCommentById(commentId: string): Promise<ReturnTypeObjectComment> {
+  async findCommentById(commentId: string, user: UserAccountDBType | null): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
+    const filterCommentId = {commentId: commentId}
+    let filterUserId = {userId: ""}
+    let currentLikeStatus = {likeStatus: "None"}
+
+    if (user) {
+      filterUserId = {userId: user.accountData.id}
+    }
+
 
     const foundPostWithComments = await MyModelComments.findOne(filter, {
       _id: false
     }).lean()
 
-    const comment = foundPostWithComments?.allComments.filter(i => i.id === commentId)[0]
+    const checkCurrentLikeStatus = await MyModelLikeStatusCommentId.findOne(
+      {
+        $and:
+          [filterCommentId, filterUserId]
+      }).lean()
+
+
+    if (checkCurrentLikeStatus) {
+      currentLikeStatus = {likeStatus: checkCurrentLikeStatus.likeStatus}
+    }
+
+
+    const countLikes = await MyModelLikeStatusCommentId.countDocuments({
+      $and:
+        [{commentId: commentId},
+          {likeStatus: "Like"}]
+    }).lean()
+
+    const countDislike = await MyModelLikeStatusCommentId.countDocuments({
+      $and:
+        [{commentId: commentId},
+          {likeStatus: "Dislike"}]
+    }).lean()
+
+    if (!foundPostWithComments) {
+      errorsArray.push(notFoundCommentId)
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+    const comment = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
+
+    const commentWithoutObjId = {
+      id: comment.id,
+      content: comment.content,
+      userId: comment.userId,
+      userLogin: comment.userLogin,
+      addedAt: comment.addedAt,
+      likesInfo: {
+        likesCount: countLikes,
+        dislikesCount: countDislike,
+        myStatus: currentLikeStatus.likeStatus,
+      }
+    }
 
     if (!comment) {
       errorsArray.push(notFoundCommentId)
@@ -31,7 +84,7 @@ export class CommentsRepository {
     }
 
     return {
-      data: comment,
+      data: commentWithoutObjId,
       errorsMessages: errorsArray,
       resultCode: 0
     }

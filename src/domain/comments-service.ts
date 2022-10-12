@@ -9,8 +9,8 @@ export class CommentsService {
     this.commentsRepository = commentsRepository
   }
 
-  async findCommentById(commentId: string): Promise<ReturnTypeObjectComment>{
-    return await this.commentsRepository.findCommentById(commentId)
+  async findCommentById(commentId: string, user: UserAccountDBType | null): Promise<ReturnTypeObjectComment>{
+    return await this.commentsRepository.findCommentById(commentId, user)
   }
 
   async updateCommentById(commentId: string, content: string): Promise<ReturnTypeObjectComment> {

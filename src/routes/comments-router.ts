@@ -8,6 +8,7 @@ import {
 export const commentsRouter = Router({})
 
 commentsRouter.get('/:commentId',
+  ioc.authCheckUserAuthorizationForUserAccount.noneStatus,
   ioc.commentsController.getCommentById.bind(ioc.commentsController))
 
   .put('/:commentId',

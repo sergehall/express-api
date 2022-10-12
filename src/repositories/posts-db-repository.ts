@@ -524,7 +524,7 @@ export class PostsRepository {
 
         while (true) {
           const newestLike = findNewestLikeArray.pop()
-          console.log(newestLike)
+
           if (newestLike === undefined) {
             break
           }
