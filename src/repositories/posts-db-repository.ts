@@ -240,7 +240,7 @@ export class PostsRepository {
     return post
   }
 
-  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<PaginatorCommentViewModel> {
+  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserAccountDBType | null): Promise<PaginatorCommentViewModel> {
     const filter = {postId: postId}
 
     let foundPost = await MyModelPosts.findOne({id: postId}).lean()
@@ -293,12 +293,14 @@ export class PostsRepository {
     let startIndex = (pageNumber - 1) * pageSize
     const commentsSlice = comments.slice(startIndex, startIndex + pageSize)
 
+    const filledComments =  await ioc.preparationComments.preparationCommentsForReturn(commentsSlice, user)
+
     return {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: commentsSlice
+      items: filledComments
     };
   }
 

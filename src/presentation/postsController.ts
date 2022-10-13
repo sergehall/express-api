@@ -116,9 +116,9 @@ export class PostsController {
       const pageSize = parseQueryData.pageSize
       const sortBy: string | null = parseQueryData.sortBy
       const sortDirection: string | null = parseQueryData.sortDirection
+      const user: UserAccountDBType | null = req.user
 
-
-      const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection);
+      const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection, user);
       if (getPost.pageSize === 0) {
         return res.status(404).send()
 

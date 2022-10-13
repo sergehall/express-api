@@ -203,3 +203,5 @@ export type PostsExtLikesInfo = {
 }
 
 export type ArrayPostsExtLikesInfo = PostsExtLikesInfo[]
+
+export type ArrayCommentsExtLikesInfo = CommentViewModel[]

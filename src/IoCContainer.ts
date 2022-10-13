@@ -42,6 +42,7 @@ import {BlogsRepository} from "./repositories/blogs-db-repository";
 import {BlogsController} from "./presentation/blogsController";
 import {BlogsService} from "./domain/blogs-service";
 import {PreparationPosts} from "./repositories/preparation-posts";
+import {PreparationComments} from "./repositories/preparation-comments";
 
 
 // posts
@@ -93,6 +94,8 @@ const blogsService = new BlogsService(blogsRepository)
 const blogsController = new BlogsController(blogsService)
 // PostsExtLikesInfo
 const preparationPostsForReturn = new PreparationPosts()
+// CommentsExtLikesInfo
+const preparationComments = new PreparationComments()
 
 export const ioc = {
   bloggersService: bloggersService,
@@ -133,5 +136,6 @@ export const ioc = {
   comparingLoginAndOwnersComment: comparingLoginAndOwnersComment,
   checkoutIPFromBlackList: checkoutIPFromBlackList,
   checkoutMongoDbId: checkoutMongoDbId,
+  preparationComments: preparationComments,
   parseQuery: parseQuery,
 }

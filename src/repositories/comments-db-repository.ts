@@ -7,6 +7,7 @@ import {
 } from "../middlewares/errorsMessages";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
+import {ioc} from "../IoCContainer";
 
 
 export class CommentsRepository {
@@ -14,41 +15,9 @@ export class CommentsRepository {
   async findCommentById(commentId: string, user: UserAccountDBType | null): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
-    const filterCommentId = {commentId: commentId}
-    let filterUserId = {userId: ""}
-    let currentLikeStatus = {likeStatus: "None"}
-
-    if (user) {
-      filterUserId = {userId: user.accountData.id}
-    }
-
-
     const foundPostWithComments = await MyModelComments.findOne(filter, {
-      _id: false
-    }).lean()
-
-    const checkCurrentLikeStatus = await MyModelLikeStatusCommentId.findOne(
-      {
-        $and:
-          [filterCommentId, filterUserId]
-      }).lean()
-
-
-    if (checkCurrentLikeStatus) {
-      currentLikeStatus = {likeStatus: checkCurrentLikeStatus.likeStatus}
-    }
-
-
-    const countLikes = await MyModelLikeStatusCommentId.countDocuments({
-      $and:
-        [{commentId: commentId},
-          {likeStatus: "Like"}]
-    }).lean()
-
-    const countDislike = await MyModelLikeStatusCommentId.countDocuments({
-      $and:
-        [{commentId: commentId},
-          {likeStatus: "Dislike"}]
+      _id: false,
+      "allComments._id": false
     }).lean()
 
     if (!foundPostWithComments) {
@@ -59,32 +28,11 @@ export class CommentsRepository {
         resultCode: 1
       }
     }
-    const comment = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
-
-    const commentWithoutObjId = {
-      id: comment.id,
-      content: comment.content,
-      userId: comment.userId,
-      userLogin: comment.userLogin,
-      addedAt: comment.addedAt,
-      likesInfo: {
-        likesCount: countLikes,
-        dislikesCount: countDislike,
-        myStatus: currentLikeStatus.likeStatus,
-      }
-    }
-
-    if (!comment) {
-      errorsArray.push(notFoundCommentId)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
+    const comment = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
+    const commentFiledLikesInfo = await ioc.preparationComments.preparationCommentsForReturn(comment, user)
 
     return {
-      data: commentWithoutObjId,
+      data: commentFiledLikesInfo[0],
       errorsMessages: errorsArray,
       resultCode: 0
     }
@@ -150,11 +98,14 @@ export class CommentsRepository {
       createdAt: createdAt,
     }
     try {
-      const filter = {"allComments.id": commentId}
-      const findCommentInDB = await MyModelComments.findOne(filter)
+      const filterToUpdate = {"allComments.id": commentId}
+      const findCommentInDB = await MyModelComments.findOne(filterToUpdate)
       if (!findCommentInDB) {
         return false
       }
+      const result = await MyModelComments.updateOne(filterToUpdate, {$set: {"allComments.$.likeStatus": likeStatus}})
+      const findUpdated = await MyModelComments.findOne(filterToUpdate).lean()
+
       const currentLikeStatus = await MyModelLikeStatusCommentId.findOne(
         {
           $and:
