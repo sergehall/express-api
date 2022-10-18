@@ -69,7 +69,7 @@ export class UsersController {
   async deleteUserById(req: Request, res: Response) {
     try {
       const id = req.params.userId
-      const deletedPost = await ioc.usersService.deleteUserById(id)
+      const deletedPost =  await this.usersService.deleteUserById(id)
 
       if (deletedPost) {
         res.sendStatus(204)

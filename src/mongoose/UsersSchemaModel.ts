@@ -19,10 +19,11 @@ const UserSchema = new Schema({
   },
   login: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'Id is required'],
+    unique: true
   },
   email: {
-    type: String
+    type: String,
   },
   passwordHash: {
     type: String,

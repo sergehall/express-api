@@ -7,9 +7,6 @@ import {FeedbacksService} from "./domain/feedbacks-service";
 import {PostsController} from "./presentation/postsController";
 import {BloggersController} from "./presentation/bloggersCotroller";
 import {FeedbacksController} from "./presentation/feedbacksController";
-import {UsersRepository} from "./repositories/users-db-repository";
-import {UsersService} from "./domain/users-service";
-import {UsersController} from "./presentation/usersController";
 import {AllDeletedBloggersPostsRepository} from "./repositories/all-deleted-bloggers-db-repository";
 import {AllDelBloggersService} from "./domain/all-del-bloggers-service";
 import {AllDelBloggersController} from "./presentation/all-dell-bloggersController";
@@ -44,7 +41,9 @@ import {BlogsService} from "./domain/blogs-service";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {UsersAccountController} from "./presentation/UserAccountsController";
-
+import {UsersRepository} from "./repositories/users-db-repository";
+import {UsersService} from "./domain/users-service";
+import {UsersController} from "./presentation/usersController";
 
 // posts
 const postsRepository = new PostsRepository()
@@ -102,29 +101,20 @@ const preparationComments = new PreparationComments()
 export const ioc = {
   bloggersService: bloggersService,
   bloggersController: bloggersController,
-
   postsService: postsService,
   postsController: postsController,
-
   feedbacksService: feedbacksService,
   feedbacksController: feedbacksController,
-
   usersService: usersService,
   usersController: usersController,
-
   commentsService: commentsService,
   commentsController: commentsController,
-
   allDelBloggersService: allDelBloggersService,
   allDelBloggersController: allDelBloggersController,
-
   blogsService: blogsService,
   blogsController: blogsController,
-
   usersAccountService: usersAccountService,
-
   preparationPostsForReturn: preparationPostsForReturn,
-
   blackListIPRepository: blackListIPRepository,
   emailsToSentRepository: emailsToSentRepository,
   usersIPLast10secRepositories: usersIPLast10secRepositories,

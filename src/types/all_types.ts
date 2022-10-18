@@ -143,7 +143,7 @@ export type UserAccountDBType = {
   accountData: {
     id: string
     login: string
-    email: string | null
+    email: string
     passwordHash: string
     passwordSalt: string
     createdAt: string

@@ -39,8 +39,8 @@ export class UsersAccountController {
       if (userAccount) {
         const userReturn = {
           id: userAccount.accountData.id,
-          email: userAccount.accountData.email,
           login: userAccount.accountData.login,
+          email: userAccount.accountData.email,
           createdAt: userAccount.accountData.createdAt
         }
         res.status(201).send(userReturn)

@@ -7,7 +7,7 @@ interface UserAccountType extends Document {
   accountData: {
     id: string;
     login: string;
-    email: string | null;
+    email: string;
     passwordSalt: string;
     passwordHash: string;
     createdAt: string
@@ -38,7 +38,8 @@ const UserAccountSchema = new Schema({
     },
     email: {
       type: String,
-      default: null
+      required: [true, 'Id is required'],
+      unique: true
     },
     passwordHash: {
       type: String,

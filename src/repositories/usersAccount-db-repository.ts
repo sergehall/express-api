@@ -9,6 +9,7 @@ export class UsersAccountRepository {
 
   async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType | null> {
     try {
+      console.log(user)
       const result = await MyModelUserAccount.create(user)
       return user
     } catch (e: any) {
