@@ -43,6 +43,7 @@ import {BlogsController} from "./presentation/blogsController";
 import {BlogsService} from "./domain/blogs-service";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {PreparationComments} from "./repositories/preparation-comments";
+import {UsersAccountController} from "./presentation/UserAccountsController";
 
 
 // posts
@@ -72,6 +73,7 @@ const commentsController = new CommentsController(commentsService)
 // usersAccount
 const usersAccountRepository = new UsersAccountRepository()
 const usersAccountService = new UsersAccountService(usersAccountRepository)
+const usersAccountController = new UsersAccountController(usersAccountService)
 // middleware
 const authCheckUserAuthorizationForUserAccount = new AuthCheckUserAuthorizationForUserAccount()
 const authMiddlewareBasicAuthorization = new AuthMiddlewareBasicAuthorization()
@@ -126,6 +128,7 @@ export const ioc = {
   blackListIPRepository: blackListIPRepository,
   emailsToSentRepository: emailsToSentRepository,
   usersIPLast10secRepositories: usersIPLast10secRepositories,
+  usersAccountController: usersAccountController,
   blackListRefreshTokenJWTRepository: blackListRefreshTokenJWTRepository,
   authCheckUserAuthorizationForUserAccount: authCheckUserAuthorizationForUserAccount,
   authMiddlewareBasicAuthorization: authMiddlewareBasicAuthorization,

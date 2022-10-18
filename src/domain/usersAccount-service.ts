@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import {UserAccountDBType, UserDBType} from "../types/all_types";
+import {Pagination, UserAccountDBType} from "../types/all_types";
 import {UsersAccountRepository} from "../repositories/usersAccount-db-repository";
 import uuid4 from "uuid4";
 import add from "date-fns/add";
@@ -10,22 +10,25 @@ export class UsersAccountService {
   constructor(private usersAccountRepository: UsersAccountRepository) {
     this.usersAccountRepository = usersAccountRepository
   }
+  async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
+    return await this.usersAccountRepository.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
+  }
 
-  async createUser(user: UserDBType, clientIp: string | null): Promise<UserAccountDBType | null> {
-    const login = user.login
-    const email = user.email === undefined ? null : user.email
-    const id = user.id
-    const passwordSalt = user.passwordSalt
-    const passwordHash = user.passwordHash
+
+  async createUser(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
+    const newId = uuid4().toString();
+    const passwordSalt = await bcrypt.genSalt(10)
+    const passwordHash = await this._generateHash(password, passwordSalt)
+
 
     const newUser: UserAccountDBType = {
       accountData: {
-        id: id,
+        id: newId,
         login: login,
         email: email,
         passwordSalt,
         passwordHash,
-        createdAt: new Date()
+        createdAt:  new Date().toISOString()
       },
       emailConfirmation: {
         confirmationCode: uuid4(),
@@ -33,13 +36,13 @@ export class UsersAccountService {
           {
             hours: 1,
             minutes: 5
-          }),
+          }).toString(),
         isConfirmed: false,
-        sentEmail: [{sendTime: new Date()}]
+        sentEmail: [{sendTime: new Date().toISOString()}]
       },
       registrationData: [{
         ip: clientIp,
-        createdAt: new Date()
+        createdAt:  new Date().toISOString()
       }]
     }
     return await this.usersAccountRepository.createUserAccount(newUser)
@@ -56,7 +59,7 @@ export class UsersAccountService {
         email: email,
         passwordSalt,
         passwordHash,
-        createdAt: new Date()
+        createdAt: new Date().toISOString()
       },
       emailConfirmation: {
         confirmationCode: uuid4(),
@@ -64,13 +67,13 @@ export class UsersAccountService {
           {
             hours: 1,
             minutes: 5
-          }),
+          }).toString(),
         isConfirmed: false,
-        sentEmail: [{sendTime: new Date()}]
+        sentEmail: [{sendTime: new Date().toISOString()}]
       },
       registrationData: [{
         ip: clientIp,
-        createdAt: new Date()
+        createdAt: new Date().toISOString()
       }]
     }
 
@@ -106,7 +109,7 @@ export class UsersAccountService {
     const user = await this.usersAccountRepository.getUserAccountByEmailCode(code, email)
     if (user) {
       if (!user.emailConfirmation.isConfirmed) {
-        if (user.emailConfirmation.expirationDate > new Date()) {
+        if (user.emailConfirmation.expirationDate > new Date().toISOString()) {
           user.emailConfirmation.isConfirmed = true
           const result = await this.usersAccountRepository.updateUserAccount(user)
           if (result.matchedCount !== 1) {
@@ -124,7 +127,7 @@ export class UsersAccountService {
     const user = await this.usersAccountRepository.getUserAccountByCode(code)
     if (user) {
       if (!user.emailConfirmation.isConfirmed) {
-        if (user.emailConfirmation.expirationDate > new Date()) {
+        if (user.emailConfirmation.expirationDate > new Date().toISOString()) {
           user.emailConfirmation.isConfirmed = true
           await this.usersAccountRepository.updateUserAccount(user)
           return user
@@ -177,20 +180,20 @@ export class UsersAccountService {
     }
     if (user) {
       if (!user.emailConfirmation.isConfirmed) {
-        if (user.emailConfirmation.expirationDate > new Date()) {
+        if (user.emailConfirmation.expirationDate > new Date().toISOString()) {
           user.emailConfirmation.confirmationCode = uuid4()
           user.emailConfirmation.expirationDate = add(new Date(),
             {
               hours: 1,
               minutes: 5
-            })
+            }).toString()
           const newDataUserEmailConfirmationCode = {
             email: user.accountData.email,
             confirmationCode: user.emailConfirmation.confirmationCode,
             createdAt: new Date()
           }
           await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
-          user.emailConfirmation.sentEmail.push({sendTime: new Date()})
+          user.emailConfirmation.sentEmail.push({sendTime: new Date().toISOString()})
           await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
           return user
         }

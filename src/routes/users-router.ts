@@ -11,17 +11,14 @@ import {
 export const usersRouter = Router({});
 
 usersRouter.get('/',
-  ioc.usersController.getUsers.bind(ioc.usersController))
-
-  .get('/:mongoId', ioc.checkoutMongoDbId.checkOut,
-    ioc.usersController.getUserByUserId.bind(ioc.usersController))
+  ioc.usersAccountController.getUsers.bind(ioc.usersAccountController))
 
   .post('/', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     bodyLogin, bodyPassword, inputValidatorMiddleware,
-    ioc.usersController.createNewUser.bind(ioc.usersController))
+    ioc.usersAccountController.createNewUser.bind(ioc.usersAccountController))
 
   .delete('/:userId', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
     userIdParamsValidation, inputValidatorMiddleware,
-    ioc.usersController.deleteUserById.bind(ioc.usersController))
+    ioc.usersAccountController.deleteUserById.bind(ioc.usersAccountController))
 
 

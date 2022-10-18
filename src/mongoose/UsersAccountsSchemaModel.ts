@@ -10,17 +10,17 @@ interface UserAccountType extends Document {
     email: string | null;
     passwordSalt: string;
     passwordHash: string;
-    createdAt: Date
+    createdAt: string
   },
   emailConfirmation: {
     confirmationCode: string;
-    expirationDate: Date;
+    expirationDate: string;
     isConfirmed: boolean;
     sentEmail: Array<object>;
   },
   registrationData: Array<{
     ip: string | null;
-    createdAt: Date;
+    createdAt: string;
   }>
 }
 
@@ -49,7 +49,7 @@ const UserAccountSchema = new Schema({
       required: [false, 'Id is not required']
     },
     createdAt: {
-      type: Date,
+      type: String,
       required: [true, 'Id is required']
     },
   },
@@ -59,14 +59,14 @@ const UserAccountSchema = new Schema({
       required: [true, 'Id is required']
     },
     expirationDate: {
-      type: Date,
+      type: String,
       required: [true, 'Id is required']
     },
     isConfirmed: Boolean,
     sentEmail: {
       type: Array({
         sendTime: {
-          type: Date,
+          type: String,
           required: [true, 'Id is required']
         }
       }),
@@ -81,7 +81,7 @@ const UserAccountSchema = new Schema({
       },
 
       createdAt: {
-        type: Date,
+        type: String,
         required: [true, 'Id is required']
       }
     }),

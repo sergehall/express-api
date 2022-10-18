@@ -6,6 +6,8 @@ export class ParseQuery {
     let pageNumber: number = parseInt(<string>req.query.pageNumber)
     let pageSize: number = parseInt(<string>req.query.pageSize)
     let searchNameTerm: string | undefined | null = req.query.searchNameTerm?.toString()
+    let searchLoginTerm: string | undefined | null = req.query.searchLoginTerm?.toString()
+    let searchEmailTerm: string | undefined | null = req.query.searchEmailTerm?.toString()
     let title: string | undefined | null = req.query.title?.toString()
     let userName: string | undefined | null = req.query.userName?.toString()
     let searchTitle: string | undefined | null = req.query.searchTitle?.toString()
@@ -19,6 +21,13 @@ export class ParseQuery {
     if (!searchNameTerm || searchNameTerm.length === 0) {
       searchNameTerm = null
     }
+    if (!searchLoginTerm || searchLoginTerm.length === 0) {
+      searchLoginTerm = null
+    }
+    if (!searchEmailTerm || searchEmailTerm.length === 0) {
+      searchEmailTerm = null
+    }
+
     if (!confirmationCode || confirmationCode.length === 0) {
       confirmationCode = null
     }
@@ -58,7 +67,9 @@ export class ParseQuery {
       code: code,
       confirmationCode: confirmationCode,
       sortBy: sortBy,
-      sortDirection: sortDirection
+      sortDirection: sortDirection,
+      searchLoginTerm: searchLoginTerm,
+      searchEmailTerm: searchEmailTerm
     }
   }
 }

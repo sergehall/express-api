@@ -1,4 +1,7 @@
-import {UserAccountDBType} from "../types/all_types";
+import {
+  allUsersReturnArray, Pagination,
+  UserAccountDBType,
+} from "../types/all_types";
 import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 
 
@@ -14,9 +17,60 @@ export class UsersAccountRepository {
     }
   }
 
-  async findAllUsers() {
-    const result = await MyModelUserAccount.find({}).lean();
-    return result
+  async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
+    let filterLogin = {}
+    if (searchLoginTerm) {
+      filterLogin = {"accountData.login": {$regex: searchLoginTerm.toString()}}
+    }
+    let filterEmail = {}
+    if (searchEmailTerm) {
+      filterEmail = {"accountData.email": {$regex: searchEmailTerm.toString()}}
+    }
+
+    const startIndex = (pageNumber - 1) * pageSize
+
+    const users = await MyModelUserAccount.find({$and: [filterLogin, filterEmail]}, {
+      _id: false,
+      __v: false,
+      "accountData.passwordHash": false,
+      "accountData.passwordSalt": false,
+      emailConfirmation: false,
+      registrationData: false
+
+    }).limit(pageSize).skip(startIndex).lean()
+
+    const totalCount = await MyModelUserAccount.countDocuments({$and: [filterLogin, filterEmail]})
+
+    const pagesCount = Math.ceil(totalCount / pageSize)
+
+    let desc = 1
+    let asc = -1
+    let field = "createdAt"
+
+    if (sortDirection === "asc") {
+      desc = -1
+      asc = 1
+    }
+    if (sortBy === "email" || sortBy === "login" || sortBy === "id") {
+      field = sortBy
+    }
+
+    let usersSort: allUsersReturnArray = []
+
+    function byField(field: string, asc: number, desc: number) {
+      return (a: any, b: any) => a.accountData[field] > b.accountData[field] ? asc : desc;
+    }
+    if (users.length !== 0) {
+      usersSort = users.sort(byField(field, asc, desc))
+    }
+
+    return {
+      pagesCount: pagesCount,
+      page: pageNumber,
+      pageSize: pageSize,
+      totalCount: totalCount,
+      items: usersSort.map(i => i.accountData)
+    }
   }
 
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {

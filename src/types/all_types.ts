@@ -132,11 +132,11 @@ export type PaginatorCommentViewModel = {
 
 export type RegistrationDataType = {
   ip: string | null
-  createdAt: Date
+  createdAt: string
 }
 
 export type SentEmailType = {
-  sendTime: Date
+  sendTime: string
 }
 
 export type UserAccountDBType = {
@@ -146,16 +146,27 @@ export type UserAccountDBType = {
     email: string | null
     passwordHash: string
     passwordSalt: string
-    createdAt: Date
+    createdAt: string
   }
   emailConfirmation: {
     confirmationCode: string
-    expirationDate: Date
+    expirationDate: string
     isConfirmed: boolean
     sentEmail: [SentEmailType]
   }
   registrationData: Array<RegistrationDataType>
 }
+
+export type allUsersReturn = {
+  accountData: {
+    id: string
+    login: string
+    email: string | null
+    createdAt: string
+  }
+}
+
+export type allUsersReturnArray = allUsersReturn[]
 
 
 export type BlackListIPDBType = {
