@@ -37,7 +37,7 @@ export const jwtService = {
       const token = req.cookies.refreshToken
       const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(token)
       const userId: string | null = await jwtService.verifyRefreshJWT(token);
-      if (tokenInBlackList || userId === null) {
+      if (tokenInBlackList || !userId) {
         return res.sendStatus(401)
       }
       next()
