@@ -61,9 +61,9 @@ export class PostsController {
     try {
       const postId: string = req.params.postId;
       const content: string = req.body.content;
-      const user = req.user
+      const user: UserAccountDBType | null = req.user
 
-      if (user === null) {
+      if (!user) {
         res.status(401)
         res.send()
         return

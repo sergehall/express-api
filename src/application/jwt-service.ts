@@ -7,11 +7,11 @@ const ck = require('ckey')
 export const jwtService = {
 
   async createUsersAccountJWT(userId: string) {
-    return jwt.sign({userId: userId}, ck.ACCESS_SECRET_KEY, {expiresIn: '30m'})
+    return jwt.sign({userId: userId}, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
   }, // 10s
 
   async createUsersAccountRefreshJWT(userId: string) {
-    return jwt.sign({userId: userId}, ck.REFRESH_SECRET_KEY, {expiresIn: '30s'})
+    return jwt.sign({userId: userId}, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
   },
 
   async verifyRefreshJWT(token: string) {
