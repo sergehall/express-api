@@ -186,12 +186,6 @@ export type BlackListRefreshTokenJWT = {
   refreshToken: string
 }
 
-export type PayloadType = {
-  userId: string
-  iat: number
-  exp: number
-}
-
 export type PostsExtLikesInfo = {
   id: string
   title: string
@@ -216,3 +210,26 @@ export type PostsExtLikesInfo = {
 export type ArrayPostsExtLikesInfo = PostsExtLikesInfo[]
 
 export type ArrayCommentsExtLikesInfo = CommentViewModel[]
+
+export type SessionType = {
+  userId: string
+  ip: string | null
+  title: string | undefined
+  lastActiveDate: string
+  expirationDate: string
+  deviceId: string
+}
+
+export type SessionTypeArray = {
+  ip: string | null
+  title: string | undefined
+  lastActiveDate: string
+  deviceId: string
+}[]
+
+export type PayloadType = {
+  userId: string
+  deviceId: string
+  iat: number
+  exp: number
+}

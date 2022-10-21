@@ -1,18 +1,21 @@
-import jwt from 'jsonwebtoken'
 import {NextFunction, Request, Response} from "express";
+import jwt from 'jsonwebtoken'
 import {ioc} from "../IoCContainer";
+import uuid4 from "uuid4";
 
 const ck = require('ckey')
 
 export const jwtService = {
 
   async createUsersAccountJWT(userId: string) {
-    return jwt.sign({userId: userId}, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
-  }, // 10s
+    const deviceId = uuid4().toString();
+    return jwt.sign({userId: userId, deviceId}, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
+  },
 
   async createUsersAccountRefreshJWT(userId: string) {
-    return jwt.sign({userId: userId}, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
-  },
+    const deviceId = uuid4().toString();
+    return jwt.sign({userId: userId, deviceId}, ck.REFRESH_SECRET_KEY, {expiresIn: '60s'})
+  }, //20s
 
   async verifyRefreshJWT(token: string) {
     try {
@@ -34,9 +37,9 @@ export const jwtService = {
 
   async checkRefreshTokenInBlackListAndVerify(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = req.cookies.refreshToken
-      const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(token)
-      const userId: string | null = await jwtService.verifyRefreshJWT(token);
+      const refreshToken = req.cookies.refreshToken
+      const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(refreshToken)
+      const userId: string | null = await jwtService.verifyRefreshJWT(refreshToken);
       if (tokenInBlackList || !userId) {
         return res.sendStatus(401)
       }
@@ -44,6 +47,20 @@ export const jwtService = {
       return
     } catch (e) {
       console.log(e, "CheckRefreshTokenInBlackList")
+      return res.sendStatus(401)
+    }
+  },
+
+  async verifyRefreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const refreshToken = req.cookies.refreshToken
+      const userId: string | null = await jwtService.verifyRefreshJWT(refreshToken);
+      if (!userId) {
+        return res.sendStatus(401)
+      }
+      next()
+    } catch (e) {
+      console.log(e, "RefreshToken expired or incorrect")
       return res.sendStatus(401)
     }
   }

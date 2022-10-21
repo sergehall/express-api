@@ -40,10 +40,13 @@ import {BlogsController} from "./presentation/blogsController";
 import {BlogsService} from "./domain/blogs-service";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {PreparationComments} from "./repositories/preparation-comments";
-import {UsersAccountController} from "./presentation/UserAccountsController";
+import {UsersAccountController} from "./presentation/userAccountsController";
 import {UsersRepository} from "./repositories/users-db-repository";
 import {UsersService} from "./domain/users-service";
 import {UsersController} from "./presentation/usersController";
+import {SecurityDevicesRepository} from "./repositories/securityDevices-db-repository";
+import {SecurityDevicesController} from "./presentation/securityDeviceController";
+import {SecurityDevicesService} from "./domain/securityDevices-service";
 
 // posts
 const postsRepository = new PostsRepository()
@@ -97,6 +100,10 @@ const blogsController = new BlogsController(blogsService)
 const preparationPostsForReturn = new PreparationPosts()
 // CommentsExtLikesInfo
 const preparationComments = new PreparationComments()
+// SecurityDevices
+const securityDevicesRepository = new SecurityDevicesRepository()
+const securityDevicesService = new SecurityDevicesService(securityDevicesRepository)
+const securityDevicesController = new SecurityDevicesController(securityDevicesService)
 
 export const ioc = {
   bloggersService: bloggersService,
@@ -131,4 +138,6 @@ export const ioc = {
   checkoutMongoDbId: checkoutMongoDbId,
   preparationComments: preparationComments,
   parseQuery: parseQuery,
+  securityDevicesService: securityDevicesService,
+  securityDevicesController: securityDevicesController
 }
