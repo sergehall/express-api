@@ -16,6 +16,7 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
+import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
 
 export const testingRouter = Router({})
@@ -28,6 +29,7 @@ testingRouter
     await MyModelBloggers.deleteMany({})
     await MyModelPosts.deleteMany({})
     await MyModelLikeStatusPostsId.deleteMany({})
+    await MyModelDevicesSchema.deleteMany({})
     await MyModelLikeStatusCommentId.deleteMany({})
     await MyModelThreeLastLikesPost.deleteMany({})
     await MyModelEmailsToSent.deleteMany({})

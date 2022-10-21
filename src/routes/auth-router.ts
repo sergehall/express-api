@@ -119,6 +119,7 @@ authRouter.post('/login',
         expirationDate: payload.exp + "000",
         deviceId: payload.deviceId
       }
+      console.log(newSession, "newSession")
       await MyModelDevicesSchema.create(newSession)
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})

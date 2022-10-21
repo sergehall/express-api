@@ -6,5 +6,5 @@ export const clearingExpDateJWT = async () => {
   setTimeout(async () => {
     await MyModelDevicesSchema.deleteMany({"expirationDate": {$lt: Date.now().toString()}})
     await clearingExpDateJWT()
-  }, 5000)
+  }, 300000)
 }
