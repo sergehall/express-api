@@ -13,3 +13,7 @@ securityDevicesRouter.get('/devices',
     jwtService.verifyRefreshToken,
     ioc.securityDevicesController.deleteAllDevicesExceptCurrent.bind(ioc.securityDevicesController))
 
+  .delete('/devices/:deviceId',
+    jwtService.verifyRefreshToken,
+    ioc.securityDevicesController.deleteAllDevicesByDeviceId.bind(ioc.securityDevicesController))
+
