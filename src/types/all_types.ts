@@ -230,6 +230,6 @@ export type SessionTypeArray = {
 export type PayloadType = {
   userId: string
   deviceId: string
-  iat: number
-  exp: number
+  iat: string
+  exp: string
 }

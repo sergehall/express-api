@@ -109,14 +109,16 @@ authRouter.post('/login',
     const accessToken = await jwtService.createUsersAccountJWT(userReqHedObjId)
     const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
 
+
+
     try {
       const payload: PayloadType = JSON.parse(base64.decode(refreshToken.split('.')[1]))
       const newSession: SessionType = {
         userId: payload.userId,
         ip: clientIp,
         title: title,
-        lastActiveDate: payload.iat + "000",
-        expirationDate: payload.exp + "000",
+        lastActiveDate: new Date().toISOString(),
+        expirationDate: new Date(payload.exp).toISOString(),
         deviceId: payload.deviceId
       }
       console.log(newSession, "newSession")
