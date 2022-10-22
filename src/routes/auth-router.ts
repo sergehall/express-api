@@ -12,7 +12,7 @@ import {
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import jwt_decode from "jwt-decode";
-import {PayloadType, SessionType} from "../types/all_types";
+import {PayloadType} from "../types/all_types";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
 
@@ -116,7 +116,7 @@ authRouter.post('/login',
         lastActiveDate: new Date(payload.iat * 1000).toISOString(),
         expirationDate: new Date(payload.exp * 1000).toISOString(),
         deviceId: payload.deviceId
-      }, "New session ------------------")
+      }, "------------------ New session ------------------")
       await MyModelDevicesSchema.findOneAndUpdate(
         {title: title, ip: clientIp,},
         {
@@ -128,7 +128,6 @@ authRouter.post('/login',
           deviceId: payload.deviceId
         },
         {upsert: true})
-
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
 
       return res.status(200).send({
@@ -165,7 +164,6 @@ authRouter.post('/refresh-token',
         })
 
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
-
       res.status(200).send({accessToken: newAccessToken})
       return
 

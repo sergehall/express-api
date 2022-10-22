@@ -9,6 +9,9 @@ export class SecurityDevicesController {
   }
 
   async getAllDevices(req: Request, res: Response) {
+    const refreshToken = req.cookies.refreshToken
+    const payload: PayloadType = jwt_decode(refreshToken);
+    console.log(payload, "getAllDevicesCurrent")
     const getDevices = await this.securityDevicesService.getAllDevices()
     return res.send(getDevices)
   }
