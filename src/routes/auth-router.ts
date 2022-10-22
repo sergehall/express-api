@@ -148,13 +148,13 @@ authRouter.post('/refresh-token',
       const title = req.header('user-agent')
       const refreshToken = req.cookies.refreshToken
       const payload: PayloadType = jwt_decode(refreshToken)
+      console.log(payload, "payload")
       await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
 
       const newAccessToken = await jwtService.updateUsersAccountAccessJWT(payload)
       const newRefreshToken = await jwtService.updateUsersAccountRefreshJWT(payload)
 
       const newPayload: PayloadType = jwt_decode(newRefreshToken)
-      console.log(payload, "payload")
       console.log(newPayload, "newPayload")
       await MyModelDevicesSchema.findOneAndUpdate(
         {userId: payload.userId, deviceId: payload.deviceId},
