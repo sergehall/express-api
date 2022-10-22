@@ -36,7 +36,7 @@ export class SecurityDevicesRepository {
 
   async deleteDeviceByDeviceIdAfterLogout(payloadRefreshToken: PayloadType): Promise<String> {
     try {
-      const delById = await MyModelDevicesSchema.deleteMany(
+      const delById = await MyModelDevicesSchema.deleteOne(
         {
           userId: payloadRefreshToken.userId,
           deviceId: payloadRefreshToken.deviceId
@@ -67,7 +67,7 @@ export class SecurityDevicesRepository {
       if (!findByDeviceId) {
         throw new Error("404");
       }
-      const delById = await MyModelDevicesSchema.deleteMany(
+      const delById = await MyModelDevicesSchema.deleteOne(
         {userId: payloadRefreshToken.userId, deviceId: deviceId}).lean()
 
       if (delById.deletedCount === 0) {

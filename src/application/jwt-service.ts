@@ -19,12 +19,18 @@ export const jwtService = {
   }, //20s
 
   async updateUsersAccountAccessJWT(payload: PayloadType) {
-    return jwt.sign({userId: payload.userId, deviceId: payload.deviceId}, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
+    return jwt.sign({
+      userId: payload.userId,
+      deviceId: payload.deviceId
+    }, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
   },
 
 
   async updateUsersAccountRefreshJWT(payload: PayloadType) {
-    return jwt.sign({userId: payload.userId, deviceId: payload.deviceId}, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
+    return jwt.sign({
+      userId: payload.userId,
+      deviceId: payload.deviceId
+    }, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
   }, //20s
 
   async verifyRefreshJWT(token: string) {
@@ -55,20 +61,6 @@ export const jwtService = {
       }
       next()
       return
-    } catch (e) {
-      console.log(e, "CheckRefreshTokenInBlackList")
-      return res.sendStatus(401)
-    }
-  },
-
-  async verifyRefreshToken(req: Request, res: Response, next: NextFunction) {
-    try {
-      const refreshToken = req.cookies.refreshToken
-      const userId: string | null = await jwtService.verifyRefreshJWT(refreshToken);
-      if (!userId) {
-        return res.sendStatus(401)
-      }
-      next()
     } catch (e) {
       console.log(e, "RefreshToken expired or incorrect")
       return res.sendStatus(401)

@@ -110,9 +110,8 @@ authRouter.post('/login',
       const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
       const payload: PayloadType = jwt_decode(refreshToken);
 
-
       await MyModelDevicesSchema.findOneAndUpdate(
-        {title: title},
+        {title: title, ip: clientIp,},
         {
           userId: payload.userId,
           ip: clientIp,
@@ -149,6 +148,7 @@ authRouter.post('/refresh-token',
       const newRefreshToken = await jwtService.updateUsersAccountRefreshJWT(payload)
 
       const newPayload: PayloadType = jwt_decode(newRefreshToken)
+
       await MyModelDevicesSchema.findOneAndUpdate(
         {userId: payload.userId, deviceId: payload.deviceId},
         {
@@ -159,6 +159,7 @@ authRouter.post('/refresh-token',
           expirationDate: new Date(newPayload.exp * 1000).toISOString(),
           deviceId: payload.deviceId
         })
+
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})
       return
