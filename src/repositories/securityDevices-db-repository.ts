@@ -6,7 +6,7 @@ export class SecurityDevicesRepository {
 
   async getAllDevices(): Promise<SessionTypeArray> {
     try {
-      return await MyModelDevicesSchema.find(
+      const findAll = await MyModelDevicesSchema.find(
         {expirationDate: {$gt: new Date().toISOString()}},
         {
           _id: false,
@@ -14,6 +14,8 @@ export class SecurityDevicesRepository {
           userId: false,
           expirationDate: false
         })
+      console.log(findAll.length, "getAllDevicesArray", findAll)
+      return findAll
 
     } catch (e) {
       console.log(e)

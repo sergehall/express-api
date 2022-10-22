@@ -148,7 +148,8 @@ authRouter.post('/refresh-token',
       const newRefreshToken = await jwtService.updateUsersAccountRefreshJWT(payload)
 
       const newPayload: PayloadType = jwt_decode(newRefreshToken)
-
+      console.log(payload, "payload")
+      console.log(newPayload, "newPayload")
       await MyModelDevicesSchema.findOneAndUpdate(
         {userId: payload.userId, deviceId: payload.deviceId},
         {
