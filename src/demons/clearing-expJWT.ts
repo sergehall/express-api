@@ -2,9 +2,10 @@ import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
 
 export const clearingExpDateJWT = async () => {
-  // runs every 5 sec
+  // runs every 2 sec
   setTimeout(async () => {
-    await MyModelDevicesSchema.deleteMany({"expirationDate": {$lt: Date.now().toString()}})
+    const currentDate = new Date().toISOString()
+    await MyModelDevicesSchema.deleteMany({"expirationDate": {$lt: currentDate}})
     await clearingExpDateJWT()
-  }, 300000)
+  }, 2000)
 }

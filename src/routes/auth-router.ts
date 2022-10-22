@@ -102,26 +102,22 @@ authRouter.post('/login',
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpLog,
   ioc.checkCredentialsLoginPass.checkCredentials,
   async (req: Request, res: Response) => {
-    const clientIp = requestIp.getClientIp(req);
-    const title = req.header('user-agent')
-    const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
-
-    const accessToken = await jwtService.createUsersAccountJWT(userReqHedObjId)
-    const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
-
-
-
     try {
+      const clientIp = requestIp.getClientIp(req);
+      const title = req.header('user-agent')
+      const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
+
+      const accessToken = await jwtService.createUsersAccountJWT(userReqHedObjId)
+      const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
       const payload: PayloadType = JSON.parse(base64.decode(refreshToken.split('.')[1]))
       const newSession: SessionType = {
         userId: payload.userId,
         ip: clientIp,
         title: title,
         lastActiveDate: new Date().toISOString(),
-        expirationDate: new Date(payload.exp).toISOString(),
+        expirationDate: new Date(payload.exp * 1000).toISOString(),
         deviceId: payload.deviceId
       }
-      console.log(newSession, "newSession")
       await MyModelDevicesSchema.create(newSession)
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
@@ -144,7 +140,7 @@ authRouter.post('/refresh-token',
 
       const newAccessToken = await jwtService.createUsersAccountJWT(payload.userId)
       const newRefreshToken = await jwtService.createUsersAccountRefreshJWT(payload.userId)
-      const insertRefreshTokenToBlackList: string = await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
+      await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})
       return

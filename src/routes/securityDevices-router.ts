@@ -15,5 +15,5 @@ securityDevicesRouter.get('/devices',
 
   .delete('/devices/:deviceId',
     jwtService.verifyRefreshToken,
-    ioc.securityDevicesController.deleteAllDevicesByDeviceId.bind(ioc.securityDevicesController))
+    ioc.securityDevicesController.deleteDeviceByDeviceId.bind(ioc.securityDevicesController))
 

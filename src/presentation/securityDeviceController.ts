@@ -9,9 +9,7 @@ export class SecurityDevicesController {
   }
 
   async getAllDevices(req: Request, res: Response) {
-    console.log("getAllDevices")
     const getDevices = await this.securityDevicesService.getAllDevices()
-    console.log("getDevices",getDevices)
     return res.send(getDevices)
   }
 
@@ -26,11 +24,23 @@ export class SecurityDevicesController {
       return res.sendStatus(500)
     }
   }
-  async deleteAllDevicesByDeviceId(req: Request, res: Response) {
+  async deleteDeviceByDeviceId(req: Request, res: Response) {
     try {
-      const deletedId = req.body.deviceId
-      console.log(deletedId, "deletedId")
-      return res.sendStatus(204)
+      const deletedId = req.params.deviceId
+      const refreshToken = req.cookies.refreshToken
+      const payloadRefreshToken = JSON.parse(base64.decode(refreshToken.split('.')[1]))
+
+      const result = await this.securityDevicesService.deleteDeviceByDeviceId(deletedId, payloadRefreshToken)
+      if (result === "204") {
+        return res.sendStatus(204)
+      }
+      if (result === "404") {
+        return res.sendStatus(404)
+      }
+      if (result === "403") {
+        return res.sendStatus(403)
+      }
+      return res.send({result: result})
     } catch (e) {
       console.log(e)
       return res.sendStatus(500)
