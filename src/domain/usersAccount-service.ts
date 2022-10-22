@@ -36,7 +36,7 @@ export class UsersAccountService {
           {
             hours: 1,
             minutes: 5
-          }).toString(),
+          }).toISOString(),
         isConfirmed: false,
         sentEmail: [{sendTime: new Date().toISOString()}]
       },

@@ -12,7 +12,7 @@ import {
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import jwt_decode from "jwt-decode";
-import {PayloadType} from "../types/all_types";
+import {PayloadType, SessionType} from "../types/all_types";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
 
@@ -109,7 +109,14 @@ authRouter.post('/login',
       const accessToken = await jwtService.createUsersAccountJWT(userReqHedObjId)
       const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
       const payload: PayloadType = jwt_decode(refreshToken);
-
+      console.log({
+        userId: payload.userId,
+        ip: clientIp,
+        title: title,
+        lastActiveDate: new Date(payload.iat * 1000).toISOString(),
+        expirationDate: new Date(payload.exp * 1000).toISOString(),
+        deviceId: payload.deviceId
+      }, "New session ------------------")
       await MyModelDevicesSchema.findOneAndUpdate(
         {title: title, ip: clientIp,},
         {
@@ -122,7 +129,8 @@ authRouter.post('/login',
         },
         {upsert: true})
 
-      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", refreshToken)
       return res.status(200).send({
         "accessToken": accessToken
       })
@@ -156,7 +164,8 @@ authRouter.post('/refresh-token',
           expirationDate: new Date(newPayload.exp * 1000).toISOString(),
         })
 
-      res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", newRefreshToken)
       res.status(200).send({accessToken: newAccessToken})
       return
 
