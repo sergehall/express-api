@@ -26,16 +26,16 @@ export class SecurityDevicesRepository {
       console.log(payloadRefreshToken.deviceId, 'payloadRefreshToken.deviceId-------------')
       console.log(await MyModelDevicesSchema.find({}).lean())
 
-      // await MyModelDevicesSchema.deleteMany(
-      //   {
-      //     deviceId: {$ne: payloadRefreshToken.deviceId}
-      //   })
-      await MyModelDevicesSchema.deleteMany({
-        $and: [
-          {userId: payloadRefreshToken.userId},
-          {deviceId: {$ne: payloadRefreshToken.deviceId}}
-        ]
-      })
+      await MyModelDevicesSchema.deleteMany(
+        {
+          deviceId: {$ne: payloadRefreshToken.deviceId}
+        })
+      // await MyModelDevicesSchema.deleteMany({
+      //   $and: [
+      //     {userId: payloadRefreshToken.userId},
+      //     {deviceId: {$ne: payloadRefreshToken.deviceId}}
+      //   ]
+      // })
       return true
     } catch (e) {
       console.log(e)
