@@ -22,6 +22,7 @@ export class SecurityDevicesRepository {
 
   async deleteAllDevicesExceptCurrent(payloadRefreshToken: PayloadType): Promise<Boolean> {
     try {
+      console.log(payloadRefreshToken.deviceId, 'payloadRefreshToken.deviceId')
       await MyModelDevicesSchema.deleteMany(
         {deviceId: {$ne: payloadRefreshToken.deviceId}})
       // await MyModelDevicesSchema.deleteMany({
