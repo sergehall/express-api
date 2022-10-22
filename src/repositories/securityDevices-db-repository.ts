@@ -3,6 +3,7 @@ import {PayloadType, SessionTypeArray} from "../types/all_types";
 
 
 export class SecurityDevicesRepository {
+
   async getAllDevices(): Promise<SessionTypeArray> {
     try {
       return await MyModelDevicesSchema.find(
@@ -35,13 +36,10 @@ export class SecurityDevicesRepository {
 
   async deleteDeviceByDeviceIdAfterLogout(payloadRefreshToken: PayloadType): Promise<String> {
     try {
-      const delById = await MyModelDevicesSchema.deleteOne(
-        {
-          $and: [{
-            userId: payloadRefreshToken.userId,
-            deviceId: payloadRefreshToken.deviceId
-          }]
-        }).lean()
+      const delById = await MyModelDevicesSchema.deleteOne({
+        userId: payloadRefreshToken.userId,
+        deviceId: payloadRefreshToken.deviceId
+      }).lean()
 
       if (delById.deletedCount === 0) {
         throw new Error("403");
@@ -68,12 +66,7 @@ export class SecurityDevicesRepository {
         throw new Error("404");
       }
       const delById = await MyModelDevicesSchema.deleteOne(
-        {
-          $and: [{
-            userId: payloadRefreshToken.userId,
-            deviceId: deviceId
-          }]
-        }).lean()
+        {userId: payloadRefreshToken.userId, deviceId: deviceId}).lean()
 
       if (delById.deletedCount === 0) {
         throw new Error("403");
