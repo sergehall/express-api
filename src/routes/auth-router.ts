@@ -12,10 +12,9 @@ import {
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
 import jwt_decode from "jwt-decode";
-import {PayloadType, SessionType} from "../types/all_types";
+import {PayloadType} from "../types/all_types";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
-const base64 = require('base-64');
 
 export const authRouter = Router({})
 
@@ -109,16 +108,16 @@ authRouter.post('/login',
 
       const accessToken = await jwtService.createUsersAccountJWT(userReqHedObjId)
       const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
-      const payload: PayloadType = JSON.parse(base64.decode(refreshToken.split('.')[1]))
-      const newSession: SessionType = {
+      const payload: PayloadType = jwt_decode(refreshToken);
+
+      await MyModelDevicesSchema.create({
         userId: payload.userId,
         ip: clientIp,
         title: title,
-        lastActiveDate: new Date().toISOString(),
+        lastActiveDate: new Date(payload.iat * 1000).toISOString(),
         expirationDate: new Date(payload.exp * 1000).toISOString(),
         deviceId: payload.deviceId
-      }
-      await MyModelDevicesSchema.create(newSession)
+      })
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
       return res.status(200).send({
@@ -135,11 +134,10 @@ authRouter.post('/refresh-token',
   jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     try {
-      const payload: PayloadType = jwt_decode(req.cookies.refreshToken);
       const refreshToken = req.cookies.refreshToken
-
-      const newAccessToken = await jwtService.createUsersAccountJWT(payload.userId)
-      const newRefreshToken = await jwtService.createUsersAccountRefreshJWT(payload.userId)
+      const payload: PayloadType = jwt_decode(refreshToken);
+      const newAccessToken = await jwtService.updateUsersAccountAccessJWT(payload)
+      const newRefreshToken = await jwtService.updateUsersAccountRefreshJWT(payload)
       await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})

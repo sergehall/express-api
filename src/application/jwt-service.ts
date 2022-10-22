@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import jwt from 'jsonwebtoken'
 import {ioc} from "../IoCContainer";
 import uuid4 from "uuid4";
+import {PayloadType} from "../types/all_types";
 
 const ck = require('ckey')
 
@@ -14,7 +15,16 @@ export const jwtService = {
 
   async createUsersAccountRefreshJWT(userId: string) {
     const deviceId = uuid4().toString();
-    return jwt.sign({userId: userId, deviceId}, ck.REFRESH_SECRET_KEY, {expiresIn: '10m'})
+    return jwt.sign({userId: userId, deviceId}, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
+  }, //20s
+
+  async updateUsersAccountAccessJWT(payload: PayloadType) {
+    return jwt.sign({userId: payload.userId, deviceId: payload.deviceId}, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
+  },
+
+
+  async updateUsersAccountRefreshJWT(payload: PayloadType) {
+    return jwt.sign({userId: payload.userId, deviceId: payload.deviceId}, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
   }, //20s
 
   async verifyRefreshJWT(token: string) {

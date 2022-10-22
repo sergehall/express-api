@@ -12,7 +12,7 @@ export class SecurityDevicesService {
   async deleteAllDevicesExceptCurrent(payloadRefreshToken: PayloadType): Promise<Boolean> {
     return await this.securityDevicesRepository.deleteAllDevicesExceptCurrent(payloadRefreshToken)
   }
-  async   deleteDeviceByDeviceId(deviceId: string, payloadRefreshToken: PayloadType): Promise<String> {
-    return await this.securityDevicesRepository.deleteDeviceByDeviceId(deviceId, payloadRefreshToken)
+  async   deleteDeviceByDeviceId(deviceId: string ): Promise<String> {
+    return await this.securityDevicesRepository.deleteDeviceByDeviceId(deviceId)
   }
 }

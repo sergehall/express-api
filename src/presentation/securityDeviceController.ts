@@ -1,8 +1,8 @@
 import {SecurityDevicesService} from "../domain/securityDevices-service";
 import {Request, Response} from "express";
+import jwt_decode from "jwt-decode";
+import {PayloadType} from "../types/all_types";
 
-
-const base64 = require('base-64');
 
 export class SecurityDevicesController {
   constructor(private securityDevicesService: SecurityDevicesService) {
@@ -16,7 +16,7 @@ export class SecurityDevicesController {
   async deleteAllDevicesExceptCurrent(req: Request, res: Response) {
     try {
       const refreshToken = req.cookies.refreshToken
-      const payloadRefreshToken = JSON.parse(base64.decode(refreshToken.split('.')[1]))
+      const payloadRefreshToken:PayloadType = jwt_decode(refreshToken)
       await this.securityDevicesService.deleteAllDevicesExceptCurrent(payloadRefreshToken)
       return res.sendStatus(204)
     } catch (e) {
@@ -27,10 +27,7 @@ export class SecurityDevicesController {
   async deleteDeviceByDeviceId(req: Request, res: Response) {
     try {
       const deletedId = req.params.deviceId
-      const refreshToken = req.cookies.refreshToken
-      const payloadRefreshToken = JSON.parse(base64.decode(refreshToken.split('.')[1]))
-
-      const result = await this.securityDevicesService.deleteDeviceByDeviceId(deletedId, payloadRefreshToken)
+      const result = await this.securityDevicesService.deleteDeviceByDeviceId(deletedId)
       if (result === "204") {
         return res.sendStatus(204)
       }
