@@ -27,7 +27,10 @@ export class SecurityDevicesController {
   async deleteDeviceByDeviceId(req: Request, res: Response) {
     try {
       const deletedId = req.params.deviceId
-      const result = await this.securityDevicesService.deleteDeviceByDeviceId(deletedId)
+      const refreshToken = req.cookies.refreshToken
+      const payloadRefreshToken: PayloadType = jwt_decode(refreshToken)
+
+      const result = await this.securityDevicesService.deleteDeviceByDeviceId(deletedId, payloadRefreshToken)
       if (result === "204") {
         return res.sendStatus(204)
       }

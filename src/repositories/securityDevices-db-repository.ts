@@ -35,7 +35,7 @@ export class SecurityDevicesRepository {
     }
   }
 
-  async deleteDeviceByDeviceId(deviceId: string): Promise<String> {
+  async deleteDeviceByDeviceId(deviceId: string, payloadRefreshToken: PayloadType): Promise<String> {
     try {
       const findByDeviceId = await MyModelDevicesSchema.findOne(
         {deviceId: deviceId}
@@ -45,7 +45,10 @@ export class SecurityDevicesRepository {
       }
       const delById = await MyModelDevicesSchema.deleteOne(
         {
-          deviceId: deviceId
+          $and: [{
+            userId: payloadRefreshToken.userId,
+            deviceId: deviceId
+          }]
         }).lean()
 
       if (delById.deletedCount === 0) {
