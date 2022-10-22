@@ -5,15 +5,6 @@ import {PayloadType, SessionTypeArray} from "../types/all_types";
 export class SecurityDevicesRepository {
   async getAllDevices(): Promise<SessionTypeArray> {
     try {
-      const d = await MyModelDevicesSchema.find(
-        {"expirationDate": {$gt: new Date().toISOString()}},
-        {
-          _id: false,
-          __v: false,
-          userId: false,
-          expirationDate: false
-        })
-      console.log("---------------------------", d, "---------------------------")
       return await MyModelDevicesSchema.find(
         {"expirationDate": {$gte: new Date().toISOString()}},
         {
@@ -31,12 +22,14 @@ export class SecurityDevicesRepository {
 
   async deleteAllDevicesExceptCurrent(payloadRefreshToken: PayloadType): Promise<Boolean> {
     try {
-      await MyModelDevicesSchema.deleteMany({
-        $and: [
-          {userId: payloadRefreshToken.userId},
-          {deviceId: {$ne: payloadRefreshToken.deviceId}}
-        ]
-      })
+      await MyModelDevicesSchema.deleteMany(
+        {deviceId: {$ne: payloadRefreshToken.deviceId}})
+      // await MyModelDevicesSchema.deleteMany({
+      //   $and: [
+      //     {userId: payloadRefreshToken.userId},
+      //     {deviceId: {$ne: payloadRefreshToken.deviceId}}
+      //   ]
+      // })
       return true
     } catch (e) {
       console.log(e)
