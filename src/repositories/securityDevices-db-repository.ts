@@ -33,6 +33,32 @@ export class SecurityDevicesRepository {
     }
   }
 
+  async deleteDeviceByDeviceIdAfterLogout(payloadRefreshToken: PayloadType): Promise<String> {
+    try {
+      const delById = await MyModelDevicesSchema.deleteOne(
+        {
+          $and: [{
+            userId: payloadRefreshToken.userId,
+            deviceId: payloadRefreshToken.deviceId
+          }]
+        }).lean()
+
+      if (delById.deletedCount === 0) {
+        throw new Error("403");
+      }
+      return "204"
+
+    } catch (e: any) {
+      if (e.toString().split(" ")[1] == "404") {
+        return "404"
+      }
+      if (e.toString().split(" ")[1] == "403") {
+        return "403"
+      } else {
+        return e.toString()
+      }
+    }
+  }
   async deleteDeviceByDeviceId(deviceId: string, payloadRefreshToken: PayloadType): Promise<String> {
     try {
       const findByDeviceId = await MyModelDevicesSchema.findOne(

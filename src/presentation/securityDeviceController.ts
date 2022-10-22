@@ -16,7 +16,7 @@ export class SecurityDevicesController {
   async deleteAllDevicesExceptCurrent(req: Request, res: Response) {
     try {
       const refreshToken = req.cookies.refreshToken
-      const payloadRefreshToken:PayloadType = jwt_decode(refreshToken)
+      const payloadRefreshToken: PayloadType = jwt_decode(refreshToken)
       await this.securityDevicesService.deleteAllDevicesExceptCurrent(payloadRefreshToken)
       return res.sendStatus(204)
     } catch (e) {
@@ -24,6 +24,7 @@ export class SecurityDevicesController {
       return res.sendStatus(500)
     }
   }
+
   async deleteDeviceByDeviceId(req: Request, res: Response) {
     try {
       const deletedId = req.params.deviceId
@@ -46,4 +47,5 @@ export class SecurityDevicesController {
       return res.sendStatus(500)
     }
   }
+
 }

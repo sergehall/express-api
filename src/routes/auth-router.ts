@@ -171,8 +171,19 @@ authRouter.post('/logout',
   jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
+    const payload: PayloadType = jwt_decode(refreshToken);
     await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
-    return res.sendStatus(204)
+    const result = await ioc.securityDevicesService.deleteDeviceByDeviceIdAfterLogout(payload)
+    if (result === "204") {
+      return res.sendStatus(204)
+    }
+    if (result === "404") {
+      return res.sendStatus(404)
+    }
+    if (result === "403") {
+      return res.sendStatus(403)
+    }
+    return res.send({result: result})
   })
 
 authRouter.get("/me",
