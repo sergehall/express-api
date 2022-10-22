@@ -5,15 +5,24 @@ import {PayloadType, SessionTypeArray} from "../types/all_types";
 export class SecurityDevicesRepository {
   async getAllDevices(): Promise<SessionTypeArray> {
     try {
-      const currentDate = new Date().toISOString()
-      return await MyModelDevicesSchema.find(
-        {"expirationDate": {$gte: currentDate}},
+      const d = await MyModelDevicesSchema.find(
+        {"expirationDate": {$gt: new Date().toISOString()}},
         {
           _id: false,
           __v: false,
           userId: false,
           expirationDate: false
         })
+      console.log("---------------------------", d, "---------------------------")
+      return await MyModelDevicesSchema.find(
+        {"expirationDate": {$gt: new Date().toISOString()}},
+        {
+          _id: false,
+          __v: false,
+          userId: false,
+          expirationDate: false
+        })
+
     } catch (e) {
       console.log(e)
       return []

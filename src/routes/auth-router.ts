@@ -120,7 +120,8 @@ authRouter.post('/login',
       }
       await MyModelDevicesSchema.create(newSession)
 
-      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", refreshToken)
       return res.status(200).send({
         "accessToken": accessToken
       })
