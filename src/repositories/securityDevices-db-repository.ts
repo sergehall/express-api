@@ -36,7 +36,7 @@ export class SecurityDevicesRepository {
 
   async deleteDeviceByDeviceIdAfterLogout(payloadRefreshToken: PayloadType): Promise<String> {
     try {
-      const delById = await MyModelDevicesSchema.deleteOne({
+      const delById = await MyModelDevicesSchema.deleteMany({
         userId: payloadRefreshToken.userId,
         deviceId: payloadRefreshToken.deviceId
       }).lean()

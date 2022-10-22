@@ -110,16 +110,19 @@ authRouter.post('/login',
       const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
       const payload: PayloadType = jwt_decode(refreshToken);
 
-      await MyModelDevicesSchema.create({
+      await MyModelDevicesSchema.findOneAndUpdate(
+        {ip: clientIp, title: title},
+        {
         userId: payload.userId,
         ip: clientIp,
         title: title,
         lastActiveDate: new Date(payload.iat * 1000).toISOString(),
         expirationDate: new Date(payload.exp * 1000).toISOString(),
         deviceId: payload.deviceId
-      })
+      }, {upsert: true})
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+
 
       return res.status(200).send({
         "accessToken": accessToken
@@ -145,12 +148,8 @@ authRouter.post('/refresh-token',
       await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
       const newPayload: PayloadType = jwt_decode(newRefreshToken);
       await MyModelDevicesSchema.findOneAndUpdate(
+        {userId: payload.userId, deviceId: payload.deviceId},
         {
-          $and: [
-            {userId: payload.userId},
-            {deviceId: payload.deviceId}
-          ]
-        }, {
           ip: clientIp,
           title: title,
           lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
