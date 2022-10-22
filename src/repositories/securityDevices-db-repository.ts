@@ -22,7 +22,6 @@ export class SecurityDevicesRepository {
 
   async deleteAllDevicesExceptCurrent(payloadRefreshToken: PayloadType): Promise<Boolean> {
     try {
-      console.log()
       console.log(payloadRefreshToken.deviceId, 'payloadRefreshToken.deviceId-------------')
       console.log(await MyModelDevicesSchema.find({}).lean())
 
@@ -45,18 +44,20 @@ export class SecurityDevicesRepository {
 
   async deleteDeviceByDeviceId(deviceId: string, payloadRefreshToken: PayloadType): Promise<String> {
     try {
-      const findByDeviceId = await MyModelDevicesSchema.findOne(
-        {deviceId: deviceId}
-      ).lean()
-      if (!findByDeviceId) {
-        throw new Error("404");
-      }
       const delById = await MyModelDevicesSchema.deleteOne({
         $and: [
           {userId: payloadRefreshToken.userId},
           {deviceId: deviceId}
         ]
       }).lean()
+
+      const findByDeviceId = await MyModelDevicesSchema.findOne(
+        {deviceId: deviceId}
+      ).lean()
+      if (!findByDeviceId) {
+        throw new Error("404");
+      }
+
       if (delById.deletedCount === 0) {
         throw new Error("403");
       }
