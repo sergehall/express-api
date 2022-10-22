@@ -110,19 +110,20 @@ authRouter.post('/login',
       const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
       const payload: PayloadType = jwt_decode(refreshToken);
 
+
       await MyModelDevicesSchema.findOneAndUpdate(
-        {ip: clientIp, title: title},
+        {title: title},
         {
-        userId: payload.userId,
-        ip: clientIp,
-        title: title,
-        lastActiveDate: new Date(payload.iat * 1000).toISOString(),
-        expirationDate: new Date(payload.exp * 1000).toISOString(),
-        deviceId: payload.deviceId
-      }, {upsert: true})
+          userId: payload.userId,
+          ip: clientIp,
+          title: title,
+          lastActiveDate: new Date(payload.iat * 1000).toISOString(),
+          expirationDate: new Date(payload.exp * 1000).toISOString(),
+          deviceId: payload.deviceId
+        },
+        {upsert: true})
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-
 
       return res.status(200).send({
         "accessToken": accessToken
@@ -138,22 +139,25 @@ authRouter.post('/refresh-token',
   jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     try {
-      const clientIp = requestIp.getClientIp(req);
-      const title = req.header('user-agent');
+      const clientIp = requestIp.getClientIp(req)
+      const title = req.header('user-agent')
       const refreshToken = req.cookies.refreshToken
-      const payload: PayloadType = jwt_decode(refreshToken);
+      const payload: PayloadType = jwt_decode(refreshToken)
+      await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
 
       const newAccessToken = await jwtService.updateUsersAccountAccessJWT(payload)
       const newRefreshToken = await jwtService.updateUsersAccountRefreshJWT(payload)
-      await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
-      const newPayload: PayloadType = jwt_decode(newRefreshToken);
+
+      const newPayload: PayloadType = jwt_decode(newRefreshToken)
       await MyModelDevicesSchema.findOneAndUpdate(
         {userId: payload.userId, deviceId: payload.deviceId},
         {
+          userId: payload.userId,
           ip: clientIp,
           title: title,
           lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
           expirationDate: new Date(newPayload.exp * 1000).toISOString(),
+          deviceId: payload.deviceId
         })
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})

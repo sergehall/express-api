@@ -36,10 +36,11 @@ export class SecurityDevicesRepository {
 
   async deleteDeviceByDeviceIdAfterLogout(payloadRefreshToken: PayloadType): Promise<String> {
     try {
-      const delById = await MyModelDevicesSchema.deleteMany({
-        userId: payloadRefreshToken.userId,
-        deviceId: payloadRefreshToken.deviceId
-      }).lean()
+      const delById = await MyModelDevicesSchema.deleteOne(
+        {
+          userId: payloadRefreshToken.userId,
+          deviceId: payloadRefreshToken.deviceId
+        }).lean()
 
       if (delById.deletedCount === 0) {
         throw new Error("403");
@@ -57,6 +58,7 @@ export class SecurityDevicesRepository {
       }
     }
   }
+
   async deleteDeviceByDeviceId(deviceId: string, payloadRefreshToken: PayloadType): Promise<String> {
     try {
       const findByDeviceId = await MyModelDevicesSchema.findOne(
