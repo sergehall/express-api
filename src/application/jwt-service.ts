@@ -15,7 +15,7 @@ export const jwtService = {
 
   async createUsersAccountRefreshJWT(userId: string) {
     const deviceId = uuid4().toString();
-    return jwt.sign({userId: userId, deviceId}, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
+    return jwt.sign({userId: userId, deviceId}, ck.REFRESH_SECRET_KEY, {expiresIn: '20m'})
   }, //20s
 
   async updateUsersAccountAccessJWT(payload: PayloadType) {

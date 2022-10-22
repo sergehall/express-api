@@ -7,7 +7,7 @@ export class SecurityDevicesRepository {
   async getAllDevices(): Promise<SessionTypeArray> {
     try {
       return await MyModelDevicesSchema.find(
-        {"expirationDate": {$gte: new Date().toISOString()}},
+        {expirationDate: {$gt: new Date().toISOString()}},
         {
           _id: false,
           __v: false,
