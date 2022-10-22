@@ -123,7 +123,6 @@ authRouter.post('/login',
         {upsert: true})
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-
       return res.status(200).send({
         "accessToken": accessToken
       })
@@ -153,12 +152,8 @@ authRouter.post('/refresh-token',
       await MyModelDevicesSchema.findOneAndUpdate(
         {userId: payload.userId, deviceId: payload.deviceId},
         {
-          userId: payload.userId,
-          ip: clientIp,
-          title: title,
           lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
           expirationDate: new Date(newPayload.exp * 1000).toISOString(),
-          deviceId: payload.deviceId
         })
 
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
@@ -179,6 +174,8 @@ authRouter.post('/logout',
     const payload: PayloadType = jwt_decode(refreshToken);
     await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
     const result = await ioc.securityDevicesService.deleteDeviceByDeviceIdAfterLogout(payload)
+    console.log(payload, "logout payload")
+    console.log(result, "logout result")
     if (result === "204") {
       return res.sendStatus(204)
     }

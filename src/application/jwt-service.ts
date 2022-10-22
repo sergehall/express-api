@@ -10,27 +10,37 @@ export const jwtService = {
 
   async createUsersAccountJWT(userId: string) {
     const deviceId = uuid4().toString();
-    return jwt.sign({userId: userId, deviceId}, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
+    return jwt.sign(
+      {userId: userId, deviceId}, ck.ACCESS_SECRET_KEY,
+      {expiresIn: '10s'}
+    )
   },
 
   async createUsersAccountRefreshJWT(userId: string) {
     const deviceId = uuid4().toString();
-    return jwt.sign({userId: userId, deviceId}, ck.REFRESH_SECRET_KEY, {expiresIn: '20m'})
+    return jwt.sign(
+      {userId: userId, deviceId}, ck.REFRESH_SECRET_KEY,
+      {expiresIn: '20s'}
+    )
   }, //20s
 
   async updateUsersAccountAccessJWT(payload: PayloadType) {
-    return jwt.sign({
-      userId: payload.userId,
-      deviceId: payload.deviceId
-    }, ck.ACCESS_SECRET_KEY, {expiresIn: '10s'})
+    return jwt.sign(
+      {
+        userId: payload.userId,
+        deviceId: payload.deviceId
+      }, ck.ACCESS_SECRET_KEY,
+      {expiresIn: '10s'}
+    )
   },
 
-
   async updateUsersAccountRefreshJWT(payload: PayloadType) {
-    return jwt.sign({
-      userId: payload.userId,
-      deviceId: payload.deviceId
-    }, ck.REFRESH_SECRET_KEY, {expiresIn: '20s'})
+    return jwt.sign(
+      {
+        userId: payload.userId,
+        deviceId: payload.deviceId
+      }, ck.REFRESH_SECRET_KEY,
+      {expiresIn: '20s'})
   }, //20s
 
   async verifyRefreshJWT(token: string) {
