@@ -15,7 +15,7 @@ export class SecurityDevicesRepository {
         })
       console.log("---------------------------", d, "---------------------------")
       return await MyModelDevicesSchema.find(
-        {"expirationDate": {$gt: new Date().toISOString()}},
+        {"expirationDate": {$gte: new Date().toISOString()}},
         {
           _id: false,
           __v: false,
