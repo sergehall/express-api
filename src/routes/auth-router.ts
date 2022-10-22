@@ -103,7 +103,7 @@ authRouter.post('/login',
   async (req: Request, res: Response) => {
     try {
       const clientIp = requestIp.getClientIp(req);
-      const title = req.header('user-agent')
+      const title = req.header('user-agent');
       const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
 
       const accessToken = await jwtService.createUsersAccountJWT(userReqHedObjId)
@@ -134,11 +134,22 @@ authRouter.post('/refresh-token',
   jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     try {
+      const clientIp = requestIp.getClientIp(req);
+      const title = req.header('user-agent');
       const refreshToken = req.cookies.refreshToken
       const payload: PayloadType = jwt_decode(refreshToken);
+
       const newAccessToken = await jwtService.updateUsersAccountAccessJWT(payload)
       const newRefreshToken = await jwtService.updateUsersAccountRefreshJWT(payload)
       await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
+      await MyModelDevicesSchema.create({
+        userId: payload.userId,
+        ip: clientIp,
+        title: title,
+        lastActiveDate: new Date(payload.iat * 1000).toISOString(),
+        expirationDate: new Date(payload.exp * 1000).toISOString(),
+        deviceId: payload.deviceId
+      })
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})
       return
