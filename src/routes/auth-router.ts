@@ -128,8 +128,7 @@ authRouter.post('/login',
           deviceId: payload.deviceId
         },
         {upsert: true})
-      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-      res.cookie("refreshToken", refreshToken)
+      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
 
       return res.status(200).send({
         "accessToken": accessToken
@@ -145,8 +144,6 @@ authRouter.post('/refresh-token',
   jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     try {
-      const clientIp = requestIp.getClientIp(req)
-      const title = req.header('user-agent')
       const refreshToken = req.cookies.refreshToken
       const payload: PayloadType = jwt_decode(refreshToken)
       console.log(payload, "payload")
@@ -164,8 +161,7 @@ authRouter.post('/refresh-token',
           expirationDate: new Date(newPayload.exp * 1000).toISOString(),
         })
 
-      // res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
-      res.cookie("refreshToken", newRefreshToken)
+      res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})
       return
 
