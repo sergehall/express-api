@@ -129,6 +129,7 @@ authRouter.post('/login',
         },
         {upsert: true})
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", refreshToken)
 
       return res.status(200).send({
         "accessToken": accessToken
@@ -157,11 +158,14 @@ authRouter.post('/refresh-token',
       await MyModelDevicesSchema.findOneAndUpdate(
         {userId: payload.userId, deviceId: payload.deviceId},
         {
-          lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
-          expirationDate: new Date(newPayload.exp * 1000).toISOString(),
+          $set: {
+            lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
+            expirationDate: new Date(newPayload.exp * 1000).toISOString(),
+          }
         })
 
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", newRefreshToken)
       res.status(200).send({accessToken: newAccessToken})
       return
 

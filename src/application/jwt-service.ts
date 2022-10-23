@@ -20,7 +20,7 @@ export const jwtService = {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.REFRESH_SECRET_KEY,
-      {expiresIn: '20s'}
+      {expiresIn: '2m'}
     )
   }, //20s
 
