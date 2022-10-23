@@ -7,8 +7,8 @@ export class SecurityDevicesService {
     this.securityDevicesRepository = securityDevicesRepository
   }
 
-  async getAllDevices(): Promise<SessionTypeArray> {
-    return await this.securityDevicesRepository.getAllDevices()
+  async getAllDevices(payload: PayloadType): Promise<SessionTypeArray> {
+    return await this.securityDevicesRepository.getAllDevices(payload)
   }
 
   async deleteAllDevicesExceptCurrent(payloadRefreshToken: PayloadType): Promise<Boolean> {

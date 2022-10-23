@@ -4,18 +4,18 @@ import {PayloadType, SessionTypeArray} from "../types/all_types";
 
 export class SecurityDevicesRepository {
 
-  async getAllDevices(): Promise<SessionTypeArray> {
+  async getAllDevices(payload: PayloadType): Promise<SessionTypeArray> {
     try {
-      const findAll = await MyModelDevicesSchema.find(
-        {expirationDate: {$gt: new Date().toISOString()}},
+      const findAllDevices = await MyModelDevicesSchema.find(
+        {userId: payload.userId, expirationDate: {$gt: new Date().toISOString()}},
         {
           _id: false,
           __v: false,
           userId: false,
           expirationDate: false
         })
-      console.log(findAll.length, "getAllDevicesArray", findAll)
-      return findAll
+      console.log(findAllDevices.length, "getAllDevicesArray", findAllDevices)
+      return findAllDevices
 
     } catch (e) {
       console.log(e)
@@ -27,6 +27,7 @@ export class SecurityDevicesRepository {
     try {
       await MyModelDevicesSchema.deleteMany(
         {
+          userId: payloadRefreshToken.userId,
           deviceId: {$ne: payloadRefreshToken.deviceId}
         })
       return true
@@ -69,12 +70,12 @@ export class SecurityDevicesRepository {
       if (!findByDeviceId) {
         throw new Error("404");
       }
-      const delById = await MyModelDevicesSchema.deleteOne(
-        {userId: payloadRefreshToken.userId, deviceId: deviceId}).lean()
-
-      if (delById.deletedCount === 0) {
+      if (findByDeviceId && findByDeviceId.userId !== payloadRefreshToken.userId) {
         throw new Error("403");
       }
+
+      await MyModelDevicesSchema.deleteOne({deviceId: deviceId})
+
       return "204"
 
     } catch (e: any) {

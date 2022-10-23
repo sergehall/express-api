@@ -128,7 +128,8 @@ authRouter.post('/login',
           deviceId: payload.deviceId
         },
         {upsert: true})
-      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", refreshToken)
 
       return res.status(200).send({
         "accessToken": accessToken
@@ -163,7 +164,8 @@ authRouter.post('/refresh-token',
           expirationDate: new Date(newPayload.exp * 1000).toISOString(),
         })
 
-      res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
+      // res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", newRefreshToken)
       res.status(200).send({accessToken: newAccessToken})
       return
 
