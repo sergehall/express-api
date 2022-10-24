@@ -1,5 +1,4 @@
 import {Router, Request, Response} from "express";
-import {jwtService} from "../application/jwt-service";
 import {ioc} from "../IoCContainer";
 import requestIp from 'request-ip';
 import {
@@ -106,17 +105,10 @@ authRouter.post('/login',
       const title = req.header('user-agent');
       const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
 
-      const accessToken = await jwtService.createUsersAccountJWT(userReqHedObjId)
-      const refreshToken = await jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
+      const accessToken = await ioc.jwtService.createUsersAccountJWT(userReqHedObjId)
+      const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
       const payload: PayloadType = jwt_decode(refreshToken);
-      console.log({
-        userId: payload.userId,
-        ip: clientIp,
-        title: title,
-        lastActiveDate: new Date(payload.iat * 1000).toISOString(),
-        expirationDate: new Date(payload.exp * 1000).toISOString(),
-        deviceId: payload.deviceId
-      }, "------------------ New session ------------------")
+
       await MyModelDevicesSchema.findOneAndUpdate(
         {title: title, ip: clientIp,},
         {
@@ -128,8 +120,8 @@ authRouter.post('/login',
           deviceId: payload.deviceId
         },
         {upsert: true})
-      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-      // res.cookie("refreshToken", refreshToken)
+      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", refreshToken)
 
       return res.status(200).send({
         "accessToken": accessToken
@@ -142,21 +134,19 @@ authRouter.post('/login',
   })
 
 authRouter.post('/refresh-token',
-  jwtService.checkRefreshTokenInBlackListAndVerify,
+  ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     try {
       const refreshToken = req.cookies.refreshToken
-      const payload: PayloadType = jwt_decode(refreshToken)
+      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
       const clientIp = requestIp.getClientIp(req);
       const title = req.header('user-agent');
-      console.log(payload, "payload refresh-token")
       await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
 
-      const newAccessToken = await jwtService.updateUsersAccountAccessJWT(payload)
-      const newRefreshToken = await jwtService.updateUsersAccountRefreshJWT(payload)
+      const newAccessToken = await ioc.jwtService.updateUsersAccountAccessJWT(payload)
+      const newRefreshToken = await ioc.jwtService.updateUsersAccountRefreshJWT(payload)
 
-      const newPayload: PayloadType = jwt_decode(newRefreshToken)
-      console.log(newPayload, "newPayload refresh-token")
+      const newPayload: PayloadType = ioc.jwtService.jwt_decode(newRefreshToken)
       await MyModelDevicesSchema.findOneAndUpdate(
         {userId: payload.userId, deviceId: payload.deviceId},
         {
@@ -171,8 +161,8 @@ authRouter.post('/refresh-token',
         },
         {upsert: true})
 
-      res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
-      // res.cookie("refreshToken", newRefreshToken)
+      // res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
+      res.cookie("refreshToken", newRefreshToken)
       res.status(200).send({accessToken: newAccessToken})
       return
 
@@ -184,22 +174,14 @@ authRouter.post('/refresh-token',
   })
 
 authRouter.post('/logout',
-  jwtService.checkRefreshTokenInBlackListAndVerify,
+  ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
-    const payload: PayloadType = jwt_decode(refreshToken);
+    const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
     await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
     const result = await ioc.securityDevicesService.deleteDeviceByDeviceIdAfterLogout(payload)
-    console.log(payload, "logout payload")
-    console.log(result, "logout result")
     if (result === "204") {
       return res.sendStatus(204)
-    }
-    if (result === "404") {
-      return res.sendStatus(404)
-    }
-    if (result === "403") {
-      return res.sendStatus(403)
     }
     return res.send({result: result})
   })

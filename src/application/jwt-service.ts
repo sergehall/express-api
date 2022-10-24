@@ -3,10 +3,11 @@ import jwt from 'jsonwebtoken'
 import {ioc} from "../IoCContainer";
 import uuid4 from "uuid4";
 import {PayloadType} from "../types/all_types";
+import jwt_decode from "jwt-decode";
 
 const ck = require('ckey')
 
-export const jwtService = {
+export class JWTService {
 
   async createUsersAccountJWT(userId: string) {
     const deviceId = uuid4().toString();
@@ -14,15 +15,15 @@ export const jwtService = {
       {userId: userId, deviceId}, ck.ACCESS_SECRET_KEY,
       {expiresIn: '10s'}
     )
-  },
+  }
 
   async createUsersAccountRefreshJWT(userId: string) {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.REFRESH_SECRET_KEY,
-      {expiresIn: '2m'}
+      {expiresIn: '5m'}
     )
-  }, //20s
+  } //20s
 
   async updateUsersAccountAccessJWT(payload: PayloadType) {
     return jwt.sign(
@@ -32,7 +33,7 @@ export const jwtService = {
       }, ck.ACCESS_SECRET_KEY,
       {expiresIn: '10s'}
     )
-  },
+  }
 
   async updateUsersAccountRefreshJWT(payload: PayloadType) {
     return jwt.sign(
@@ -41,7 +42,7 @@ export const jwtService = {
         deviceId: payload.deviceId
       }, ck.REFRESH_SECRET_KEY,
       {expiresIn: '20s'})
-  }, //20s
+  } //20s
 
   async verifyRefreshJWT(token: string) {
     try {
@@ -50,7 +51,7 @@ export const jwtService = {
     } catch (e) {
       return null
     }
-  },
+  }
 
   async getUserIdByToken(token: string) {
     try {
@@ -59,13 +60,13 @@ export const jwtService = {
     } catch (err) {
       return null
     }
-  },
+  }
 
   async checkRefreshTokenInBlackListAndVerify(req: Request, res: Response, next: NextFunction) {
     try {
       const refreshToken = req.cookies.refreshToken
       const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(refreshToken)
-      const userId: string | null = await jwtService.verifyRefreshJWT(refreshToken);
+      const userId: string | null = await ioc.jwtService.verifyRefreshJWT(refreshToken);
       if (tokenInBlackList || !userId) {
         return res.sendStatus(401)
       }
@@ -75,6 +76,10 @@ export const jwtService = {
       console.log(e, "RefreshToken expired or incorrect")
       return res.sendStatus(401)
     }
+  }
+
+  jwt_decode(token: string): PayloadType {
+    return jwt_decode(token)
   }
 }
 

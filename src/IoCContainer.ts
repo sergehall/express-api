@@ -47,6 +47,7 @@ import {UsersController} from "./presentation/usersController";
 import {SecurityDevicesRepository} from "./repositories/securityDevices-db-repository";
 import {SecurityDevicesController} from "./presentation/securityDeviceController";
 import {SecurityDevicesService} from "./domain/securityDevices-service";
+import {JWTService} from "./application/jwt-service";
 
 // posts
 const postsRepository = new PostsRepository()
@@ -104,6 +105,8 @@ const preparationComments = new PreparationComments()
 const securityDevicesRepository = new SecurityDevicesRepository()
 const securityDevicesService = new SecurityDevicesService(securityDevicesRepository)
 const securityDevicesController = new SecurityDevicesController(securityDevicesService)
+// JWT Service
+const jwtService = new JWTService()
 
 export const ioc = {
   bloggersService: bloggersService,
@@ -139,5 +142,6 @@ export const ioc = {
   preparationComments: preparationComments,
   parseQuery: parseQuery,
   securityDevicesService: securityDevicesService,
-  securityDevicesController: securityDevicesController
+  securityDevicesController: securityDevicesController,
+  jwtService: jwtService
 }

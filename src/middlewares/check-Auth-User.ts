@@ -1,5 +1,4 @@
 import {NextFunction, Request, Response} from "express";
-import {jwtService} from "../application/jwt-service";
 import {ioc} from "../IoCContainer";
 
 export class AuthCheckUserAuthorizationForUserAccount {
@@ -9,7 +8,7 @@ export class AuthCheckUserAuthorizationForUserAccount {
       return
     }
     const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
-    const userId = await jwtService.getUserIdByToken(token)
+    const userId = await ioc.jwtService.getUserIdByToken(token)
     if (!userId) {
       res.sendStatus(401)
       return
@@ -24,7 +23,7 @@ export class AuthCheckUserAuthorizationForUserAccount {
       return
     }
     const token = req.headers.authorization.split(' ')[1]
-    const userId = await jwtService.getUserIdByToken(token)
+    const userId = await ioc.jwtService.getUserIdByToken(token)
     if (userId === null) {
       next()
       return
