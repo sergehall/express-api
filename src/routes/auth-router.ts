@@ -10,7 +10,6 @@ import {
   bodyPasswordUsersAccount,
   inputValidatorMiddleware
 } from "../middlewares/input-validator-middleware";
-import jwt_decode from "jwt-decode";
 import {PayloadType} from "../types/all_types";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
@@ -107,7 +106,7 @@ authRouter.post('/login',
 
       const accessToken = await ioc.jwtService.createUsersAccountJWT(userReqHedObjId)
       const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
-      const payload: PayloadType = jwt_decode(refreshToken);
+      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
 
       await MyModelDevicesSchema.findOneAndUpdate(
         {title: title, ip: clientIp,},
