@@ -12,6 +12,10 @@ import {ioc} from "../IoCContainer";
 
 export class CommentsRepository {
 
+  async findCommentInDB(filter: { "allComments.id": string }) {
+    return MyModelComments.findOne(filter)
+  }
+
   async findCommentById(commentId: string, user: UserAccountDBType | null): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
@@ -99,32 +103,25 @@ export class CommentsRepository {
     }
     try {
       const filterToUpdate = {"allComments.id": commentId}
-      const findCommentInDB = await MyModelComments.findOne(filterToUpdate)
-      if (!findCommentInDB) {
+      const result = await MyModelComments.findOneAndUpdate(
+        filterToUpdate,
+        {$set: {"allComments.$.likeStatus": likeStatus}}
+      )
+      if (!result) {
         return false
       }
-      const result = await MyModelComments.updateOne(filterToUpdate, {$set: {"allComments.$.likeStatus": likeStatus}})
-      const findUpdated = await MyModelComments.findOne(filterToUpdate).lean()
 
-      const currentLikeStatus = await MyModelLikeStatusCommentId.findOne(
-        {
-          $and:
-            [{commentId: commentId},
-              {userId: userId}]
-        }).lean()
-      if (!currentLikeStatus) {
-        const createNewLikeStatusCommentId = await MyModelLikeStatusCommentId.create(newLikeStatus)
-        return true
-      }
-      const updateLikeStatusCommentId = await MyModelLikeStatusCommentId.findOneAndUpdate(
+      const currentLikeStatus = await MyModelLikeStatusCommentId.findOneAndUpdate(
         {
           $and:
             [{commentId: commentId},
               {userId: userId}]
         },
-        {$set: {likeStatus: likeStatus}}).lean()
+        newLikeStatus,
+        {upsert: true})
 
       return true
+
     } catch (e) {
       console.log(e)
       return false

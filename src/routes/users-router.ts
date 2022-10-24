@@ -14,11 +14,11 @@ export const usersRouter = Router({});
 usersRouter.get('/',
   ioc.usersAccountController.getUsers.bind(ioc.usersAccountController))
 
-  .post('/', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+  .post('/', ioc.auth.basicAuthorization,
     bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
     ioc.usersAccountController.createNewUser.bind(ioc.usersAccountController))
 
-  .delete('/:userId', ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+  .delete('/:userId', ioc.auth.basicAuthorization,
     userIdParamsValidation, inputValidatorMiddleware,
     ioc.usersAccountController.deleteUserById.bind(ioc.usersAccountController))
 

@@ -8,22 +8,22 @@ import {
 export const commentsRouter = Router({})
 
 commentsRouter.get('/:commentId',
-  ioc.authCheckUserAuthorizationForUserAccount.noneStatus,
+  ioc.auth.noneStatus,
   ioc.commentsController.getCommentById.bind(ioc.commentsController))
 
   .put('/:commentId',
-    ioc.authCheckUserAuthorizationForUserAccount.authCheck,
-    ioc.comparingLoginAndOwnersComment.comparing,
+    ioc.auth.authentication,
+    ioc.auth.compareCurrentAndCreatorComment,
     contentCommentValidation, inputValidatorMiddleware,
     ioc.commentsController.updateCommentsById.bind(ioc.commentsController))
 
   .put('/:commentId/like-status',
-    ioc.authCheckUserAuthorizationForUserAccount.authCheck,
+    ioc.auth.authentication,
     likeStatusValidator,
     inputValidatorMiddleware,
     ioc.commentsController.likeStatusCommentId.bind(ioc.commentsController))
 
   .delete('/:commentId',
-    ioc.authCheckUserAuthorizationForUserAccount.authCheck,
-    ioc.comparingLoginAndOwnersComment.comparing,
+    ioc.auth.authentication,
+    ioc.auth.compareCurrentAndCreatorComment,
     ioc.commentsController.deleteCommentsById.bind(ioc.commentsController))

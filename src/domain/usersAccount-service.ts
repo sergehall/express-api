@@ -137,20 +137,12 @@ export class UsersAccountService {
     return null
   }
 
-  async checkCredentials(loginOrEmail: string, password: string) {
-    const user = await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
-    if (user === null) {
-      return null
-    }
-    const result = await bcrypt.compare(password, user.accountData.passwordHash)
-    if (result) {
-      return user
-    }
-    return null   //user.accountData.passwordHash === passwordHash; // true or false if not match
-  }
-
   async findByLoginAndEmail(email: string, login: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByLoginAndEmail(email, login)
+  }
+
+  async findByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
   }
 
   async findByConfirmationCode(code: string): Promise<UserAccountDBType | null> {

@@ -17,7 +17,7 @@ import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 export const authRouter = Router({})
 
 authRouter.post('/registration-confirmation',
-  ioc.checkoutIPFromBlackList.check,
+  ioc.auth.checkIpInBlackList,
   bodyCode, inputValidatorMiddleware,
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegConf,
   async (req: Request, res: Response) => {
@@ -44,10 +44,10 @@ authRouter.post('/registration-confirmation',
   });
 
 authRouter.post('/registration',
-  ioc.checkoutIPFromBlackList.check,
-  ioc.checkoutContentType.appJson,
+  ioc.auth.checkIpInBlackList,
+  ioc.auth.checkoutContentType,
   bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
-  ioc.checkOutEmailOrLoginInDB.checkOut,
+  ioc.auth.checkUserAccountNotExists,
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpReg,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
@@ -97,7 +97,7 @@ authRouter.post('/registration-email-resending',
 authRouter.post('/login',
   bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpLog,
-  ioc.checkCredentialsLoginPass.checkCredentials,
+  ioc.auth.checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     try {
       const clientIp = requestIp.getClientIp(req);
@@ -184,7 +184,7 @@ authRouter.post('/logout',
   })
 
 authRouter.get("/me",
-  ioc.authCheckUserAuthorizationForUserAccount.authCheck,
+  ioc.auth.authentication,
   async (req: Request, res: Response) => {
     const user = req.user
     if (user) {

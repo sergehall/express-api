@@ -1,12 +1,16 @@
 import {CommentsRepository} from "../repositories/comments-db-repository";
 import {
-  ReturnTypeObjectComment, UserAccountDBType,
+  ReturnTypeObjectComment,
+  UserAccountDBType,
 } from "../types/all_types";
 
 
 export class CommentsService {
   constructor(private commentsRepository: CommentsRepository) {
     this.commentsRepository = commentsRepository
+  }
+  async findCommentInDB(filter: { "allComments.id": string }) {
+    return await this.commentsRepository.findCommentInDB(filter)
   }
 
   async findCommentById(commentId: string, user: UserAccountDBType | null): Promise<ReturnTypeObjectComment>{

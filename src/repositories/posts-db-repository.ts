@@ -1,6 +1,8 @@
 import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/errorsMessages";
+import uuid4 from "uuid4";
 import {
-  ArrayErrorsType, CommentViewModel,
+  ArrayErrorsType,
+  CommentViewModel,
   LastTreeLikes,
   Pagination,
   PaginatorCommentViewModel,
@@ -11,7 +13,6 @@ import {
 } from "../types/all_types";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
-import uuid4 from "uuid4";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
@@ -76,33 +77,36 @@ export class PostsRepository {
   async createPost(title: string, shortDescription: string, content: string, bloggerId: string, addedAt: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
+    const ReturnObjectPost = {
+      data: {
+        id: "",
+        title: title,
+        shortDescription: shortDescription,
+        content: content,
+        bloggerId: bloggerId,
+        bloggerName: "",
+        addedAt: addedAt,
+        extendedLikesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: "None",
+          newestLikes: []
+        }
+      },
+      errorsMessages: [],
+      resultCode: 1
+    }
+
     const foundBloggerId = await MyModelBloggers.findOne({id: bloggerId})
+
     if (!foundBloggerId) {
       errorsArray.push(notFoundBloggerId)
-      return {
-        data: {
-          id: "",
-          title: title,
-          shortDescription: shortDescription,
-          content: content,
-          bloggerId: bloggerId,
-          bloggerName: "",
-          addedAt: addedAt,
-          extendedLikesInfo: {
-            likesCount: 0,
-            dislikesCount: 0,
-            myStatus: "",
-            newestLikes: []
-          }
-        },
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
+      return {...ReturnObjectPost, errorsMessages: errorsArray}
     }
 
     const nameBloggerId = foundBloggerId.name
-
     const newPost = {
+      ...ReturnObjectPost.data,
       id: newPostId,
       title: title,
       shortDescription: shortDescription,
@@ -115,14 +119,19 @@ export class PostsRepository {
         dislikesCount: 0,
         myStatus: "None",
         newestLikes: []
+
       }
     }
 
     try {
       const createNewPost = await MyModelPosts.create(newPost)
-
+      const creteNewPostInCommentDB = await MyModelComments.create({
+        postId: newPostId,
+        allComments: []
+      })
       if (!createNewPost) {
-        throw true
+        errorsArray.push(MongoHasNotUpdated)
+        return {...ReturnObjectPost, errorsMessages: errorsArray}
       }
       return {
         data: createNewPost,
@@ -130,97 +139,61 @@ export class PostsRepository {
         resultCode: 0
       }
 
-    } catch (e) {
+    } catch (e: any) {
       console.log(e)
-      errorsArray.push(MongoHasNotUpdated)
-      return {
-        data: {
-          id: "",
-          title: title,
-          shortDescription: shortDescription,
-          content: content,
-          bloggerId: bloggerId,
-          bloggerName: "",
-          addedAt: addedAt,
-          extendedLikesInfo: {
-            likesCount: 0,
-            dislikesCount: 0,
-            myStatus: "",
-            newestLikes: [{
-              addedAt: "",
-              userId: "",
-              login: ""
-            }]
-          }
-        },
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
+      return {...ReturnObjectPost, errorsMessages: errorsArray}
     }
   }
 
   async createNewCommentByPostId(postId: string, content: string, user: UserAccountDBType): Promise<ReturnTypeObjectComment> {
-    let errorsArray: ArrayErrorsType = [];
-    const newCommentId = uuid4().toString()
-    const addedAt = (new Date()).toISOString()
-    const filter = {id: postId}
+    try {
+      let errorsArray: ArrayErrorsType = [];
+      const newCommentId = uuid4().toString()
+      const addedAt = (new Date()).toISOString()
 
-    const newComment: CommentViewModel = {
-      id: newCommentId,
-      content: content,
-      userId: user.accountData.id,
-      userLogin: user.accountData.login,
-      addedAt: addedAt,
-      likesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: "None"
+      const newComment: CommentViewModel = {
+        id: newCommentId,
+        content: content,
+        userId: user.accountData.id,
+        userLogin: user.accountData.login,
+        addedAt: addedAt,
+        likesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: "None"
+        }
       }
-    }
-
-    const foundPost = await MyModelPosts.findOne(filter)
-    if (!foundPost) {
-      errorsArray.push(notFoundPostId)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
-
-    const filterComments = {postId: postId}
-    const foundComments = await MyModelComments.findOne(filterComments)
-    if (!foundComments) {
-      const insertNewComment = await MyModelComments.create({
-        postId: postId,
-        allComments: [newComment]
-      })
-      if (!insertNewComment) {
-        errorsArray.push(MongoHasNotUpdated)
-      }
-    } else {
-      const result = await MyModelComments.updateOne(
+      const findOneAndUpdateComment = await MyModelComments.findOneAndUpdate(
         {postId: postId},
         {
           $push: {allComments: newComment}
-        })
+        }
+      )
 
-      if (!result.modifiedCount && !result.matchedCount) {
-        errorsArray.push(MongoHasNotUpdated)
+      if (!findOneAndUpdateComment) {
+        errorsArray.push(notFoundPostId)
+        return {
+          data: null,
+          errorsMessages: errorsArray,
+          resultCode: 1
+        }
       }
-    }
 
-    if (errorsArray.length !== 0) {
+      return {
+        data: newComment,
+        errorsMessages: errorsArray,
+        resultCode: 0
+      }
+    } catch (e) {
+      console.log(e)
       return {
         data: null,
-        errorsMessages: errorsArray,
+        errorsMessages: [{
+          message: 'catch error in createNewCommentByPostId',
+          field: "error"
+        }],
         resultCode: 1
       }
-    }
-    return {
-      data: newComment,
-      errorsMessages: errorsArray,
-      resultCode: 0
     }
   }
 
@@ -293,7 +266,7 @@ export class PostsRepository {
     let startIndex = (pageNumber - 1) * pageSize
     const commentsSlice = comments.slice(startIndex, startIndex + pageSize)
 
-    const filledComments =  await ioc.preparationComments.preparationCommentsForReturn(commentsSlice, user)
+    const filledComments = await ioc.preparationComments.preparationCommentsForReturn(commentsSlice, user)
 
     return {
       pagesCount: pagesCount,

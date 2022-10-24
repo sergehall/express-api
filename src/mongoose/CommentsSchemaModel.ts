@@ -3,7 +3,7 @@ import mongoose, {Document} from 'mongoose';
 const Schema = mongoose.Schema
 
 interface CommentsType extends Document {
-  postId: string;
+  postId: string
   allComments: {
     id: string
     content: string

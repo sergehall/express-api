@@ -15,52 +15,52 @@ import {ioc} from "../IoCContainer";
 export const postsRouts = Router({})
 
 postsRouts.get('/',
-  ioc.authCheckUserAuthorizationForUserAccount.noneStatus,
+  ioc.auth.noneStatus,
   ioc.postsController.getAllPosts.bind(ioc.postsController))
 
   .post('/',
-    ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+    ioc.auth.basicAuthorization,
     titleValidation, shortDescriptionValidation, contentValidation,
     bloggerIdBodyValidator, inputValidatorMiddleware,
     ioc.postsController.createNewPost.bind(ioc.postsController))
 
   .get('/:postId',
-    ioc.authCheckUserAuthorizationForUserAccount.noneStatus,
+    ioc.auth.noneStatus,
     postIdParamsValidation,
     inputValidatorMiddleware,
     ioc.postsController.getPostById.bind(ioc.postsController))
 
   .put('/:postId',
-    ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+    ioc.auth.basicAuthorization,
     postIdParamsValidation, titleValidation, shortDescriptionValidation,
     contentValidation, bloggerIdBodyValidator,
     inputValidatorMiddleware,
     ioc.postsController.updatePostById.bind(ioc.postsController))
 
   .delete('/:postId',
-    ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+    ioc.auth.basicAuthorization,
     postIdParamsValidation,
     inputValidatorMiddleware,
     ioc.postsController.deletePostById.bind(ioc.postsController))
 
   .delete('/',
-    ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+    ioc.auth.basicAuthorization,
     ioc.postsController.deleteAllPosts.bind(ioc.postsController))
 
   .get('/:postId/comments',
-    ioc.authCheckUserAuthorizationForUserAccount.noneStatus,
+    ioc.auth.noneStatus,
     postIdParamsValidation,
     inputValidatorMiddleware,
     ioc.postsController.getCommentsByPostId.bind(ioc.postsController))
 
   .post('/:postId/comments',
-    ioc.authCheckUserAuthorizationForUserAccount.authCheck,
+    ioc.auth.noneStatus,
     contentCommentValidation,
     inputValidatorMiddleware,
     ioc.postsController.createNewCommentByPostId.bind(ioc.postsController))
 
   .put('/:postId/like-status',
-    ioc.authCheckUserAuthorizationForUserAccount.authCheck,
+    ioc.auth.noneStatus,
     postIdParamsValidation,
     likeStatusValidator,
     inputValidatorMiddleware,

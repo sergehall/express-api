@@ -25,14 +25,14 @@ blogsRouts.get('/',
     ioc.blogsController.findBlogById.bind(ioc.blogsController))
 
   .post('/',
-    ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+    ioc.auth.basicAuthorization,
     nameBlogValidation,
     youtubeUrlBlogValidation,
     inputValidatorMiddleware,
     ioc.blogsController.createNewBlog.bind(ioc.blogsController))
 
   .post('/:blogId/posts',
-    ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+    ioc.auth.basicAuthorization,
     titleBlogValidation,
     shortDescriptionBlogValidation,
     contentBlogValidation,
@@ -41,7 +41,7 @@ blogsRouts.get('/',
     ioc.blogsController.createNewPostByBlogId.bind(ioc.blogsController))
 
   .put('/:id',
-    ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+    ioc.auth.basicAuthorization,
     nameBlogValidation,
     youtubeUrlBlogValidation,
     idParamsValidation,
@@ -49,7 +49,7 @@ blogsRouts.get('/',
     ioc.blogsController.updatedBlogById.bind(ioc.blogsController))
 
   .delete('/:id',
-    ioc.authMiddlewareBasicAuthorization.authBasicCheck,
+    ioc.auth.basicAuthorization,
     idParamsValidation,
     inputValidatorMiddleware,
     ioc.blogsController.deleteBlogById.bind(ioc.blogsController))
