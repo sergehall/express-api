@@ -1,6 +1,5 @@
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
-import {MongoHasNotUpdated} from "../middlewares/errorsMessages";
 import requestIp from "request-ip";
 import {UsersAccountService} from "../domain/usersAccount-service";
 
@@ -46,11 +45,18 @@ export class UsersAccountController {
         res.status(201).send(userReturn)
         return
       }
-      res.status(501).send({MongoHasNotUpdated})
+      res.status(400).send({
+        errorsMessages: [
+          {
+            message: "E11000 duplicate key error collection",
+            field: "Login or password"
+          }
+        ]
+      })
 
-    } catch (e) {
-      console.log(e)
-      return res.sendStatus(500)
+    } catch (e: any) {
+      console.log(e.toString())
+      return res.sendStatus(400)
     }
   }
 
