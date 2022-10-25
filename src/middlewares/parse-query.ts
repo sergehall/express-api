@@ -27,7 +27,6 @@ export class ParseQuery {
     if (!searchEmailTerm || searchEmailTerm.length === 0) {
       searchEmailTerm = null
     }
-
     if (!confirmationCode || confirmationCode.length === 0) {
       confirmationCode = null
     }
