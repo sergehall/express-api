@@ -70,7 +70,7 @@ authRouter.post('/password-recovery',
   })
 
 authRouter.post('/new-password',
-  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpNewPasswordReq,
   bodyNewPassword,
   recoveryCode,
   inputValidatorMiddleware,
@@ -80,9 +80,14 @@ authRouter.post('/new-password',
     console.log(newPassword, recoveryCode)
 
     const user = await ioc.usersAccountService.findByConfirmationCode(recoveryCode)
-    console.log(user)
     if (!user) {
-      return res.sendStatus(400)
+      return res.status(400).send(
+        {
+          errorsMessages: [{
+            message: "incorrect recoveryCode",
+            field: "recoveryCode"
+          }]
+        })
     }
     await ioc.usersAccountService.createNewPassword(newPassword, user)
 

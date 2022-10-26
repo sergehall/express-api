@@ -3,6 +3,7 @@ import {MyModeLast10secReg} from "../mongoose/Last10secRegModel";
 import {MyModeLast10secRedEmailRes} from "../mongoose/Last10secRegEmailResModel";
 import {MyModeLast10secLog} from "../mongoose/Last10secLogModel";
 import {ioc} from "../IoCContainer";
+import {MyModeRedLast10secNewPasswordReq} from "../mongoose/Last10secNewPassResModel";
 
 
 export class ClearingIpWithDateOlder11Sec {
@@ -13,6 +14,7 @@ export class ClearingIpWithDateOlder11Sec {
       await MyModeLast10secReg.deleteMany({createdAt: {$lt: new Date(Date.now() - 1000 * 10).toISOString()}})
       await MyModeLast10secLog.deleteMany({createdAt: {$lt: new Date(Date.now() - 1000 * 10).toISOString()}})
       await MyModeLast10secRedEmailRes.deleteMany({createdAt: {$lt: new Date(Date.now() - 1000 * 10).toISOString()}})
+      await MyModeRedLast10secNewPasswordReq.deleteMany({createdAt: {$lt: new Date(Date.now() - 1000 * 10).toISOString()}})
       await ioc.clearingIpWithDateOlder11Sec.start()
     }, 60000)
   }

@@ -50,5 +50,17 @@ export class CheckHowManyTimesUserLoginLast10sec {
     res.status(429).send('More than 5 registration attempts from one IP-address during 10 seconds.')
     return
   }
+
+  async withSameIpNewPasswordReq (req: Request, res: Response, next: NextFunction) {
+    const clientIp = requestIp.getClientIp(req);
+    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.findSameIpNewPasswordReq(clientIp)
+
+    if (countRegistrationAttempts <= 5) {
+      next()
+      return
+    }
+    res.status(429).send('More than 5 registration attempts from one IP-address during 10 seconds.')
+    return
+  }
 }
 
