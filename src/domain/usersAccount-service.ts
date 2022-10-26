@@ -47,6 +47,17 @@ export class UsersAccountService {
     return await this.usersAccountRepository.createUserAccount(newUser)
   }
 
+  async createNewPassword(newPassword: string, user: UserAccountDBType) {
+    const passwordSalt = await bcrypt.genSalt(10)
+    const passwordHash = await this._generateHash(newPassword, passwordSalt)
+
+    const newUser: UserAccountDBType = JSON.parse(JSON.stringify(user))
+    newUser.accountData.passwordSalt = passwordSalt
+    newUser.accountData.passwordHash = passwordHash
+
+    return await this.usersAccountRepository.createUserAccount(newUser)
+  }
+
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)

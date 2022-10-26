@@ -425,11 +425,7 @@ export class PostsRepository {
           login: user.accountData.login
         }
         const updateCurrentLikeInLikeStatusPosts = await MyModelLikeStatusPostsId.findOneAndUpdate(
-          {
-            $and:
-              [{postId: postId},
-                {userId: userId}]
-          },
+          {postId: postId, userId: userId},
           {likeStatus: likeStatus}).lean()
 
         const checkPostLastLikes = await MyModelThreeLastLikesPost.findOne({postId: postId}).lean()

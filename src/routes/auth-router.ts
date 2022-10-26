@@ -5,16 +5,129 @@ import {
   bodyCode,
   bodyEmail,
   bodyLogin,
-  bodyLoginUsersAccount,
+  bodyLoginUsersAccount, bodyNewPassword,
   bodyPassword,
   bodyPasswordUsersAccount,
-  inputValidatorMiddleware
+  inputValidatorMiddleware, recoveryCode
 } from "../middlewares/input-validator-middleware";
 import {PayloadType} from "../types/all_types";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
 
 export const authRouter = Router({})
+
+authRouter.post('/login',
+  bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpLog,
+  ioc.auth.checkCredentialsLoginPass,
+  async (req: Request, res: Response) => {
+    try {
+      const clientIp = requestIp.getClientIp(req);
+      const title = req.header('user-agent');
+      const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
+
+      const accessToken = await ioc.jwtService.createUsersAccountJWT(userReqHedObjId)
+      const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
+      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
+
+      await MyModelDevicesSchema.findOneAndUpdate(
+        {title: title, ip: clientIp,},
+        {
+          userId: payload.userId,
+          ip: clientIp,
+          title: title,
+          lastActiveDate: new Date(payload.iat * 1000).toISOString(),
+          expirationDate: new Date(payload.exp * 1000).toISOString(),
+          deviceId: payload.deviceId
+        },
+        {upsert: true})
+      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
+
+      return res.status(200).send({
+        "accessToken": accessToken
+      })
+
+    } catch (e) {
+      console.log(e)
+      return res.status(500)
+    }
+  })
+
+authRouter.post('/password-recovery',
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
+  bodyEmail, inputValidatorMiddleware,
+  async (req: Request, res: Response) => {
+    const email = req.body.email
+    const user = await ioc.usersAccountService.findByEmail(email)
+    if (!user) {
+      const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserNotExist(email)
+      console.log(`Resend password-recovery to email:  ${result?.email}`)
+      return res.sendStatus(204)
+    }
+    const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserExist(user)
+    console.log(`Resend password-recovery to email:  ${result?.accountData.email}`)
+    return res.sendStatus(204)
+  })
+
+authRouter.post('/new-password',
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
+  bodyNewPassword,
+  recoveryCode,
+  inputValidatorMiddleware,
+  async (req: Request, res: Response) => {
+    const newPassword = req.body.newPassword
+    const recoveryCode = req.body.recoveryCode
+    console.log(newPassword, recoveryCode)
+
+    const user = await ioc.usersAccountService.findByConfirmationCode(recoveryCode)
+    console.log(user)
+    if (!user) {
+      return res.sendStatus(400)
+    }
+    await ioc.usersAccountService.createNewPassword(newPassword, user)
+
+    return res.sendStatus(204)
+
+  })
+
+authRouter.post('/refresh-token',
+  ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
+  async (req: Request, res: Response) => {
+    try {
+      const refreshToken = req.cookies.refreshToken
+      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
+      const clientIp = requestIp.getClientIp(req);
+      const title = req.header('user-agent');
+      await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
+
+      const newAccessToken = await ioc.jwtService.updateUsersAccountAccessJWT(payload)
+      const newRefreshToken = await ioc.jwtService.updateUsersAccountRefreshJWT(payload)
+
+      const newPayload: PayloadType = ioc.jwtService.jwt_decode(newRefreshToken)
+      await MyModelDevicesSchema.findOneAndUpdate(
+        {userId: payload.userId, deviceId: payload.deviceId},
+        {
+          $set: {
+            userId: payload.userId,
+            ip: clientIp,
+            title: title,
+            lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
+            expirationDate: new Date(newPayload.exp * 1000).toISOString(),
+            deviceId: payload.deviceId
+          }
+        },
+        {upsert: true})
+
+      res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
+      res.status(200).send({accessToken: newAccessToken})
+      return
+
+    } catch (e) {
+      console.log(e)
+      return res.status(401).send({error: e})
+    }
+
+  })
 
 authRouter.post('/registration-confirmation',
   ioc.auth.checkIpInBlackList,
@@ -94,82 +207,6 @@ authRouter.post('/registration-email-resending',
     return
   });
 
-authRouter.post('/login',
-  bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
-  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpLog,
-  ioc.auth.checkCredentialsLoginPass,
-  async (req: Request, res: Response) => {
-    try {
-      const clientIp = requestIp.getClientIp(req);
-      const title = req.header('user-agent');
-      const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
-
-      const accessToken = await ioc.jwtService.createUsersAccountJWT(userReqHedObjId)
-      const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
-      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
-
-      await MyModelDevicesSchema.findOneAndUpdate(
-        {title: title, ip: clientIp,},
-        {
-          userId: payload.userId,
-          ip: clientIp,
-          title: title,
-          lastActiveDate: new Date(payload.iat * 1000).toISOString(),
-          expirationDate: new Date(payload.exp * 1000).toISOString(),
-          deviceId: payload.deviceId
-        },
-        {upsert: true})
-      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-
-      return res.status(200).send({
-        "accessToken": accessToken
-      })
-
-    } catch (e) {
-      console.log(e)
-      return res.status(500)
-    }
-  })
-
-authRouter.post('/refresh-token',
-  ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
-  async (req: Request, res: Response) => {
-    try {
-      const refreshToken = req.cookies.refreshToken
-      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
-      const clientIp = requestIp.getClientIp(req);
-      const title = req.header('user-agent');
-      await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
-
-      const newAccessToken = await ioc.jwtService.updateUsersAccountAccessJWT(payload)
-      const newRefreshToken = await ioc.jwtService.updateUsersAccountRefreshJWT(payload)
-
-      const newPayload: PayloadType = ioc.jwtService.jwt_decode(newRefreshToken)
-      await MyModelDevicesSchema.findOneAndUpdate(
-        {userId: payload.userId, deviceId: payload.deviceId},
-        {
-          $set: {
-            userId: payload.userId,
-            ip: clientIp,
-            title: title,
-            lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
-            expirationDate: new Date(newPayload.exp * 1000).toISOString(),
-            deviceId: payload.deviceId
-          }
-        },
-        {upsert: true})
-
-      res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
-      res.status(200).send({accessToken: newAccessToken})
-      return
-
-    } catch (e) {
-      console.log(e)
-      return res.status(401).send({error: e})
-    }
-
-  })
-
 authRouter.post('/logout',
   ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
   async (req: Request, res: Response) => {
@@ -198,6 +235,8 @@ authRouter.get("/me",
     return res.sendStatus(401)
   })
 
+// just for me
+
 authRouter.get('/resend-registration-email',
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
   async (req: Request, res: Response) => {
@@ -214,22 +253,6 @@ authRouter.get('/resend-registration-email',
     }
     const result = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(user.accountData.email)
     res.send(`Resend code to email:  ${result?.accountData?.email}`)
-  })
-
-authRouter.post('/password-recovery',
-  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
-  bodyEmail, inputValidatorMiddleware,
-  async (req: Request, res: Response) => {
-    const email = req.body.email
-    const user = await ioc.usersAccountService.findByEmail(email)
-    if (!user) {
-      const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserNotExist(email)
-      console.log(`Resend password-recovery to email:  ${result?.email}`)
-      return res.sendStatus(204)
-    }
-    const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserExist(user)
-    console.log(`Resend password-recovery to email:  ${result?.accountData.email}`)
-    return res.sendStatus(204)
   })
 
 authRouter.get('/confirm-registration',
