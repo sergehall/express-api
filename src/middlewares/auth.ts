@@ -14,7 +14,7 @@ export class Auth {
       return
     }
     const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
-    const userId = await ioc.jwtService.getUserIdByToken(token)
+    const userId = await ioc.jwtService.verifyAccessJWT(token)
     if (!userId) {
       res.sendStatus(401)
       return
@@ -23,13 +23,13 @@ export class Auth {
     next()
   }
 
-  async noneStatus(req: Request, res: Response, next: NextFunction) {
-    if (!req.headers.authorization) {
+  async noneStatusRefreshToken(req: Request, res: Response, next: NextFunction) {
+    if (!req.cookies.refreshToken) {
       next()
       return
     }
-    const token = req.headers.authorization.split(' ')[1]
-    const userId = await ioc.jwtService.getUserIdByToken(token)
+
+    const userId = await ioc.jwtService.verifyRefreshJWT(req.cookies.refreshToken.toString())
     if (userId === null) {
       next()
       return

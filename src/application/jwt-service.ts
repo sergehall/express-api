@@ -13,7 +13,7 @@ export class JWTService {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.ACCESS_SECRET_KEY,
-      {expiresIn: '10s'}
+      {expiresIn: '5m'}
     )
   }
 
@@ -21,7 +21,7 @@ export class JWTService {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.REFRESH_SECRET_KEY,
-      {expiresIn: '2m'}
+      {expiresIn: '10m'}
     )
   } 
 
@@ -53,7 +53,7 @@ export class JWTService {
     }
   }
 
-  async getUserIdByToken(token: string) {
+  async verifyAccessJWT(token: string) {
     try {
       const result: any = jwt.verify(token, ck.ACCESS_SECRET_KEY)
       return result.userId

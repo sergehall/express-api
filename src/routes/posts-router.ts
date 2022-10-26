@@ -15,7 +15,7 @@ import {ioc} from "../IoCContainer";
 export const postsRouts = Router({})
 
 postsRouts.get('/',
-  ioc.auth.noneStatus,
+  ioc.auth.noneStatusRefreshToken,
   ioc.postsController.getAllPosts.bind(ioc.postsController))
 
   .post('/',
@@ -25,7 +25,7 @@ postsRouts.get('/',
     ioc.postsController.createNewPost.bind(ioc.postsController))
 
   .get('/:postId',
-    ioc.auth.noneStatus,
+    ioc.auth.noneStatusRefreshToken,
     postIdParamsValidation,
     inputValidatorMiddleware,
     ioc.postsController.getPostById.bind(ioc.postsController))
@@ -48,19 +48,19 @@ postsRouts.get('/',
     ioc.postsController.deleteAllPosts.bind(ioc.postsController))
 
   .get('/:postId/comments',
-    ioc.auth.noneStatus,
+    ioc.auth.noneStatusRefreshToken,
     postIdParamsValidation,
     inputValidatorMiddleware,
     ioc.postsController.getCommentsByPostId.bind(ioc.postsController))
 
   .post('/:postId/comments',
-    ioc.auth.noneStatus,
+    ioc.auth.authentication,
     contentCommentValidation,
     inputValidatorMiddleware,
     ioc.postsController.createNewCommentByPostId.bind(ioc.postsController))
 
   .put('/:postId/like-status',
-    ioc.auth.noneStatus,
+    ioc.auth.authentication,
     postIdParamsValidation,
     likeStatusValidator,
     inputValidatorMiddleware,

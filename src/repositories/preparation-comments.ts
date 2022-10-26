@@ -10,7 +10,6 @@ export class PreparationComments {
 
   async preparationCommentsForReturn(commentsArray: ArrayCommentsExtLikesInfo, user: UserAccountDBType | null) {
     const filledCommentsArray = []
-
     for (let i in commentsArray) {
       const comment = commentsArray[i]
       const commentId = commentsArray[i].id
@@ -21,11 +20,9 @@ export class PreparationComments {
       if (user) {
         filterUserId = {userId: user.accountData.id}
       }
+
       const checkCurrentLikeStatus = await MyModelLikeStatusCommentId.findOne(
-        {
-          $and:
-            [filterCommentId, filterUserId]
-        }).lean()
+        {filterCommentId, filterUserId}).lean()
 
       if (checkCurrentLikeStatus) {
         currentLikeStatus = {likeStatus: checkCurrentLikeStatus.likeStatus}

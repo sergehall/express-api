@@ -4,7 +4,7 @@ export type ErrorType = {
   message: string
   field: string
 }
-export type ArrayErrorsType = Array<ErrorType>
+export type ArrayErrorsType = ErrorType[]
 export type BloggerType = {
   id: string | null
   name: string
@@ -12,7 +12,7 @@ export type BloggerType = {
 }
 export type ReturnTypeObjectBloggers = {
   data: BloggerType,
-  errorsMessages: Array<ErrorType>,
+  errorsMessages: ArrayErrorsType,
   resultCode: number
 }
 export type LastTreeLikes = {
@@ -44,7 +44,7 @@ export type PostsType = {
 
 export type ReturnTypeObjectPosts = {
   data: PostsType
-  errorsMessages: Array<ErrorType>
+  errorsMessages: ErrorType[]
   resultCode: number
 }
 
@@ -56,7 +56,7 @@ export type TypeBlog = {
 }
 export type ReturnTypeObjectBlog = {
   data: TypeBlog | null
-  errorsMessages: Array<ErrorType>
+  errorsMessages: ErrorType[]
   resultCode: number
 }
 
@@ -71,7 +71,7 @@ export type TypeObjectBlogPost = {
 }
 export type ReturnTypeObjectBlogPost = {
   data: TypeObjectBlogPost | null
-  errorsMessages: Array<ErrorType>
+  errorsMessages: ErrorType[]
   resultCode: number
 }
 
@@ -100,26 +100,26 @@ export type CommentViewModel = {
 }
 
 export type ReturnTypeObjectComment = {
-  data: CommentViewModel | null,
-  errorsMessages: Array<ErrorType>,
+  data: CommentViewModel | null
+  errorsMessages: ErrorType[]
   resultCode: number
 }
 
 export type UserDBType = {
   id: string
   login: string
-  email: string,
-  passwordHash: string,
-  passwordSalt: string,
+  email: string
+  passwordHash: string
+  passwordSalt: string
   createdAt: string
 }
 
 export type FeedbackDBType = {
   _id: ObjectId,
-  allFeedbacks: Array<{
-    commentId: ObjectId,
+  allFeedbacks: {
+    commentId: ObjectId
     comment: string
-  }>
+  }[]
 }
 
 export type PaginatorCommentViewModel = {
@@ -127,7 +127,7 @@ export type PaginatorCommentViewModel = {
   page: number
   pageSize: number
   totalCount: number
-  items: Array<CommentViewModel> | []
+  items: CommentViewModel[]
 }
 
 export type RegistrationDataType = {
@@ -171,9 +171,9 @@ export type allUsersReturnArray = allUsersReturn[]
 
 export type BlackListIPDBType = {
   ip: string
-  countTimes: Array<{
+  countTimes: {
     createdAt: Date
-  }>
+  }[]
 }
 
 export type UserEmailAndConfirmationCode = {

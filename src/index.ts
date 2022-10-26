@@ -44,7 +44,7 @@ app.use('/testing/', testingRouter)
 
 app.use('/deleted-bloggers', allDeletedBloggersRouts)
 
-//test 8, 9 done
+//test
 
 const startApp = async () => {
   await runDb()
