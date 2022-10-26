@@ -12,7 +12,7 @@ import {emailRouter} from "./routes/email-router";
 import {testingRouter} from "./routes/testing-router";
 import cookieParser from "cookie-parser"
 import {usersRouter} from "./routes/users-router";
-import {emailSender} from "./demons/emailSender";
+import {emailConfirmationSender, emailSenderRecoveryCode} from "./demons/emailSender";
 import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
 import {blogsRouts} from "./routes/blogs-router";
 import {securityDevicesRouter} from "./routes/securityDevices-router";
@@ -56,6 +56,10 @@ const startApp = async () => {
 }
 
 startApp()
-emailSender()
-clearingIpWithDateOlder11Sec()
-clearingExpDateJWT()
+  .then(() =>
+    [emailConfirmationSender(),
+      emailSenderRecoveryCode(),
+      clearingIpWithDateOlder11Sec(),
+      clearingExpDateJWT()
+    ])
+

@@ -198,7 +198,7 @@ authRouter.get("/me",
     return res.sendStatus(401)
   })
 
-authRouter.get('/resend-registration-email/',
+authRouter.get('/resend-registration-email',
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
   async (req: Request, res: Response) => {
     const parseQueryData = await ioc.parseQuery.parse(req)
@@ -214,6 +214,20 @@ authRouter.get('/resend-registration-email/',
     }
     const result = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(user.accountData.email)
     res.send(`Resend code to email:  ${result?.accountData?.email}`)
+  })
+
+authRouter.post('/password-recovery',
+  ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
+  bodyEmail, inputValidatorMiddleware,
+  async (req: Request, res: Response) => {
+    const email = req.body.email
+    const user = await ioc.usersAccountService.findByEmail(email)
+    if (!user) {
+      const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserNotExist(email)
+      return res.send(`Resend password-recovery to email:  ${result?.email}`)
+    }
+    const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserExist(user)
+    return res.send(`Resend password-recovery to email:  ${result?.accountData?.email}`)
   })
 
 authRouter.get('/confirm-registration',

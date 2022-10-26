@@ -176,10 +176,15 @@ export type BlackListIPDBType = {
   }>
 }
 
-export type UserEmailConfirmationCode = {
+export type UserEmailAndConfirmationCode = {
   email: string
   confirmationCode: string
-  createdAt: Date
+  createdAt: string
+}
+export type UserEmailAndRecoveryCode = {
+  email: string
+  recoveryCode: string
+  createdAt: string
 }
 
 export type BlackListRefreshTokenJWT = {

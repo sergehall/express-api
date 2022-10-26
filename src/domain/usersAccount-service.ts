@@ -10,10 +10,10 @@ export class UsersAccountService {
   constructor(private usersAccountRepository: UsersAccountRepository) {
     this.usersAccountRepository = usersAccountRepository
   }
+
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
     return await this.usersAccountRepository.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
   }
-
 
   async createUser(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
     const newId = uuid4().toString();
@@ -27,7 +27,7 @@ export class UsersAccountService {
         email: email,
         passwordSalt,
         passwordHash,
-        createdAt:  new Date().toISOString()
+        createdAt: new Date().toISOString()
       },
       emailConfirmation: {
         confirmationCode: uuid4(),
@@ -41,7 +41,7 @@ export class UsersAccountService {
       },
       registrationData: [{
         ip: clientIp,
-        createdAt:  new Date().toISOString()
+        createdAt: new Date().toISOString()
       }]
     }
     return await this.usersAccountRepository.createUserAccount(newUser)
@@ -87,7 +87,7 @@ export class UsersAccountService {
         const newDataUserEmailConfirmationCode = {
           email: copy.accountData.email,
           confirmationCode: copy.emailConfirmation.confirmationCode,
-          createdAt: new Date()
+          createdAt: new Date().toISOString()
         }
         await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
 
@@ -144,6 +144,10 @@ export class UsersAccountService {
     return await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
   }
 
+  async findByEmail(email: string): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findByEmail(email)
+  }
+
   async findByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByConfirmationCode(code)
   }
@@ -160,6 +164,29 @@ export class UsersAccountService {
     return await this.usersAccountRepository.findUserByUserId(userId)
   }
 
+  async sentRecoveryCodeByEmailUserExist(user: UserAccountDBType) {
+
+    await ioc.emailsToSentRepository.insertEmailToRecoveryCodesDB({
+      email: user.accountData.email,
+      recoveryCode: user.emailConfirmation.confirmationCode,
+      createdAt: new Date().toISOString()
+    })
+    user.emailConfirmation.sentEmail.push({sendTime: new Date().toISOString()})
+    await this.usersAccountRepository.updateUserAccountConfirmationCode(user)
+    return user
+  }
+
+  async sentRecoveryCodeByEmailUserNotExist(email: string) {
+
+    const newEmailRecoveryCode = {
+      email: email,
+      recoveryCode: uuid4().toString(),
+      createdAt: new Date().toISOString()
+    }
+    await ioc.emailsToSentRepository.insertEmailToRecoveryCodesDB(newEmailRecoveryCode)
+    return newEmailRecoveryCode
+  }
+
   async updateAndSentConfirmationCodeByEmail(email: string) {
 
     const user = await this.usersAccountRepository.findByLoginOrEmail(email)
@@ -172,7 +199,7 @@ export class UsersAccountService {
     if (user) {
       if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date().toISOString()) {
-          user.emailConfirmation.confirmationCode = uuid4()
+          user.emailConfirmation.confirmationCode = uuid4().toString()
           user.emailConfirmation.expirationDate = add(new Date(),
             {
               hours: 1,
@@ -181,7 +208,7 @@ export class UsersAccountService {
           const newDataUserEmailConfirmationCode = {
             email: user.accountData.email,
             confirmationCode: user.emailConfirmation.confirmationCode,
-            createdAt: new Date()
+            createdAt: new Date().toISOString()
           }
           await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
           user.emailConfirmation.sentEmail.push({sendTime: new Date().toISOString()})

@@ -1,5 +1,8 @@
 import nodemailer from "nodemailer";
-import {UserEmailConfirmationCode} from "../types/all_types";
+import {
+  UserEmailAndConfirmationCode,
+  UserEmailAndRecoveryCode
+} from "../types/all_types";
 
 const ck = require('ckey')
 
@@ -23,7 +26,7 @@ export const emailAdapter = {
     })
   },
 
-  async sendEmailConfirmationMessage(emailAndCode: UserEmailConfirmationCode) {
+  async sendEmailConfirmationMessage(emailAndCode: UserEmailAndConfirmationCode) {
     return await transporter.sendMail({
       from: 'Email confirmation message <ck.NODEMAILER_EMAIL>',
       to: emailAndCode.email,
@@ -45,6 +48,21 @@ export const emailAdapter = {
       html: `
         Hello, to recover your password, please enter the following link:
         http://localhost:5000/recovery/${token}
+        `
+    })
+  },
+
+  async sendEmailRecoveryCode(emailAndCode: UserEmailAndRecoveryCode) {
+    return await transporter.sendMail({
+      from: 'Serge Nodemailer <ck.NODEMAILER_EMAIL>',
+      to: emailAndCode.email,
+      subject: "Recover password by code",
+      html:
+        `
+        <h1>Password recovery</h1>
+          <p>To finish password recovery please follow the link below:
+          <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/password-recovery?recoveryCode=${emailAndCode.recoveryCode}\"> Push for recovery password </a></div>
+        </p>
         `
     })
   }
