@@ -77,7 +77,6 @@ authRouter.post('/new-password',
   async (req: Request, res: Response) => {
     const newPassword = req.body.newPassword
     const recoveryCode = req.body.recoveryCode
-    console.log(newPassword, recoveryCode)
 
     const user = await ioc.usersAccountService.findByConfirmationCode(recoveryCode)
     if (!user) {
