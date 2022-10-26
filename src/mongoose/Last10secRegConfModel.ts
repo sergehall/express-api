@@ -2,7 +2,7 @@ import mongoose, {Document} from 'mongoose';
 
 interface RegConfType extends Document {
   ip: string;
-  createdAt: Date
+  createdAt: string
 }
 
 const Schema = mongoose.Schema
@@ -12,7 +12,7 @@ const UsersIPLast10secCollectionRegConfSchema = new Schema({
     type: String,
     required: [true, 'Id is required']
   },
-  createdAt: Date
+  createdAt: String
 })
 
 export const MyModeLast10secRegConf = mongoose.model<RegConfType>("usersIPLast10secCollectionRegConfSchema", UsersIPLast10secCollectionRegConfSchema, "Last10secRegConf")
