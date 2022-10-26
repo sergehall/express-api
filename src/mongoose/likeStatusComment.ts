@@ -12,19 +12,19 @@ interface likeStatusCommentIdType extends Document {
 const LikeStatusCommentIdSchema = new Schema({
   commentId: {
     type: String,
-    required: [true, 'Id is required'],
+    required: [true, 'commentId is required'],
   },
   userId: {
     type: String,
-    required: [true, 'Id is required'],
+    required: [true, 'userId is required'],
   },
   likeStatus: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'likeStatus is required']
   },
   createdAt: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'createdAt is required']
   }
 })
 

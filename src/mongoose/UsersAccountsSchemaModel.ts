@@ -33,42 +33,42 @@ const UserAccountSchema = new Schema({
     },
     login: {
       type: String,
-      required: [true, 'Id is required'],
+      required: [true, 'login is required'],
       unique: true
     },
     email: {
       type: String,
-      required: [true, 'Id is required'],
+      required: [true, 'email is required'],
       unique: true
     },
     passwordHash: {
       type: String,
-      required: [true, 'Id is required']
+      required: [true, 'passwordHash is required']
     },
     passwordSalt: {
       type: String,
-      required: [false, 'Id is not required']
+      required: [false, 'passwordSalt is not required']
     },
     createdAt: {
       type: String,
-      required: [true, 'Id is required']
+      required: [true, 'createdAt is required']
     },
   },
   emailConfirmation: {
     confirmationCode: {
       type: String,
-      required: [true, 'Id is required']
+      required: [true, 'confirmationCode is required']
     },
     expirationDate: {
       type: String,
-      required: [true, 'Id is required']
+      required: [true, 'expirationDate is required']
     },
     isConfirmed: Boolean,
     sentEmail: {
       type: Array({
         sendTime: {
           type: String,
-          required: [true, 'Id is required']
+          required: [true, 'sendTime is required']
         }
       }),
       validate: (v: any) => Array.isArray(v)
@@ -83,7 +83,7 @@ const UserAccountSchema = new Schema({
 
       createdAt: {
         type: String,
-        required: [true, 'Id is required']
+        required: [true, 'createdAt is required']
       }
     }),
     validate: (v: any) => Array.isArray(v)

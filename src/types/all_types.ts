@@ -179,7 +179,7 @@ export type BlackListIPDBType = {
 export type UserEmailConfirmationCode = {
   email: string
   confirmationCode: string
-  createdAt: Date
+  createdAt: string
 }
 
 export type BlackListRefreshTokenJWT = {

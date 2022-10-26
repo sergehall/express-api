@@ -16,7 +16,7 @@ interface FeedbacksType extends Document {
 const FeedbacksSchema = new Schema({
   _id: {
     type: Schema.Types.ObjectId,
-    required: [true, 'Id is required']
+    required: [true, '_id is required']
   },
   allFeedbacks: {
     commentId: Schema.Types.ObjectId,

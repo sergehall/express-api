@@ -16,27 +16,27 @@ interface DevicesSchemaModel extends Document {
 const DevicesSchemaSchema = new Schema({
   userId: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'userId is required']
   },
   ip: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'ip is required']
   },
   title: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'title is required']
   },
   lastActiveDate: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'lastActiveDate is required']
   },
   expirationDate: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'expirationDate is required']
   },
   deviceId: {
     type: String,
-    required: [false, 'Id is not required'],
+    required: [false, 'deviceId is not required'],
     unique: true
   }
 })

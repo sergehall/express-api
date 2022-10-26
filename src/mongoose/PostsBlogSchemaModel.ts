@@ -18,13 +18,13 @@ interface BlogPostsType extends Document {
 const BlogPostsSchema = new Schema({
   blogId: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'blogId is required']
   },
   allPosts: {
     type: Array({
       id: {
         type: String,
-        required: [true, 'Id is required']
+        required: [true, 'id is required']
       },
       title: {
         type: String,

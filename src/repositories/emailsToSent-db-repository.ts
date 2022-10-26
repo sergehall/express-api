@@ -8,13 +8,16 @@ export class EmailsToSentRepository {
     const confirmationCode = userData.confirmationCode
     const createdAt = userData.createdAt
 
-    const findOneAndReplaceData = await MyModelEmailsToSent.findOneAndReplace({"email": email}, {"email": email, "confirmationCode": confirmationCode, "createdAt": createdAt},  {upsert: true})
-    return  findOneAndReplaceData !== null;
+    const findOneAndReplaceData = await MyModelEmailsToSent.findOneAndUpdate(
+      {"email": email},
+      {"email": email, "confirmationCode": confirmationCode, "createdAt": createdAt},
+      {upsert: true})
+    return findOneAndReplaceData !== null;
   }
 
   async findEmailByOldestDate(): Promise<UserEmailConfirmationCode | null> {
-    const foundData = await MyModelEmailsToSent.find().sort({  "createdAt": 1 }).limit(1)
-    if(foundData.length === 0) {
+    const foundData = await MyModelEmailsToSent.find().sort({createdAt: 1}).limit(1)
+    if (foundData.length === 0) {
       return null
     }
     return foundData[0]

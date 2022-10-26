@@ -9,7 +9,7 @@ const Schema = mongoose.Schema
 const BlackListRefreshTokenJWTSchema = new Schema({
   refreshToken: {
     type: String,
-    required: [true, 'Id is required'],
+    required: [true, 'refreshToken is required'],
     unique: true
   }
 })

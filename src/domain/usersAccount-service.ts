@@ -30,7 +30,7 @@ export class UsersAccountService {
         createdAt:  new Date().toISOString()
       },
       emailConfirmation: {
-        confirmationCode: uuid4(),
+        confirmationCode: uuid4().toString(),
         expirationDate: add(new Date(),
           {
             hours: 1,
@@ -87,7 +87,7 @@ export class UsersAccountService {
         const newDataUserEmailConfirmationCode = {
           email: copy.accountData.email,
           confirmationCode: copy.emailConfirmation.confirmationCode,
-          createdAt: new Date()
+          createdAt: new Date().toISOString()
         }
         await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
 
@@ -181,7 +181,7 @@ export class UsersAccountService {
           const newDataUserEmailConfirmationCode = {
             email: user.accountData.email,
             confirmationCode: user.emailConfirmation.confirmationCode,
-            createdAt: new Date()
+            createdAt: new Date().toISOString()
           }
           await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
           user.emailConfirmation.sentEmail.push({sendTime: new Date().toISOString()})

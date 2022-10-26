@@ -14,21 +14,21 @@ interface ThreeLastLikesPostType extends Document {
 const ThreeLastLikesPostSchema = new Schema({
   postId: {
     type: String,
-    required: [true, 'Id is required'],
+    required: [true, 'postId is required'],
   },
   threeNewestLikes: {
     type: Array({
       addedAt: {
         type: String,
-        required: [true, 'Id is required']
+        required: [true, 'addedAt is required']
       },
       userId: {
         type: String,
-        required: [true, 'Id is required']
+        required: [true, 'userId is required']
       },
       login: {
         type: String,
-        required: [true, 'Id is required']
+        required: [true, 'login is required']
       }
     }),
     validate: (v: any) => Array.isArray(v)

@@ -10,7 +10,7 @@ const Schema = mongoose.Schema
 const UsersIPLast10secCollectionRegConfSchema = new Schema({
   ip: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'ip is required']
   },
   createdAt: Date
 })

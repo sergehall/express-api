@@ -11,15 +11,15 @@ interface BloggerType extends Document {
 const BloggerSchema = new Schema({
   id: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'id is required']
   },
   name: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'name is required']
   },
   youtubeUrl: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'youtubeUrl is required']
   }
 })
 

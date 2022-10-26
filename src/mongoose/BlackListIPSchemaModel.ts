@@ -12,7 +12,7 @@ interface BlackListIPType extends Document{
 const BlackListIPSchema = new Schema({
   ip: {
     type: String,
-    required: [true, 'Id is required'],
+    required: [true, 'ip is required'],
     default: ""
   },
   countTimes: {

@@ -19,7 +19,7 @@ const UserSchema = new Schema({
   },
   login: {
     type: String,
-    required: [true, 'Id is required'],
+    required: [true, 'login is required'],
     unique: true
   },
   email: {
@@ -27,15 +27,15 @@ const UserSchema = new Schema({
   },
   passwordHash: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'passwordHash is required']
   },
   passwordSalt: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'passwordSalt is required']
   },
   createdAt: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'createdAt is required']
   }
 })
 

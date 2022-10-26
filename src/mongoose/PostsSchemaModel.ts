@@ -30,54 +30,54 @@ const PostsSchema = new Schema({
   },
   title: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'title is required']
   },
   shortDescription: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'shortDescription is required']
   },
   content: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'content is required']
   },
   bloggerId: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'bloggerId is required']
   },
   bloggerName: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'bloggerName is required']
   },
   addedAt: {
     type: String,
-    required: [true, 'Id is required']
+    required: [true, 'addedAt is required']
   },
   extendedLikesInfo: {
     likesCount: {
       type: String,
-      required: [true, 'Id is required']
+      required: [true, 'likesCount is required']
     },
     dislikesCount: {
       type: String,
-      required: [true, 'Id is required']
+      required: [true, 'dislikesCount is required']
     },
     myStatus: {
       type: String,
-      required: [true, 'Id is required']
+      required: [true, 'myStatus is required']
     },
     newestLikes: {
       type: Array({
         addedAt: {
           type: String,
-          required: [true, 'Id is required']
+          required: [true, 'addedAt is required']
         },
         userId: {
           type: String,
-          required: [true, 'Id is required']
+          required: [true, 'userId is required']
         },
         login: {
           type: String,
-          required: [true, 'Id is required']
+          required: [true, 'login is required']
         }
       }),
       validate: (v: any) => Array.isArray(v)
