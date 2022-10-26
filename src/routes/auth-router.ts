@@ -224,10 +224,12 @@ authRouter.post('/password-recovery',
     const user = await ioc.usersAccountService.findByEmail(email)
     if (!user) {
       const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserNotExist(email)
-      return res.send(`Resend password-recovery to email:  ${result?.email}`)
+      console.log(`Resend password-recovery to email:  ${result?.email}`)
+      return res.sendStatus(204)
     }
     const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserExist(user)
-    return res.send(`Resend password-recovery to email:  ${result?.accountData?.email}`)
+    console.log(`Resend password-recovery to email:  ${result?.accountData.email}`)
+    return res.sendStatus(204)
   })
 
 authRouter.get('/confirm-registration',
