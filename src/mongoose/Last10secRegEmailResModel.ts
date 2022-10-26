@@ -2,7 +2,7 @@ import mongoose, {Document} from 'mongoose';
 
 interface RedEmailResType extends Document {
   ip: string;
-  createdAt: Date;
+  createdAt: string;
 }
 
 const Schema = mongoose.Schema
@@ -12,7 +12,7 @@ const UsersIPLast10secCollectionRegEmailResSchema = new Schema({
     type: String,
     required: [true, 'ip is required']
   },
-  createdAt: Date
+  createdAt: String
 })
 
 export const MyModeLast10secRedEmailRes = mongoose.model<RedEmailResType>("usersIPLast10secCollectionRegEmailResSchema", UsersIPLast10secCollectionRegEmailResSchema, "Last10secRedEmailRes")
