@@ -1,10 +1,14 @@
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
+import {ioc} from "../IoCContainer";
 
 
-export const clearingExpDateJWT = async () => {
+export class ClearingExpDateJWT {
   // runs every 5 sec
-  setTimeout(async () => {
-    await MyModelDevicesSchema.deleteMany({expirationDate: {$lt: new Date().toISOString()}})
-    await clearingExpDateJWT()
-  }, 5000)
+  async start() {
+    setTimeout(async () => {
+      await MyModelDevicesSchema.deleteMany({expirationDate: {$lt: new Date().toISOString()}})
+      await ioc.clearingExpDateJWT.start()
+    }, 5000)
+  }
 }
+

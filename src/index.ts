@@ -14,8 +14,6 @@ import cookieParser from "cookie-parser"
 import {usersRouter} from "./routes/users-router";
 import {blogsRouts} from "./routes/blogs-router";
 import {securityDevicesRouter} from "./routes/securityDevices-router";
-import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
-import {clearingExpDateJWT} from "./demons/clearing-expJWT";
 import {ioc} from "./IoCContainer";
 
 
@@ -59,7 +57,7 @@ startApp()
   .then(() =>
     [ioc.emailSender.emailSenderRecoveryCode(),
       ioc.emailSender.emailSenderConfirmationCode(),
-      clearingIpWithDateOlder11Sec(),
-      clearingExpDateJWT()
+      ioc.clearingIpWithDateOlder11Sec.start(),
+      ioc.clearingExpDateJWT.start()
     ])
 

@@ -43,6 +43,8 @@ import {SecurityDevicesService} from "./domain/securityDevices-service";
 import {JWTService} from "./application/jwt-service";
 import {EmailSender} from "./demons/emailSender";
 import {EmailAdapter} from "./adapters/email-adapter";
+import {ClearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
+import {ClearingExpDateJWT} from "./demons/clearing-expJWT";
 
 // usersAccount
 const usersAccountRepository = new UsersAccountRepository()
@@ -96,9 +98,12 @@ const securityDevicesService = new SecurityDevicesService(securityDevicesReposit
 const securityDevicesController = new SecurityDevicesController(securityDevicesService)
 // JWT Service
 const jwtService = new JWTService()
-// email sender
-const emailSender = new EmailSender()
+// email adapter
 const emailAdapter = new EmailAdapter()
+// my demons
+const emailSender = new EmailSender()
+const clearingIpWithDateOlder11Sec = new ClearingIpWithDateOlder11Sec()
+const clearingExpDateJWT = new ClearingExpDateJWT()
 
 export const ioc = {
   auth: auth,
@@ -130,5 +135,7 @@ export const ioc = {
   securityDevicesController: securityDevicesController,
   jwtService: jwtService,
   emailSender: emailSender,
-  emailAdapter: emailAdapter
+  emailAdapter: emailAdapter,
+  clearingIpWithDateOlder11Sec: clearingIpWithDateOlder11Sec,
+  clearingExpDateJWT: clearingExpDateJWT
 }
