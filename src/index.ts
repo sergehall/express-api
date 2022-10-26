@@ -14,12 +14,9 @@ import cookieParser from "cookie-parser"
 import {usersRouter} from "./routes/users-router";
 import {blogsRouts} from "./routes/blogs-router";
 import {securityDevicesRouter} from "./routes/securityDevices-router";
-import {
-  emailConfirmationSender,
-  emailSenderRecoveryCode
-} from "./demons/emailSender";
 import {clearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
 import {clearingExpDateJWT} from "./demons/clearing-expJWT";
+import {ioc} from "./IoCContainer";
 
 
 const app = express()
@@ -60,8 +57,8 @@ const startApp = async () => {
 
 startApp()
   .then(() =>
-    [emailConfirmationSender(),
-      emailSenderRecoveryCode(),
+    [ioc.emailSender.emailSenderRecoveryCode(),
+      ioc.emailSender.emailSenderConfirmationCode(),
       clearingIpWithDateOlder11Sec(),
       clearingExpDateJWT()
     ])

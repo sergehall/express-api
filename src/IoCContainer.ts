@@ -41,6 +41,8 @@ import {SecurityDevicesRepository} from "./repositories/securityDevices-db-repos
 import {SecurityDevicesController} from "./presentation/securityDeviceController";
 import {SecurityDevicesService} from "./domain/securityDevices-service";
 import {JWTService} from "./application/jwt-service";
+import {EmailSender} from "./demons/emailSender";
+import {EmailAdapter} from "./adapters/email-adapter";
 
 // usersAccount
 const usersAccountRepository = new UsersAccountRepository()
@@ -94,6 +96,9 @@ const securityDevicesService = new SecurityDevicesService(securityDevicesReposit
 const securityDevicesController = new SecurityDevicesController(securityDevicesService)
 // JWT Service
 const jwtService = new JWTService()
+// email sender
+const emailSender = new EmailSender()
+const emailAdapter = new EmailAdapter()
 
 export const ioc = {
   auth: auth,
@@ -123,5 +128,7 @@ export const ioc = {
   parseQuery: parseQuery,
   securityDevicesService: securityDevicesService,
   securityDevicesController: securityDevicesController,
-  jwtService: jwtService
+  jwtService: jwtService,
+  emailSender: emailSender,
+  emailAdapter: emailAdapter
 }

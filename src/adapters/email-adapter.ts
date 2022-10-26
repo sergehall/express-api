@@ -6,6 +6,7 @@ import {
 
 const ck = require('ckey')
 
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -15,7 +16,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-export const emailAdapter = {
+export class EmailAdapter {
 
   async sendEmail(email: string, subject: string, text: string) {
     return await transporter.sendMail({
@@ -24,7 +25,7 @@ export const emailAdapter = {
       subject: subject,
       html: text
     })
-  },
+  }
 
   async sendEmailConfirmationMessage(emailAndCode: UserEmailAndConfirmationCode) {
     return await transporter.sendMail({
@@ -38,7 +39,7 @@ export const emailAdapter = {
       <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/resend-registration-email?code=${emailAndCode.confirmationCode}\"> Push to /resend-registration-emai?сode= </a></div>
       `
     })
-  },
+  }
 
   async sendEmailRecoveryPassword(user: object, token: string) {
     return await transporter.sendMail({
@@ -50,7 +51,7 @@ export const emailAdapter = {
         http://localhost:5000/recovery/${token}
         `
     })
-  },
+  }
 
   async sendEmailRecoveryCode(emailAndCode: UserEmailAndRecoveryCode) {
     return await transporter.sendMail({
@@ -66,4 +67,4 @@ export const emailAdapter = {
         `
     })
   }
-};
+}
