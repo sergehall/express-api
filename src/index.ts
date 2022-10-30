@@ -44,7 +44,6 @@ app.use('/testing/', testingRouter)
 
 app.use('/deleted-bloggers', allDeletedBloggersRouts)
 
-//test
 
 const startApp = async () => {
   await runDb()
@@ -55,8 +54,8 @@ const startApp = async () => {
 
 startApp()
   .then(() =>
-    [ioc.emailSender.emailSenderRecoveryCode(),
-      ioc.emailSender.emailSenderConfirmationCode(),
+    [ioc.emailSender.sendAndDeleteConfirmationCode(),
+      ioc.emailSender.sendAndDeleteRecoveryCode(),
       ioc.clearingIpWithDateOlder11Sec.start(),
       ioc.clearingExpDateJWT.start()
     ])

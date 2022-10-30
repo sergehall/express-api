@@ -31,7 +31,7 @@ export class JWTService {
         userId: payload.userId,
         deviceId: payload.deviceId
       }, ck.ACCESS_SECRET_KEY,
-      {expiresIn: '10s'}
+      {expiresIn: '5m'}
     )
   }
 
@@ -41,7 +41,7 @@ export class JWTService {
         userId: payload.userId,
         deviceId: payload.deviceId
       }, ck.REFRESH_SECRET_KEY,
-      {expiresIn: '2m'})
+      {expiresIn: '10m'})
   }
 
   async verifyRefreshJWT(token: string) {
