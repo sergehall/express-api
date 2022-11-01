@@ -33,6 +33,8 @@ export class UsersAccountController {
   async createNewUser(req: Request, res: Response) {
     try {
       const clientIp = requestIp.getClientIp(req);
+      console.log("createNewUser mail: ", req.body.email)
+      console.log("createNewUser password; ",  req.body.password)
       const userAccount = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
 
       if (userAccount) {
