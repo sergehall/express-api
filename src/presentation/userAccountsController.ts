@@ -33,9 +33,6 @@ export class UsersAccountController {
   async createNewUser(req: Request, res: Response) {
     try {
       const clientIp = requestIp.getClientIp(req);
-      console.log("createNewUser login: ", req.body.loginl)
-      console.log("createNewUser mail: ", req.body.email)
-      console.log("createNewUser password; ",  req.body.password)
       const userAccount = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
 
       if (userAccount) {
@@ -45,7 +42,6 @@ export class UsersAccountController {
           email: userAccount.accountData.email,
           createdAt: userAccount.accountData.createdAt
         }
-        console.log(userReturn, 'createNewUser')
         res.status(201).send(userReturn)
         return
       }
