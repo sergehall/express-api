@@ -154,6 +154,9 @@ export class UsersAccountService {
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
   }
+  async findByLogin(login: string): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findByLogin(login)
+  }
 
   async findByEmail(email: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByEmail(email)

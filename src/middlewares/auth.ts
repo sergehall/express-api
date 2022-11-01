@@ -2,6 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import {ioc} from "../IoCContainer";
 import bcrypt from "bcrypt";
 import requestIp from "request-ip";
+import {UserAccountType} from "../types/all_types";
 
 const base64 = require('base-64');
 
@@ -79,11 +80,11 @@ export class Auth {
     next()
   }
 
-  async checkCredentials(loginOrEmail: string, password: string) {
-    console.log(loginOrEmail, "loginOrEmail")
+  async checkCredentials(login: string, password: string) {
+    console.log(login, "loginOrEmail")
     console.log(password, "password")
-    const user = await ioc.usersAccountService.findByLoginOrEmail(loginOrEmail)
-    console.log(user, "user findByLoginOrEmail(loginOrEmail)")
+    const user: UserAccountType| null = await ioc.usersAccountService.findByLogin(login)
+    console.log(user, "user findByLogin(login)")
     if (!user) {
       return null
     }
