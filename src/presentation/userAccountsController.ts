@@ -42,6 +42,7 @@ export class UsersAccountController {
           email: userAccount.accountData.email,
           createdAt: userAccount.accountData.createdAt
         }
+        console.log(userReturn, 'createNewUser')
         res.status(201).send(userReturn)
         return
       }
