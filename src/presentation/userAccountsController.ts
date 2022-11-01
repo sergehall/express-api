@@ -34,7 +34,7 @@ export class UsersAccountController {
     try {
       const clientIp = requestIp.getClientIp(req);
       const userAccount = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
-
+      console.log(userAccount, "createNewUser--------")
       if (userAccount) {
         const userReturn = {
           id: userAccount.accountData.id,
