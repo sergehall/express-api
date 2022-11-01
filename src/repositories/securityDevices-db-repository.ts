@@ -24,8 +24,9 @@ export class SecurityDevicesRepository {
     try {
       return await MyModelDevicesSchema.deleteMany(
         {
-          userId: payloadRefreshToken.userId,
-          deviceId: {$ne: payloadRefreshToken.deviceId}
+          $and: [
+            {userId: payloadRefreshToken.userId},
+            {deviceId: {$ne: payloadRefreshToken.deviceId}}]
         }).lean()
     } catch (e) {
       console.log(e)
@@ -37,8 +38,9 @@ export class SecurityDevicesRepository {
     try {
       await MyModelDevicesSchema.deleteOne(
         {
-          userId: payloadRefreshToken.userId,
-          deviceId: payloadRefreshToken.deviceId
+          $and: [
+            {userId: payloadRefreshToken.userId},
+            {deviceId: payloadRefreshToken.deviceId}]
         })
       return "204"
     } catch (e: any) {

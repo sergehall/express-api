@@ -18,16 +18,15 @@ import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
-
 export const testingRouter = Router({})
-
 
 testingRouter
   .delete("/all-data", async (req: Request, res: Response) => {
     await MyModelUserAccount.deleteMany({})
     await MyModelUser.deleteMany({})
-    await MyModelBloggers.deleteMany({})
+    await MyModelBlogs.deleteMany({})
     await MyModelPosts.deleteMany({})
+    await MyModelBlogPosts.deleteMany({})
     await MyModelLikeStatusPostsId.deleteMany({})
     await MyModelDevicesSchema.deleteMany({})
     await MyModelLikeStatusCommentId.deleteMany({})
@@ -40,8 +39,6 @@ testingRouter
     await MyModeLast10secRedEmailRes.deleteMany({})
     await MyModelComments.deleteMany({})
     await MyModelBlackListRefreshTokenJWT.deleteMany({})
-    await MyModelBlogPosts.deleteMany({})
-    await MyModelBlogs.deleteMany({})
-    res.status(204).send()
-    return
+    await MyModelBloggers.deleteMany({})
+    return res.status(204).send()
   })
