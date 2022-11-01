@@ -22,7 +22,7 @@ export class PreparationComments {
       }
 
       const checkCurrentLikeStatus = await MyModelLikeStatusCommentId.findOne(
-        {filterCommentId, filterUserId}).lean()
+        {filterCommentId, filterUserId})
 
       if (checkCurrentLikeStatus) {
         currentLikeStatus = {likeStatus: checkCurrentLikeStatus.likeStatus}

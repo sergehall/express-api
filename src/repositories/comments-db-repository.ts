@@ -1,4 +1,5 @@
 import {
+  ArrayCommentsExtLikesInfo,
   ArrayErrorsType, ReturnTypeObjectComment, UserAccountDBType,
 } from "../types/all_types";
 import {
@@ -33,7 +34,7 @@ export class CommentsRepository {
         resultCode: 1
       }
     }
-    const comment = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
+    const comment: ArrayCommentsExtLikesInfo = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
     const commentFiledLikesInfo = await ioc.preparationComments.preparationCommentsForReturn(comment, user)
 
     return {
