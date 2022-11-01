@@ -16,7 +16,6 @@ export const contentValidation = body("content").trim().isLength({
   max: 1000
 }).withMessage("content must be >1 and <1000 characters.")
 export const postIdParamsValidation = param('postId').isString().withMessage("postIdParamsValidation must be string.")
-// export const bloggerIdBodyValidator = body('bloggerId').isString().withMessage("bloggerIdBodyValidator")
 export const blogIdBodyValidator = body('blogId').isString().withMessage("blogIdBodyValidator")
 
 export const nameValidation = body("name").trim().isLength({

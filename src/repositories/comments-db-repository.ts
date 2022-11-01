@@ -35,8 +35,8 @@ export class CommentsRepository {
       }
     }
 
-    const comment: ArrayCommentsExtLikesInfo = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
-    const commentFiledLikesInfo = await ioc.preparationComments.preparationCommentsForReturn(comment, user)
+    const commentArray: ArrayCommentsExtLikesInfo = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
+    const commentFiledLikesInfo = await ioc.preparationComments.preparationCommentsForReturn(commentArray, user)
 
     return {
       data: commentFiledLikesInfo[0],

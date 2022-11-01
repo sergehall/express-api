@@ -17,7 +17,9 @@ import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 export const authRouter = Router({})
 
 authRouter.post('/login',
-  bodyLoginUsersAccount, bodyPasswordUsersAccount, inputValidatorMiddleware,
+  bodyLoginUsersAccount,
+  bodyPasswordUsersAccount,
+  inputValidatorMiddleware,
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpLog,
   ioc.auth.checkCredentialsLoginPass,
   async (req: Request, res: Response) => {

@@ -88,7 +88,12 @@ export class UsersAccountRepository {
 
   async findByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
     return MyModelUserAccount.findOne(
-      {$or: [{"accountData.email": loginOrEmail}, {"accountData.login": loginOrEmail}]});
+      {
+        $or: [
+          {"accountData.email": loginOrEmail},
+          {"accountData.login": loginOrEmail}
+        ]
+      });
   }
 
   async findByEmail(email: string): Promise<UserAccountDBType | null> {

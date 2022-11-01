@@ -63,7 +63,7 @@ export class Auth {
 
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
     const user = await ioc.auth.checkCredentials(req.body.login, req.body.password)
-    if (user === null) {
+    if (!user) {
       res.status(401).send({
         "errorsMessages": [
           {
@@ -79,11 +79,14 @@ export class Auth {
   }
 
   async checkCredentials(loginOrEmail: string, password: string) {
+    console.log(loginOrEmail, password, "loginOrEmail", "password")
     const user = await ioc.usersAccountService.findByLoginOrEmail(loginOrEmail)
+    console.log(user, "user findByLoginOrEmail(loginOrEmail)")
     if (!user) {
       return null
     }
     const compare = await bcrypt.compare(password, user.accountData.passwordHash)
+    console.log(compare, "compare")
     if (compare) {
       return user
     }
