@@ -30,7 +30,7 @@ export class Auth {
     }
 
     const userId = await ioc.jwtService.verifyRefreshJWT(req.cookies.refreshToken)
-    if (userId === null) {
+    if (!userId) {
       next()
       return
     }
