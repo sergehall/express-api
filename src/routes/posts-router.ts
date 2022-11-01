@@ -22,7 +22,8 @@ postsRouts.get('/',
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
-    blogIdBodyValidator, inputValidatorMiddleware,
+    blogIdBodyValidator,
+    inputValidatorMiddleware,
     ioc.postsController.createNewPost.bind(ioc.postsController))
 
   .get('/:postId',

@@ -155,10 +155,6 @@ export class UsersAccountService {
     return await this.usersAccountRepository.findUserByLoginOrEmail(loginOrEmail)
   }
 
-  async findByEmail(email: string): Promise<UserAccountDBType | null> {
-    return await this.usersAccountRepository.findByEmail(email)
-  }
-
   async findByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
     return await this.usersAccountRepository.findByConfirmationCode(code)
   }

@@ -60,7 +60,7 @@ authRouter.post('/password-recovery',
   bodyEmail, inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const email = req.body.email
-    const user = await ioc.usersAccountService.findByEmail(email)
+    const user = await ioc.usersAccountService.findUserByLoginOrEmail(email)
     if (!user) {
       const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserNotExist(email)
       console.log(`Resend password-recovery to email:  ${result?.email}`)

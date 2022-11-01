@@ -61,31 +61,13 @@ export class Auth {
     return
   }
 
-  // async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
-  //   const user = await ioc.auth.checkCredentials(req.body.login, req.body.password)
-  //   console.log(user, "user checkCredentialsLoginPass")
-  //   if (!user) {
-  //     res.status(401).send({
-  //       "errorsMessages": [
-  //         {
-  //           message: "Login or password is wrong!",
-  //           field: "Login or Password"
-  //         }
-  //       ]
-  //     })
-  //     return
-  //   }
-  //   req.headers.userId = `${user.accountData.id}`
-  //   next()
-  // }
-
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
     const login = req.body.login
     const password = req.body.password
-    console.log(login, "loginOrEmail")
+    console.log(login, "login")
     console.log(password, "password")
     const user = await ioc.usersAccountService.findUserByLoginOrEmail(login)
-    console.log(user, "user findByLogin(login)")
+    console.log(user, "user findUserByLoginOrEmail(login)")
     if (user) {
       const compare = await bcrypt.compare(password, user.accountData.passwordHash)
       console.log(compare, "compare")
@@ -96,7 +78,7 @@ export class Auth {
       }
     }
     return res.status(401).send({
-      "errorsMessages": [
+      errorsMessages: [
         {
           message: "Login or password is wrong!",
           field: "Login or Password"
@@ -105,21 +87,6 @@ export class Auth {
     })
   }
 
-  // async checkCredentials(login: string, password: string) {
-  //   console.log(login, "loginOrEmail")
-  //   console.log(password, "password")
-  //   const user = await ioc.usersAccountService.findUserByLoginOrEmail(login)
-  //   console.log(user, "user findByLogin(login)")
-  //   if (user === null) {
-  //     return null
-  //   }
-  //   const compare = await bcrypt.compare(password, user.accountData.passwordHash)
-  //   if (compare) {
-  //     return user
-  //   }
-  //   //user.accountData.passwordHash === passwordHash; // true or false if not match
-  //   return null
-  // }
 
   async checkUserAccountNotExists(req: Request, res: Response, next: NextFunction) {
     const email = req.body.email;
