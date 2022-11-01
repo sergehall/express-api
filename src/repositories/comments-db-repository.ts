@@ -99,7 +99,7 @@ export class CommentsRepository {
 
   async changeLikeStatusComment(user: UserAccountDBType, commentId: string, likeStatus: string): Promise<Boolean> {
     const userId = user.accountData.id
-    const createdAt = (new Date()).toISOString()
+    const createdAt = new Date().toISOString()
 
     const newLikeStatus = {
       commentId: commentId,
@@ -111,8 +111,8 @@ export class CommentsRepository {
       const filterToUpdate = {"allComments.id": commentId}
       const result = await MyModelComments.findOneAndUpdate(
         filterToUpdate,
-        {$set: {"allComments.$.likeStatus": likeStatus}}
-      )
+        {$set: {"allComments.likeStatus": likeStatus}},
+        {upsert: true})
       if (!result) {
         return false
       }
@@ -123,7 +123,7 @@ export class CommentsRepository {
             [{commentId: commentId},
               {userId: userId}]
         },
-        newLikeStatus,
+        {$set: newLikeStatus},
         {upsert: true})
 
       return true
