@@ -1,32 +1,25 @@
-import mongoose, {Document} from 'mongoose';
-import {ObjectId} from "mongodb";
+import mongoose from 'mongoose';
+import {FeedbacksType} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface FeedbacksType extends Document {
-  _id: ObjectId;
-  allFeedbacks: {
-    commentId: ObjectId;
-    comment: Array<{
-      type: string;
-    }>
-  }
-}
-
-const FeedbacksSchema = new Schema({
-  _id: {
-    type: Schema.Types.ObjectId,
-    required: [true, '_id is required']
+const FeedbacksSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: [true, 'id is required'],
+    unique: true
   },
   allFeedbacks: {
-    commentId: Schema.Types.ObjectId,
-    comment: {
-      type: Array({
+    type: Array({
+      commentId: {
         type: String,
-        required: true
-      }),
-      validate: (v: any) => Array.isArray(v)
-    }
+        required: [true, 'commentId from Feedback is required']
+      },
+      comment: {
+        type: String,
+        required: [true, 'comment from Feedback is required']
+      }
+    }),
+    validate: (v: any) => Array.isArray(v)
   }
 })
 

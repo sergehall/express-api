@@ -1,18 +1,16 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {Last10secReq} from "../types/all_types";
 
-interface RegType extends Document {
-  ip: string;
-  createdAt: string;
-}
 
-const Schema = mongoose.Schema
-
-const UsersIPLast10secCollectionRegSchema = new Schema({
+const UsersIPLast10secCollectionRegSchema = new mongoose.Schema({
   ip: {
     type: String,
     required: [true, 'ip is required']
   },
-  createdAt: String
+  createdAt: {
+    type: String,
+    required: [true, 'createdAt is required']
+  }
 })
 
-export const MyModeLast10secReg = mongoose.model<RegType>("usersIPLast10secCollectionReg", UsersIPLast10secCollectionRegSchema, "Last10secReg")
+export const MyModeLast10secReg = mongoose.model<Last10secReq>("usersIPLast10secCollectionReg", UsersIPLast10secCollectionRegSchema, "Last10secReg")

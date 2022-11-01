@@ -1,17 +1,12 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {BloggerType} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface BloggerType extends Document {
-  id: string | null
-  name: string;
-  youtubeUrl: string;
-}
-
-const BloggerSchema = new Schema({
+const BloggerSchema = new mongoose.Schema({
   id: {
     type: String,
-    required: [true, 'id is required']
+    required: [true, 'id is required'],
+    unique:true
   },
   name: {
     type: String,

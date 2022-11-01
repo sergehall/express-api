@@ -1,14 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {EmailsToSent} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface EmailsToSent extends Document {
-  email: string;
-  confirmationCode: string;
-  createdAt: string;
-}
-
-const EmailsToSentSchema = new Schema({
+const EmailsToSentSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'email is required']

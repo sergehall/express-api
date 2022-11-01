@@ -38,7 +38,7 @@ export class BloggersRepository {
     const errorsArray: ArrayErrorsType = [];
 
     const newBlogId = (+new Date()).toString()
-    const newBlogger = {
+    const newBlogger: BloggerType = {
       id: newBlogId,
       name: name,
       youtubeUrl: youtubeUrl

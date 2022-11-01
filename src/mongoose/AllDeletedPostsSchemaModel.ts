@@ -1,20 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {AllDeletedPostsType} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface AllDeletedPostsType extends Document{
-  bloggerIdKey: string;
-  posts: Array<{
-    id: string | null;
-    title: string;
-    shortDescription: string;
-    content: string;
-    bloggerId: string;
-    bloggerName: string;
-  }>
-}
-
-const AllDeletedPostsSchema = new Schema({
+const AllDeletedPostsSchema = new mongoose.Schema({
   bloggerIdKey: {
     type: String,
     required: true

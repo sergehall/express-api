@@ -1,14 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {EmailsRecoveryCode} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface EmailsRecoveryCode extends Document {
-  email: string;
-  recoveryCode: string;
-  createdAt: string;
-}
-
-const EmailsRecoveryCodeSchema = new Schema({
+const EmailsRecoveryCodeSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Id is required'],

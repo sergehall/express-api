@@ -1,31 +1,9 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {UserAccountType} from "../types/all_types";
 
 
-const Schema = mongoose.Schema
 
-interface UserAccountType extends Document {
-  accountData: {
-    id: string;
-    login: string;
-    email: string;
-    passwordSalt: string;
-    passwordHash: string;
-    createdAt: string
-  },
-  emailConfirmation: {
-    confirmationCode: string;
-    expirationDate: string;
-    isConfirmed: boolean;
-    sentEmail: Array<object>;
-  },
-  registrationData: Array<{
-    ip: string | null;
-    createdAt: string;
-  }>
-}
-
-
-const UserAccountSchema = new Schema({
+const UserAccountSchema = new mongoose.Schema({
   accountData: {
     id: {
       type: String,

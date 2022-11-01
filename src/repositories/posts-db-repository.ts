@@ -1,4 +1,9 @@
-import {MongoHasNotUpdated, notFoundBloggerId, notFoundPostId} from "../middlewares/errorsMessages";
+import {
+  MongoHasNotUpdated,
+  notFoundBloggerId,
+  notFoundBlogId,
+  notFoundPostId
+} from "../middlewares/errorsMessages";
 import uuid4 from "uuid4";
 import {
   ArrayErrorsType,
@@ -18,6 +23,7 @@ import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 import {ioc} from "../IoCContainer";
+import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 
 export class PostsRepository {
@@ -74,7 +80,7 @@ export class PostsRepository {
     };
   }
 
-  async createPost(title: string, shortDescription: string, content: string, bloggerId: string, addedAt: string): Promise<ReturnTypeObjectPosts> {
+  async createPost(title: string, shortDescription: string, content: string, blogId: string, addedAt: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
     const ReturnObjectPost = {
@@ -83,8 +89,8 @@ export class PostsRepository {
         title: title,
         shortDescription: shortDescription,
         content: content,
-        bloggerId: bloggerId,
-        bloggerName: "",
+        blogId: blogId,
+        blogName: "",
         addedAt: addedAt,
         extendedLikesInfo: {
           likesCount: 0,
@@ -97,22 +103,21 @@ export class PostsRepository {
       resultCode: 1
     }
 
-    const foundBloggerId = await MyModelBloggers.findOne({id: bloggerId})
+    const foundBlogId = await MyModelBlogs.findOne({id: blogId})
 
-    if (!foundBloggerId) {
-      errorsArray.push(notFoundBloggerId)
+    if (!foundBlogId) {
+      errorsArray.push(notFoundBlogId)
       return {...ReturnObjectPost, errorsMessages: errorsArray}
     }
 
-    const nameBloggerId = foundBloggerId.name
     const newPost = {
       ...ReturnObjectPost.data,
       id: newPostId,
       title: title,
       shortDescription: shortDescription,
       content: content,
-      bloggerId: bloggerId,
-      bloggerName: nameBloggerId,
+      blogId: blogId,
+      blogName: foundBlogId.name,
       addedAt: addedAt,
       extendedLikesInfo: {
         likesCount: 0,
@@ -293,16 +298,18 @@ export class PostsRepository {
       errorsArray.push(notFoundBloggerId)
     }
     if (searchPost && searchBlogger) {
-      const result = await MyModelPosts.updateOne({id: id}, {
-        $set: {
-          id: id,
-          title: title,
-          shortDescription: shortDescription,
-          content: content,
-          blogId: blogId,
-          bloggerName: searchBlogger.name,
-        }
-      }).lean()
+      const result = await MyModelPosts.updateOne(
+        {id: id},
+        {
+          $set: {
+            id: id,
+            title: title,
+            shortDescription: shortDescription,
+            content: content,
+            blogId: blogId,
+            blogName: searchBlogger.name,
+          }
+        }).lean()
 
       if (result.matchedCount === 0) {
         errorsArray.push(MongoHasNotUpdated)
@@ -315,8 +322,8 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          bloggerId: blogId,
-          bloggerName: "",
+          blogId: blogId,
+          blogName: "",
           addedAt: createdAt,
           extendedLikesInfo: {
             likesCount: 0,
@@ -341,8 +348,8 @@ export class PostsRepository {
           title: title,
           shortDescription: shortDescription,
           content: content,
-          bloggerId: blogId,
-          bloggerName: "",
+          blogId: blogId,
+          blogName: "",
           addedAt: createdAt,
           extendedLikesInfo: {
             likesCount: 0,

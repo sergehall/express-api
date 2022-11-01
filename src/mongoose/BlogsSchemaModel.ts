@@ -1,16 +1,9 @@
-import mongoose, {Document} from 'mongoose';
-
-const Schema = mongoose.Schema
-
-interface BlogsType extends Document{
-  id: string;
-  name: string;
-  youtubeUrl: string;
-  createdAt: string;
-}
+import mongoose from 'mongoose';
+import {BlogsType} from "../types/all_types";
 
 
-const BlogsSchema = new Schema({
+
+const BlogsSchema = new  mongoose.Schema({
   id: {
     type: String,
     required: [true, 'id is required']

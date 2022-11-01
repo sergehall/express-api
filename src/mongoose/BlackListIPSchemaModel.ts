@@ -1,15 +1,9 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose  from 'mongoose';
+import {BlackListIPType} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface BlackListIPType extends Document{
-  ip: string;
-  countTimes: Array<{
-    createdAt: Date;
-  }>
-}
 
-const BlackListIPSchema = new Schema({
+const BlackListIPSchema = new mongoose.Schema({
   ip: {
     type: String,
     required: [true, 'ip is required'],
@@ -17,7 +11,10 @@ const BlackListIPSchema = new Schema({
   },
   countTimes: {
     type: Array({
-      createdAt: Date
+      createdAt: {
+        type: String,
+        required: [true, 'createdAt is required']
+      }
     }),
     validate: (v: any) => Array.isArray(v)
   }

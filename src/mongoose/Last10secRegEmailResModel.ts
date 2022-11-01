@@ -1,18 +1,16 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {Last10secReq} from "../types/all_types";
 
-interface RedEmailResType extends Document {
-  ip: string;
-  createdAt: string;
-}
 
-const Schema = mongoose.Schema
-
-const UsersIPLast10secCollectionRegEmailResSchema = new Schema({
+const UsersIPLast10secCollectionRegEmailResSchema = new mongoose.Schema({
   ip: {
     type: String,
     required: [true, 'ip is required']
   },
-  createdAt: String
+  createdAt: {
+    type: String,
+    required: [true, 'createdAt is required']
+  }
 })
 
-export const MyModeLast10secRedEmailRes = mongoose.model<RedEmailResType>("usersIPLast10secCollectionRegEmailResSchema", UsersIPLast10secCollectionRegEmailResSchema, "Last10secRedEmailRes")
+export const MyModeLast10secRedEmailRes = mongoose.model<Last10secReq>("usersIPLast10secCollectionRegEmailResSchema", UsersIPLast10secCollectionRegEmailResSchema, "Last10secRedEmailRes")

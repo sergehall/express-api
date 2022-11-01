@@ -1,19 +1,9 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {DevicesSchemaModel} from "../types/all_types";
 
 
-const Schema = mongoose.Schema
 
-interface DevicesSchemaModel extends Document {
-  userId: string
-  ip: string
-  title: string
-  lastActiveDate: string
-  expirationDate: string
-  deviceId: string
-}
-
-
-const DevicesSchemaSchema = new Schema({
+const DevicesSchemaSchema = new mongoose.Schema({
   userId: {
     type: String,
     required: [true, 'userId is required']

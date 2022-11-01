@@ -24,10 +24,10 @@ export class PostsController {
       const title: string = req.body.title;
       const shortDescription: string = req.body.shortDescription;
       const content: string = req.body.content;
-      const bloggerId: string = req.body.bloggerId
+      const blogId: string = req.body.blogId
       const addedAt = (new Date()).toISOString()
 
-      const newPost = await this.postsService.createPost(title, shortDescription, content, bloggerId, addedAt)
+      const newPost = await this.postsService.createPost(title, shortDescription, content, blogId, addedAt)
 
       if (newPost.resultCode === 0) {
         res.status(201)
@@ -36,8 +36,8 @@ export class PostsController {
           title: newPost.data.title,
           shortDescription: newPost.data.shortDescription,
           content: newPost.data.content,
-          bloggerId: newPost.data.bloggerId,
-          bloggerName: newPost.data.bloggerName,
+          blogId: newPost.data.blogId,
+          blogName: newPost.data.blogName,
           addedAt: newPost.data.addedAt,
           extendedLikesInfo: {
             likesCount: Number(newPost.data.extendedLikesInfo.likesCount),
@@ -59,8 +59,8 @@ export class PostsController {
 
   async createNewCommentByPostId(req: Request, res: Response) {
     try {
-      const postId: string = req.params.postId;
-      const content: string = req.body.content;
+      const postId = req.params.postId;
+      const content = req.body.content;
       const user: UserAccountDBType | null = req.user
 
       if (!user) {

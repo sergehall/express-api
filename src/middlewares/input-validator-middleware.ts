@@ -16,18 +16,19 @@ export const contentValidation = body("content").trim().isLength({
   max: 1000
 }).withMessage("content must be >1 and <1000 characters.")
 export const postIdParamsValidation = param('postId').isString().withMessage("postIdParamsValidation must be string.")
-// const bloggerIdBodyRegExp2 = /^\d+$/i
-// export const bloggerIdBodyValidator = body('bloggerId').matches(bloggerIdBodyRegExp2).withMessage('body.bloggerId must be Int')
-// export const bloggerIdBodyValidator = body('blogId').isString().withMessage("bloggerIdBodyValidator")
 export const bloggerIdBodyValidator = body('bloggerId').isString().withMessage("bloggerIdBodyValidator")
+export const blogIdBodyValidator = body('blogId').isString().withMessage("blogIdBodyValidator")
 
 export const nameValidation = body("name").trim().isLength({
   min: 1,
   max: 15
 }).withMessage("Name must be >1 and <15 characters.")
 export const bloggerIdParamsValidation = param('bloggerId').isString().withMessage('param bloggerId must string')
-const userIdBodyRegExp = /^\d+$/i
-export const userIdParamsValidation = param('userId').matches(userIdBodyRegExp).withMessage('param userId must be Int')
+export const userIdParamsValidation = param('userId').trim().isLength({
+  min: 1,
+  max: 50
+}).withMessage("'param userId must string and >1 and <50 characters.")
+
 const youtubeUrlRegExp = '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'
 export const validatorUrl = body("youtubeUrl").trim().matches(youtubeUrlRegExp).isLength({
   min: 0,

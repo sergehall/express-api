@@ -2,7 +2,8 @@ import {
   ArrayErrorsType, ReturnTypeObjectComment, UserAccountDBType,
 } from "../types/all_types";
 import {
-  MongoHasNotUpdated, notDeletedComment,
+  MongoHasNotUpdated,
+  notDeletedComment,
   notFoundCommentId
 } from "../middlewares/errorsMessages";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
@@ -47,7 +48,9 @@ export class CommentsRepository {
     const filterToUpdate = {"allComments.id": commentId}
     let resultCode = 0
 
-    const result = await MyModelComments.updateOne(filterToUpdate, {$set: {"allComments.$.content": content}})
+    const result = await MyModelComments.updateOne(
+      filterToUpdate,
+      {$set: {"allComments.$.content": content}})
 
     if (result.modifiedCount === 0 && result.matchedCount == 0) {
       errorsArray.push(MongoHasNotUpdated)

@@ -1,17 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {UserType} from "../types/all_types";
 
-interface UserType extends Document {
-  id: string;
-  login: string;
-  email: string;
-  passwordHash: string;
-  passwordSalt: string;
-  createdAt: string;
-}
 
-const Schema = mongoose.Schema
-
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
   id: {
     type: String,
     required: [true, 'Id is required'],

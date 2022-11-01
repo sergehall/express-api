@@ -1,12 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {BlackListRefreshTokenJWTType} from "../types/all_types";
 
-interface BlackListRefreshTokenJWTType extends Document {
-  refreshToken: string
-}
 
-const Schema = mongoose.Schema
-
-const BlackListRefreshTokenJWTSchema = new Schema({
+const BlackListRefreshTokenJWTSchema = new mongoose.Schema({
   refreshToken: {
     type: String,
     required: [true, 'refreshToken is required'],

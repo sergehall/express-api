@@ -1,18 +1,16 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {Last10secReq} from "../types/all_types";
 
-interface NewPasswordResType extends Document {
-  ip: string;
-  createdAt: string;
-}
 
-const Schema = mongoose.Schema
-
-const NewPasswordReqSchema = new Schema({
+const NewPasswordReqSchema = new mongoose.Schema({
   ip: {
     type: String,
     required: [true, 'ip is required']
   },
-  createdAt: String
+  createdAt: {
+    type: String,
+    required: [true, 'createdAt is required']
+  }
 })
 
-export const MyModeRedLast10secNewPasswordReq = mongoose.model<NewPasswordResType>("Last10secNewPasswordReqSchema", NewPasswordReqSchema, "Last10secNewPasswordReq")
+export const MyModeRedLast10secNewPasswordReq = mongoose.model<Last10secReq>("Last10secNewPasswordReqSchema", NewPasswordReqSchema, "Last10secNewPasswordReq")

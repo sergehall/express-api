@@ -1,24 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {CommentsType} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface CommentsType extends Document {
-  postId: string
-  allComments: {
-    id: string
-    content: string
-    userId: string
-    userLogin: string
-    addedAt: string
-    likesInfo: {
-      likesCount: number
-      dislikesCount: number
-      myStatus: string
-    }
-  }[]
-}
-
-const CommentsSchema = new Schema({
+const CommentsSchema = new mongoose.Schema({
   postId: {
     type: String,
     required: [true, 'postId is required']

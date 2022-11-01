@@ -1,29 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose  from 'mongoose';
+import {PostsType} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface PostsType extends Document {
-  id: string
-  title: string
-  shortDescription: string
-  content: string
-  bloggerId: string
-  bloggerName: string
-  addedAt: string
-  extendedLikesInfo: {
-    likesCount: number,
-    dislikesCount: number,
-    myStatus: string,
-    newestLikes:
-      {
-        addedAt: string,
-        userId: string,
-        login: string
-      }[]
-  }
-}
-
-const PostsSchema = new Schema({
+const PostsSchema = new mongoose.Schema({
   id: {
     type: String,
     required: [true, 'Id is required!!!'],
@@ -40,13 +19,13 @@ const PostsSchema = new Schema({
     type: String,
     required: [true, 'content is required']
   },
-  bloggerId: {
+  blogId: {
     type: String,
-    required: [true, 'bloggerId is required']
+    required: [true, 'blogId is required']
   },
-  bloggerName: {
+  blogName: {
     type: String,
-    required: [true, 'bloggerName is required']
+    required: [true, 'blogName is required']
   },
   addedAt: {
     type: String,

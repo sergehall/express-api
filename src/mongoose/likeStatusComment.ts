@@ -1,15 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {likeStatusCommentIdType} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface likeStatusCommentIdType extends Document {
-  commentId: string
-  userId: string
-  likeStatus: string
-  createdAt: string
-}
-
-const LikeStatusCommentIdSchema = new Schema({
+const LikeStatusCommentIdSchema = new mongoose.Schema({
   commentId: {
     type: String,
     required: [true, 'commentId is required'],

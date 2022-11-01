@@ -5,11 +5,96 @@ export type ErrorType = {
   field: string
 }
 export type ArrayErrorsType = ErrorType[]
+
 export type BloggerType = {
   id: string | null
+  name: string;
+  youtubeUrl: string;
+}
+
+export type AllDeletedPostsType = {
+  bloggerIdKey: string
+  posts: {
+    id: string | null
+    title: string
+    shortDescription: string
+    content: string
+    bloggerId: string
+    bloggerName: string
+  }[]
+}
+
+export type BlackListIPType = {
+  ip: string
+  countTimes: {
+    createdAt: Date
+  }[]
+}
+
+export type CommentsType = {
+  postId: string
+  allComments: {
+    id: string
+    content: string
+    userId: string
+    userLogin: string
+    addedAt: string
+    likesInfo: {
+      likesCount: number
+      dislikesCount: number
+      myStatus: string
+    }
+  }[]
+}
+
+export type EmailsRecoveryCode = {
+  email: string
+  recoveryCode: string
+  createdAt: string
+}
+
+export type FeedbacksType = {
+  _id: ObjectId
+  allFeedbacks: {
+    commentId: ObjectId
+    comment: {
+      type: string;
+    }[]
+  }
+}
+
+export type Last10secReq = {
+  ip: string
+  createdAt: string
+}
+
+export type EmailsToSent = {
+  email: string
+  confirmationCode: string
+  createdAt: string
+}
+
+export type DevicesSchemaModel =  {
+  userId: string
+  ip: string
+  title: string
+  lastActiveDate: string
+  expirationDate: string
+  deviceId: string
+}
+
+
+export type BlogsType = {
+  id: string
   name: string
   youtubeUrl: string
+  createdAt: string
 }
+
+export type  BlackListRefreshTokenJWTType =  {
+  refreshToken: string
+}
+
 export type ReturnTypeObjectBloggers = {
   data: BloggerType,
   errorsMessages: ArrayErrorsType,
@@ -20,26 +105,6 @@ export type LastTreeLikes = {
   userId: string
   likeStatus: string
   createdAt: string
-}
-export type PostsType = {
-  id: string
-  title: string
-  shortDescription: string
-  content: string
-  bloggerId: string
-  bloggerName: string
-  addedAt: string
-  extendedLikesInfo: {
-    likesCount: number,
-    dislikesCount: number,
-    myStatus: string,
-    newestLikes:
-      {
-        addedAt: string,
-        userId: string,
-        login: string
-      }[]
-  }
 }
 
 export type ReturnTypeObjectPosts = {
@@ -113,14 +178,19 @@ export type UserDBType = {
   passwordSalt: string
   createdAt: string
 }
-
 export type FeedbackDBType = {
-  _id: ObjectId,
+  id: string,
   allFeedbacks: {
-    commentId: ObjectId
+    commentId: string
     comment: string
   }[]
 }
+export type ReturnTypeObjectFeedback = {
+  data: FeedbackDBType | null
+  errorsMessages: ErrorType[]
+  resultCode: number
+}
+
 
 export type PaginatorCommentViewModel = {
   pagesCount: number
@@ -172,7 +242,94 @@ export type allUsersReturnArray = allUsersReturn[]
 export type BlackListIPDBType = {
   ip: string
   countTimes: {
-    createdAt: Date
+    createdAt: string
+  }[]
+}
+
+export type likeStatusCommentIdType = {
+  commentId: string
+  userId: string
+  likeStatus: string
+  createdAt: string
+}
+
+export type likeStatusPostsIdType =  {
+  postId: string
+  userId: string
+  likeStatus: string
+  createdAt: string
+}
+
+export type BlogPostsType = {
+  blogId: string;
+  allPosts: {
+    id: string
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
+    createdAt: string
+  }[]
+}
+
+export type PostsType =  {
+  id: string
+  title: string
+  shortDescription: string
+  content: string
+  blogId: string
+  blogName: string
+  addedAt: string
+  extendedLikesInfo: {
+    likesCount: number
+    dislikesCount: number
+    myStatus: string
+    newestLikes:
+      {
+        addedAt: string
+        userId: string
+        login: string
+      }[]
+  }
+}
+
+export type UserAccountType = {
+  accountData: {
+    id: string
+    login: string
+    email: string
+    passwordSalt: string
+    passwordHash: string
+    createdAt: string
+  },
+  emailConfirmation: {
+    confirmationCode: string
+    expirationDate: string
+    isConfirmed: boolean
+    sentEmail: SentEmailType[];
+  },
+  registrationData: {
+    ip: string | null
+    createdAt: string
+  }[]
+}
+
+export type UserType = {
+  id: string
+  login: string
+  email: string
+  passwordHash: string
+  passwordSalt: string
+  createdAt: string
+}
+
+export type ThreeLastLikesPostType = {
+  postId: string
+  threeNewestLikes: {
+    addedAt: string
+    userId: string
+    login: string
   }[]
 }
 
@@ -196,8 +353,8 @@ export type PostsExtLikesInfo = {
   title: string
   shortDescription: string
   content: string
-  bloggerId: string
-  bloggerName: string
+  blogId: string
+  blogName: string
   addedAt: string
   extendedLikesInfo: {
     likesCount: number,

@@ -1,17 +1,8 @@
-import mongoose, {Document} from 'mongoose';
+import mongoose from 'mongoose';
+import {ThreeLastLikesPostType} from "../types/all_types";
 
-const Schema = mongoose.Schema
 
-interface ThreeLastLikesPostType extends Document {
-  postId: string
-  threeNewestLikes: {
-    addedAt: string,
-    userId: string,
-    login: string
-  }[]
-}
-
-const ThreeLastLikesPostSchema = new Schema({
+const ThreeLastLikesPostSchema = new mongoose.Schema({
   postId: {
     type: String,
     required: [true, 'postId is required'],
