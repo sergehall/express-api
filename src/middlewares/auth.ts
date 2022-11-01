@@ -62,15 +62,9 @@ export class Auth {
   }
 
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
-    const login = req.body.login
-    const password = req.body.password
-    console.log(login, "login")
-    console.log(password, "password")
-    const user = await ioc.usersAccountService.findUserByLoginOrEmail(login)
-    console.log(user, "user findUserByLoginOrEmail(login)")
+    const user = await ioc.usersAccountService.findUserByLoginOrEmail(req.body.login)
     if (user) {
-      const compare = await bcrypt.compare(password, user.accountData.passwordHash)
-      console.log(compare, "compare")
+      const compare = await bcrypt.compare(req.body.password, user.accountData.passwordHash)
       if (compare) {
         req.headers.userId = `${user.accountData.id}`
         next()
@@ -89,32 +83,19 @@ export class Auth {
 
 
   async checkUserAccountNotExists(req: Request, res: Response, next: NextFunction) {
-    const email = req.body.email;
-    const login = req.body.login;
-    let errorMessage = {};
-    if (email || login) {
-      const checkOutEmailInDB = await ioc.usersAccountService.findByLoginAndEmail(email, login);
-      if (checkOutEmailInDB === null) {
-        next()
-        return
-      }
-      if (checkOutEmailInDB.accountData.email === email) {
-        errorMessage = {
-          message: "Email already exist.",
-          field: "email"
-        }
-      }
-      if (checkOutEmailInDB.accountData.login === login) {
-        errorMessage = {
-          message: "Login already exist",
-          field: "login"
-        }
-      }
-      res.status(400).send({
-        errorsMessages: [errorMessage]
-      });
+    const checkOutEmailInDB = await ioc.usersAccountService.findByLoginAndEmail(req.body.email, req.body.login);
+    if (!checkOutEmailInDB) {
+      next()
       return
     }
+    res.status(400).send({
+      errorsMessages: [{
+        message: "Account already exist.",
+        field: "login, email"
+      }]
+    });
+    return
+
   }
 
   async checkIpInBlackList(req: Request, res: Response, next: NextFunction) {
