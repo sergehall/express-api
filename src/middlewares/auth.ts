@@ -63,6 +63,7 @@ export class Auth {
 
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
     const user = await ioc.auth.checkCredentials(req.body.login, req.body.password)
+    console.log(user, "user checkCredentialsLoginPass")
     if (!user) {
       res.status(401).send({
         "errorsMessages": [
@@ -74,7 +75,7 @@ export class Auth {
       })
       return
     }
-    req.headers.foundId = `${user.accountData.id}`
+    req.headers.userId = `${user.accountData.id}`
     next()
   }
 

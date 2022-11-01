@@ -26,10 +26,10 @@ authRouter.post('/login',
     try {
       const clientIp = requestIp.getClientIp(req);
       const title = req.header('user-agent');
-      const userReqHedObjId = (req.headers.foundId) ? `${req.headers.foundId}` : '';
+      const userId = (req.headers.userId) ? `${req.headers.userId}` : '';
 
-      const accessToken = await ioc.jwtService.createUsersAccountJWT(userReqHedObjId)
-      const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userReqHedObjId)
+      const accessToken = await ioc.jwtService.createUsersAccountJWT(userId)
+      const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userId)
       const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
 
       await MyModelDevicesSchema.findOneAndUpdate(
