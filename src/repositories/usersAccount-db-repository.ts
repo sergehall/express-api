@@ -90,8 +90,8 @@ export class UsersAccountRepository {
     return MyModelUserAccount.findOne(
       {
         $or: [
-          {"accountData.email": loginOrEmail},
-          {"accountData.login": loginOrEmail}
+          {"accountData.login": loginOrEmail},
+          {"accountData.email": loginOrEmail}
         ]
       });
   }
