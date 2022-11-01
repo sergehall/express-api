@@ -83,9 +83,9 @@ export class Auth {
   async checkCredentials(login: string, password: string) {
     console.log(login, "loginOrEmail")
     console.log(password, "password")
-    const user: UserAccountType| null = await ioc.usersAccountService.findByLogin(login)
+    const user = await ioc.usersAccountService.findUserByLoginOrEmail(login)
     console.log(user, "user findByLogin(login)")
-    if (!user) {
+    if (user === null) {
       return null
     }
     const compare = await bcrypt.compare(password, user.accountData.passwordHash)

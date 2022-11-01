@@ -82,41 +82,23 @@ export class UsersAccountRepository {
   }
 
   async findByLoginAndEmail(email: string, login: string): Promise<UserAccountDBType | null> {
-    return await MyModelUserAccount.findOne(
-      {
-        $and:
-          [
-            {"accountData.email": email},
-            {"accountData.login": login}
-          ]
-      })
+    return await MyModelUserAccount.findOne({ $and: [{"accountData.email": email}, {"accountData.login": login}]})
   }
 
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
+  async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
     return await MyModelUserAccount.findOne({$or: [{"accountData.login": loginOrEmail}, {"accountData.email": loginOrEmail}]})
   }
 
-  async findByLogin(login: string): Promise<UserAccountDBType | null> {
-    return await MyModelUserAccount.findOne({"accountData.login": login})
-  }
-
   async findByEmail(email: string): Promise<UserAccountDBType | null> {
-    return await MyModelUserAccount.findOne({"accountData.email": email})
+    return await MyModelUserAccount.find({"accountData.email": email}).lean()
   }
 
   async findByConfirmationCode(code: string,): Promise<UserAccountDBType | null> {
-    return await MyModelUserAccount.findOne({
-      "emailConfirmation.confirmationCode": code,
-      "emailConfirmation.isConfirmed": false,
-      "emailConfirmation.expirationDate": {$gt: new Date().toISOString()}
-    })
+    return await MyModelUserAccount.findOne({"emailConfirmation.confirmationCode": code, "emailConfirmation.isConfirmed": false, "emailConfirmation.expirationDate": {$gt: new Date().toISOString()}})
   }
 
   async getUserAccountByEmailCode(code: string, email: string): Promise<UserAccountDBType | null> {
-    return await MyModelUserAccount.findOne({
-      "emailConfirmation.confirmationCode": code,
-      "accountData.email": email
-    })
+    return await MyModelUserAccount.findOne({"emailConfirmation.confirmationCode": code, "accountData.email": email})
   }
 
   async getUserAccountByCode(code: string): Promise<UserAccountDBType | null> {
@@ -124,10 +106,7 @@ export class UsersAccountRepository {
   }
 
   async findByIpAndSentEmail(ip: string | null) {
-    return await MyModelUserAccount.countDocuments({
-      "registrationData.ip": ip,
-      "emailConfirmation.sentEmail.sendTime": {$gt: new Date(Date.now() - 1000 * 10).toISOString()}
-    })
+    return await MyModelUserAccount.countDocuments({"registrationData.ip": ip, "emailConfirmation.sentEmail.sendTime": {$gt: new Date(Date.now() - 1000 * 10).toISOString()}})
   }
 
   async updateUserAccount(user: UserAccountDBType) {

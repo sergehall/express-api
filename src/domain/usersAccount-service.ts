@@ -151,11 +151,8 @@ export class UsersAccountService {
     return await this.usersAccountRepository.findByLoginAndEmail(email, login)
   }
 
-  async findByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
-    return await this.usersAccountRepository.findByLoginOrEmail(loginOrEmail)
-  }
-  async findByLogin(login: string): Promise<UserAccountDBType | null> {
-    return await this.usersAccountRepository.findByLogin(login)
+  async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
+    return await this.usersAccountRepository.findUserByLoginOrEmail(loginOrEmail)
   }
 
   async findByEmail(email: string): Promise<UserAccountDBType | null> {
@@ -203,7 +200,7 @@ export class UsersAccountService {
 
   async updateAndSentConfirmationCodeByEmail(email: string) {
 
-    const user = await this.usersAccountRepository.findByLoginOrEmail(email)
+    const user = await this.usersAccountRepository.findUserByLoginOrEmail(email)
     if (!user || !user.accountData.email) {
       return null
     }
