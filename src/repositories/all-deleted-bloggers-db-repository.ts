@@ -4,6 +4,6 @@ import {MyModelAllDeletedPosts} from "../mongoose/AllDeletedPostsSchemaModel";
 
 export class AllDeletedBloggersPostsRepository {
   async findBloggersPosts(): Promise<AllDeletedPosts[]> {
-    return MyModelAllDeletedPosts.find({}).lean()
+    return await MyModelAllDeletedPosts.find({}).lean()
   }
 }

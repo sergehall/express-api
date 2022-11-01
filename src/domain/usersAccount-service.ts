@@ -23,8 +23,8 @@ export class UsersAccountService {
     const newUser: UserAccountDBType = {
       accountData: {
         id: newId,
-        login: login,
-        email: email,
+        login,
+        email,
         passwordSalt,
         passwordHash,
         createdAt: new Date().toISOString()

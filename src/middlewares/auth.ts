@@ -79,7 +79,10 @@ export class Auth {
   }
 
   async checkCredentials(loginOrEmail: string, password: string) {
+    console.log(loginOrEmail, "loginOrEmail")
+    console.log(password, "password")
     const user = await ioc.usersAccountService.findByLoginOrEmail(loginOrEmail)
+    console.log(user, "user findByLoginOrEmail(loginOrEmail)")
     if (!user) {
       return null
     }

@@ -39,7 +39,7 @@ export class FeedbacksRepository{
     }
   }
   async getAllFeedbacks(): Promise<FeedbackDBType[]> {
-    return MyModelFeedbacks.find(
+    return await MyModelFeedbacks.find(
       {},
       {_id: false, __v: false, "allFeedbacks._id": false}).lean()
   }
