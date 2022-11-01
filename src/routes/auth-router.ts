@@ -5,7 +5,8 @@ import {
   bodyCode,
   bodyEmail,
   bodyLogin,
-  bodyLoginUsersAccount, bodyNewPassword,
+  bodyLoginUsersAccount,
+  bodyNewPassword,
   bodyPassword,
   bodyPasswordUsersAccount,
   inputValidatorMiddleware, recoveryCode
