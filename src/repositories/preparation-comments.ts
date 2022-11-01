@@ -45,7 +45,7 @@ export class PreparationComments {
         content: comment.content,
         userId: comment.userId,
         userLogin: comment.userLogin,
-        addedAt: comment.addedAt,
+        createdAt: comment.createdAt,
         likesInfo: {
           likesCount: countLikes,
           dislikesCount: countDislike,

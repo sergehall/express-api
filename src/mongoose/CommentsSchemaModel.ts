@@ -25,9 +25,9 @@ const CommentsSchema = new mongoose.Schema({
         type: String,
         required: [true, 'userLogin is required']
       },
-      addedAt: {
+      createdAt: {
         type: String,
-        required: [true, 'addedAt is required']
+        required: [true, 'createdAt is required']
       },
       likesInfo: {
         likesCount: {

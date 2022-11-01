@@ -38,7 +38,7 @@ export type CommentsType = {
     content: string
     userId: string
     userLogin: string
-    addedAt: string
+    createdAt: string
     likesInfo: {
       likesCount: number
       dislikesCount: number
@@ -156,7 +156,7 @@ export type CommentViewModel = {
   content: string
   userId: string
   userLogin: string
-  addedAt: string
+  createdAt: string
   likesInfo: {
     likesCount: number
     dislikesCount: number

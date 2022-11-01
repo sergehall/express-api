@@ -154,14 +154,14 @@ export class PostsRepository {
     try {
       let errorsArray: ArrayErrorsType = [];
       const newCommentId = uuid4().toString()
-      const addedAt = (new Date()).toISOString()
+      const createdAt = new Date().toISOString()
 
       const newComment: CommentViewModel = {
         id: newCommentId,
         content: content,
         userId: user.accountData.id,
         userLogin: user.accountData.login,
-        addedAt: addedAt,
+        createdAt: createdAt,
         likesInfo: {
           likesCount: 0,
           dislikesCount: 0,
