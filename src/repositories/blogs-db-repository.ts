@@ -47,16 +47,14 @@ export class BlogsRepository {
   async createBlog(name: string, youtubeUrl: string) {
     let errorsArray: ArrayErrorsType = [];
     const newBlogId = uuid4().toString()
-    const createdAt = (new Date()).toISOString()
+    const createdAt = new Date().toISOString()
 
-    const newBlog = {
+    const createBlog = await MyModelBlogs.create({
       id: newBlogId,
       name: name,
       youtubeUrl: youtubeUrl,
       createdAt: createdAt
-    }
-
-    const createBlog = await MyModelBlogs.create(newBlog)
+    })
 
     return {
       data: createBlog,
