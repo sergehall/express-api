@@ -10,8 +10,8 @@ export class CommentsController {
   async getCommentById(req: Request, res: Response) {
     try {
       const commId = req.params.commentId;
-      const user = req.user
-      const getComment: ReturnTypeObjectComment = await this.commentsService.findCommentById(commId, user);
+      const currentUser = req.user
+      const getComment: ReturnTypeObjectComment = await this.commentsService.getCommentById(commId, currentUser);
       if (getComment.data !== null) {
         res.send(getComment.data)
       } else {

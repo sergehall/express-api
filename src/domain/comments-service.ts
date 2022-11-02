@@ -13,8 +13,8 @@ export class CommentsService {
     return await this.commentsRepository.findCommentInDB(filter)
   }
 
-  async findCommentById(commentId: string, user: UserAccountDBType | null): Promise<ReturnTypeObjectComment>{
-    return await this.commentsRepository.findCommentById(commentId, user)
+  async getCommentById(commentId: string, currentUser: UserAccountDBType | null): Promise<ReturnTypeObjectComment>{
+    return await this.commentsRepository.getCommentById(commentId, currentUser)
   }
 
   async updateCommentById(commentId: string, content: string): Promise<ReturnTypeObjectComment> {

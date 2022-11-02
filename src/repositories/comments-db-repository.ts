@@ -18,7 +18,7 @@ export class CommentsRepository {
     return MyModelComments.findOne(filter)
   }
 
-  async findCommentById(commentId: string, user: UserAccountDBType | null): Promise<ReturnTypeObjectComment> {
+  async getCommentById(commentId: string, currentUser: UserAccountDBType | null): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
     const foundPostWithComments = await MyModelComments.findOne(filter, {
@@ -36,7 +36,7 @@ export class CommentsRepository {
     }
 
     const commentArray: ArrayCommentsExtLikesInfo = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
-    const commentFiledLikesInfo = await ioc.preparationComments.preparationCommentsForReturn(commentArray, user)
+    const commentFiledLikesInfo = await ioc.preparationComments.preparationCommentsForReturn(commentArray, currentUser)
 
     return {
       data: commentFiledLikesInfo[0],

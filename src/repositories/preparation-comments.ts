@@ -7,21 +7,21 @@ import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 
 export class PreparationComments {
 
-  async preparationCommentsForReturn(commentsArray: ArrayCommentsExtLikesInfo, user: UserAccountDBType | null) {
+  async preparationCommentsForReturn(commentsArray: ArrayCommentsExtLikesInfo, currentUser: UserAccountDBType | null) {
     const filledCommentsArray = []
+    let currentLikeStatus = {likeStatus: "None"}
+    let filterCurrentUserId = {userId: ""}
+    if (currentUser) {
+      filterCurrentUserId = {userId: currentUser.accountData.id}
+    }
     for (let i in commentsArray) {
       const comment = commentsArray[i]
       const commentId = commentsArray[i].id
       const filterCommentId = {commentId: commentId}
-      let filterUserId = {userId: ""}
-      let currentLikeStatus = {likeStatus: "None"}
-      if (user) {
-        filterUserId = {userId: user.accountData.id}
-      }
 
       const checkCurrentLikeStatus = await MyModelLikeStatusCommentId.findOne(
         {
-          $and: [filterUserId, filterCommentId]
+          $and: [filterCurrentUserId, filterCommentId]
         }
       )
 
