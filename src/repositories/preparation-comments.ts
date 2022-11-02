@@ -9,12 +9,12 @@ export class PreparationComments {
 
   async preparationCommentsForReturn(commentsArray: ArrayCommentsExtLikesInfo, currentUser: UserAccountDBType | null) {
     const filledCommentsArray = []
-    let currentLikeStatus = {likeStatus: "None"}
-    let filterCurrentUserId = {userId: ""}
-    if (currentUser) {
-      filterCurrentUserId = {userId: currentUser.accountData.id}
-    }
     for (let i in commentsArray) {
+      let currentLikeStatus = {likeStatus: "None"}
+      let filterCurrentUserId = {userId: ""}
+      if (currentUser) {
+        filterCurrentUserId = {userId: currentUser.accountData.id}
+      }
       const comment = commentsArray[i]
       const commentId = commentsArray[i].id
       const filterCommentId = {commentId: commentId}
