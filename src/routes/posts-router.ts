@@ -50,7 +50,7 @@ postsRouts.get('/',
     ioc.postsController.deleteAllPosts.bind(ioc.postsController))
 
   .get('/:postId/comments',
-    ioc.auth.noneStatusRefreshToken,
+    ioc.auth.noneStatusAccessToken,
     postIdParamsValidation,
     inputValidatorMiddleware,
     ioc.postsController.getCommentsByPostId.bind(ioc.postsController))
