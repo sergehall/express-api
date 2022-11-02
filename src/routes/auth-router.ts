@@ -227,7 +227,7 @@ authRouter.post('/logout',
   })
 
 authRouter.get("/me",
-  ioc.auth.authentication,
+  ioc.auth.authenticationAccessToken,
   async (req: Request, res: Response) => {
     const user = req.user
     if (user) {

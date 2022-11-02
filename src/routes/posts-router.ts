@@ -56,13 +56,13 @@ postsRouts.get('/',
     ioc.postsController.getCommentsByPostId.bind(ioc.postsController))
 
   .post('/:postId/comments',
-    ioc.auth.authentication,
+    ioc.auth.authenticationAccessToken,
     contentCommentValidation,
     inputValidatorMiddleware,
     ioc.postsController.createNewCommentByPostId.bind(ioc.postsController))
 
   .put('/:postId/like-status',
-    ioc.auth.authentication,
+    ioc.auth.authenticationAccessToken,
     postIdParamsValidation,
     likeStatusValidator,
     inputValidatorMiddleware,

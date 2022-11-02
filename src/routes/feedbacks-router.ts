@@ -12,6 +12,6 @@ feedbacksRouter.get('/',
   ioc.feedbacksController.getAllFeedbacks.bind(ioc.feedbacksController))
 
   .post('/:userId',
-    ioc.auth.authentication,
+    ioc.auth.authenticationAccessToken,
     userIdParamsValidation, inputValidatorMiddleware,
     ioc.feedbacksController.createFeedback.bind(ioc.feedbacksController))

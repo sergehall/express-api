@@ -8,7 +8,7 @@ const base64 = require('base-64');
 
 export class Auth {
 
-  async authentication(req: Request, res: Response, next: NextFunction) {
+  async authenticationAccessToken(req: Request, res: Response, next: NextFunction) {
     if (!req.headers.authorization) {
       res.sendStatus(401)
       return
