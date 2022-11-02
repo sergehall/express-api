@@ -39,6 +39,21 @@ export class Auth {
     return
   }
 
+  async noneStatusAccessToken(req: Request, res: Response, next: NextFunction) {
+    if (!req.headers.authorization) {
+      next()
+      return
+    }
+    const userId = await ioc.jwtService.verifyAccessJWT(req.headers.authorization.split(" ")[1])
+    if (!userId) {
+      next()
+      return
+    }
+    req.user = await ioc.usersAccountService.findUserByUserId(userId)
+    next()
+    return
+  }
+
   async basicAuthorization(req: Request, res: Response, next: NextFunction) {
     try {
       const expectedAuthHeaderValue = "Basic " + base64.encode("admin:qwerty")
