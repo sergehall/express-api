@@ -28,7 +28,7 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 export class PostsRepository {
 
-  async findPosts(pageNumber: number, pageSize: number, title: string | null, user: UserAccountDBType | null): Promise<Pagination> {
+  async findPosts(pageNumber: number, pageSize: number, title: string | null, currentUser: UserAccountDBType | null): Promise<Pagination> {
 
     let filter = {}
     if (title !== null) {
@@ -40,7 +40,7 @@ export class PostsRepository {
       __v: false
     }).limit(pageSize).skip(startIndex).lean()
 
-    await ioc.preparationPostsForReturn.preparationPostsForReturn(result, user)
+    await ioc.preparationPostsForReturn.preparationPostsForReturn(result, currentUser)
 
     const totalCount = await MyModelPosts.countDocuments(filter)
     const pagesCount = Math.ceil(totalCount / pageSize)

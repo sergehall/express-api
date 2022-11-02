@@ -14,7 +14,7 @@ import {ioc} from "../IoCContainer";
 export const postsRouts = Router({})
 
 postsRouts.get('/',
-  ioc.auth.noneStatusRefreshToken,
+  ioc.auth.noneStatusAccessToken,
   ioc.postsController.getAllPosts.bind(ioc.postsController))
 
   .post('/',

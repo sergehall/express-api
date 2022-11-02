@@ -8,7 +8,7 @@ import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 
 
 export class PreparationPosts {
-  async preparationPostsForReturn(myArray: ArrayPostsExtLikesInfo, user: UserAccountDBType | null) {
+  async preparationPostsForReturn(myArray: ArrayPostsExtLikesInfo, currentUser: UserAccountDBType | null) {
     for (let i in myArray) {
       const id = myArray[i].id
       const post: PostsType = myArray[i]
@@ -26,13 +26,12 @@ export class PreparationPosts {
       }).lean()
 
       // getting the status of the post owner
-      if (!user) {
-        post.extendedLikesInfo.myStatus = "None"
-      } else {
+      post.extendedLikesInfo.myStatus = "None"
+      if (currentUser) {
         const statusPostOwner = await MyModelLikeStatusPostsId.findOne({
           $and:
             [{postId: id},
-              {userId: user.accountData.id}]
+              {userId: currentUser.accountData.id}]
         }).lean()
         if (statusPostOwner) {
           post.extendedLikesInfo.myStatus = statusPostOwner.likeStatus
