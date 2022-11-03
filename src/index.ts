@@ -1,6 +1,7 @@
 import express, {Request, Response} from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import cookieParser from "cookie-parser"
 import {runDb} from "./repositories/db-connection";
 import {authRouter} from "./routes/auth-router";
 import {bloggersRouts} from "./routes/bloggers-router";
@@ -10,7 +11,6 @@ import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
 import {commentsRouter} from "./routes/comments-router";
 import {emailRouter} from "./routes/email-router";
 import {testingRouter} from "./routes/testing-router";
-import cookieParser from "cookie-parser"
 import {usersRouter} from "./routes/users-router";
 import {blogsRouts} from "./routes/blogs-router";
 import {securityDevicesRouter} from "./routes/securityDevices-router";
