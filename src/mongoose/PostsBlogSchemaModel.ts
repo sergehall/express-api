@@ -33,7 +33,7 @@ const BlogPostsSchema = new mongoose.Schema({
         type: String,
         required: [true, 'blogName is required']
       },
-      createdAt: {
+      addedAt: {
         type: String,
         required: [true, 'createdAt is required']
       }

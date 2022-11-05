@@ -80,9 +80,11 @@ export class PostsRepository {
     };
   }
 
-  async createPost(title: string, shortDescription: string, content: string, blogId: string, addedAt: string): Promise<ReturnTypeObjectPosts> {
+  async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
+    const addedAt = new Date().toISOString()
+
     const ReturnObjectPost = {
       data: {
         id: "",
@@ -139,7 +141,7 @@ export class PostsRepository {
         return {...ReturnObjectPost, errorsMessages: errorsArray}
       }
       return {
-        data: createNewPost,
+        data: newPost,
         errorsMessages: errorsArray,
         resultCode: 0
       }

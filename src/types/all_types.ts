@@ -269,7 +269,7 @@ export type BlogPostsType = {
     content: string
     blogId: string
     blogName: string
-    createdAt: string
+    addedAt: string
   }[]
 }
 

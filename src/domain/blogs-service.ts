@@ -3,7 +3,6 @@ import {BlogsRepository} from "../repositories/blogs-db-repository";
 import {
   Pagination,
   ReturnTypeObjectBlog,
-  ReturnTypeObjectBlogPost,
   TypeBlog
 } from "../types/all_types";
 
@@ -20,9 +19,9 @@ export class BlogsService {
     return await this.blogsRepository.createBlog(name, youtubeUrl)
   }
 
-  async createNewPostByBlogId(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectBlogPost> {
-    return await this.blogsRepository.createNewPostByBlogId(title, shortDescription, content, blogId)
-  }
+  // async createNewPostByBlogId(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectBlogPost> {
+  //   return await this.blogsRepository.createNewPostByBlogId(title, shortDescription, content, blogId)
+  // }
   
   async getAllPostsByBlog(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string): Promise<Pagination | null> {
     return await this.blogsRepository.findAllPostsByBlog(pageNumber, pageSize, sortBy, sortDirection, blogId)

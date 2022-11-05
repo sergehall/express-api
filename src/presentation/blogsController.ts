@@ -1,10 +1,11 @@
 import {BlogsService} from "../domain/blogs-service";
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
+import {PostsService} from "../domain/posts-service";
 
 
 export class BlogsController {
-  constructor(private blogsService: BlogsService) {
+  constructor(private blogsService: BlogsService, private postService: PostsService) {
   }
 
   async getAllBlogs(req: Request, res: Response) {
@@ -49,23 +50,12 @@ export class BlogsController {
     const content: string = req.body.content
     const blogId: string = req.params.blogId
 
-    const newBlogPost = await this.blogsService.createNewPostByBlogId(title, shortDescription, content, blogId)
-    if (newBlogPost.errorsMessages.length !== 0) {
-      res.status(404)
-      return res.send()
+    const newPost = await this.postService.createPost(title, shortDescription, content, blogId)
+
+    if (!newPost.data) {
+      return res.status(404).send(newPost.errorsMessages)
     }
-    if (newBlogPost.data !== null) {
-      res.status(201)
-      return res.send({
-        id: newBlogPost.data.id,
-        title: newBlogPost.data.title,
-        shortDescription: newBlogPost.data.shortDescription,
-        content: newBlogPost.data.content,
-        blogId: newBlogPost.data.blogId,
-        blogName: newBlogPost.data.blogName,
-        createdAt: newBlogPost.data.createdAt
-      })
-    }
+    return  res.status(201).send(newPost.data)
   }
 
   async getAllPostsByBlog(req: Request, res: Response) {
@@ -128,7 +118,7 @@ export class BlogsController {
 
   }
 
-  async deleteBlogById(req: Request, res: Response){
+  async deleteBlogById(req: Request, res: Response) {
     const id = req.params.id
 
     const deletedBlog = await this.blogsService.deletedBlogById(id)

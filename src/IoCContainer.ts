@@ -87,7 +87,7 @@ const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepositor
 // Blogs
 const blogsRepository = new BlogsRepository()
 const blogsService = new BlogsService(blogsRepository)
-const blogsController = new BlogsController(blogsService)
+const blogsController = new BlogsController(blogsService, postsService)
 // PostsExtLikesInfo
 const preparationPostsForReturn = new PreparationPosts()
 // CommentsExtLikesInfo

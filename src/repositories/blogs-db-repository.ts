@@ -63,70 +63,70 @@ export class BlogsRepository {
     }
   }
 
-  async createNewPostByBlogId(title: string, shortDescription: string, content: string, blogId: string) {
-    let errorsArray: ArrayErrorsType = [];
-
-    const filter = {id: blogId}
-    const verifyBlogIg = await MyModelBlogs.findOne(filter).lean()
-
-    if (!verifyBlogIg) {
-      errorsArray.push(notFoundBlogId)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
-
-    const blogName = verifyBlogIg.name
-    const createdAt = (new Date()).toISOString()
-    const newPostId = uuid4().toString()
-
-    const newPostBlog = {
-      id: newPostId,
-      title: title,
-      shortDescription: shortDescription,
-      content: content,
-      blogId: blogId,
-      blogName: blogName,
-      createdAt: createdAt,
-    }
-
-    const filterBlogId = {blogId: blogId}
-    const foundBlog = await MyModelBlogPosts.findOne(filterBlogId)
-    if (!foundBlog) {
-      const createNewBlog = await MyModelBlogPosts.create({
-        blogId: blogId,
-        allPosts: [newPostBlog]
-      })
-      if (!createNewBlog) {
-        errorsArray.push(MongoHasNotUpdated)
-      }
-    } else {
-      const result = await MyModelBlogPosts.updateOne(
-        {blogId: blogId},
-        {
-          $push: {allPosts: newPostBlog}
-        })
-      if (!result.modifiedCount && !result.matchedCount) {
-        errorsArray.push(MongoHasNotUpdated)
-      }
-    }
-
-    if (errorsArray.length !== 0) {
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
-
-    return {
-      data: newPostBlog,
-      errorsMessages: errorsArray,
-      resultCode: 0
-    }
-  }
+  // async createNewPostByBlogId(title: string, shortDescription: string, content: string, blogId: string) {
+  //   let errorsArray: ArrayErrorsType = [];
+  //
+  //   const filter = {id: blogId}
+  //   const verifyBlogIg = await MyModelBlogs.findOne(filter).lean()
+  //
+  //   if (!verifyBlogIg) {
+  //     errorsArray.push(notFoundBlogId)
+  //     return {
+  //       data: null,
+  //       errorsMessages: errorsArray,
+  //       resultCode: 1
+  //     }
+  //   }
+  //
+  //   const blogName = verifyBlogIg.name
+  //   const createdAt = new Date().toISOString()
+  //   const newPostId = uuid4().toString()
+  //
+  //   const newPostBlog = {
+  //     id: newPostId,
+  //     title: title,
+  //     shortDescription: shortDescription,
+  //     content: content,
+  //     blogId: blogId,
+  //     blogName: blogName,
+  //     createdAt: createdAt,
+  //   }
+  //
+  //   const filterBlogId = {blogId: blogId}
+  //   const foundBlog = await MyModelBlogPosts.findOne(filterBlogId)
+  //   if (!foundBlog) {
+  //     const createNewBlog = await MyModelBlogPosts.create({
+  //       blogId: blogId,
+  //       allPosts: [newPostBlog]
+  //     })
+  //     if (!createNewBlog) {
+  //       errorsArray.push(MongoHasNotUpdated)
+  //     }
+  //   } else {
+  //     const result = await MyModelBlogPosts.updateOne(
+  //       {blogId: blogId},
+  //       {
+  //         $push: {allPosts: newPostBlog}
+  //       })
+  //     if (!result.modifiedCount && !result.matchedCount) {
+  //       errorsArray.push(MongoHasNotUpdated)
+  //     }
+  //   }
+  //
+  //   if (errorsArray.length !== 0) {
+  //     return {
+  //       data: null,
+  //       errorsMessages: errorsArray,
+  //       resultCode: 1
+  //     }
+  //   }
+  //
+  //   return {
+  //     data: newPostBlog,
+  //     errorsMessages: errorsArray,
+  //     resultCode: 0
+  //   }
+  // }
 
   async findAllPostsByBlog(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string): Promise<Pagination | null> {
     const filter = {blogId: blogId}

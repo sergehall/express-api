@@ -25,33 +25,14 @@ export class PostsController {
       const shortDescription: string = req.body.shortDescription;
       const content: string = req.body.content;
       const blogId: string = req.body.blogId
-      const addedAt = new Date().toISOString()
 
-      const newPost = await this.postsService.createPost(title, shortDescription, content, blogId, addedAt)
+      const newPost = await this.postsService.createPost(title, shortDescription, content, blogId)
 
-      if (newPost.resultCode === 0) {
-        res.status(201)
-        return res.send({
-          id: newPost.data.id,
-          title: newPost.data.title,
-          shortDescription: newPost.data.shortDescription,
-          content: newPost.data.content,
-          blogId: newPost.data.blogId,
-          blogName: newPost.data.blogName,
-          addedAt: newPost.data.addedAt,
-          extendedLikesInfo: {
-            likesCount: Number(newPost.data.extendedLikesInfo.likesCount),
-            dislikesCount: Number(newPost.data.extendedLikesInfo.dislikesCount),
-            myStatus: newPost.data.extendedLikesInfo.myStatus,
-            newestLikes: newPost.data.extendedLikesInfo.newestLikes
-          }
-        })
-      } else {
-        res.status(400)
-        const errorsMessages = newPost.errorsMessages
-        const resultCode = newPost.resultCode
-        res.send({errorsMessages, resultCode})
+      if (newPost.errorsMessages.length !== 0) {
+        return res.status(400).send(newPost.errorsMessages)
       }
+      return res.status(201).send(newPost.data)
+
     } catch (error) {
       return res.sendStatus(500)
     }
