@@ -83,7 +83,7 @@ export class PostsRepository {
   async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectPosts> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
-    const addedAt = new Date().toISOString()
+    const createdAt = new Date().toISOString()
 
     const ReturnObjectPost = {
       data: {
@@ -93,7 +93,7 @@ export class PostsRepository {
         content: content,
         blogId: blogId,
         blogName: "",
-        createdAt: addedAt,
+        createdAt: createdAt,
         extendedLikesInfo: {
           likesCount: 0,
           dislikesCount: 0,
@@ -120,7 +120,7 @@ export class PostsRepository {
       content: content,
       blogId: blogId,
       blogName: foundBlogId.name,
-      createdAt: addedAt,
+      createdAt: createdAt,
       extendedLikesInfo: {
         likesCount: 0,
         dislikesCount: 0,
@@ -386,11 +386,11 @@ export class PostsRepository {
 
   async changeLikeStatusPost(user: UserAccountDBType, postId: string, likeStatus: string): Promise<Boolean> {
     const userId = user.accountData.id
-    const createdAt = (new Date()).toISOString()
+    const createdAt = new Date().toISOString()
 
     const newLikeStatus = {
       postId: postId,
-      userId: userId,
+      userId: user.accountData.id,
       likeStatus: likeStatus,
       createdAt: createdAt,
     }
@@ -402,23 +402,27 @@ export class PostsRepository {
         return false
       }
 
-      const currentLikeStatus = await MyModelLikeStatusPostsId.findOne(
+      const currentLikeStatus = await MyModelLikeStatusPostsId.findOneAndUpdate(
         {
           $and:
-            [{postId: postId},
-              {userId: userId}]
-        }).lean()
-
-      if (!currentLikeStatus) {
-        await MyModelLikeStatusPostsId.create(newLikeStatus)
-      }
+            [
+              {postId: postId},
+              {userId: userId}
+            ]
+        },
+        newLikeStatus,
+        {upsert: true}
+      ).lean()
 
       const postInThreeLastLikes = await MyModelThreeLastLikesPost.findOne(
         {
           $and:
-            [{postId: postId},
-              {"threeNewestLikes.userId": userId}]
+            [
+              {postId: postId},
+              {"threeNewestLikes.userId": userId}
+            ]
         }).lean()
+
 
       if (currentLikeStatus
         && currentLikeStatus.likeStatus === "Like"
@@ -434,8 +438,14 @@ export class PostsRepository {
           login: user.accountData.login
         }
         const updateCurrentLikeInLikeStatusPosts = await MyModelLikeStatusPostsId.findOneAndUpdate(
-          {postId: postId, userId: userId},
-          {likeStatus: likeStatus}).lean()
+          {
+            $and: [
+              {postId: postId},
+              {userId: userId}
+            ]
+          },
+          newLikeStatus,
+          {upsert: true}).lean()
 
         const checkPostLastLikes = await MyModelThreeLastLikesPost.findOne({postId: postId}).lean()
         if (!checkPostLastLikes) {

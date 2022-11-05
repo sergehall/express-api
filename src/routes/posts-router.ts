@@ -27,7 +27,7 @@ postsRouts.get('/',
     ioc.postsController.createNewPost.bind(ioc.postsController))
 
   .get('/:postId',
-    ioc.auth.noneStatusRefreshToken,
+    ioc.auth.noneStatusAccessToken,
     postIdParamsValidation,
     inputValidatorMiddleware,
     ioc.postsController.getPostById.bind(ioc.postsController))
