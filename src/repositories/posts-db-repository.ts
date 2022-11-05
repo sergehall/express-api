@@ -93,7 +93,7 @@ export class PostsRepository {
         content: content,
         blogId: blogId,
         blogName: "",
-        addedAt: addedAt,
+        createdAt: addedAt,
         extendedLikesInfo: {
           likesCount: 0,
           dislikesCount: 0,
@@ -120,7 +120,7 @@ export class PostsRepository {
       content: content,
       blogId: blogId,
       blogName: foundBlogId.name,
-      addedAt: addedAt,
+      createdAt: addedAt,
       extendedLikesInfo: {
         likesCount: 0,
         dislikesCount: 0,
@@ -326,7 +326,7 @@ export class PostsRepository {
           content: content,
           blogId: blogId,
           blogName: "",
-          addedAt: createdAt,
+          createdAt: createdAt,
           extendedLikesInfo: {
             likesCount: 0,
             dislikesCount: 0,
@@ -352,7 +352,7 @@ export class PostsRepository {
           content: content,
           blogId: blogId,
           blogName: "",
-          addedAt: createdAt,
+          createdAt: createdAt,
           extendedLikesInfo: {
             likesCount: 0,
             dislikesCount: 0,
