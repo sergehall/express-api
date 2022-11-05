@@ -25,7 +25,7 @@ export class PostsController {
       const shortDescription: string = req.body.shortDescription;
       const content: string = req.body.content;
       const blogId: string = req.body.blogId
-      const addedAt = (new Date()).toISOString()
+      const addedAt = new Date().toISOString()
 
       const newPost = await this.postsService.createPost(title, shortDescription, content, blogId, addedAt)
 
