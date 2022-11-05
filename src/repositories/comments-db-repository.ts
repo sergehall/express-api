@@ -3,7 +3,7 @@ import {
   ArrayErrorsType, ReturnTypeObjectComment, UserAccountDBType,
 } from "../types/all_types";
 import {
-  MongoHasNotUpdated,
+  mongoHasNotUpdated,
   notDeletedComment,
   notFoundCommentId
 } from "../middlewares/errorsMessages";
@@ -55,7 +55,7 @@ export class CommentsRepository {
       {$set: {"allComments.$.content": content}})
 
     if (result.modifiedCount === 0 && result.matchedCount == 0) {
-      errorsArray.push(MongoHasNotUpdated)
+      errorsArray.push(mongoHasNotUpdated)
     }
 
     if (errorsArray.length !== 0) {

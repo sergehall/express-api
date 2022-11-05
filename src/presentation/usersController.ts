@@ -1,8 +1,8 @@
 import {Request, Response} from "express";
 import {UsersService} from "../domain/users-service";
 import {ioc} from "../IoCContainer";
-import {MongoHasNotUpdated} from "../middlewares/errorsMessages";
 import requestIp from "request-ip";
+import {mongoHasNotUpdated} from "../middlewares/errorsMessages";
 
 
 export class UsersController {
@@ -58,7 +58,7 @@ export class UsersController {
         res.status(201).send(userReturn)
         return
       }
-      res.status(501).send({MongoHasNotUpdated})
+      res.status(501).send({mongoHasNotUpdated})
 
     } catch (e) {
       console.log(e)

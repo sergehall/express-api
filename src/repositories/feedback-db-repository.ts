@@ -1,7 +1,7 @@
 import {ArrayErrorsType, FeedbackDBType, ReturnTypeObjectFeedback} from "../types/all_types";
 import {MyModelFeedbacks} from "../mongoose/FeedbacksSchemaModel";
 import uuid4 from "uuid4";
-import {MongoHasNotUpdated} from "../middlewares/errorsMessages";
+import {mongoHasNotUpdated} from "../middlewares/errorsMessages";
 
 
 export class FeedbacksRepository{
@@ -24,7 +24,7 @@ export class FeedbacksRepository{
         {$push: {allFeedbacks: newFeedback}},
         {upsert: true, returnDocument: "after", projection: {_id: false, __v: false, "allFeedbacks._id": false}})
       if(!updateFeedback) {
-        errorsArray.push(MongoHasNotUpdated)
+        errorsArray.push(mongoHasNotUpdated)
         return {
           data: null,
           errorsMessages: errorsArray,

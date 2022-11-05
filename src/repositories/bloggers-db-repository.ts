@@ -5,7 +5,7 @@ import {
   ReturnTypeObjectBloggers,
   Pagination
 } from "../types/all_types";
-import {MongoHasNotUpdated, notFoundBloggerId} from "../middlewares/errorsMessages";
+import {mongoHasNotUpdated, notFoundBloggerId} from "../middlewares/errorsMessages";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 
 
@@ -46,7 +46,7 @@ export class BloggersRepository {
 
     const resultBloggers = await MyModelBloggers.create(newBlogger)
     if (!resultBloggers._id) {
-      errorsArray.push(MongoHasNotUpdated)
+      errorsArray.push(mongoHasNotUpdated)
       return {
         data: newBlogger,
         errorsMessages: errorsArray,
@@ -102,7 +102,7 @@ export class BloggersRepository {
     })
 
     if (result.matchedCount === 0) {
-      errorsArray.push(notFoundBloggerId, MongoHasNotUpdated)
+      errorsArray.push(notFoundBloggerId, mongoHasNotUpdated)
     }
 
     if (errorsArray.length !== 0) {

@@ -11,8 +11,8 @@ export class BlogsService {
     this.blogsRepository = blogsRepository
   }
 
-  async findBlogs(pageNumber: number, pageSize: number, title: string | null, sortBy: string| null, sortDirection: string| null,): Promise<Pagination> {
-    return await this.blogsRepository.findBlogs(pageNumber, pageSize, title, sortBy, sortDirection)
+  async findBlogs(pageNumber: number, pageSize: number, sortBy: string| null, sortDirection: string| null): Promise<Pagination> {
+    return await this.blogsRepository.findBlogs(pageNumber, pageSize, sortBy, sortDirection)
   }
 
   async createBlog(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBlog> {

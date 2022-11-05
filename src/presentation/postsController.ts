@@ -12,10 +12,11 @@ export class PostsController {
     const parseQueryData = await ioc.parseQuery.parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
-    const title: string | null = parseQueryData.title
+    const sortBy: string | null = parseQueryData.sortBy
+    const sortDirection: string | null = parseQueryData.sortDirection
     const currentUser: UserAccountDBType | null = req.user
 
-    const foundPosts = await this.postsService.findPosts(pageNumber, pageSize, title, currentUser);
+    const foundPosts = await this.postsService.findPosts(pageNumber, pageSize, sortBy, sortDirection, currentUser);
     res.send(foundPosts)
   }
 

@@ -1,5 +1,5 @@
 // db
-export const MongoHasNotUpdated = {
+export const mongoHasNotUpdated = {
   message: "Mongo database has not updated the data",
   field: "MongoDb"
 }

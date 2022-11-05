@@ -1,38 +1,36 @@
 import {ArrayErrorsType, Pagination, ReturnTypeObjectBlog, TypeBlog} from "../types/all_types";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
-import {MongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
+import {mongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 
 
 export class BlogsRepository {
 
-  async findBlogs(pageNumber: number, pageSize: number, title: string | null, sortBy: string | null, sortDirection: string | null,): Promise<Pagination> {
-    let filter = {}
-    let sortFilter = {}
-    if (title !== null) {
-      filter = {title: {$regex: title}}
-    }
+  async findBlogs(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null,): Promise<Pagination> {
 
     if (!sortDirection || sortDirection !== "asc") {
       sortDirection = "desc"
     }
-    if (!sortBy || sortBy !== "name" && sortBy !== "youtubeUrl") {
-      sortFilter = {"createdAt": sortDirection}
-    } else if (sortBy === "name") {
-      sortFilter = {"name": sortDirection}
-    } else if (sortBy === "youtubeUrl") {
-      sortFilter = {"youtubeUrl": sortDirection}
+    const direction = sortDirection === "desc" ? 1 : -1;
+
+    let field = "createdAt"
+    if (sortBy === "name" || sortBy === "youtubeUrl") {
+      field = sortBy
     }
 
-
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await MyModelBlogs.find(filter, {
-      _id: false,
-      __v: false
-    }).limit(pageSize).skip(startIndex).sort(sortFilter).lean()
+    const result = await MyModelBlogs.find(
+      {},
+      {
+        _id: false,
+        __v: false
+      })
+      .limit(pageSize)
+      .skip(startIndex)
+      .sort({[field]: direction}).lean()
 
-    const totalCount = await MyModelBlogs.countDocuments(filter)
+    const totalCount = await MyModelBlogs.countDocuments({})
     const pagesCount = Math.ceil(totalCount / pageSize)
 
     return {
@@ -129,67 +127,78 @@ export class BlogsRepository {
   // }
 
   async findAllPostsByBlog(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string): Promise<Pagination | null> {
-    const filter = {blogId: blogId}
-    console.log(sortDirection, "sortDirection in ---------")
-    console.log(sortBy, "sortBy field in ---------")
-    console.log(filter, "filter", `${"blogId:" + blogId}`)
-    // const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
+    const filterBlogId = {blogId: blogId}
+
+    if (!sortDirection || sortDirection !== "asc") {
+      sortDirection = "desc"
+    }
+    const direction = sortDirection === "desc" ? 1 : -1;
+
+    let field = "createdAt"
+    if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogName" || sortBy === "content" || sortBy === "blogName") {
+      field = sortBy
+    }
+    const startIndex = (pageNumber - 1) * pageSize
     const findPostsByBlogId = await MyModelPosts.find(
-      filter,
+      filterBlogId,
       {
         _id: false,
         __v: false
-      }).lean()
-    console.log(findPostsByBlogId, "foundPostsBlog")
+      })
+      .limit(pageSize)
+      .skip(startIndex)
+      .sort({[field]: direction}).lean()
+
     if (!findPostsByBlogId) {
       return null
     }
+    //
+    // let totalCount = findPostsByBlogId.length
+    // console.log(totalCount, "totalCount")
 
-    let totalCount = findPostsByBlogId.length
-    console.log(totalCount, "totalCount")
-
+    const totalCount = await MyModelPosts.countDocuments(filterBlogId)
     const pagesCount = Math.ceil(totalCount / pageSize)
-
-    let desc = -1
-    let asc = 1
-    let field = "createdAt"
-
-    if (sortDirection !== "asc") {
-      desc = 1
-      asc = -1
-    }
-
-    if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
-      field = sortBy
-    }
-    console.log(field, "field sortBy out ---------")
-    console.log(sortDirection, "sortDirection out ---------")
-
-    // sort array posts
-    function byField(field: string, asc: number, desc: number) {
-      return (a: any, b: any) => a[field] > b[field] ? asc : desc;
-    }
-
-    // let posts = await MyModelBlogPosts.findOne(filter, {
-    //   _id: false
-    // })
-    //   .then(posts => posts?.allPosts.sort(byField(field, asc, desc)))
-
-    const sortPosts = findPostsByBlogId.sort(byField(field, asc, desc))
-
-    // if (!sortPosts) {
-    //   sortPosts = []
+    //
+    // let desc = -1
+    // let asc = 1
+    // let field = "createdAt"
+    //
+    // if (sortDirection !== "asc") {
+    //   desc = 1
+    //   asc = -1
     // }
+    //
+    // if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
+    //   field = sortBy
+    // }
+    // console.log(field, "field sortBy out ---------")
+    // console.log(sortDirection, "sortDirection out ---------")
+    //
+    // // sort array posts
+    // function byField(field: string, asc: number, desc: number) {
+    //   return (a: any, b: any) => a[field] > b[field] ? asc : desc;
+    // }
+    //
+    // // let posts = await MyModelBlogPosts.findOne(filter, {
+    // //   _id: false
+    // // })
+    // //   .then(posts => posts?.allPosts.sort(byField(field, asc, desc)))
+    //
+    // const sortPosts = findPostsByBlogId.sort(byField(field, asc, desc))
+    //
+    // // if (!sortPosts) {
+    // //   sortPosts = []
+    // // }
 
-    let startIndex = (pageNumber - 1) * pageSize
-    const postsSlice = sortPosts.slice(startIndex, startIndex + pageSize)
+    // let startIndex = (pageNumber - 1) * pageSize
+    // const postsSlice = sortPosts.slice(startIndex, startIndex + pageSize)
 
     return {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: postsSlice
+      items: findPostsByBlogId
     };
   }
 
@@ -207,7 +216,7 @@ export class BlogsRepository {
 
   async updatedBlogById(name: string, youtubeUrl: string, id: string): Promise<ReturnTypeObjectBlog> {
     const errorsArray: ArrayErrorsType = [];
-    const createdAt = (new Date()).toISOString()
+    const createdAt = new Date().toISOString()
 
     const searchBlog = await MyModelBlogs.findOne({id: id})
     if (!searchBlog) {
@@ -223,9 +232,11 @@ export class BlogsRepository {
     }).lean()
 
     if (updatedBlog.matchedCount === 0) {
-      errorsArray.push(MongoHasNotUpdated)
+      errorsArray.push(mongoHasNotUpdated)
     }
-    const foundBlog = await MyModelBlogs.findOne({id: id}, {
+    const foundBlog = await MyModelBlogs.findOne(
+      {id: id},
+      {
       _id: false,
       __v: false,
     }).lean()

@@ -1,5 +1,5 @@
 import {
-  MongoHasNotUpdated,
+  mongoHasNotUpdated,
   notFoundBloggerId,
   notFoundBlogId,
   notFoundPostId
@@ -28,29 +28,41 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 export class PostsRepository {
 
-  async findPosts(pageNumber: number, pageSize: number, title: string | null, currentUser: UserAccountDBType | null): Promise<Pagination> {
+  async findPosts(pageNumber: number, pageSize: number, sortBy: string| null, sortDirection: string| null, currentUser: UserAccountDBType | null): Promise<Pagination> {
 
-    let filter = {}
-    if (title !== null) {
-      filter = {title: {$regex: title}}
+    if (!sortDirection || sortDirection !== "asc") {
+      sortDirection = "desc"
     }
+    const direction = sortDirection === "desc" ? 1: -1;
+
+    let field = "createdAt"
+    if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogId" || sortBy === "blogName" ||  sortBy === "content" || sortBy === "blogName") {
+      field = sortBy
+    }
+
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await MyModelPosts.find(filter, {
+    const findAllPosts = await MyModelPosts.find(
+      {},
+      {
       _id: false,
       __v: false
-    }).limit(pageSize).skip(startIndex).lean()
+    })
+      .limit(pageSize)
+      .skip(startIndex)
+      .sort({[field]: direction}).lean()
 
-    await ioc.preparationPostsForReturn.preparationPostsForReturn(result, currentUser)
+    await ioc.preparationPostsForReturn.preparationPostsForReturn(findAllPosts, currentUser)
 
-    const totalCount = await MyModelPosts.countDocuments(filter)
+    const totalCount = await MyModelPosts.countDocuments({})
     const pagesCount = Math.ceil(totalCount / pageSize)
+
 
     return {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: result
+      items: findAllPosts
     };
   }
 
@@ -137,7 +149,7 @@ export class PostsRepository {
         allComments: []
       })
       if (!createNewPost) {
-        errorsArray.push(MongoHasNotUpdated)
+        errorsArray.push(mongoHasNotUpdated)
         return {...ReturnObjectPost, errorsMessages: errorsArray}
       }
       return {
@@ -314,7 +326,7 @@ export class PostsRepository {
         }).lean()
 
       if (result.matchedCount === 0) {
-        errorsArray.push(MongoHasNotUpdated)
+        errorsArray.push(mongoHasNotUpdated)
       }
     }
     if (errorsArray.length !== 0 || !searchPost) {

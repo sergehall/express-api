@@ -13,12 +13,11 @@ export class BlogsController {
     const parseQueryData = await ioc.parseQuery.parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
-    const title: string | null = parseQueryData.title
     const sortBy: string | null = parseQueryData.sortBy
     const sortDirection: string | null = parseQueryData.sortDirection
 
 
-    const foundBlogs = await this.blogsService.findBlogs(pageNumber, pageSize, title, sortBy, sortDirection);
+    const foundBlogs = await this.blogsService.findBlogs(pageNumber, pageSize, sortBy, sortDirection);
     return res.send(foundBlogs)
   }
 
