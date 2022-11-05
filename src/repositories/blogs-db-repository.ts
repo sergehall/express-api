@@ -130,7 +130,8 @@ export class BlogsRepository {
 
   async findAllPostsByBlog(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string): Promise<Pagination | null> {
     const filter = {blogId: blogId}
-
+    console.log(sortDirection, "sortDirection in ---------" )
+    console.log(sortBy, "sortBy field in ---------" )
     const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
     if (!foundPostsBlog) {
       return null
@@ -152,6 +153,8 @@ export class BlogsRepository {
     if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
       field = sortBy
     }
+    console.log(field, "field out ---------" )
+    console.log(sortBy, "sortBy field out ---------" )
 
     // sort array posts
     function byField(field: string, asc: number, desc: number) {
