@@ -15,10 +15,6 @@ import {ioc} from "../IoCContainer";
 export class BlogsRepository {
 
   async findBlogs(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null,): Promise<Pagination> {
-
-    if (!sortDirection || sortDirection !== "asc") {
-      sortDirection = "desc"
-    }
     const direction = sortDirection === "desc" ? 1 : -1;
 
     let field = "createdAt"
@@ -71,9 +67,6 @@ export class BlogsRepository {
   async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string, currentUser: UserAccountDBType | null): Promise<Pagination | null> {
     const filterBlogId = {blogId: blogId}
 
-    if (!sortDirection || sortDirection !== "asc") {
-      sortDirection = "desc"
-    }
     const direction = sortDirection === "desc" ? -1 : 1;
 
     let field = "createdAt"
@@ -144,9 +137,9 @@ export class BlogsRepository {
     const foundBlog = await MyModelBlogs.findOne(
       {id: id},
       {
-      _id: false,
-      __v: false,
-    }).lean()
+        _id: false,
+        __v: false,
+      }).lean()
 
     if (errorsArray.length !== 0 || !foundBlog) {
       return {

@@ -28,15 +28,11 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 export class PostsRepository {
 
-  async findPosts(pageNumber: number, pageSize: number, sortBy: string| null, sortDirection: string| null, currentUser: UserAccountDBType | null): Promise<Pagination> {
-
-    if (!sortDirection || sortDirection !== "asc") {
-      sortDirection = "desc"
-    }
-    const direction = sortDirection === "desc" ? -1: 1;
+  async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserAccountDBType | null): Promise<Pagination> {
+    const direction = sortDirection === "desc" ? -1 : 1;
 
     let field = "createdAt"
-    if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogId" || sortBy === "blogName" ||  sortBy === "content" || sortBy === "blogName") {
+    if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogId" || sortBy === "blogName" || sortBy === "content" || sortBy === "blogName") {
       field = sortBy
     }
 
@@ -44,9 +40,9 @@ export class PostsRepository {
     const findAllPosts = await MyModelPosts.find(
       {},
       {
-      _id: false,
-      __v: false
-    })
+        _id: false,
+        __v: false
+      })
       .limit(pageSize)
       .skip(startIndex)
       .sort({[field]: direction}).lean()
