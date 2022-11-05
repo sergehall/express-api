@@ -1,5 +1,5 @@
 import {
-  allUsersReturnArray, Pagination,
+  Pagination,
   UserAccountDBType,
 } from "../types/all_types";
 import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
@@ -29,48 +29,91 @@ export class UsersAccountRepository {
 
     const startIndex = (pageNumber - 1) * pageSize
 
-    const users = await MyModelUserAccount.find({$and: [filterLogin, filterEmail]}, {
-      _id: false,
-      __v: false,
-      "accountData.passwordHash": false,
-      "accountData.passwordSalt": false,
-      emailConfirmation: false,
-      registrationData: false
+    // const users = await MyModelUserAccount.find(
+    //   {
+    //     $and: [
+    //       filterLogin,
+    //       filterEmail
+    //     ]
+    //   },
+    //   {
+    //     _id: false,
+    //     __v: false,
+    //     "accountData.passwordHash": false,
+    //     "accountData.passwordSalt": false,
+    //     emailConfirmation: false,
+    //     registrationData: false
+    //
+    //   }).limit(pageSize).skip(startIndex).lean()
 
-    }).limit(pageSize).skip(startIndex).lean()
+    if (!sortDirection || sortDirection !== "asc") {
+      sortDirection = "desc"
+    }
+    const direction = sortDirection === "desc" ? -1 : 1;
+
+    let field = "createdAt"
+    if (sortBy === "accountData.login" || sortBy === "accountData.email" ) {
+      field = sortBy
+    }
+    const users = await MyModelUserAccount.find(
+      {
+        $and: [
+          filterLogin,
+          filterEmail
+        ]
+      },
+      {
+        _id: false,
+        __v: false,
+        "accountData.passwordHash": false,
+        "accountData.passwordSalt": false,
+        emailConfirmation: false,
+        registrationData: false
+
+      })
+      .limit(pageSize)
+      .skip(startIndex)
+      .sort({[field]: direction}).lean()
 
     const totalCount = await MyModelUserAccount.countDocuments({$and: [filterLogin, filterEmail]})
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 
-    let desc = 1
-    let asc = -1
-    let field = "createdAt"
+    // let desc = 1
+    // let asc = -1
+    // let field = "createdAt"
+    //
+    // if (sortDirection === "asc") {
+    //   desc = -1
+    //   asc = 1
+    // }
+    // if (sortBy === "email" || sortBy === "login" || sortBy === "id") {
+    //   field = sortBy
+    // }
+    //
+    // let usersSort: allUsersReturnArray = []
+    //
+    // function byField(field: string, asc: number, desc: number) {
+    //   return (a: any, b: any) => a.accountData[field] > b.accountData[field] ? asc : desc;
+    // }
+    //
+    // if (users.length !== 0) {
+    //   usersSort = users.sort(byField(field, asc, desc))
+    // }
 
-    if (sortDirection === "asc") {
-      desc = -1
-      asc = 1
-    }
-    if (sortBy === "email" || sortBy === "login" || sortBy === "id") {
-      field = sortBy
-    }
-
-    let usersSort: allUsersReturnArray = []
-
-    function byField(field: string, asc: number, desc: number) {
-      return (a: any, b: any) => a.accountData[field] > b.accountData[field] ? asc : desc;
-    }
-
-    if (users.length !== 0) {
-      usersSort = users.sort(byField(field, asc, desc))
-    }
-
+    // return {
+    //   pagesCount: pagesCount,
+    //   page: pageNumber,
+    //   pageSize: pageSize,
+    //   totalCount: totalCount,
+    //   items: usersSort.map(i => i.accountData)
+    // }
     return {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: usersSort.map(i => i.accountData)
+      items: users
     }
   }
 
