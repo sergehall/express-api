@@ -20,13 +20,13 @@ export class UsersAccountRepository {
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
     let filterLogin = {}
     if (searchLoginTerm) {
-      filterLogin = {"accountData.login": {$regex: searchLoginTerm.toString()}}
+      filterLogin = {"accountData.login": searchLoginTerm}
     }
     let filterEmail = {}
     if (searchEmailTerm) {
       filterEmail = {"accountData.email": {$regex: searchEmailTerm.toString()}}
     }
-
+    console.log(filterLogin)
     const startIndex = (pageNumber - 1) * pageSize
 
     // const users = await MyModelUserAccount.find(
