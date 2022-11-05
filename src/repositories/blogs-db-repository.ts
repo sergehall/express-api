@@ -150,19 +150,20 @@ export class BlogsRepository {
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 
-    let desc = 1
-    let asc = -1
+    let desc = -1
+    let asc = 1
     let field = "addedAt"
 
     if (sortDirection !== "asc") {
-      desc = -1
-      asc = 1
+      desc = 1
+      asc = -1
     }
 
     if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
       field = sortBy
     }
     console.log(field, "field sortBy out ---------")
+    console.log(sortDirection, "sortDirection out ---------")
 
     // sort array posts
     function byField(field: string, asc: number, desc: number) {
