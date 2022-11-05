@@ -3,6 +3,7 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
 import {MongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
 import {MyModelBlogPosts} from "../mongoose/PostsBlogSchemaModel";
+import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 
 
 export class BlogsRepository {
@@ -132,7 +133,11 @@ export class BlogsRepository {
     const filter = {blogId: blogId}
     console.log(sortDirection, "sortDirection in ---------" )
     console.log(sortBy, "sortBy field in ---------" )
+    console.log(filter, "filter", `${"blogId:" + blogId}` )
     const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
+    const foundPostsBlog2 = await MyModelPosts.findOne(filter)
+    console.log(foundPostsBlog, "foundPostsBlog" )
+    console.log(foundPostsBlog2, "foundPostsBlog" )
     if (!foundPostsBlog) {
       return null
     }
