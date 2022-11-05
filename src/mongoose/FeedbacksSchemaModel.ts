@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {FeedbacksType} from "../types/all_types";
+import {FeedbacksTypeModel} from "../types/all_types";
 
 
 const FeedbacksSchema = new mongoose.Schema({
@@ -23,4 +23,4 @@ const FeedbacksSchema = new mongoose.Schema({
   }
 })
 
-export const MyModelFeedbacks = mongoose.model<FeedbacksType>("feedbacks", FeedbacksSchema, 'Feedbacks')
+export const MyModelFeedbacks = mongoose.model<FeedbacksTypeModel>("feedbacks", FeedbacksSchema, 'Feedbacks')

@@ -2,8 +2,7 @@ import {
   ArrayErrorsType,
   BloggerType,
   ErrorType,
-  ReturnTypeObjectBloggers,
-  Pagination
+  Pagination, ReturnObjectBloggerType
 } from "../types/all_types";
 import {mongoHasNotUpdated, notFoundBloggerId} from "../middlewares/errorsMessages";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
@@ -34,7 +33,7 @@ export class BloggersRepository {
     };
   }
 
-  async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
+  async createNewBlogger(name: string, youtubeUrl: string): Promise<ReturnObjectBloggerType> {
     const errorsArray: ArrayErrorsType = [];
 
     const newBlogId = (+new Date()).toString()
@@ -61,7 +60,7 @@ export class BloggersRepository {
     }
   }
 
-  async getBloggerById(id: string): Promise<ReturnTypeObjectBloggers> {
+  async getBloggerById(id: string): Promise<ReturnObjectBloggerType> {
     const errorsArray: ArrayErrorsType = [];
     const blogger: BloggerType | null = await MyModelBloggers.findOne({id: id}, {
       _id: false,
@@ -86,7 +85,7 @@ export class BloggersRepository {
     }
   }
 
-  async updateBloggerById(id: string, name: string, youtubeUrl: string): Promise<ReturnTypeObjectBloggers> {
+  async updateBloggerById(id: string, name: string, youtubeUrl: string): Promise<ReturnObjectBloggerType> {
     let errorsArray: Array<ErrorType> = [];
     const data = {
       id: id,

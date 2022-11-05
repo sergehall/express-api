@@ -1,7 +1,6 @@
 import {CommentsRepository} from "../repositories/comments-db-repository";
 import {
-  ReturnTypeObjectComment,
-  UserAccountDBType,
+  ReturnTypeObjectComment, UserAccountType
 } from "../types/all_types";
 
 
@@ -13,7 +12,7 @@ export class CommentsService {
     return await this.commentsRepository.findCommentInDB(filter)
   }
 
-  async getCommentById(commentId: string, currentUser: UserAccountDBType | null): Promise<ReturnTypeObjectComment>{
+  async getCommentById(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment>{
     return await this.commentsRepository.getCommentById(commentId, currentUser)
   }
 
@@ -25,7 +24,7 @@ export class CommentsService {
     return await this.commentsRepository.deletedCommentById(commentId)
   }
 
-  async changeLikeStatusComment(user: UserAccountDBType, commentId: string, likeStatus: string) {
+  async changeLikeStatusComment(user: UserAccountType, commentId: string, likeStatus: string) {
     return await this.commentsRepository.changeLikeStatusComment(user, commentId, likeStatus)
   }
 

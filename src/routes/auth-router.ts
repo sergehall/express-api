@@ -2,14 +2,11 @@ import {Router, Request, Response} from "express";
 import {ioc} from "../IoCContainer";
 import requestIp from 'request-ip';
 import {
-  bodyCode,
-  bodyEmail,
-  bodyLogin,
-  bodyLoginUsersAccount,
-  bodyNewPassword,
-  bodyPassword,
-  bodyPasswordUsersAccount,
-  inputValidatorMiddleware, recoveryCode
+  confirmationCodeValidation,
+  emailValidation,
+  inputValidatorMiddleware,
+  loginValidation, newPasswordValidation,
+  passwordValidation, recoveryCodeValidation
 } from "../middlewares/input-validator-middleware";
 import {PayloadType} from "../types/all_types";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
@@ -18,8 +15,8 @@ import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 export const authRouter = Router({})
 
 authRouter.post('/login',
-  bodyLoginUsersAccount,
-  bodyPasswordUsersAccount,
+  loginValidation,
+  passwordValidation,
   inputValidatorMiddleware,
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpLog,
   ioc.auth.checkCredentialsLoginPass,
@@ -57,7 +54,7 @@ authRouter.post('/login',
 
 authRouter.post('/password-recovery',
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
-  bodyEmail, inputValidatorMiddleware,
+  emailValidation, inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const email = req.body.email
     const user = await ioc.usersAccountService.findUserByLoginOrEmail(email)
@@ -73,8 +70,8 @@ authRouter.post('/password-recovery',
 
 authRouter.post('/new-password',
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpNewPasswordReq,
-  bodyNewPassword,
-  recoveryCode,
+  newPasswordValidation,
+  recoveryCodeValidation,
   inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const newPassword = req.body.newPassword
@@ -137,7 +134,7 @@ authRouter.post('/refresh-token',
 
 authRouter.post('/registration-confirmation',
   ioc.auth.checkIpInBlackList,
-  bodyCode, inputValidatorMiddleware,
+  confirmationCodeValidation, inputValidatorMiddleware,
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegConf,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
@@ -165,7 +162,7 @@ authRouter.post('/registration-confirmation',
 authRouter.post('/registration',
   ioc.auth.checkIpInBlackList,
   ioc.auth.checkoutContentType,
-  bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
+  loginValidation, passwordValidation, emailValidation, inputValidatorMiddleware,
   ioc.auth.checkUserAccountNotExists,
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpReg,
   async (req: Request, res: Response) => {
@@ -192,7 +189,7 @@ authRouter.post('/registration',
   });
 
 authRouter.post('/registration-email-resending',
-  bodyEmail, inputValidatorMiddleware,
+  emailValidation, inputValidatorMiddleware,
   ioc.checkHowManyTimesUserLoginLast10sec.withSameIpRegEmailRes,
   async (req: Request, res: Response) => {
     const email: string = req.body.email

@@ -6,8 +6,7 @@ import {
   inputValidatorMiddleware,
   nameValidation,
   shortDescriptionValidation,
-  titleValidation,
-  validatorUrl,
+  titleValidation, urlValidation
 } from "../middlewares/input-validator-middleware";
 
 
@@ -19,14 +18,14 @@ bloggersRouts.get('/',
   ioc.bloggersController.getAllBloggers.bind(ioc.bloggersController))
 
   .post('/', ioc.auth.basicAuthorization,
-    nameValidation, validatorUrl, inputValidatorMiddleware,
+    nameValidation, urlValidation, inputValidatorMiddleware,
     ioc.bloggersController.createNewBlogger.bind(ioc.bloggersController))
 
   .get('/:bloggerId', bloggerIdParamsValidation, inputValidatorMiddleware,
     ioc.bloggersController.getBloggerById.bind(ioc.bloggersController))
 
   .put('/:bloggerId', ioc.auth.basicAuthorization,
-    bloggerIdParamsValidation, nameValidation, validatorUrl, inputValidatorMiddleware,
+    bloggerIdParamsValidation, nameValidation, urlValidation, inputValidatorMiddleware,
     ioc.bloggersController.updateBloggerById.bind(ioc.bloggersController))
 
   .delete('/', ioc.auth.basicAuthorization,

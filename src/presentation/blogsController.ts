@@ -2,7 +2,7 @@ import {BlogsService} from "../domain/blogs-service";
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
 import {PostsService} from "../domain/posts-service";
-import {UserAccountDBType} from "../types/all_types";
+import {UserAccountType} from "../types/all_types";
 
 
 export class BlogsController {
@@ -60,7 +60,7 @@ export class BlogsController {
 
   async findAllPostsByBlogId(req: Request, res: Response) {
     const blogId: string = req.params.blogId
-    const currentUser: UserAccountDBType | null = req.user
+    const currentUser: UserAccountType | null = req.user
     const parseQueryData = await ioc.parseQuery.parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize

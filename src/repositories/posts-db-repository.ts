@@ -7,14 +7,10 @@ import {
 import uuid4 from "uuid4";
 import {
   ArrayErrorsType,
-  CommentViewModel,
   LastTreeLikes,
   Pagination,
-  PaginatorCommentViewModel,
-  PostsType,
-  ReturnTypeObjectComment,
-  ReturnTypeObjectPosts,
-  UserAccountDBType,
+  PostsType, ReturnObjectPostsType,
+  ReturnTypeObjectComment, UserAccountType
 } from "../types/all_types";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
@@ -28,7 +24,7 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 export class PostsRepository {
 
-  async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserAccountDBType | null): Promise<Pagination> {
+  async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserAccountType | null): Promise<Pagination> {
     const direction = sortDirection === "desc" ? 1 : -1;
 
     let field = "createdAt"
@@ -62,7 +58,7 @@ export class PostsRepository {
     };
   }
 
-  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountDBType | null): Promise<Pagination> {
+  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountType | null): Promise<Pagination> {
     let filter = {}
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
@@ -90,7 +86,7 @@ export class PostsRepository {
     };
   }
 
-  async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectPosts> {
+  async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjectPostsType> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
     const createdAt = new Date().toISOString()
@@ -162,13 +158,13 @@ export class PostsRepository {
     }
   }
 
-  async createNewCommentByPostId(postId: string, content: string, user: UserAccountDBType): Promise<ReturnTypeObjectComment> {
+  async createNewCommentByPostId(postId: string, content: string, user: UserAccountType): Promise<ReturnTypeObjectComment> {
     try {
       let errorsArray: ArrayErrorsType = [];
       const newCommentId = uuid4().toString()
       const createdAt = new Date().toISOString()
 
-      const newComment: CommentViewModel = {
+      const newComment = {
         id: newCommentId,
         content: content,
         userId: user.accountData.id,
@@ -214,7 +210,7 @@ export class PostsRepository {
     }
   }
 
-  async getPostById(id: string, user: UserAccountDBType | null): Promise<PostsType | null> {
+  async getPostById(id: string, user: UserAccountType | null): Promise<PostsType | null> {
     const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
       _id: false,
       __v: false
@@ -230,7 +226,7 @@ export class PostsRepository {
     return post
   }
 
-  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserAccountDBType | null): Promise<PaginatorCommentViewModel> {
+  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserAccountType | null): Promise<Pagination> {
     const filter = {postId: postId}
 
     let foundPost = await MyModelPosts.findOne({id: postId}).lean()
@@ -294,7 +290,7 @@ export class PostsRepository {
     };
   }
 
-  async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectPosts> {
+  async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjectPostsType> {
     const searchPost = await MyModelPosts.findOne({id: id}, {
       _id: false,
       __v: false,
@@ -394,7 +390,7 @@ export class PostsRepository {
     return result.acknowledged
   }
 
-  async changeLikeStatusPost(user: UserAccountDBType, postId: string, likeStatus: string): Promise<Boolean> {
+  async changeLikeStatusPost(user: UserAccountType, postId: string, likeStatus: string): Promise<Boolean> {
     const userId = user.accountData.id
     const createdAt = new Date().toISOString()
 

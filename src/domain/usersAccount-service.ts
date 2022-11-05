@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import {Pagination, UserAccountDBType} from "../types/all_types";
+import {Pagination, UserAccountType} from "../types/all_types";
 import {UsersAccountRepository} from "../repositories/usersAccount-db-repository";
 import uuid4 from "uuid4";
 import add from "date-fns/add";
@@ -15,12 +15,12 @@ export class UsersAccountService {
     return await this.usersAccountRepository.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
   }
 
-  async createUser(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
+  async createUser(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountType | null> {
     const newId = uuid4().toString();
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
 
-    const newUser: UserAccountDBType = {
+    const newUser: UserAccountType = {
       accountData: {
         id: newId,
         login,
@@ -47,22 +47,22 @@ export class UsersAccountService {
     return await this.usersAccountRepository.createUserAccount(newUser)
   }
 
-  async createNewPassword(newPassword: string, user: UserAccountDBType) {
+  async createNewPassword(newPassword: string, user: UserAccountType) {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(newPassword, passwordSalt)
 
-    const newUser: UserAccountDBType = JSON.parse(JSON.stringify(user))
+    const newUser: UserAccountType = JSON.parse(JSON.stringify(user))
     newUser.accountData.passwordSalt = passwordSalt
     newUser.accountData.passwordHash = passwordHash
 
     return await this.usersAccountRepository.createUserAccount(newUser)
   }
 
-  async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountDBType | null> {
+  async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountType | null> {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
 
-    const newUser: UserAccountDBType = {
+    const newUser: UserAccountType = {
       accountData: {
         id: uuid4().toString(),
         login: login,
@@ -115,7 +115,7 @@ export class UsersAccountService {
     return await bcrypt.hash(password, salt)
   }
 
-  async confirmByEmail(code: string, email: string): Promise<UserAccountDBType | null> {
+  async confirmByEmail(code: string, email: string): Promise<UserAccountType | null> {
     const user = await this.usersAccountRepository.getUserAccountByEmailCode(code, email)
     if (user) {
       if (!user.emailConfirmation.isConfirmed) {
@@ -132,7 +132,7 @@ export class UsersAccountService {
     return null
   }
 
-  async confirmByCodeInParams(code: string): Promise<UserAccountDBType | null> {
+  async confirmByCodeInParams(code: string): Promise<UserAccountType | null> {
 
     const user = await this.usersAccountRepository.getUserAccountByCode(code)
     if (user) {
@@ -147,15 +147,15 @@ export class UsersAccountService {
     return null
   }
 
-  async findByLoginAndEmail(email: string, login: string): Promise<UserAccountDBType | null> {
+  async findByLoginAndEmail(email: string, login: string): Promise<UserAccountType | null> {
     return await this.usersAccountRepository.findByLoginAndEmail(email, login)
   }
 
-  async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
+  async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountType | null> {
     return await this.usersAccountRepository.findUserByLoginOrEmail(loginOrEmail)
   }
 
-  async findByConfirmationCode(code: string): Promise<UserAccountDBType | null> {
+  async findByConfirmationCode(code: string): Promise<UserAccountType | null> {
     return await this.usersAccountRepository.findByConfirmationCode(code)
   }
 
@@ -167,11 +167,11 @@ export class UsersAccountService {
     return await this.usersAccountRepository.findByIsConfirmedAndCreatedAt()
   }
 
-  async findUserByUserId(userId: string): Promise<UserAccountDBType | null> {
+  async findUserByUserId(userId: string): Promise<UserAccountType | null> {
     return await this.usersAccountRepository.findUserByUserId(userId)
   }
 
-  async sentRecoveryCodeByEmailUserExist(user: UserAccountDBType) {
+  async sentRecoveryCodeByEmailUserExist(user: UserAccountType) {
 
     await ioc.emailsToSentRepository.insertEmailToRecoveryCodesDB({
       email: user.accountData.email,

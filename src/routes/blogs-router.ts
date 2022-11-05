@@ -1,11 +1,12 @@
 import {Router} from "express";
 import {ioc} from "../IoCContainer";
 import {
-  blogIdParamsValidation,
-  contentBlogValidation, idParamsValidation,
+  blogIdParamsValidation, contentValidation,
+  idParamsValidation,
   inputValidatorMiddleware,
-  nameBlogValidation, shortDescriptionBlogValidation, titleBlogValidation,
-  youtubeUrlBlogValidation
+  nameValidation,
+  shortDescriptionValidation,
+  titleValidation, urlValidation
 } from "../middlewares/input-validator-middleware";
 
 
@@ -27,24 +28,24 @@ blogsRouts.get('/',
 
   .post('/',
     ioc.auth.basicAuthorization,
-    nameBlogValidation,
-    youtubeUrlBlogValidation,
+    nameValidation,
+    urlValidation,
     inputValidatorMiddleware,
     ioc.blogsController.createNewBlog.bind(ioc.blogsController))
 
   .post('/:blogId/posts',
     ioc.auth.basicAuthorization,
-    titleBlogValidation,
-    shortDescriptionBlogValidation,
-    contentBlogValidation,
+    titleValidation,
+    shortDescriptionValidation,
+    contentValidation,
     blogIdParamsValidation,
     inputValidatorMiddleware,
     ioc.blogsController.createNewPostByBlogId.bind(ioc.blogsController))
 
   .put('/:id',
     ioc.auth.basicAuthorization,
-    nameBlogValidation,
-    youtubeUrlBlogValidation,
+    nameValidation,
+    urlValidation,
     idParamsValidation,
     inputValidatorMiddleware,
     ioc.blogsController.updatedBlogById.bind(ioc.blogsController))

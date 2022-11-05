@@ -1,4 +1,4 @@
-import {ArrayErrorsType, FeedbackDBType, ReturnTypeObjectFeedback} from "../types/all_types";
+import {ArrayErrorsType, FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/all_types";
 import {MyModelFeedbacks} from "../mongoose/FeedbacksSchemaModel";
 import uuid4 from "uuid4";
 import {mongoHasNotUpdated} from "../middlewares/errorsMessages";
@@ -19,7 +19,7 @@ export class FeedbacksRepository{
 
     } else {
       const newFeedback = {commentId: uuid4().toString(), comment: comment}
-      const updateFeedback: FeedbackDBType = await MyModelFeedbacks.findOneAndUpdate(
+      const updateFeedback: FeedbacksTypeModel = await MyModelFeedbacks.findOneAndUpdate(
         {id: userId},
         {$push: {allFeedbacks: newFeedback}},
         {upsert: true, returnDocument: "after", projection: {_id: false, __v: false, "allFeedbacks._id": false}})
@@ -38,7 +38,7 @@ export class FeedbacksRepository{
       }
     }
   }
-  async getAllFeedbacks(): Promise<FeedbackDBType[]> {
+  async getAllFeedbacks(): Promise<FeedbacksTypeModel> {
     return await MyModelFeedbacks.find(
       {},
       {_id: false, __v: false, "allFeedbacks._id": false}).lean()

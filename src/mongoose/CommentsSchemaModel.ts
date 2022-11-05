@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {CommentsType} from "../types/all_types";
+import {CommentsTypeModel} from "../types/all_types";
 
 
 const CommentsSchema = new mongoose.Schema({
@@ -48,4 +48,4 @@ const CommentsSchema = new mongoose.Schema({
   }
 })
 
-export const MyModelComments = mongoose.model<CommentsType>("comments", CommentsSchema, 'Comments')
+export const MyModelComments = mongoose.model<CommentsTypeModel>("comments", CommentsSchema, 'Comments')

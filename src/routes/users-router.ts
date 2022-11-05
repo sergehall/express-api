@@ -1,11 +1,8 @@
 import {Router} from "express";
 import {ioc} from "../IoCContainer";
 import {
-  bodyLogin,
-  bodyPassword,
-  bodyEmail,
   inputValidatorMiddleware,
-  userIdParamsValidation
+  userIdParamsValidation, loginValidation, passwordValidation, emailValidation
 } from "../middlewares/input-validator-middleware";
 
 
@@ -15,7 +12,7 @@ usersRouter.get('/',
   ioc.usersAccountController.getUsers.bind(ioc.usersAccountController))
 
   .post('/', ioc.auth.basicAuthorization,
-    bodyLogin, bodyPassword, bodyEmail, inputValidatorMiddleware,
+    loginValidation, passwordValidation, emailValidation, inputValidatorMiddleware,
     ioc.usersAccountController.createNewUser.bind(ioc.usersAccountController))
 
   .delete('/:userId', ioc.auth.basicAuthorization,

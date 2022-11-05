@@ -1,13 +1,12 @@
 import {
-  ArrayCommentsExtLikesInfo,
-  UserAccountDBType
+  ArrayCommentsExtLikesInfo, UserAccountType
 } from "../types/all_types";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 
 
 export class PreparationComments {
 
-  async preparationCommentsForReturn(commentsArray: ArrayCommentsExtLikesInfo, currentUser: UserAccountDBType | null) {
+  async preparationCommentsForReturn(commentsArray: ArrayCommentsExtLikesInfo, currentUser: UserAccountType | null) {
     const filledCommentsArray = []
     for (let i in commentsArray) {
       const comment = commentsArray[i]

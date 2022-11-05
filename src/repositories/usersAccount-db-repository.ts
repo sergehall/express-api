@@ -1,13 +1,12 @@
 import {
-  Pagination,
-  UserAccountDBType,
+  Pagination, UserAccountType
 } from "../types/all_types";
 import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 
 
 export class UsersAccountRepository {
 
-  async createUserAccount(user: UserAccountDBType): Promise<UserAccountDBType | null> {
+  async createUserAccount(user: UserAccountType): Promise<UserAccountType | null> {
     try {
       await MyModelUserAccount.create(user)
       return user
@@ -69,15 +68,15 @@ export class UsersAccountRepository {
     }
   }
 
-  async findByLoginAndEmail(email: string, login: string): Promise<UserAccountDBType | null> {
+  async findByLoginAndEmail(email: string, login: string): Promise<UserAccountType | null> {
     return await MyModelUserAccount.findOne({$and: [{"accountData.email": email}, {"accountData.login": login}]})
   }
 
-  async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDBType | null> {
+  async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountType | null> {
     return await MyModelUserAccount.findOne({$or: [{"accountData.login": loginOrEmail}, {"accountData.email": loginOrEmail}]})
   }
 
-  async findByConfirmationCode(code: string,): Promise<UserAccountDBType | null> {
+  async findByConfirmationCode(code: string,): Promise<UserAccountType | null> {
     return await MyModelUserAccount.findOne({
       "emailConfirmation.confirmationCode": code,
       "emailConfirmation.isConfirmed": false,
@@ -85,14 +84,14 @@ export class UsersAccountRepository {
     })
   }
 
-  async getUserAccountByEmailCode(code: string, email: string): Promise<UserAccountDBType | null> {
+  async getUserAccountByEmailCode(code: string, email: string): Promise<UserAccountType | null> {
     return await MyModelUserAccount.findOne({
       "emailConfirmation.confirmationCode": code,
       "accountData.email": email
     })
   }
 
-  async getUserAccountByCode(code: string): Promise<UserAccountDBType | null> {
+  async getUserAccountByCode(code: string): Promise<UserAccountType | null> {
     return await MyModelUserAccount.findOne({"emailConfirmation.confirmationCode": code})
   }
 
@@ -103,15 +102,15 @@ export class UsersAccountRepository {
     })
   }
 
-  async updateUserAccount(user: UserAccountDBType) {
+  async updateUserAccount(user: UserAccountType) {
     return await MyModelUserAccount.updateOne({"accountData.id": user.accountData.id}, {$set: user})
   }
 
-  async updateUserAccountConfirmationCode(user: UserAccountDBType) {
+  async updateUserAccountConfirmationCode(user: UserAccountType) {
     return await MyModelUserAccount.findOneAndUpdate({"accountData.email": user.accountData.email}, {$set: user})
   }
 
-  async deleteSendTimeOlderMinute(user: UserAccountDBType): Promise<number> {
+  async deleteSendTimeOlderMinute(user: UserAccountType): Promise<number> {
     // redo it so that it does not delete the entire user
     const result = await MyModelUserAccount.deleteMany({
       "accountData.id": user.accountData.id,
@@ -137,7 +136,7 @@ export class UsersAccountRepository {
     return result.deletedCount
   }
 
-  async findUserByUserId(userId: string): Promise<UserAccountDBType | null> {
+  async findUserByUserId(userId: string): Promise<UserAccountType | null> {
     return await MyModelUserAccount.findOne({"accountData.id": userId})
   }
 }

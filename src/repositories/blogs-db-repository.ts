@@ -1,9 +1,6 @@
 import {
-  ArrayErrorsType,
-  Pagination,
-  ReturnTypeObjectBlog,
-  TypeBlog,
-  UserAccountDBType
+  ArrayErrorsType, BlogsType,
+  Pagination, ReturnObjectBlogType, UserAccountType
 } from "../types/all_types";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
@@ -64,7 +61,7 @@ export class BlogsRepository {
     }
   }
 
-  async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string, currentUser: UserAccountDBType | null): Promise<Pagination | null> {
+  async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string, currentUser: UserAccountType | null): Promise<Pagination | null> {
     const filterBlogId = {blogId: blogId}
 
     const direction = sortDirection === "desc" ? 1 : -1;
@@ -102,7 +99,7 @@ export class BlogsRepository {
     };
   }
 
-  async findBlogById(id: string): Promise<TypeBlog | null> {
+  async findBlogById(id: string): Promise<BlogsType | null> {
     const foundBlog = await MyModelBlogs.findOne({id: id}, {
       _id: false,
       __v: false,
@@ -114,7 +111,7 @@ export class BlogsRepository {
     return foundBlog
   }
 
-  async updatedBlogById(name: string, youtubeUrl: string, id: string): Promise<ReturnTypeObjectBlog> {
+  async updatedBlogById(name: string, youtubeUrl: string, id: string): Promise<ReturnObjectBlogType> {
     const errorsArray: ArrayErrorsType = [];
     const createdAt = new Date().toISOString()
 
