@@ -132,7 +132,7 @@ export class BlogsRepository {
     if (!sortDirection || sortDirection !== "asc") {
       sortDirection = "desc"
     }
-    const direction = sortDirection === "desc" ? 1 : -1;
+    const direction = sortDirection === "desc" ? -1 : 1;
 
     let field = "createdAt"
     if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogName" || sortBy === "content" || sortBy === "blogName") {

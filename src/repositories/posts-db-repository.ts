@@ -33,12 +33,13 @@ export class PostsRepository {
     if (!sortDirection || sortDirection !== "asc") {
       sortDirection = "desc"
     }
-    const direction = sortDirection === "desc" ? 1: -1;
+    const direction = sortDirection === "desc" ? -1: 1;
 
     let field = "createdAt"
     if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogId" || sortBy === "blogName" ||  sortBy === "content" || sortBy === "blogName") {
       field = sortBy
     }
+    console.log({[field]: direction})
 
     const startIndex = (pageNumber - 1) * pageSize
     const findAllPosts = await MyModelPosts.find(
