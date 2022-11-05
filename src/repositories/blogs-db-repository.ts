@@ -152,7 +152,7 @@ export class BlogsRepository {
 
     let desc = -1
     let asc = 1
-    let field = "addedAt"
+    let field = "createdAt"
 
     if (sortDirection !== "asc") {
       desc = 1
