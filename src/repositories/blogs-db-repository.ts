@@ -2,7 +2,6 @@ import {ArrayErrorsType, Pagination, ReturnTypeObjectBlog, TypeBlog} from "../ty
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
 import {MongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
-import {MyModelBlogPosts} from "../mongoose/PostsBlogSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 
 
@@ -131,17 +130,22 @@ export class BlogsRepository {
 
   async findAllPostsByBlog(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string): Promise<Pagination | null> {
     const filter = {blogId: blogId}
-    console.log(sortDirection, "sortDirection in ---------" )
-    console.log(sortBy, "sortBy field in ---------" )
-    console.log(filter, "filter", `${"blogId:" + blogId}` )
+    console.log(sortDirection, "sortDirection in ---------")
+    console.log(sortBy, "sortBy field in ---------")
+    console.log(filter, "filter", `${"blogId:" + blogId}`)
     // const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
-    const foundPostsBlog = await MyModelPosts.find(filter).lean()
-    console.log(foundPostsBlog, "foundPostsBlog" )
-    if (!foundPostsBlog) {
+    const findPostsByBlogId = await MyModelPosts.find(
+      filter,
+      {
+        _id: false,
+        __v: false
+      }).lean()
+    console.log(findPostsByBlogId, "foundPostsBlog")
+    if (!findPostsByBlogId) {
       return null
     }
 
-    let totalCount = foundPostsBlog.length
+    let totalCount = findPostsByBlogId.length
     console.log(totalCount, "totalCount")
 
     const pagesCount = Math.ceil(totalCount / pageSize)
@@ -158,25 +162,26 @@ export class BlogsRepository {
     if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
       field = sortBy
     }
-    console.log(field, "field out ---------" )
-    console.log(sortBy, "sortBy field out ---------" )
+    console.log(field, "field sortBy out ---------")
 
     // sort array posts
     function byField(field: string, asc: number, desc: number) {
       return (a: any, b: any) => a[field] > b[field] ? asc : desc;
     }
 
-    let posts = await MyModelBlogPosts.findOne(filter, {
-      _id: false
-    })
-      .then(posts => posts?.allPosts.sort(byField(field, asc, desc)))
+    // let posts = await MyModelBlogPosts.findOne(filter, {
+    //   _id: false
+    // })
+    //   .then(posts => posts?.allPosts.sort(byField(field, asc, desc)))
 
-    if (!posts) {
-      posts = []
-    }
+    const sortPosts = findPostsByBlogId.sort(byField(field, asc, desc))
+
+    // if (!sortPosts) {
+    //   sortPosts = []
+    // }
 
     let startIndex = (pageNumber - 1) * pageSize
-    const postsSlice = posts.slice(startIndex, startIndex + pageSize)
+    const postsSlice = sortPosts.slice(startIndex, startIndex + pageSize)
 
     return {
       pagesCount: pagesCount,
