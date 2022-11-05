@@ -62,13 +62,15 @@ export class PostsRepository {
     };
   }
 
-  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountDBType | null): Promise<Pagination> {
+  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountDBType | null): Promise<Pagination> {
     let filter = {}
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const result = await MyModelPosts.find(filter, {
+    const result = await MyModelPosts.find(
+      filter,
+      {
       _id: false,
       __v: false
     }).limit(pageSize).skip(startIndex).lean()

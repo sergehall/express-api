@@ -15,8 +15,8 @@ export class PostsService {
   async findPosts(pageNumber: number, pageSize: number, sortBy: string| null, sortDirection: string| null, currentUser: UserAccountDBType | null): Promise<Pagination>{
     return await this.postsRepository.findPosts(pageNumber, pageSize, sortBy, sortDirection, currentUser)
   }
-  async findPostsByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountDBType | null): Promise<Pagination>{
-    return await this.postsRepository.findPostsByBloggerId(bloggerId, pageNumber, pageSize, user)
+  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountDBType | null): Promise<Pagination>{
+    return await this.postsRepository.findAllPostByBloggerId(bloggerId, pageNumber, pageSize, user)
   }
 
   async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnTypeObjectPosts> {

@@ -24,7 +24,7 @@ export class BloggersController {
     res.send(foundBloggers)
   }
 
-  async getAllPostByBloggerId(req: Request, res: Response) {
+  async findAllPostByBloggerId(req: Request, res: Response) {
     const id: string = req.params.bloggerId;
     const foundBlogger = await this.bloggersService.getBloggerById(id);
     const user: UserAccountDBType | null = req.user
@@ -34,7 +34,7 @@ export class BloggersController {
       const pageNumber: number = parseQueryData.pageNumber
       const pageSize: number = parseQueryData.pageSize
 
-      const foundPosts = await this.postsService.findPostsByBloggerId(id, pageNumber, pageSize, user);
+      const foundPosts = await this.postsService.findAllPostByBloggerId(id, pageNumber, pageSize, user);
       res.send(foundPosts)
     } else {
       res.status(404)

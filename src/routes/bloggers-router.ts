@@ -38,7 +38,7 @@ bloggersRouts.get('/',
 
   .get('/:bloggerId/posts',   ioc.auth.noneStatusRefreshToken,
     bloggerIdParamsValidation, inputValidatorMiddleware,
-    ioc.bloggersController.getAllPostByBloggerId.bind(ioc.bloggersController))
+    ioc.bloggersController.findAllPostByBloggerId.bind(ioc.bloggersController))
 
   .post('/:bloggerId/posts', ioc.auth.basicAuthorization,
     bloggerIdParamsValidation, titleValidation, shortDescriptionValidation,
