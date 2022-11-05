@@ -134,25 +134,25 @@ export class BlogsRepository {
     console.log(sortDirection, "sortDirection in ---------" )
     console.log(sortBy, "sortBy field in ---------" )
     console.log(filter, "filter", `${"blogId:" + blogId}` )
-    const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
-    const foundPostsBlog2 = await MyModelPosts.findOne(filter)
+    // const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
+    const foundPostsBlog = await MyModelPosts.find(filter).lean()
     console.log(foundPostsBlog, "foundPostsBlog" )
-    console.log(foundPostsBlog2, "foundPostsBlog" )
     if (!foundPostsBlog) {
       return null
     }
 
-    let totalCount = foundPostsBlog.allPosts.length
+    let totalCount = foundPostsBlog.length
+    console.log(totalCount, "totalCount")
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 
-    let desc = -1
-    let asc = 1
+    let desc = 1
+    let asc = -1
     let field = "addedAt"
 
     if (sortDirection !== "asc") {
-      desc = 1
-      asc = -1
+      desc = -1
+      asc = 1
     }
 
     if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
