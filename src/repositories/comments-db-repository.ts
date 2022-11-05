@@ -101,16 +101,9 @@ export class CommentsRepository {
     const userId = user.accountData.id
     const createdAt = new Date().toISOString()
 
-    const newLikeStatus = {
-      commentId: commentId,
-      userId: userId,
-      likeStatus: likeStatus,
-      createdAt: createdAt,
-    }
     try {
-      const filterToUpdate = {"allComments.id": commentId}
       const result = await MyModelComments.findOneAndUpdate(
-        filterToUpdate,
+        {"allComments.id": commentId},
         {$set: {"allComments.likeStatus": likeStatus}},
         {upsert: true})
       if (!result) {
@@ -120,10 +113,17 @@ export class CommentsRepository {
       const currentLikeStatus = await MyModelLikeStatusCommentId.findOneAndUpdate(
         {
           $and:
-            [{commentId: commentId},
-              {userId: userId}]
-        },
-        {$set: newLikeStatus},
+            [
+              {commentId: commentId},
+              {userId: userId}
+            ]},
+        {
+          $set: {
+            commentId: commentId,
+            userId: userId,
+            likeStatus: likeStatus,
+            createdAt: createdAt,
+          }},
         {upsert: true})
 
       return true
