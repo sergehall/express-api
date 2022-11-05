@@ -132,26 +132,21 @@ export class BlogsRepository {
     const filter = {blogId: blogId}
 
     const foundPostsBlog = await MyModelBlogPosts.findOne(filter)
-    if (foundPostsBlog === null) {
+    if (!foundPostsBlog) {
       return null
     }
 
-    let totalCount = await MyModelBlogPosts.findOne(filter)
-      .then(posts => posts?.allPosts.length)
-
-    if (!totalCount) {
-      totalCount = 0
-    }
+    let totalCount = foundPostsBlog.allPosts.length
 
     const pagesCount = Math.ceil(totalCount / pageSize)
 
-    let desc = 1
-    let asc = -1
-    let field = "createdAt"
+    let desc = -1
+    let asc = 1
+    let field = "addedAt"
 
     if (sortDirection !== "asc") {
-      desc = -1
-      asc = 1
+      desc = 1
+      asc = -1
     }
 
     if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {

@@ -68,7 +68,7 @@ export class BlogsController {
     const sortDirection: string | null = parseQueryData.sortDirection
 
     const allPostsByBlog = await this.blogsService.getAllPostsByBlog(pageNumber, pageSize, sortBy, sortDirection, blogId)
-    if (allPostsByBlog === null) {
+    if (!allPostsByBlog) {
       return res.sendStatus(404)
     }
     return res.send(allPostsByBlog)
