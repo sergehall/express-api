@@ -39,7 +39,6 @@ export class PostsRepository {
     if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogId" || sortBy === "blogName" ||  sortBy === "content" || sortBy === "blogName") {
       field = sortBy
     }
-    console.log({[field]: direction})
 
     const startIndex = (pageNumber - 1) * pageSize
     const findAllPosts = await MyModelPosts.find(

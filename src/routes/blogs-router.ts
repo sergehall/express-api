@@ -17,7 +17,8 @@ blogsRouts.get('/',
   .get('/:blogId/posts',
     blogIdParamsValidation,
     inputValidatorMiddleware,
-    ioc.blogsController.getAllPostsByBlog.bind(ioc.blogsController))
+    ioc.auth.noneStatusAccessToken,
+    ioc.blogsController.findAllPostsByBlogId.bind(ioc.blogsController))
 
   .get('/:id',
     idParamsValidation,

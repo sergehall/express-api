@@ -1,8 +1,15 @@
-import {ArrayErrorsType, Pagination, ReturnTypeObjectBlog, TypeBlog} from "../types/all_types";
+import {
+  ArrayErrorsType,
+  Pagination,
+  ReturnTypeObjectBlog,
+  TypeBlog,
+  UserAccountDBType
+} from "../types/all_types";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
 import {mongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
+import {ioc} from "../IoCContainer";
 
 
 export class BlogsRepository {
@@ -61,72 +68,7 @@ export class BlogsRepository {
     }
   }
 
-  // async createNewPostByBlogId(title: string, shortDescription: string, content: string, blogId: string) {
-  //   let errorsArray: ArrayErrorsType = [];
-  //
-  //   const filter = {id: blogId}
-  //   const verifyBlogIg = await MyModelBlogs.findOne(filter).lean()
-  //
-  //   if (!verifyBlogIg) {
-  //     errorsArray.push(notFoundBlogId)
-  //     return {
-  //       data: null,
-  //       errorsMessages: errorsArray,
-  //       resultCode: 1
-  //     }
-  //   }
-  //
-  //   const blogName = verifyBlogIg.name
-  //   const createdAt = new Date().toISOString()
-  //   const newPostId = uuid4().toString()
-  //
-  //   const newPostBlog = {
-  //     id: newPostId,
-  //     title: title,
-  //     shortDescription: shortDescription,
-  //     content: content,
-  //     blogId: blogId,
-  //     blogName: blogName,
-  //     createdAt: createdAt,
-  //   }
-  //
-  //   const filterBlogId = {blogId: blogId}
-  //   const foundBlog = await MyModelBlogPosts.findOne(filterBlogId)
-  //   if (!foundBlog) {
-  //     const createNewBlog = await MyModelBlogPosts.create({
-  //       blogId: blogId,
-  //       allPosts: [newPostBlog]
-  //     })
-  //     if (!createNewBlog) {
-  //       errorsArray.push(MongoHasNotUpdated)
-  //     }
-  //   } else {
-  //     const result = await MyModelBlogPosts.updateOne(
-  //       {blogId: blogId},
-  //       {
-  //         $push: {allPosts: newPostBlog}
-  //       })
-  //     if (!result.modifiedCount && !result.matchedCount) {
-  //       errorsArray.push(MongoHasNotUpdated)
-  //     }
-  //   }
-  //
-  //   if (errorsArray.length !== 0) {
-  //     return {
-  //       data: null,
-  //       errorsMessages: errorsArray,
-  //       resultCode: 1
-  //     }
-  //   }
-  //
-  //   return {
-  //     data: newPostBlog,
-  //     errorsMessages: errorsArray,
-  //     resultCode: 0
-  //   }
-  // }
-
-  async findAllPostsByBlog(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string): Promise<Pagination | null> {
+  async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string, currentUser: UserAccountDBType | null): Promise<Pagination | null> {
     const filterBlogId = {blogId: blogId}
 
     if (!sortDirection || sortDirection !== "asc") {
@@ -138,8 +80,10 @@ export class BlogsRepository {
     if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogName" || sortBy === "content" || sortBy === "blogName") {
       field = sortBy
     }
+    console.log({[field]: direction})
+
     const startIndex = (pageNumber - 1) * pageSize
-    const findPostsByBlogId = await MyModelPosts.find(
+    const allPostsByBlogId = await MyModelPosts.find(
       filterBlogId,
       {
         _id: false,
@@ -149,56 +93,20 @@ export class BlogsRepository {
       .skip(startIndex)
       .sort({[field]: direction}).lean()
 
-    if (!findPostsByBlogId) {
+    if (!allPostsByBlogId) {
       return null
     }
-    //
-    // let totalCount = findPostsByBlogId.length
-    // console.log(totalCount, "totalCount")
+    await ioc.preparationPostsForReturn.preparationPostsForReturn(allPostsByBlogId, currentUser)
 
     const totalCount = await MyModelPosts.countDocuments(filterBlogId)
     const pagesCount = Math.ceil(totalCount / pageSize)
-    //
-    // let desc = -1
-    // let asc = 1
-    // let field = "createdAt"
-    //
-    // if (sortDirection !== "asc") {
-    //   desc = 1
-    //   asc = -1
-    // }
-    //
-    // if (sortBy === "blogName" || sortBy === "shortDescription" || sortBy === "title" || sortBy === "content") {
-    //   field = sortBy
-    // }
-    // console.log(field, "field sortBy out ---------")
-    // console.log(sortDirection, "sortDirection out ---------")
-    //
-    // // sort array posts
-    // function byField(field: string, asc: number, desc: number) {
-    //   return (a: any, b: any) => a[field] > b[field] ? asc : desc;
-    // }
-    //
-    // // let posts = await MyModelBlogPosts.findOne(filter, {
-    // //   _id: false
-    // // })
-    // //   .then(posts => posts?.allPosts.sort(byField(field, asc, desc)))
-    //
-    // const sortPosts = findPostsByBlogId.sort(byField(field, asc, desc))
-    //
-    // // if (!sortPosts) {
-    // //   sortPosts = []
-    // // }
-
-    // let startIndex = (pageNumber - 1) * pageSize
-    // const postsSlice = sortPosts.slice(startIndex, startIndex + pageSize)
 
     return {
       pagesCount: pagesCount,
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: findPostsByBlogId
+      items: allPostsByBlogId
     };
   }
 

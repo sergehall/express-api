@@ -2,6 +2,7 @@ import {BlogsService} from "../domain/blogs-service";
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
 import {PostsService} from "../domain/posts-service";
+import {UserAccountDBType} from "../types/all_types";
 
 
 export class BlogsController {
@@ -54,19 +55,19 @@ export class BlogsController {
     if (!newPost.data) {
       return res.status(404).send(newPost.errorsMessages)
     }
-    return  res.status(201).send(newPost.data)
+    return res.status(201).send(newPost.data)
   }
 
-  async getAllPostsByBlog(req: Request, res: Response) {
+  async findAllPostsByBlogId(req: Request, res: Response) {
     const blogId: string = req.params.blogId
-
+    const currentUser: UserAccountDBType | null = req.user
     const parseQueryData = await ioc.parseQuery.parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
     const sortBy: string | null = parseQueryData.sortBy
     const sortDirection: string | null = parseQueryData.sortDirection
 
-    const allPostsByBlog = await this.blogsService.getAllPostsByBlog(pageNumber, pageSize, sortBy, sortDirection, blogId)
+    const allPostsByBlog = await this.blogsService.findAllPostsByBlogId(pageNumber, pageSize, sortBy, sortDirection, blogId, currentUser)
     if (!allPostsByBlog) {
       return res.sendStatus(404)
     }
@@ -114,7 +115,6 @@ export class BlogsController {
       console.log(error)
       return res.sendStatus(500)
     }
-
   }
 
   async deleteBlogById(req: Request, res: Response) {
