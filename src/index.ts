@@ -56,6 +56,7 @@ startApp()
     [ioc.emailSender.sendAndDeleteConfirmationCode(),
       ioc.emailSender.sendAndDeleteRecoveryCode(),
       ioc.clearingIpWithDateOlder11Sec.start(),
-      ioc.clearingExpDateJWT.start()
+      ioc.clearingInvalidJWTFromBlackList.start(),
+      ioc.clearingDevicesWithExpDate.start()
     ])
 

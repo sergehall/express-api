@@ -1,14 +1,23 @@
-import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 import {ioc} from "../IoCContainer";
+import {MyModelBlackListRefreshTokenJWT} from "../mongoose/BlackListRefreshTokenJWTModel";
 
 
-export class ClearingExpDateJWT {
-  // runs every 5 sec
+export class ClearingInvalidJWTFromBlackList {
+  // runs every 5 min
   async start() {
     setTimeout(async () => {
-      await MyModelDevicesSchema.deleteMany({expirationDate: {$lt: new Date().toISOString()}})
-      await ioc.clearingExpDateJWT.start()
-    }, 5000)
+      const arrayJWT = await MyModelBlackListRefreshTokenJWT.find(
+        {})
+        .limit(1000)
+
+      for (let i in arrayJWT) {
+        const verifyJWT = await ioc.jwtService.verifyRefreshJWT(arrayJWT[i].refreshToken)
+        if (!verifyJWT) {
+          await MyModelBlackListRefreshTokenJWT.deleteOne({refreshToken: arrayJWT[i].refreshToken})
+        }
+      }
+      await ioc.clearingInvalidJWTFromBlackList.start()
+    }, 300000)
   }
 }
 

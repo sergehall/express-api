@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {BlackListRefreshTokenJWT} from "../types/types";
+import {RefreshTokenJWTInBlackList} from "../types/types";
 
 
 const BlackListRefreshTokenJWTSchema = new mongoose.Schema({
@@ -10,4 +10,4 @@ const BlackListRefreshTokenJWTSchema = new mongoose.Schema({
   }
 })
 
-export const MyModelBlackListRefreshTokenJWT = mongoose.model<BlackListRefreshTokenJWT>("blackListRefreshToken", BlackListRefreshTokenJWTSchema, "BlackListRefreshTokens")
+export const MyModelBlackListRefreshTokenJWT = mongoose.model<RefreshTokenJWTInBlackList>("blackListRefreshToken", BlackListRefreshTokenJWTSchema, "BlackListRefreshTokens")

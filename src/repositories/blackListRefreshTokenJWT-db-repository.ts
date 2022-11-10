@@ -1,11 +1,11 @@
-import {BlackListRefreshTokenJWT} from "../types/types";
+import {RefreshTokenJWTInBlackList} from "../types/types";
 import {MyModelBlackListRefreshTokenJWT} from "../mongoose/BlackListRefreshTokenJWTModel";
 
 
 export class BlackListRefreshTokenJWTRepository {
 
-  async findByRefreshTokenAndUserId(refreshToken: string): Promise<BlackListRefreshTokenJWT | null> {
-    return await MyModelBlackListRefreshTokenJWT.findOne({"refreshToken": refreshToken})
+  async findByRefreshTokenAndUserId(refreshToken: string): Promise<RefreshTokenJWTInBlackList | null> {
+    return await MyModelBlackListRefreshTokenJWT.findOne({refreshToken: refreshToken})
   }
 
   async addRefreshTokenAndUserId(refreshToken: string) {

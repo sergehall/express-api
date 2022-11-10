@@ -44,7 +44,9 @@ import {JWTService} from "./application/jwt-service";
 import {EmailSender} from "./demons/emailSender";
 import {EmailAdapter} from "./adapters/email-adapter";
 import {ClearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
-import {ClearingExpDateJWT} from "./demons/clearing-expJWT";
+import {ClearingInvalidJWTFromBlackList} from "./demons/clearing-expJWT";
+import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
+
 
 // usersAccount
 const usersAccountRepository = new UsersAccountRepository()
@@ -103,7 +105,8 @@ const emailAdapter = new EmailAdapter()
 // my demons
 const emailSender = new EmailSender()
 const clearingIpWithDateOlder11Sec = new ClearingIpWithDateOlder11Sec()
-const clearingExpDateJWT = new ClearingExpDateJWT()
+const clearingInvalidJWTFromBlackList = new ClearingInvalidJWTFromBlackList()
+const clearingDevicesWithExpDate = new ClearingDevicesWithExpDate()
 
 export const ioc = {
   auth: auth,
@@ -137,5 +140,6 @@ export const ioc = {
   emailSender: emailSender,
   emailAdapter: emailAdapter,
   clearingIpWithDateOlder11Sec: clearingIpWithDateOlder11Sec,
-  clearingExpDateJWT: clearingExpDateJWT
+  clearingInvalidJWTFromBlackList: clearingInvalidJWTFromBlackList,
+  clearingDevicesWithExpDate: clearingDevicesWithExpDate
 }

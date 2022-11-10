@@ -246,7 +246,7 @@ export type BlackListIPType = {
     createdAt: Date
   }[]
 }
-export type BlackListRefreshTokenJWT = {
+export type RefreshTokenJWTInBlackList = {
   refreshToken: string
 }
 export type BlackListIPDBType = {
@@ -255,7 +255,6 @@ export type BlackListIPDBType = {
     createdAt: string
   }[]
 }
-
 
 //...............................................likeStatus
 export type likeStatusCommentIdType = {
