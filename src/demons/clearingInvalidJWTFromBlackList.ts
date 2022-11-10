@@ -23,7 +23,7 @@ export class ClearingInvalidJWTFromBlackList {
       }
       skipCount = countValidJWT
       await ioc.clearingInvalidJWTFromBlackList.start(skipCount)
-    }, 1000)  //60000
+    }, 60000) 
   }
 }
 
