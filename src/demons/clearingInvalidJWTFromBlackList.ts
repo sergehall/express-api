@@ -6,7 +6,7 @@ export class ClearingInvalidJWTFromBlackList {
   // runs every 1 min
   async start() {
     setTimeout(async () => {
-      await MyModelBlackListRefreshTokenJWT.deleteMany({addedAt: {$lt: new Date().toISOString()}})
+      await MyModelBlackListRefreshTokenJWT.deleteMany({expirationDate: {$lt: new Date().toISOString()}})
       await ioc.clearingInvalidJWTFromBlackList.start()
     }, 60000)
   }
