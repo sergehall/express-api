@@ -3,7 +3,7 @@ import {
   SessionDevicesType,
   SessionTypeArray
 } from "../types/types";
-import {DevicesRepository} from "../repositories/securityDevices-db-repository";
+import {DevicesRepository} from "../repositories/devices-db-repository";
 
 
 export class DevicesService {
