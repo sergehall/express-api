@@ -22,15 +22,21 @@ import {UsersAccountController} from "./presentation/userAccountsController";
 import {BlogsRepository} from "./repositories/blogs-db-repository";
 import {BlogsService} from "./domain/blogs-service";
 import {BlogsController} from "./presentation/blogsController";
-import {DevicesRepository} from "./repositories/devices-db-repository";
-import {DevicesService} from "./domain/devices-service";
-import {DevicesController} from "./presentation/deviceController";
+import {
+  SecurityDevicesRepository
+} from "./repositories/securityDevices-db-repository";
+import {SecurityDevicesService} from "./domain/securityDevices-service";
+import {SecurityDevicesController} from "./presentation/deviceController";
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {EmailsToSentRepository} from "./repositories/emailsToSent-db-repository";
 import {UsersIPLast10secRepositories,} from "./repositories/usersIPlast10sec-bd-repository";
-import {BlackListRefreshTokenJWTRepository} from "./repositories/blackListRefreshTokenJWT-db-repository";
+import {
+  BlackListRefreshTokenJWTRepository
+} from "./repositories/blackListRefreshTokenJWT-db-repository";
 import {Auth} from "./middlewares/auth";
-import {CheckHowManyTimesUserLoginLast10sec} from "./middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
+import {
+  CheckHowManyTimesUserLoginLast10sec
+} from "./middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
 import {ParseQuery} from "./middlewares/parse-query";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {PreparationComments} from "./repositories/preparation-comments";
@@ -88,9 +94,9 @@ const preparationPostsForReturn = new PreparationPosts()
 // CommentsExtLikesInfo
 const preparationComments = new PreparationComments()
 // Devices
-const devicesRepository = new DevicesRepository()
-const devicesService = new DevicesService(devicesRepository)
-const devicesController = new DevicesController(devicesService)
+const securityDevicesRepository = new SecurityDevicesRepository()
+const securityDevicesService = new SecurityDevicesService(securityDevicesRepository)
+const securityDevicesController = new SecurityDevicesController(securityDevicesService)
 // JWT Service
 const jwtService = new JWTService()
 // email adapter
@@ -127,8 +133,8 @@ export const ioc = {
   checkHowManyTimesUserLoginLast10sec: checkHowManyTimesUserLoginLast10sec,
   preparationComments: preparationComments,
   parseQuery: parseQuery,
-  devicesService: devicesService,
-  devicesController: devicesController,
+  securityDevicesService: securityDevicesService,
+  securityDevicesController: securityDevicesController,
   jwtService: jwtService,
   emailSender: emailSender,
   emailAdapter: emailAdapter,

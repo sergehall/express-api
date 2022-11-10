@@ -6,7 +6,7 @@ import {
 } from "../types/types";
 
 
-export class DevicesRepository {
+export class SecurityDevicesRepository {
 
   async createOrUpdateDevices(filter: {} , newDevices: SessionDevicesType): Promise<Boolean> {
     try {
