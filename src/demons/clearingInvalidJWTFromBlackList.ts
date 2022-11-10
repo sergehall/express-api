@@ -9,8 +9,8 @@ export class ClearingInvalidJWTFromBlackList {
       let countValidJWT = 0
       const arrayJWT = await MyModelBlackListRefreshTokenJWT.find(
         {})
-        .skip(skipCount)
         .sort({addedAt: 1})
+        .skip(skipCount)
         .limit(1000)
       for (let i in arrayJWT) {
         const verifyJWT = await ioc.jwtService.verifyRefreshJWT(arrayJWT[i].refreshToken)
@@ -23,7 +23,7 @@ export class ClearingInvalidJWTFromBlackList {
       }
       skipCount = countValidJWT
       await ioc.clearingInvalidJWTFromBlackList.start(skipCount)
-    }, 60000)
+    }, 1000)  //60000
   }
 }
 
