@@ -4,5 +4,3 @@
 /.idea/
 /dist/
 globalConfig.json
-src/repositories/users-db-repository.test.ts
-src/domain/users-service.test.ts
