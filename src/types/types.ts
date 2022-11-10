@@ -248,6 +248,7 @@ export type BlackListIPType = {
 }
 export type RefreshTokenJWTInBlackList = {
   refreshToken: string
+  addedAt: string
 }
 export type BlackListIPDBType = {
   ip: string

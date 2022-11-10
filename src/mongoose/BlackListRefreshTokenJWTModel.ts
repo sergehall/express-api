@@ -7,6 +7,10 @@ const BlackListRefreshTokenJWTSchema = new mongoose.Schema({
     type: String,
     required: [true, 'refreshToken is required'],
     unique: true
+  },
+  addedAt: {
+    type: String,
+    required: [true, 'addedAt is required'],
   }
 })
 

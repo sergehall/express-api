@@ -9,7 +9,11 @@ export class BlackListRefreshTokenJWTRepository {
   }
 
   async addRefreshTokenAndUserId(refreshToken: string) {
-    const result = await MyModelBlackListRefreshTokenJWT.create({refreshToken: refreshToken})
+    const result = await MyModelBlackListRefreshTokenJWT.create(
+      {
+        refreshToken: refreshToken,
+        addedAt: new Date().toISOString()
+      })
     return result.refreshToken
   }
 }

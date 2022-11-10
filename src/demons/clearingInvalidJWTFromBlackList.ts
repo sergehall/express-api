@@ -3,21 +3,27 @@ import {MyModelBlackListRefreshTokenJWT} from "../mongoose/BlackListRefreshToken
 
 
 export class ClearingInvalidJWTFromBlackList {
-  // runs every 5 min
-  async start() {
+  // runs every 1 min
+  async start(skipCount=0) {
     setTimeout(async () => {
+      let countValidJWT = 0
       const arrayJWT = await MyModelBlackListRefreshTokenJWT.find(
         {})
+        .skip(skipCount)
+        .sort({addedAt: 1})
         .limit(1000)
-
       for (let i in arrayJWT) {
         const verifyJWT = await ioc.jwtService.verifyRefreshJWT(arrayJWT[i].refreshToken)
         if (!verifyJWT) {
           await MyModelBlackListRefreshTokenJWT.deleteOne({refreshToken: arrayJWT[i].refreshToken})
         }
+        if (verifyJWT) {
+          countValidJWT += 1
+        }
       }
-      await ioc.clearingInvalidJWTFromBlackList.start()
-    }, 300000)
+      skipCount = countValidJWT
+      await ioc.clearingInvalidJWTFromBlackList.start(skipCount)
+    }, 60000)
   }
 }
 
