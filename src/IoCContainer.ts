@@ -43,8 +43,8 @@ import {SecurityDevicesService} from "./domain/securityDevices-service";
 import {JWTService} from "./application/jwt-service";
 import {EmailSender} from "./demons/emailSender";
 import {EmailAdapter} from "./adapters/email-adapter";
-import {ClearingIpWithDateOlder11Sec} from "./demons/clearing-usersIPLast10secRepository";
-import {ClearingInvalidJWTFromBlackList} from "./demons/clearing-expJWT";
+import {ClearingIpWithDateOlder11Sec} from "./demons/clearingUsersIPLast10secRepository";
+import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBlackList";
 import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
 
 

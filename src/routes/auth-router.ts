@@ -41,8 +41,7 @@ authRouter.post('/login',
           deviceId: payload.deviceId
         },
         {upsert: true})
-      // res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
-      res.cookie("refreshToken", refreshToken)
+      res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
       return res.status(200).send({
         "accessToken": accessToken
       })
