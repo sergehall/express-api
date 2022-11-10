@@ -8,8 +8,7 @@ import {
   loginValidation, newPasswordValidation,
   passwordValidation, recoveryCodeValidation
 } from "../middlewares/input-validator-middleware";
-import {PayloadType} from "../types/types";
-import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
+import {PayloadType, SessionDevicesType} from "../types/types";
 
 
 export const authRouter = Router({})
@@ -30,17 +29,28 @@ authRouter.post('/login',
       const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userId)
       const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
 
-      await MyModelDevicesSchema.findOneAndUpdate(
-        {title: title, ip: clientIp,},
-        {
-          userId: payload.userId,
-          ip: clientIp,
-          title: title,
-          lastActiveDate: new Date(payload.iat * 1000).toISOString(),
-          expirationDate: new Date(payload.exp * 1000).toISOString(),
-          deviceId: payload.deviceId
-        },
-        {upsert: true})
+      const filter = {title: title, ip: clientIp,}
+      const newDevices: SessionDevicesType = {
+        userId: payload.userId,
+        ip: clientIp,
+        title: title,
+        lastActiveDate: new Date(payload.iat * 1000).toISOString(),
+        expirationDate: new Date(payload.exp * 1000).toISOString(),
+        deviceId: payload.deviceId
+      }
+      await ioc.devicesService.createOrUpdateDevices(filter, newDevices)
+
+      // await MyModelDevicesSchema.findOneAndUpdate(
+      //   {title: title, ip: clientIp,},
+      //   {
+      //     userId: payload.userId,
+      //     ip: clientIp,
+      //     title: title,
+      //     lastActiveDate: new Date(payload.iat * 1000).toISOString(),
+      //     expirationDate: new Date(payload.exp * 1000).toISOString(),
+      //     deviceId: payload.deviceId
+      //   },
+      //   {upsert: true})
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
       return res.status(200).send({
         "accessToken": accessToken
@@ -107,19 +117,30 @@ authRouter.post('/refresh-token',
       const newRefreshToken = await ioc.jwtService.updateUsersAccountRefreshJWT(payload)
 
       const newPayload: PayloadType = ioc.jwtService.jwt_decode(newRefreshToken)
-      await MyModelDevicesSchema.findOneAndUpdate(
-        {userId: payload.userId, deviceId: payload.deviceId},
-        {
-          $set: {
-            userId: payload.userId,
-            ip: clientIp,
-            title: title,
-            lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
-            expirationDate: new Date(newPayload.exp * 1000).toISOString(),
-            deviceId: payload.deviceId
-          }
-        },
-        {upsert: true})
+      const filter = {userId: payload.userId, deviceId: payload.deviceId}
+      const newDevices: SessionDevicesType = {
+        userId: payload.userId,
+        ip: clientIp,
+        title: title,
+        lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
+        expirationDate: new Date(newPayload.exp * 1000).toISOString(),
+        deviceId: payload.deviceId
+      }
+      await ioc.devicesService.createOrUpdateDevices(filter, newDevices)
+
+      // await MyModelDevicesSchema.findOneAndUpdate(
+      //   {userId: payload.userId, deviceId: payload.deviceId},
+      //   {
+      //     $set: {
+      //       userId: payload.userId,
+      //       ip: clientIp,
+      //       title: title,
+      //       lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
+      //       expirationDate: new Date(newPayload.exp * 1000).toISOString(),
+      //       deviceId: payload.deviceId
+      //     }
+      //   },
+      //   {upsert: true})
 
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})
@@ -216,7 +237,7 @@ authRouter.post('/logout',
     const refreshToken = req.cookies.refreshToken
     const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
     await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
-    const result = await ioc.securityDevicesService.deleteDeviceByDeviceIdAfterLogout(payload)
+    const result = await ioc.devicesService.deleteDeviceByDeviceIdAfterLogout(payload)
     if (result === "204") {
       return res.sendStatus(204)
     }

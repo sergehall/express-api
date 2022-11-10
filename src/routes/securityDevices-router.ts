@@ -6,13 +6,13 @@ export const securityDevicesRouter = Router({})
 
 securityDevicesRouter.get('/devices',
   ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
-  ioc.securityDevicesController.getAllDevices.bind(ioc.securityDevicesController))
+  ioc.devicesController.getAllDevices.bind(ioc.devicesController))
 
   .delete('/devices',
     ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
-    ioc.securityDevicesController.deleteAllDevicesExceptCurrent.bind(ioc.securityDevicesController))
+    ioc.devicesController.deleteAllDevicesExceptCurrent.bind(ioc.devicesController))
 
   .delete('/devices/:deviceId',
     ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
-    ioc.securityDevicesController.deleteDeviceByDeviceId.bind(ioc.securityDevicesController))
+    ioc.devicesController.deleteDeviceByDeviceId.bind(ioc.devicesController))
 

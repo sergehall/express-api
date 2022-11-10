@@ -80,7 +80,7 @@ export type BlogPostsType = {
 }
 
 //...............................................Posts
-export type PostsType =  {
+export type PostsType = {
   id: string
   title: string
   shortDescription: string
@@ -210,7 +210,7 @@ export type ReturnTypeObjectFeedback = {
 }
 
 //...............................................Devices
-export type DevicesSchemaModel =  {
+export type DevicesSchemaModel = {
   userId: string
   ip: string
   title: string
@@ -264,7 +264,7 @@ export type likeStatusCommentIdType = {
   likeStatus: string
   createdAt: string
 }
-export type likeStatusPostsIdType =  {
+export type likeStatusPostsIdType = {
   postId: string
   userId: string
   likeStatus: string
@@ -285,7 +285,7 @@ export type SessionTypeArray = {
   lastActiveDate: string
   deviceId: string
 }[]
-export type SessionType = {
+export type SessionDevicesType = {
   userId: string
   ip: string | null
   title: string | undefined

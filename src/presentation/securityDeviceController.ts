@@ -1,17 +1,17 @@
-import {SecurityDevicesService} from "../domain/securityDevices-service";
+import {DevicesService} from "../domain/devices-service";
 import {Request, Response} from "express";
 import {PayloadType} from "../types/types";
 import {ioc} from "../IoCContainer";
 
 
-export class SecurityDevicesController {
-  constructor(private securityDevicesService: SecurityDevicesService) {
+export class DevicesController {
+  constructor(private devicesService: DevicesService) {
   }
 
   async getAllDevices(req: Request, res: Response) {
     const refreshToken = req.cookies.refreshToken
     const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
-    const getDevices = await this.securityDevicesService.getAllDevices(payload)
+    const getDevices = await this.devicesService.getAllDevices(payload)
     return res.send(getDevices)
   }
 
@@ -19,7 +19,7 @@ export class SecurityDevicesController {
     try {
       const refreshToken = req.cookies.refreshToken
       const payloadRefreshToken: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
-      await this.securityDevicesService.deleteAllDevicesExceptCurrent(payloadRefreshToken)
+      await this.devicesService.deleteAllDevicesExceptCurrent(payloadRefreshToken)
       return res.sendStatus(204)
     } catch (e) {
       console.log(e)
@@ -33,7 +33,7 @@ export class SecurityDevicesController {
       const refreshToken = req.cookies.refreshToken
       const payloadRefreshToken: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
 
-      const result = await this.securityDevicesService.deleteDeviceByDeviceId(deletedId, payloadRefreshToken)
+      const result = await this.devicesService.deleteDeviceByDeviceId(deletedId, payloadRefreshToken)
       if (result === "204") {
         return res.sendStatus(204)
       }

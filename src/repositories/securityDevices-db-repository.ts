@@ -1,9 +1,26 @@
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
-import {PayloadType, SessionTypeArray} from "../types/types";
+import {
+  PayloadType,
+  SessionDevicesType,
+  SessionTypeArray
+} from "../types/types";
 
 
-export class SecurityDevicesRepository {
+export class DevicesRepository {
 
+  async createOrUpdateDevices(filter: {} , newDevices: SessionDevicesType): Promise<Boolean> {
+    try {
+      return await MyModelDevicesSchema.findOneAndUpdate(
+        filter,
+        {
+          $set: newDevices
+        },
+        {upsert: true}).lean()
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  }
   async getAllDevices(payload: PayloadType): Promise<SessionTypeArray> {
     try {
       return await MyModelDevicesSchema.find(

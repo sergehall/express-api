@@ -37,15 +37,17 @@ import {UsersAccountController} from "./presentation/userAccountsController";
 import {UsersRepository} from "./repositories/users-db-repository";
 import {UsersService} from "./domain/users-service";
 import {UsersController} from "./presentation/usersController";
-import {SecurityDevicesRepository} from "./repositories/securityDevices-db-repository";
-import {SecurityDevicesController} from "./presentation/securityDeviceController";
-import {SecurityDevicesService} from "./domain/securityDevices-service";
+import {
+  DevicesController
+} from "./presentation/securityDeviceController";
+import {DevicesService} from "./domain/devices-service";
 import {JWTService} from "./application/jwt-service";
 import {EmailSender} from "./demons/emailSender";
 import {EmailAdapter} from "./adapters/email-adapter";
 import {ClearingIpWithDateOlder11Sec} from "./demons/clearingUsersIPLast10secRepository";
 import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBlackList";
 import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
+import {DevicesRepository} from "./repositories/securityDevices-db-repository";
 
 
 // usersAccount
@@ -95,9 +97,9 @@ const preparationPostsForReturn = new PreparationPosts()
 // CommentsExtLikesInfo
 const preparationComments = new PreparationComments()
 // SecurityDevices
-const securityDevicesRepository = new SecurityDevicesRepository()
-const securityDevicesService = new SecurityDevicesService(securityDevicesRepository)
-const securityDevicesController = new SecurityDevicesController(securityDevicesService)
+const devicesRepository = new DevicesRepository()
+const devicesService = new DevicesService(devicesRepository)
+const devicesController = new DevicesController(devicesService)
 // JWT Service
 const jwtService = new JWTService()
 // email adapter
@@ -134,8 +136,8 @@ export const ioc = {
   checkHowManyTimesUserLoginLast10sec: checkHowManyTimesUserLoginLast10sec,
   preparationComments: preparationComments,
   parseQuery: parseQuery,
-  securityDevicesService: securityDevicesService,
-  securityDevicesController: securityDevicesController,
+  devicesService: devicesService,
+  devicesController: devicesController,
   jwtService: jwtService,
   emailSender: emailSender,
   emailAdapter: emailAdapter,
