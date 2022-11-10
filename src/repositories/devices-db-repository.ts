@@ -21,6 +21,7 @@ export class DevicesRepository {
       return false
     }
   }
+
   async getAllDevices(payload: PayloadType): Promise<SessionTypeArray> {
     try {
       return await MyModelDevicesSchema.find(

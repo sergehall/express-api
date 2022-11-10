@@ -10,6 +10,7 @@ export class DevicesService {
   constructor(private devicesRepository: DevicesRepository) {
     this.devicesRepository = devicesRepository
   }
+
   async createOrUpdateDevices(filter: {} , newDevices: SessionDevicesType): Promise<Boolean> {
     return await this.devicesRepository.createOrUpdateDevices(filter, newDevices)
   }
