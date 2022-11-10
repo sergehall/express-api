@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {BloggerType} from "../types/all_types";
+import {BloggerType} from "../types/types";
 
 
 const BloggerSchema = new mongoose.Schema({

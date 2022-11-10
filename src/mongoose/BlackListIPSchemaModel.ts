@@ -1,5 +1,5 @@
 import mongoose  from 'mongoose';
-import {BlackListIPType} from "../types/all_types";
+import {BlackListIPType} from "../types/types";
 
 
 

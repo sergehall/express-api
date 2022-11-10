@@ -1,6 +1,6 @@
 import {MyModelEmailsToSent} from "../mongoose/EmailsToSentSchemaModel";
 import {MyModelEmailsToSentRecoveryCode} from "../mongoose/EmailsToSentRecoveryCodeShemaModel";
-import {UserEmailAndConfirmationCode, UserEmailAndRecoveryCode} from "../types/all_types";
+import {UserEmailAndConfirmationCode, UserEmailAndRecoveryCode} from "../types/types";
 
 
 export class EmailsToSentRepository {

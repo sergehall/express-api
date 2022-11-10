@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import {Pagination, UserAccountType} from "../types/all_types";
+import {Pagination, UserAccountType} from "../types/types";
 import {UsersAccountRepository} from "../repositories/usersAccount-db-repository";
 import uuid4 from "uuid4";
 import add from "date-fns/add";

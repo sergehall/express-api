@@ -1,7 +1,7 @@
 import {CommentsRepository} from "../repositories/comments-db-repository";
 import {
   ReturnTypeObjectComment, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 
 
 export class CommentsService {

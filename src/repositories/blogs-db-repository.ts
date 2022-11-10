@@ -1,7 +1,7 @@
 import {
   ArrayErrorsType, BlogsType,
   Pagination, ReturnObjectBlogType, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
 import {mongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";

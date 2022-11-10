@@ -1,6 +1,6 @@
-import {ReturnObjectBloggerType} from "../types/all_types";
+import {ReturnObjectBloggerType} from "../types/types";
 import {BloggersRepository} from "../repositories/bloggers-db-repository";
-import {Pagination} from "../types/all_types";
+import {Pagination} from "../types/types";
 
 
 export class BloggersService {

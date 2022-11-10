@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {AllDeletedPostsType} from "../types/all_types";
+import {AllDeletedPostsType} from "../types/types";
 
 
 const AllDeletedPostsSchema = new mongoose.Schema({

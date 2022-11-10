@@ -4,7 +4,7 @@ import {
   BlogsType,
   Pagination,
   ReturnObjectBlogType, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 
 export class BlogsService {
   constructor(private blogsRepository: BlogsRepository) {

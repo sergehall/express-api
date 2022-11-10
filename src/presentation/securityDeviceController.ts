@@ -1,6 +1,6 @@
 import {SecurityDevicesService} from "../domain/securityDevices-service";
 import {Request, Response} from "express";
-import {PayloadType} from "../types/all_types";
+import {PayloadType} from "../types/types";
 import {ioc} from "../IoCContainer";
 
 

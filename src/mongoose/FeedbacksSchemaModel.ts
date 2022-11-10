@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {FeedbacksTypeModel} from "../types/all_types";
+import {FeedbacksTypeModel} from "../types/types";
 
 
 const FeedbacksSchema = new mongoose.Schema({

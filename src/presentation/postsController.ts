@@ -1,7 +1,7 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
-import {UserAccountType} from "../types/all_types";
+import {UserAccountType} from "../types/types";
 
 export class PostsController {
   constructor(private postsService: PostsService) {

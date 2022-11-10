@@ -1,4 +1,4 @@
-import {ArrayErrorsType, FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/all_types";
+import {ArrayErrorsType, FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/types";
 import {MyModelFeedbacks} from "../mongoose/FeedbacksSchemaModel";
 import uuid4 from "uuid4";
 import {mongoHasNotUpdated} from "../middlewares/errorsMessages";

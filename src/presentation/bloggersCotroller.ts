@@ -2,7 +2,7 @@ import {BloggersService} from "../domain/bloggers-service";
 import {Request, Response} from "express";
 import {PostsService} from "../domain/posts-service";
 import {ioc} from "../IoCContainer";
-import {UserAccountType} from "../types/all_types";
+import {UserAccountType} from "../types/types";
 
 
 export class BloggersController {

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {EmailsToSent} from "../types/all_types";
+import {EmailsToSent} from "../types/types";
 
 
 const EmailsToSentSchema = new mongoose.Schema({

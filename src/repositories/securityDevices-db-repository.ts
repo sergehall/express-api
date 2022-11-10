@@ -1,5 +1,5 @@
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
-import {PayloadType, SessionTypeArray} from "../types/all_types";
+import {PayloadType, SessionTypeArray} from "../types/types";
 
 
 export class SecurityDevicesRepository {

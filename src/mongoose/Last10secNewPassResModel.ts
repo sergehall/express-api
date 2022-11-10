@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {Last10secReq} from "../types/all_types";
+import {Last10secReq} from "../types/types";
 
 
 const NewPasswordReqSchema = new mongoose.Schema({

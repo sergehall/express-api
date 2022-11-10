@@ -1,4 +1,4 @@
-import {BlackListRefreshTokenJWT} from "../types/all_types";
+import {BlackListRefreshTokenJWT} from "../types/types";
 import {MyModelBlackListRefreshTokenJWT} from "../mongoose/BlackListRefreshTokenJWTModel";
 
 

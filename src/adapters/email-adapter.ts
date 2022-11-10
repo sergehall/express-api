@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import {
   UserEmailAndConfirmationCode,
   UserEmailAndRecoveryCode
-} from "../types/all_types";
+} from "../types/types";
 
 const ck = require('ckey')
 

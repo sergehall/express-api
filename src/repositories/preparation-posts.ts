@@ -1,7 +1,7 @@
 import {
   ArrayPostsExtLikesInfo,
   PostsType, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 

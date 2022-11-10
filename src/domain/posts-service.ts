@@ -3,7 +3,7 @@ import {
   Pagination,
   PostsType, ReturnObjectPostsType,
   ReturnTypeObjectComment, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 
 
 export class PostsService {

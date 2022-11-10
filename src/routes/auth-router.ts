@@ -8,7 +8,7 @@ import {
   loginValidation, newPasswordValidation,
   passwordValidation, recoveryCodeValidation
 } from "../middlewares/input-validator-middleware";
-import {PayloadType} from "../types/all_types";
+import {PayloadType} from "../types/types";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 
 

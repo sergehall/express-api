@@ -1,4 +1,4 @@
-import {AllDeletedPosts} from "../types/all_types";
+import {AllDeletedPosts} from "../types/types";
 import {MyModelAllDeletedPosts} from "../mongoose/AllDeletedPostsSchemaModel";
 
 

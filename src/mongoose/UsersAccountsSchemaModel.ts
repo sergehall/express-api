@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {UserAccountType} from "../types/all_types";
+import {UserAccountType} from "../types/types";
 
 
 

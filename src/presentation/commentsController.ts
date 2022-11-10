@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {ReturnTypeObjectComment, UserAccountType} from "../types/all_types";
+import {ReturnTypeObjectComment, UserAccountType} from "../types/types";
 import {CommentsService} from "../domain/comments-service";
 
 

@@ -11,7 +11,7 @@ import {
   Pagination,
   PostsType, ReturnObjectPostsType,
   ReturnTypeObjectComment, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";

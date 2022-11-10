@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {BlogsType} from "../types/all_types";
+import {BlogsType} from "../types/types";
 
 
 

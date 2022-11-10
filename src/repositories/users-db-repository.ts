@@ -1,4 +1,4 @@
-import {Pagination, UserDBType} from "../types/all_types";
+import {Pagination, UserDBType} from "../types/types";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
 
 

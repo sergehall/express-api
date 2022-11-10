@@ -1,4 +1,4 @@
-import {FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/all_types";
+import {FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/types";
 import {FeedbacksRepository} from "../repositories/feedback-db-repository";
 
 

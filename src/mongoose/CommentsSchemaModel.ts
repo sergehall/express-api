@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {CommentsTypeModel} from "../types/all_types";
+import {CommentsTypeModel} from "../types/types";
 
 
 const CommentsSchema = new mongoose.Schema({

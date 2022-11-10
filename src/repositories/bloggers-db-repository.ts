@@ -3,7 +3,7 @@ import {
   BloggerType,
   ErrorType,
   Pagination, ReturnObjectBloggerType
-} from "../types/all_types";
+} from "../types/types";
 import {mongoHasNotUpdated, notFoundBloggerId} from "../middlewares/errorsMessages";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 

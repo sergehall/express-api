@@ -1,4 +1,4 @@
-import {BlackListIPDBType} from "../types/all_types";
+import {BlackListIPDBType} from "../types/types";
 import {MyModelBlackListIP} from "../mongoose/BlackListIPSchemaModel";
 
 

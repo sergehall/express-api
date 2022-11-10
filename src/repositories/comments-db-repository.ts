@@ -2,7 +2,7 @@ import {
   ArrayCommentsExtLikesInfo,
   ArrayErrorsType,
   ReturnTypeObjectComment, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 import {
   mongoHasNotUpdated,
   notDeletedComment,

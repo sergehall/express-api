@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {ThreeLastLikesPostType} from "../types/all_types";
+import {ThreeLastLikesPostType} from "../types/types";
 
 
 const ThreeLastLikesPostSchema = new mongoose.Schema({

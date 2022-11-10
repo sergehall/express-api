@@ -1,6 +1,6 @@
 import {
   ArrayCommentsExtLikesInfo, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 
 

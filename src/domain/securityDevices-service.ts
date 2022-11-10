@@ -1,4 +1,4 @@
-import {PayloadType, SessionTypeArray} from "../types/all_types";
+import {PayloadType, SessionTypeArray} from "../types/types";
 import {SecurityDevicesRepository} from "../repositories/securityDevices-db-repository";
 
 

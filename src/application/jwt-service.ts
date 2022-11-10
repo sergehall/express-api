@@ -2,7 +2,7 @@ import {NextFunction, Request, Response} from "express";
 import jwt from 'jsonwebtoken'
 import {ioc} from "../IoCContainer";
 import uuid4 from "uuid4";
-import {PayloadType} from "../types/all_types";
+import {PayloadType} from "../types/types";
 import jwt_decode from "jwt-decode";
 
 const ck = require('ckey')

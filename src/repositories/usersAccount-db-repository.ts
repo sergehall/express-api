@@ -1,6 +1,6 @@
 import {
   Pagination, UserAccountType
-} from "../types/all_types";
+} from "../types/types";
 import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 
 
