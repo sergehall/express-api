@@ -66,6 +66,7 @@ export class JWTService {
     try {
       const refreshToken = req.cookies.refreshToken
       if (
+        !refreshToken ||
         !await jwt.verify(refreshToken, ck.REFRESH_SECRET_KEY) ||
         await ioc.blackListRefreshTokenJWTRepository.findJWT(refreshToken)
       ) {
@@ -73,8 +74,8 @@ export class JWTService {
       }
       next()
       return
-    } catch (e) {
-      console.log(e, "RefreshToken expired or in black list")
+    } catch (e: any) {
+      console.log("Error:", e.message + ". ")
       return res.sendStatus(401)
     }
   }
