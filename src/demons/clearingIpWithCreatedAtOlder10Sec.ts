@@ -6,7 +6,7 @@ import {ioc} from "../IoCContainer";
 import {MyModeRedLast10secNewPasswordReq} from "../mongoose/Last10secNewPassResModel";
 
 
-export class ClearingIpWithDateOlder11Sec {
+export class ClearingIpWithCreatedAtOlder10Sec {
   // runs every 2 minutes
   async start() {
     setTimeout(async () => {
@@ -15,7 +15,7 @@ export class ClearingIpWithDateOlder11Sec {
       await MyModeLast10secLog.deleteMany({createdAt: {$lt: new Date(Date.now() - 1000 * 10).toISOString()}})
       await MyModeLast10secRedEmailRes.deleteMany({createdAt: {$lt: new Date(Date.now() - 1000 * 10).toISOString()}})
       await MyModeRedLast10secNewPasswordReq.deleteMany({createdAt: {$lt: new Date(Date.now() - 1000 * 10).toISOString()}})
-      await ioc.clearingIpWithDateOlder11Sec.start()
+      await ioc.clearingIpWithCreatedAtOlder10Sec.start()
     }, 60000)
   }
 }

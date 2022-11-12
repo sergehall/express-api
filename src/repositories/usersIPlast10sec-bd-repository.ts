@@ -7,31 +7,31 @@ import {
 } from "../mongoose/Last10secNewPassResModel";
 
 export class UsersIPLast10secRepositories {
-  async findByIpAndTimeRegConf(clientIp: string | null): Promise<number> {
+  async addAndCountByIpAndTimeRegConf(clientIp: string | null): Promise<number> {
     await MyModeLast10secRegConf.create({ip: clientIp, createdAt: new Date().toISOString()})
     const currentTimeMinus10sec = new Date(Date.now() - 1000 * 10).toISOString()
     return await MyModeLast10secRegConf.countDocuments({ip: clientIp, createdAt: {$gte: currentTimeMinus10sec}})
   }
 
-  async findByIpAndTimeReg(clientIp: string | null): Promise<number> {
+  async addAndCountByIpAndTimeReg(clientIp: string | null): Promise<number> {
     await MyModeLast10secReg.create({ip: clientIp, createdAt: new Date().toISOString()})
     const currentTimeMinus10sec = new Date(Date.now() - 1000 * 10).toISOString()
     return await MyModeLast10secReg.countDocuments({ip: clientIp, createdAt: {$gte: currentTimeMinus10sec}})
   }
 
-  async findByIpAndTimeLog(clientIp: string | null): Promise<number> {
+  async addAndCountByIpAndTimeLog(clientIp: string | null): Promise<number> {
     await MyModeLast10secLog.create({ip: clientIp, createdAt: new Date().toISOString()})
     const currentTimeMinus10sec = new Date(Date.now() - 1000 * 10).toISOString()
     return await MyModeLast10secLog.countDocuments({ip: clientIp, createdAt: {$gte: currentTimeMinus10sec}})
   }
 
-  async findByIpAndTimeRegEmailRes(clientIp: string | null): Promise<number> {
+  async addAndCountByIpAndTimeRegEmailRes(clientIp: string | null): Promise<number> {
     await MyModeLast10secRedEmailRes.create({ip: clientIp, createdAt: new Date().toISOString()})
     const currentTimeMinus10sec = new Date(Date.now() - 1000 * 10).toISOString()
     return await MyModeLast10secRedEmailRes.countDocuments({ip: clientIp, createdAt: {$gte: currentTimeMinus10sec}})
   }
 
-  async findSameIpNewPasswordReq(clientIp: string | null): Promise<number> {
+  async addAndCountSameIpNewPasswordReq(clientIp: string | null): Promise<number> {
     await MyModeRedLast10secNewPasswordReq.create({ip: clientIp, createdAt: new Date().toISOString()})
     const currentTimeMinus10sec = new Date(Date.now() - 1000 * 10).toISOString()
     return await MyModeRedLast10secNewPasswordReq.countDocuments({ip: clientIp, createdAt: {$gte: currentTimeMinus10sec}})

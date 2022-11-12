@@ -34,18 +34,18 @@ import {
   BlackListRefreshTokenJWTRepository
 } from "./repositories/blackListRefreshTokenJWT-db-repository";
 import {Auth} from "./middlewares/auth";
-import {
-  CheckHowManyTimesUserLoginLast10sec
-} from "./middlewares/checkHowManyTimesUserLoginLast10secWithSameIp";
 import {ParseQuery} from "./middlewares/parse-query";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {JWTService} from "./application/jwt-service";
 import {EmailSender} from "./demons/emailSender";
 import {EmailAdapter} from "./adapters/email-adapter";
-import {ClearingIpWithDateOlder11Sec} from "./demons/clearingUsersIPLast10secRepository";
 import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBlackList";
 import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
+import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
+import {
+  AddAndCountReqWithSameIpLast10secService
+} from "./domain/addAndCountReqWithSameIpLast10secService";
 
 // usersAccount
 const usersAccountRepository = new UsersAccountRepository()
@@ -54,7 +54,7 @@ const usersAccountController = new UsersAccountController(usersAccountService)
 // auth
 const auth = new Auth()
 // middleware
-const checkHowManyTimesUserLoginLast10sec = new CheckHowManyTimesUserLoginLast10sec()
+const addAndCountReqWithSameIpLast10secService = new AddAndCountReqWithSameIpLast10secService()
 const parseQuery = new ParseQuery()
 // posts
 const postsRepository = new PostsRepository()
@@ -103,7 +103,7 @@ const jwtService = new JWTService()
 const emailAdapter = new EmailAdapter()
 // my demons
 const emailSender = new EmailSender()
-const clearingIpWithDateOlder11Sec = new ClearingIpWithDateOlder11Sec()
+const clearingIpWithCreatedAtOlder10Sec = new ClearingIpWithCreatedAtOlder10Sec()
 const clearingInvalidJWTFromBlackList = new ClearingInvalidJWTFromBlackList()
 const clearingDevicesWithExpDate = new ClearingDevicesWithExpDate()
 
@@ -130,7 +130,7 @@ export const ioc = {
   usersIPLast10secRepositories: usersIPLast10secRepositories,
   usersAccountController: usersAccountController,
   blackListRefreshTokenJWTRepository: blackListRefreshTokenJWTRepository,
-  checkHowManyTimesUserLoginLast10sec: checkHowManyTimesUserLoginLast10sec,
+  addAndCountReqWithSameIpLast10secService: addAndCountReqWithSameIpLast10secService,
   preparationComments: preparationComments,
   parseQuery: parseQuery,
   securityDevicesService: securityDevicesService,
@@ -138,7 +138,7 @@ export const ioc = {
   jwtService: jwtService,
   emailSender: emailSender,
   emailAdapter: emailAdapter,
-  clearingIpWithDateOlder11Sec: clearingIpWithDateOlder11Sec,
+  clearingIpWithCreatedAtOlder10Sec: clearingIpWithCreatedAtOlder10Sec,
   clearingInvalidJWTFromBlackList: clearingInvalidJWTFromBlackList,
   clearingDevicesWithExpDate: clearingDevicesWithExpDate
 }

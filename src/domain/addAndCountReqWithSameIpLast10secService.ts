@@ -2,10 +2,10 @@ import {NextFunction, Request, Response} from "express";
 import requestIp from "request-ip";
 import {ioc} from "../IoCContainer";
 
-export class CheckHowManyTimesUserLoginLast10sec {
-  async withSameIpRegConf (req: Request, res: Response, next: NextFunction) {
+export class AddAndCountReqWithSameIpLast10secService {
+  async byRegisConfirm (req: Request, res: Response, next: NextFunction) {
     const clientIp = requestIp.getClientIp(req);
-    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.findByIpAndTimeRegConf(clientIp)
+    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountByIpAndTimeRegConf(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       next()
@@ -15,9 +15,9 @@ export class CheckHowManyTimesUserLoginLast10sec {
     return
   }
 
-  async withSameIpReg (req: Request, res: Response, next: NextFunction) {
+  async byRegistration (req: Request, res: Response, next: NextFunction) {
     const clientIp = requestIp.getClientIp(req);
-    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.findByIpAndTimeReg(clientIp)
+    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountByIpAndTimeReg(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       next()
@@ -27,9 +27,9 @@ export class CheckHowManyTimesUserLoginLast10sec {
     return
   }
 
-  async withSameIpLog (req: Request, res: Response, next: NextFunction){
+  async byLogin (req: Request, res: Response, next: NextFunction){
     const clientIp = requestIp.getClientIp(req);
-    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.findByIpAndTimeLog(clientIp)
+    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountByIpAndTimeLog(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       next()
@@ -39,9 +39,9 @@ export class CheckHowManyTimesUserLoginLast10sec {
     return
   }
 
-  async withSameIpRegEmailRes (req: Request, res: Response, next: NextFunction) {
+  async byRecovery (req: Request, res: Response, next: NextFunction) {
     const clientIp = requestIp.getClientIp(req);
-    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.findByIpAndTimeRegEmailRes(clientIp)
+    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountByIpAndTimeRegEmailRes(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       next()
@@ -51,9 +51,9 @@ export class CheckHowManyTimesUserLoginLast10sec {
     return
   }
 
-  async withSameIpNewPasswordReq (req: Request, res: Response, next: NextFunction) {
+  async byNewPassword (req: Request, res: Response, next: NextFunction) {
     const clientIp = requestIp.getClientIp(req);
-    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.findSameIpNewPasswordReq(clientIp)
+    const  countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountSameIpNewPasswordReq(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       next()
