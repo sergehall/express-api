@@ -133,11 +133,10 @@ export class Auth {
       const commentId = req.params.commentId;
       const filter = {"allComments.id": commentId}
 
-      const foundPostWithComments = await ioc.commentsService.findCommentInDB(filter)
+      const foundPostWithComments = await ioc.commentsService.findCommentByCommentId(filter)
 
       if (foundPostWithComments) {
-        const postWithComments = foundPostWithComments.allComments.filter(i => i.id === commentId)[0]
-        if (postWithComments.userId === userId && postWithComments.userLogin === userLogin) {
+        if (foundPostWithComments.userId === userId && foundPostWithComments.userLogin === userLogin) {
           next()
           return
         }

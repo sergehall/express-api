@@ -1,6 +1,6 @@
 import {
   ArrayCommentsExtLikesInfo,
-  ArrayErrorsType,
+  ArrayErrorsType, CommentType, FilterCommentId,
   ReturnTypeObjectComment, UserAccountType
 } from "../types/types";
 import {
@@ -15,11 +15,13 @@ import {ioc} from "../IoCContainer";
 
 export class CommentsRepository {
 
-  async findCommentInDB(filter: { "allComments.id": string }) {
-    return MyModelComments.findOne(filter)
+  async findCommentByCommentId(filter: FilterCommentId): Promise<CommentType | null> {
+    const result: CommentType | undefined = await MyModelComments.findOne(filter)
+      .then(c => c?.allComments.filter(i => i.id === filter["allComments.id"])[0])
+    return result  ? result : null;
   }
 
-  async getCommentById(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment> {
+  async findCommentById(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
     const foundPostWithComments = await MyModelComments.findOne(filter, {
