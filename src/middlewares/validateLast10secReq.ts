@@ -3,8 +3,11 @@ import requestIp from "request-ip";
 import {ioc} from "../IoCContainer";
 
 export class ValidateLast10secReq {
+  message;
+  constructor() {
+    this.message = 'More than 5 registration attempts from one IP-address during 10 seconds.'
+  }
 
-  message = 'More than 5 registration attempts from one IP-address during 10 seconds.'
 
   async byRegisConfirm(req: Request, res: Response, next: NextFunction) {
     const clientIp = requestIp.getClientIp(req);
