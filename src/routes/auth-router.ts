@@ -21,15 +21,18 @@ authRouter.post('/login',
   ioc.auth.checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     try {
+      const currentRefreshToken = req.cookies.refreshToken
+      if (currentRefreshToken) {
+        await ioc.blackListRefreshTokenJWTRepository.addJWT(currentRefreshToken)
+      }
       const clientIp = requestIp.getClientIp(req);
       const title = req.header('user-agent');
       const userId = (req.headers.userId) ? `${req.headers.userId}` : '';
 
       const accessToken = await ioc.jwtService.createUsersAccountJWT(userId)
       const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userId)
-      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
 
-      const filter = {title: title, ip: clientIp,}
+      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
       const newDevices: SessionDevicesType = {
         userId: payload.userId,
         ip: clientIp,
@@ -38,6 +41,7 @@ authRouter.post('/login',
         expirationDate: new Date(payload.exp * 1000).toISOString(),
         deviceId: payload.deviceId
       }
+      const filter = {title: title, ip: clientIp}
       await ioc.securityDevicesService.createOrUpdateDevices(filter, newDevices)
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
@@ -49,6 +53,41 @@ authRouter.post('/login',
       console.log(e)
       return res.status(500)
     }
+  })
+
+authRouter.post('/refresh-token',
+  ioc.jwtService.verifyRefreshTokenAndCheckInBlackList,
+  async (req: Request, res: Response) => {
+    try {
+      const refreshToken = req.cookies.refreshToken
+      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
+      const clientIp = requestIp.getClientIp(req);
+      const title = req.header('user-agent');
+      await ioc.blackListRefreshTokenJWTRepository.addJWT(refreshToken)
+
+      const newAccessToken = await ioc.jwtService.updateUsersAccountAccessJWT(payload)
+      const newRefreshToken = await ioc.jwtService.updateUsersAccountRefreshJWT(payload)
+
+      const newPayload: PayloadType = ioc.jwtService.jwt_decode(newRefreshToken)
+      const filter = {userId: payload.userId, deviceId: payload.deviceId}
+      const newDevices: SessionDevicesType = {
+        userId: payload.userId,
+        ip: clientIp,
+        title: title,
+        lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
+        expirationDate: new Date(newPayload.exp * 1000).toISOString(),
+        deviceId: payload.deviceId
+      }
+      await ioc.securityDevicesService.createOrUpdateDevices(filter, newDevices)
+      res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
+      res.status(200).send({accessToken: newAccessToken})
+      return
+
+    } catch (e) {
+      console.log(e)
+      return res.status(401).send({error: e})
+    }
+
   })
 
 authRouter.post('/password-recovery',
@@ -89,42 +128,6 @@ authRouter.post('/new-password',
     await ioc.usersAccountService.createNewPassword(newPassword, user)
 
     return res.sendStatus(204)
-
-  })
-
-authRouter.post('/refresh-token',
-  ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
-  async (req: Request, res: Response) => {
-    try {
-      const refreshToken = req.cookies.refreshToken
-      const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
-      const clientIp = requestIp.getClientIp(req);
-      const title = req.header('user-agent');
-      await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
-
-      const newAccessToken = await ioc.jwtService.updateUsersAccountAccessJWT(payload)
-      const newRefreshToken = await ioc.jwtService.updateUsersAccountRefreshJWT(payload)
-
-      const newPayload: PayloadType = ioc.jwtService.jwt_decode(newRefreshToken)
-      const filter = {userId: payload.userId, deviceId: payload.deviceId}
-      const newDevices: SessionDevicesType = {
-        userId: payload.userId,
-        ip: clientIp,
-        title: title,
-        lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
-        expirationDate: new Date(newPayload.exp * 1000).toISOString(),
-        deviceId: payload.deviceId
-      }
-      await ioc.securityDevicesService.createOrUpdateDevices(filter, newDevices)
-
-      res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
-      res.status(200).send({accessToken: newAccessToken})
-      return
-
-    } catch (e) {
-      console.log(e)
-      return res.status(401).send({error: e})
-    }
 
   })
 
@@ -207,11 +210,11 @@ authRouter.post('/registration-email-resending',
   });
 
 authRouter.post('/logout',
-  ioc.jwtService.checkRefreshTokenInBlackListAndVerify,
+  ioc.jwtService.verifyRefreshTokenAndCheckInBlackList,
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
     const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
-    await ioc.blackListRefreshTokenJWTRepository.addRefreshTokenAndUserId(refreshToken)
+    await ioc.blackListRefreshTokenJWTRepository.addJWT(refreshToken)
     const result = await ioc.securityDevicesService.deleteDeviceByDeviceIdAfterLogout(payload)
     if (result === "204") {
       return res.sendStatus(204)

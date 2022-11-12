@@ -21,9 +21,9 @@ export class JWTService {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.REFRESH_SECRET_KEY,
-      {expiresIn: "1200s" }
+      {expiresIn: "1200s"}
     )
-  } 
+  }
 
   async updateUsersAccountAccessJWT(payload: PayloadType) {
     return jwt.sign(
@@ -41,7 +41,7 @@ export class JWTService {
         userId: payload.userId,
         deviceId: payload.deviceId
       }, ck.REFRESH_SECRET_KEY,
-      {expiresIn: "1200s"})
+      {expiresIn: "1200s"}) 
   }
 
   async verifyRefreshJWT(token: string) {
@@ -62,18 +62,19 @@ export class JWTService {
     }
   }
 
-  async checkRefreshTokenInBlackListAndVerify(req: Request, res: Response, next: NextFunction) {
+  async verifyRefreshTokenAndCheckInBlackList(req: Request, res: Response, next: NextFunction) {
     try {
       const refreshToken = req.cookies.refreshToken
-      const tokenInBlackList = await ioc.blackListRefreshTokenJWTRepository.findByRefreshTokenAndUserId(refreshToken)
-      const userId: string | null = await ioc.jwtService.verifyRefreshJWT(refreshToken);
-      if (tokenInBlackList || !userId) {
+      if (
+        !await ioc.jwtService.verifyRefreshJWT(refreshToken) ||
+        await ioc.blackListRefreshTokenJWTRepository.findJWT(refreshToken)
+      ) {
         return res.sendStatus(401)
       }
       next()
       return
     } catch (e) {
-      console.log(e, "RefreshToken expired or incorrect")
+      console.log(e, "RefreshToken expired or in black list")
       return res.sendStatus(401)
     }
   }
