@@ -16,7 +16,7 @@ authRouter.post('/login',
   loginValidation,
   passwordValidation,
   inputValidatorMiddleware,
-  ioc.addAndCountReqWithSameIpLast10secService.byLogin,
+  ioc.validateLast10secReq.byLogin,
   ioc.auth.checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     try {
@@ -90,7 +90,7 @@ authRouter.post('/refresh-token',
   })
 
 authRouter.post('/password-recovery',
-  ioc.addAndCountReqWithSameIpLast10secService.byRecovery,
+  ioc.validateLast10secReq.byRecovery,
   emailValidation, inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const email = req.body.email
@@ -106,7 +106,7 @@ authRouter.post('/password-recovery',
   })
 
 authRouter.post('/new-password',
-  ioc.addAndCountReqWithSameIpLast10secService.byNewPassword,
+  ioc.validateLast10secReq.byNewPassword,
   newPasswordValidation,
   recoveryCodeValidation,
   inputValidatorMiddleware,
@@ -132,8 +132,9 @@ authRouter.post('/new-password',
 
 authRouter.post('/registration-confirmation',
   ioc.auth.checkIpInBlackList,
-  confirmationCodeValidation, inputValidatorMiddleware,
-  ioc.addAndCountReqWithSameIpLast10secService.byRegisConfirm,
+  confirmationCodeValidation,
+  inputValidatorMiddleware,
+  ioc.validateLast10secReq.byRegisConfirm,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
@@ -162,7 +163,7 @@ authRouter.post('/registration',
   ioc.auth.checkoutContentType,
   loginValidation, passwordValidation, emailValidation, inputValidatorMiddleware,
   ioc.auth.checkUserAccountNotExists,
-  ioc.addAndCountReqWithSameIpLast10secService.byRegistration,
+  ioc.validateLast10secReq.byRegistration,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
@@ -188,7 +189,7 @@ authRouter.post('/registration',
 
 authRouter.post('/registration-email-resending',
   emailValidation, inputValidatorMiddleware,
-  ioc.addAndCountReqWithSameIpLast10secService.byRecovery,
+  ioc.validateLast10secReq.byRecovery,
   async (req: Request, res: Response) => {
     const email: string = req.body.email
     const userResult = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(email)
@@ -239,7 +240,7 @@ authRouter.get("/me",
 // just for me
 
 authRouter.get('/resend-registration-email',
-  ioc.addAndCountReqWithSameIpLast10secService.byRecovery,
+  ioc.validateLast10secReq.byRecovery,
   async (req: Request, res: Response) => {
     const parseQueryData = await ioc.parseQuery.parse(req)
     const code = parseQueryData.code

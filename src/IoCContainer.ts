@@ -43,9 +43,7 @@ import {EmailAdapter} from "./adapters/email-adapter";
 import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBlackList";
 import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
 import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
-import {
-  AddAndCountReqWithSameIpLast10secService
-} from "./domain/addAndCountReqWithSameIpLast10secService";
+import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
 
 // usersAccount
 const usersAccountRepository = new UsersAccountRepository()
@@ -54,7 +52,7 @@ const usersAccountController = new UsersAccountController(usersAccountService)
 // auth
 const auth = new Auth()
 // middleware
-const addAndCountReqWithSameIpLast10secService = new AddAndCountReqWithSameIpLast10secService()
+const validateLast10secReq = new ValidateLast10secReq()
 const parseQuery = new ParseQuery()
 // posts
 const postsRepository = new PostsRepository()
@@ -130,7 +128,7 @@ export const ioc = {
   usersIPLast10secRepositories: usersIPLast10secRepositories,
   usersAccountController: usersAccountController,
   blackListRefreshTokenJWTRepository: blackListRefreshTokenJWTRepository,
-  addAndCountReqWithSameIpLast10secService: addAndCountReqWithSameIpLast10secService,
+  validateLast10secReq: validateLast10secReq,
   preparationComments: preparationComments,
   parseQuery: parseQuery,
   securityDevicesService: securityDevicesService,
