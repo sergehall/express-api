@@ -96,6 +96,7 @@ authRouter.post('/password-recovery',
   async (req: Request, res: Response) => {
     const email = req.body.email
     const user = await ioc.usersAccountService.findUserByLoginOrEmail(email)
+
     if (!user) {
       const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserNotExist(email)
       console.log(`Resend password-recovery to email:  ${result?.email}`)
@@ -116,6 +117,7 @@ authRouter.post('/new-password',
     const recoveryCode = req.body.recoveryCode
 
     const user = await ioc.usersAccountService.findByConfirmationCode(recoveryCode)
+
     if (!user) {
       return res.status(400).send(
         {
@@ -162,7 +164,10 @@ authRouter.post('/registration-confirmation',
 authRouter.post('/registration',
   ioc.auth.checkIpInBlackList,
   ioc.auth.checkoutContentType,
-  loginValidation, passwordValidation, emailValidation, inputValidatorMiddleware,
+  loginValidation,
+  passwordValidation,
+  emailValidation,
+  inputValidatorMiddleware,
   ioc.auth.checkUserAccountNotExists,
   ioc.validateLast10secReq.byRegistration,
   async (req: Request, res: Response) => {

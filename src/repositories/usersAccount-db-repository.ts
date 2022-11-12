@@ -8,7 +8,10 @@ export class UsersAccountRepository {
 
   async createUserAccount(user: UserAccountType): Promise<UserAccountType | null> {
     try {
-      await MyModelUserAccount.create(user)
+      await MyModelUserAccount.findOneAndUpdate(
+        {"accountData.id": user.accountData.id},
+        {$set: user},
+        {upsert: true})
       return user
     } catch (e: any) {
       console.log(e.toString())
@@ -32,7 +35,7 @@ export class UsersAccountRepository {
     const direction = sortDirection === "desc" ? -1 : 1;
 
     let field = "createdAt"
-    if (sortBy === "accountData.login" || sortBy === "accountData.email" ) {
+    if (sortBy === "accountData.login" || sortBy === "accountData.email") {
       field = sortBy
     }
 
@@ -73,15 +76,22 @@ export class UsersAccountRepository {
   }
 
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountType | null> {
-    return await MyModelUserAccount.findOne({$or: [{"accountData.login": loginOrEmail}, {"accountData.email": loginOrEmail}]})
+    return await MyModelUserAccount.findOne({$or: [{"accountData.login": {$eq: loginOrEmail}}, {"accountData.email": {$eq: loginOrEmail}}]})
   }
 
   async findByConfirmationCode(code: string,): Promise<UserAccountType | null> {
     return await MyModelUserAccount.findOne({
-      "emailConfirmation.confirmationCode": code,
-      "emailConfirmation.isConfirmed": false,
-      "emailConfirmation.expirationDate": {$gt: new Date().toISOString()}
-    })
+        "emailConfirmation.confirmationCode": code,
+        "emailConfirmation.isConfirmed": false,
+        "emailConfirmation.expirationDate": {$gt: new Date().toISOString()}
+      },
+      {
+        _id: false,
+        __v: false,
+        "registrationData._id": false,
+        "emailConfirmation.sentEmail._id": false
+
+      })
   }
 
   async getUserAccountByEmailCode(code: string, email: string): Promise<UserAccountType | null> {
