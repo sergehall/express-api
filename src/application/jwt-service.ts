@@ -41,7 +41,7 @@ export class JWTService {
         userId: payload.userId,
         deviceId: payload.deviceId
       }, ck.REFRESH_SECRET_KEY,
-      {expiresIn: "1200s"}) 
+      {expiresIn: "1200s"})
   }
 
   async verifyRefreshJWT(token: string) {
@@ -66,7 +66,7 @@ export class JWTService {
     try {
       const refreshToken = req.cookies.refreshToken
       if (
-        !await ioc.jwtService.verifyRefreshJWT(refreshToken) ||
+        !await jwt.verify(refreshToken, ck.REFRESH_SECRET_KEY) ||
         await ioc.blackListRefreshTokenJWTRepository.findJWT(refreshToken)
       ) {
         return res.sendStatus(401)
