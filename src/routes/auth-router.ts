@@ -91,7 +91,8 @@ authRouter.post('/refresh-token',
 
 authRouter.post('/password-recovery',
   ioc.validateLast10secReq.byRecovery,
-  emailValidation, inputValidatorMiddleware,
+  emailValidation,
+  inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const email = req.body.email
     const user = await ioc.usersAccountService.findUserByLoginOrEmail(email)
