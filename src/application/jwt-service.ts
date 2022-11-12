@@ -9,7 +9,7 @@ const ck = require('ckey')
 
 export class JWTService {
 
-  async createUsersAccountJWT(userId: string) {
+  async createAccessJWT(userId: string) {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.ACCESS_SECRET_KEY,
@@ -17,7 +17,7 @@ export class JWTService {
     )
   }
 
-  async createUsersAccountRefreshJWT(userId: string) {
+  async createRefreshJWT(userId: string) {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.REFRESH_SECRET_KEY,
@@ -25,22 +25,16 @@ export class JWTService {
     )
   }
 
-  async updateUsersAccountAccessJWT(payload: PayloadType) {
+  async updateAccessJWT(payload: PayloadType) {
     return jwt.sign(
-      {
-        userId: payload.userId,
-        deviceId: payload.deviceId
-      }, ck.ACCESS_SECRET_KEY,
+      {userId: payload.userId, deviceId: payload.deviceId}, ck.ACCESS_SECRET_KEY,
       {expiresIn: "600s"}
     )
   }
 
-  async updateUsersAccountRefreshJWT(payload: PayloadType) {
+  async updateRefreshJWT(payload: PayloadType) {
     return jwt.sign(
-      {
-        userId: payload.userId,
-        deviceId: payload.deviceId
-      }, ck.REFRESH_SECRET_KEY,
+      {userId: payload.userId, deviceId: payload.deviceId}, ck.REFRESH_SECRET_KEY,
       {expiresIn: "1200s"})
   }
 

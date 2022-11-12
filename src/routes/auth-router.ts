@@ -28,8 +28,8 @@ authRouter.post('/login',
       const title = req.header('user-agent');
       const userId = (req.headers.userId) ? `${req.headers.userId}` : '';
 
-      const accessToken = await ioc.jwtService.createUsersAccountJWT(userId)
-      const refreshToken = await ioc.jwtService.createUsersAccountRefreshJWT(userId)
+      const accessToken = await ioc.jwtService.createAccessJWT(userId)
+      const refreshToken = await ioc.jwtService.createRefreshJWT(userId)
 
       const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
       const newDevices: SessionDevicesType = {
@@ -64,8 +64,8 @@ authRouter.post('/refresh-token',
       const title = req.header('user-agent');
       await ioc.blackListRefreshTokenJWTRepository.addJWT(refreshToken)
 
-      const newAccessToken = await ioc.jwtService.updateUsersAccountAccessJWT(payload)
-      const newRefreshToken = await ioc.jwtService.updateUsersAccountRefreshJWT(payload)
+      const newAccessToken = await ioc.jwtService.updateAccessJWT(payload)
+      const newRefreshToken = await ioc.jwtService.updateRefreshJWT(payload)
 
       const newPayload: PayloadType = ioc.jwtService.jwt_decode(newRefreshToken)
       const filter = {userId: payload.userId, deviceId: payload.deviceId}
