@@ -219,7 +219,7 @@ authRouter.post('/logout',
     if (result === "204") {
       return res.sendStatus(204)
     }
-    return res.send({result: result})
+    return res.send({logout: result})
   })
 
 authRouter.get("/me",
