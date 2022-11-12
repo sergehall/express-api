@@ -45,44 +45,38 @@ import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
 import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
 
-// usersAccount
+// UsersAccount
 const usersAccountRepository = new UsersAccountRepository()
 const usersAccountService = new UsersAccountService(usersAccountRepository)
 const usersAccountController = new UsersAccountController(usersAccountService)
-// auth
+// Middleware
 const auth = new Auth()
-// middleware
-const validateLast10secReq = new ValidateLast10secReq()
 const parseQuery = new ParseQuery()
-// posts
+const validateLast10secReq = new ValidateLast10secReq()
+// Posts
 const postsRepository = new PostsRepository()
 const postsService = new PostsService(postsRepository)
 const postsController = new PostsController(postsService)
-// bloggers
+// Bloggers
 const bloggersRepository = new BloggersRepository()
 const bloggersService = new BloggersService(bloggersRepository)
 const bloggersController = new BloggersController(bloggersService, postsService)
-// users
+// Users
 const usersRepository = new UsersRepository()
 const usersService = new UsersService(usersRepository)
 const usersController = new UsersController(usersService)
-// feedbacks
+// Feedbacks
 const feedbacksRepository = new FeedbacksRepository()
 const feedbacksService = new FeedbacksService(feedbacksRepository)
 const feedbacksController = new FeedbacksController(feedbacksService)
-// allDeletedBloggers
+// AllDeletedBloggers
 const allDeletedBloggersPostsRepository = new AllDeletedBloggersPostsRepository()
 const allDelBloggersService = new AllDelBloggersService(allDeletedBloggersPostsRepository)
 const allDelBloggersController = new AllDelBloggersController(allDelBloggersService)
-// comments
+// Comments
 const commentsRepository = new CommentsRepository()
 const commentsService = new CommentsService(commentsRepository)
 const commentsController = new CommentsController(commentsService)
-// Repositories
-const blackListIPRepository = new BlackListIPRepository()
-const emailsToSentRepository = new EmailsToSentRepository()
-const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
-const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepository()
 // Blogs
 const blogsRepository = new BlogsRepository()
 const blogsService = new BlogsService(blogsRepository)
@@ -97,13 +91,19 @@ const securityDevicesService = new SecurityDevicesService(securityDevicesReposit
 const securityDevicesController = new SecurityDevicesController(securityDevicesService)
 // JWT Service
 const jwtService = new JWTService()
-// email adapter
+// Email
 const emailAdapter = new EmailAdapter()
-// my demons
+const emailsToSentRepository = new EmailsToSentRepository()
+// My demons
 const emailSender = new EmailSender()
 const clearingIpWithCreatedAtOlder10Sec = new ClearingIpWithCreatedAtOlder10Sec()
 const clearingInvalidJWTFromBlackList = new ClearingInvalidJWTFromBlackList()
 const clearingDevicesWithExpDate = new ClearingDevicesWithExpDate()
+// Last10sec
+const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
+// Black list
+const blackListIPRepository = new BlackListIPRepository()
+const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepository()
 
 export const ioc = {
   auth: auth,
