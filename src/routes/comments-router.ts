@@ -9,7 +9,7 @@ export const commentsRouter = Router({})
 
 commentsRouter.get('/:commentId',
   ioc.auth.noneStatusAccessToken,
-  ioc.commentsController.getCommentById.bind(ioc.commentsController))
+  ioc.commentsController.findCommentByCommentId.bind(ioc.commentsController))
 
   .put('/:commentId',
     ioc.auth.authenticationAccessToken,

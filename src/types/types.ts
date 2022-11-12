@@ -163,7 +163,6 @@ export type ReturnTypeObjectComment = {
   resultCode: number
 }
 export type ArrayCommentsExtLikesInfo = CommentType[]
-export type FilterCommentId = {"allComments.id": string}
 
 //...............................................Emails
 export type EmailsRecoveryCode = {

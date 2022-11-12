@@ -1,6 +1,6 @@
 import {
   ArrayCommentsExtLikesInfo,
-  ArrayErrorsType, CommentType, FilterCommentId,
+  ArrayErrorsType, CommentType,
   ReturnTypeObjectComment, UserAccountType
 } from "../types/types";
 import {
@@ -15,19 +15,26 @@ import {ioc} from "../IoCContainer";
 
 export class CommentsRepository {
 
-  async findCommentByCommentId(filter: FilterCommentId): Promise<CommentType | null> {
-    const result: CommentType | undefined = await MyModelComments.findOne(filter)
-      .then(c => c?.allComments.filter(i => i.id === filter["allComments.id"])[0])
-    return result  ? result : null;
+  async findCommentCompareOwner(commentId: string): Promise<CommentType | null> {
+    const result: CommentType | undefined = await MyModelComments.findOne(
+      {"allComments.id": commentId},
+      {
+        _id: false,
+        "allComments._id": false
+      }
+    ).then(c => c?.allComments.filter(i => i.id === commentId)[0])
+    return result ? result : null;
   }
 
-  async findCommentById(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment> {
+  async findCommentByCommentId(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
-    const foundPostWithComments = await MyModelComments.findOne(filter, {
-      _id: false,
-      "allComments._id": false
-    }).lean()
+    const foundPostWithComments = await MyModelComments.findOne(
+      filter,
+      {
+        _id: false,
+        "allComments._id": false
+      }).lean()
 
     if (!foundPostWithComments) {
       errorsArray.push(notFoundCommentId)
@@ -118,14 +125,16 @@ export class CommentsRepository {
             [
               {commentId: commentId},
               {userId: userId}
-            ]},
+            ]
+        },
         {
           $set: {
             commentId: commentId,
             userId: userId,
             likeStatus: likeStatus,
             createdAt: createdAt,
-          }},
+          }
+        },
         {upsert: true})
 
       return true

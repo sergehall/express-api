@@ -1,7 +1,6 @@
 import {CommentsRepository} from "../repositories/comments-db-repository";
 import {
   CommentType,
-  FilterCommentId,
   ReturnTypeObjectComment, UserAccountType
 } from "../types/types";
 
@@ -10,12 +9,12 @@ export class CommentsService {
   constructor(private commentsRepository: CommentsRepository) {
     this.commentsRepository = commentsRepository
   }
-  async findCommentByCommentId(filter: FilterCommentId): Promise<CommentType | null> {
-    return await this.commentsRepository.findCommentByCommentId(filter)
+  async findCommentCompareOwner(commentId: string): Promise<CommentType | null> {
+    return await this.commentsRepository.findCommentCompareOwner(commentId)
   }
 
-  async findCommentById(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment>{
-    return await this.commentsRepository.findCommentById(commentId, currentUser)
+  async findCommentByCommentId(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment>{
+    return await this.commentsRepository.findCommentByCommentId(commentId, currentUser)
   }
 
   async updateCommentById(commentId: string, content: string): Promise<ReturnTypeObjectComment> {
