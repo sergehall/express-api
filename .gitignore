@@ -6,3 +6,4 @@
 globalConfig.json
 users-db-repository.test.ts
 users-service.test.ts
+jest.config.js
