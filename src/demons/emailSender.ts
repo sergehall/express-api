@@ -8,6 +8,7 @@ export class EmailSender {
       const emailAndCode = await ioc.emailsToSentRepository.findEmailByOldestDate()
       if (emailAndCode !== null) {
         await ioc.emailAdapter.sendEmailConfirmationMessage(emailAndCode)
+        await ioc.usersService.addTimeOfSentEmail(emailAndCode.email, new Date().toISOString())
         await ioc.emailsToSentRepository.deleteInsertedEmailAfterSent(emailAndCode)
       }
       await ioc.emailSender.sendAndDeleteConfirmationCode()
@@ -19,6 +20,7 @@ export class EmailSender {
       const emailAndCode = await ioc.emailsToSentRepository.findEmailByOldestDateRecoveryCode()
       if (emailAndCode !== null) {
         await ioc.emailAdapter.sendEmailRecoveryCode(emailAndCode)
+        await ioc.usersService.addTimeOfSentEmail(emailAndCode.email, new Date().toISOString())
         await ioc.emailsToSentRepository.deleteInsertedEmailAfterSentRecoveryCode(emailAndCode)
       }
       await ioc.emailSender.sendAndDeleteRecoveryCode()

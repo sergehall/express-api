@@ -10,21 +10,21 @@ import {
   LastTreeLikes,
   Pagination,
   PostsType, ReturnObjectPostsType,
-  ReturnTypeObjectComment, UserAccountType
+  ReturnTypeObjectComment, UserType
 } from "../types/types";
 import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
-import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
 import {ioc} from "../IoCContainer";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
+import {MyModelUser} from "../mongoose/UsersSchemaModel";
 
 
 export class PostsRepository {
 
-  async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserAccountType | null): Promise<Pagination> {
+  async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserType | null): Promise<Pagination> {
     const direction = sortDirection === "desc" ? 1 : -1;
 
     let field = "createdAt"
@@ -58,7 +58,7 @@ export class PostsRepository {
     };
   }
 
-  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountType | null): Promise<Pagination> {
+  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserType | null): Promise<Pagination> {
     let filter = {}
     if (bloggerId) {
       filter = {bloggerId: bloggerId}
@@ -158,7 +158,7 @@ export class PostsRepository {
     }
   }
 
-  async createNewCommentByPostId(postId: string, content: string, user: UserAccountType): Promise<ReturnTypeObjectComment> {
+  async createNewCommentByPostId(postId: string, content: string, user: UserType): Promise<ReturnTypeObjectComment> {
     try {
       let errorsArray: ArrayErrorsType = [];
       const newCommentId = uuid4().toString()
@@ -210,7 +210,7 @@ export class PostsRepository {
     }
   }
 
-  async getPostById(id: string, user: UserAccountType | null): Promise<PostsType | null> {
+  async getPostById(id: string, user: UserType | null): Promise<PostsType | null> {
     const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
       _id: false,
       __v: false
@@ -226,7 +226,7 @@ export class PostsRepository {
     return post
   }
 
-  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserAccountType | null): Promise<Pagination> {
+  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserType | null): Promise<Pagination> {
     const filter = {postId: postId}
 
     let foundPost = await MyModelPosts.findOne({id: postId}).lean()
@@ -390,7 +390,7 @@ export class PostsRepository {
     return result.acknowledged
   }
 
-  async changeLikeStatusPost(user: UserAccountType, postId: string, likeStatus: string): Promise<Boolean> {
+  async changeLikeStatusPost(user: UserType, postId: string, likeStatus: string): Promise<Boolean> {
     const userId = user.accountData.id
     const createdAt = new Date().toISOString()
 
@@ -550,7 +550,7 @@ export class PostsRepository {
         }
       }
 
-      const gettingLoginNewestLike = await MyModelUserAccount.findOne({"accountData.id": findNewestLike.userId}).lean()
+      const gettingLoginNewestLike = await MyModelUser.findOne({"accountData.id": findNewestLike.userId}).lean()
       if (!gettingLoginNewestLike) {
         return false
       }

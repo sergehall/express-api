@@ -1,7 +1,7 @@
 import {
   ArrayCommentsExtLikesInfo,
   ArrayErrorsType, CommentType,
-  ReturnTypeObjectComment, UserAccountType
+  ReturnTypeObjectComment, UserType
 } from "../types/types";
 import {
   mongoHasNotUpdated,
@@ -26,7 +26,7 @@ export class CommentsRepository {
     return result ? result : null;
   }
 
-  async findCommentByCommentId(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment> {
+  async findCommentByCommentId(commentId: string, currentUser: UserType | null): Promise<ReturnTypeObjectComment> {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
     const foundPostWithComments = await MyModelComments.findOne(
@@ -106,7 +106,7 @@ export class CommentsRepository {
     }
   }
 
-  async changeLikeStatusComment(user: UserAccountType, commentId: string, likeStatus: string): Promise<Boolean> {
+  async changeLikeStatusComment(user: UserType, commentId: string, likeStatus: string): Promise<Boolean> {
     const userId = user.accountData.id
     const createdAt = new Date().toISOString()
 

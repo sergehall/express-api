@@ -1,9 +1,6 @@
 import {BloggersRepository} from "./repositories/bloggers-db-repository";
 import {BloggersService} from "./domain/bloggers-service";
 import {BloggersController} from "./presentation/bloggersCotroller";
-import {UsersRepository} from "./repositories/users-db-repository";
-import {UsersService} from "./domain/users-service";
-import {UsersController} from "./presentation/usersController";
 import {PostsRepository} from "./repositories/posts-db-repository";
 import {PostsService} from "./domain/posts-service";
 import {PostsController} from "./presentation/postsController";
@@ -16,9 +13,6 @@ import {AllDelBloggersController} from "./presentation/all-dell-bloggersControll
 import {CommentsService} from "./domain/comments-service";
 import {CommentsRepository} from "./repositories/comments-db-repository";
 import {CommentsController} from "./presentation/commentsController";
-import {UsersAccountRepository} from "./repositories/usersAccount-db-repository";
-import {UsersAccountService} from "./domain/usersAccount-service";
-import {UsersAccountController} from "./presentation/userAccountsController";
 import {BlogsRepository} from "./repositories/blogs-db-repository";
 import {BlogsService} from "./domain/blogs-service";
 import {BlogsController} from "./presentation/blogsController";
@@ -44,11 +38,16 @@ import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBl
 import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
 import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
+import {User} from "./managers/create-user";
+import {UsersService} from "./domain/users-service";
+import {UsersController} from "./presentation/userController";
+import {UsersRepository} from "./repositories/users-db-repository";
 
-// UsersAccount
-const usersAccountRepository = new UsersAccountRepository()
-const usersAccountService = new UsersAccountService(usersAccountRepository)
-const usersAccountController = new UsersAccountController(usersAccountService)
+// Users
+const user = new User()
+const usersRepository = new UsersRepository()
+const usersService = new UsersService(usersRepository)
+const usersController = new UsersController(usersService)
 // Middleware
 const auth = new Auth()
 const parseQuery = new ParseQuery()
@@ -61,12 +60,6 @@ const postsController = new PostsController(postsService)
 const bloggersRepository = new BloggersRepository()
 const bloggersService = new BloggersService(bloggersRepository)
 const bloggersController = new BloggersController(bloggersService, postsService)
-// Users
-
-
-const usersRepository = new UsersRepository()
-const usersService = new UsersService(usersRepository)
-const usersController = new UsersController(usersService)
 // Feedbacks
 const feedbacksRepository = new FeedbacksRepository()
 const feedbacksService = new FeedbacksService(feedbacksRepository)
@@ -110,26 +103,25 @@ const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepositor
 
 export const ioc = {
   auth: auth,
+  user: user,
+  usersService: usersService,
+  usersController: usersController,
   bloggersService: bloggersService,
   bloggersController: bloggersController,
   postsService: postsService,
   postsController: postsController,
   feedbacksService: feedbacksService,
   feedbacksController: feedbacksController,
-  usersService: usersService,
-  usersController: usersController,
   commentsService: commentsService,
   commentsController: commentsController,
   allDelBloggersService: allDelBloggersService,
   allDelBloggersController: allDelBloggersController,
   blogsService: blogsService,
   blogsController: blogsController,
-  usersAccountService: usersAccountService,
   preparationPostsForReturn: preparationPostsForReturn,
   blackListIPRepository: blackListIPRepository,
   emailsToSentRepository: emailsToSentRepository,
   usersIPLast10secRepositories: usersIPLast10secRepositories,
-  usersAccountController: usersAccountController,
   blackListRefreshTokenJWTRepository: blackListRefreshTokenJWTRepository,
   validateLast10secReq: validateLast10secReq,
   preparationComments: preparationComments,

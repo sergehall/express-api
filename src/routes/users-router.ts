@@ -1,22 +1,31 @@
 import {Router} from "express";
 import {ioc} from "../IoCContainer";
 import {
+  idParamsValidation,
+  loginValidation,
+  passwordValidation,
+  emailValidation,
   inputValidatorMiddleware,
-  userIdParamsValidation, loginValidation, passwordValidation, emailValidation
 } from "../middlewares/input-validator-middleware";
 
 
 export const usersRouter = Router({});
 
 usersRouter.get('/',
-  ioc.usersAccountController.getUsers.bind(ioc.usersAccountController))
+  ioc.usersController.getUsers.bind(ioc.usersController))
 
-  .post('/', ioc.auth.basicAuthorization,
-    loginValidation, passwordValidation, emailValidation, inputValidatorMiddleware,
-    ioc.usersAccountController.createNewUser.bind(ioc.usersAccountController))
+  .post('/',
+    ioc.auth.basicAuthorization,
+    loginValidation,
+    passwordValidation,
+    emailValidation,
+    inputValidatorMiddleware,
+    ioc.usersController.createNewUser.bind(ioc.usersController))
 
-  .delete('/:userId', ioc.auth.basicAuthorization,
-    userIdParamsValidation, inputValidatorMiddleware,
-    ioc.usersAccountController.deleteUserById.bind(ioc.usersAccountController))
+  .delete('/:userId',
+    ioc.auth.basicAuthorization,
+    idParamsValidation,
+    inputValidatorMiddleware,
+    ioc.usersController.deleteUserById.bind(ioc.usersController))
 
 

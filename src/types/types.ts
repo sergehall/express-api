@@ -6,44 +6,26 @@ export type ErrorType = {
 export type ArrayErrorsType = ErrorType[]
 
 //...............................................User and extended UserAccount
-export type UserDBType = {
-  id: string
-  login: string
-  email: string
-  passwordHash: string
-  passwordSalt: string
-  createdAt: string
-}
-
-export type UserAccountType = {
+export type UserType = {
   accountData: {
     id: string
     login: string
     email: string
-    passwordSalt: string
     passwordHash: string
-    createdAt: string
   },
   emailConfirmation: {
     confirmationCode: string
     expirationDate: string
     isConfirmed: boolean
-    sentEmail: SentEmailType[];
+    sentEmail: TimeISOType[];
   },
   registrationData: {
     ip: string | null
+    userAgent: string
     createdAt: string
-  }[]
+  }
 }
-export type UserType = {
-  id: string
-  login: string
-  email: string
-  passwordHash: string
-  passwordSalt: string
-  createdAt: string
-}
-
+export type TimeISOType = string
 //...............................................Bloggers and Blogs
 export type BloggerType = {
   id: string | null
@@ -175,9 +157,7 @@ export type EmailsToSent = {
   confirmationCode: string
   createdAt: string
 }
-export type SentEmailType = {
-  sendTime: string
-}
+
 export type UserEmailAndConfirmationCode = {
   email: string
   confirmationCode: string
@@ -240,23 +220,14 @@ export type RegistrationDataType = {
 }
 
 //...............................................BlackList
-export type BlackListIPType = {
-  ip: string
-  countTimes: {
-    createdAt: Date
-  }[]
-}
 export type BlackListRefreshTokenJWT = {
   refreshToken: string
   expirationDate: string
 }
 export type BlackListIPDBType = {
   ip: string
-  countTimes: {
-    createdAt: string
-  }[]
+  addedAt: string
 }
-
 //...............................................likeStatus
 export type likeStatusCommentIdType = {
   commentId: string

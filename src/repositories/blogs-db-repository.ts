@@ -1,6 +1,6 @@
 import {
   ArrayErrorsType, BlogsType,
-  Pagination, ReturnObjectBlogType, UserAccountType
+  Pagination, ReturnObjectBlogType, UserType
 } from "../types/types";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
@@ -61,7 +61,7 @@ export class BlogsRepository {
     }
   }
 
-  async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string, currentUser: UserAccountType | null): Promise<Pagination | null> {
+  async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string, currentUser: UserType | null): Promise<Pagination | null> {
     const filterBlogId = {blogId: blogId}
 
     const direction = sortDirection === "desc" ? 1 : -1;

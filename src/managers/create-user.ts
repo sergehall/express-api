@@ -1,16 +1,12 @@
 import uuid4 from "uuid4";
 import add from "date-fns/add";
+import bcrypt from "bcrypt";
 
-export class NewUserObj {
-  constructor(
-    private login: string,
-    private email: string,
-    private passwordSalt: string,
-    private passwordHash: string,
-    private ip: string | null) {
-  }
+export class User {
 
-  create() {
+  async createNewUser(login: string, password: string, email: string, ip: string | null, userAgent: string) {
+    const passwordSalt = await bcrypt.genSalt(10)
+    const passwordHash = await this._generateHash(password, passwordSalt)
     const id = uuid4().toString()
     const currentTime = new Date().toISOString()
     const confirmationCode = uuid4().toString()
@@ -23,22 +19,30 @@ export class NewUserObj {
     return {
       accountData: {
         id: id,
-        login: this.login,
-        email: this.email,
-        passwordSalt: this.passwordSalt,
-        passwordHash: this.passwordHash,
-        createdAt: currentTime
+        login: login,
+        email: email,
+        passwordHash: passwordHash,
       },
       emailConfirmation: {
         confirmationCode: confirmationCode,
         expirationDate: expirationDate,
         isConfirmed: false,
-        sentEmail: [{sendTime: currentTime}]
+        sentEmail: []
       },
-      registrationData: [{
-        ip: this.ip,
+      registrationData: {
+        ip: ip,
+        userAgent: userAgent,
         createdAt: currentTime
-      }]
+      }
     }
+  }
+
+  async createNewHash(newPassword: string) {
+    const passwordSalt = await bcrypt.genSalt(10)
+    return await this._generateHash(newPassword, passwordSalt)
+  }
+
+  async _generateHash(password: string, salt: string) {
+    return await bcrypt.hash(password, salt)
   }
 }

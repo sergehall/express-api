@@ -9,20 +9,18 @@ import {MyModeLast10secRedEmailRes} from "../mongoose/Last10secRegEmailResModel"
 import {MyModeLast10secLog} from "../mongoose/Last10secLogModel";
 import {MyModeLast10secReg} from "../mongoose/Last10secRegModel";
 import {MyModeLast10secRegConf} from "../mongoose/Last10secRegConfModel";
-import {MyModelUserAccount} from "../mongoose/UsersAccountsSchemaModel";
-import {MyModelUser} from "../mongoose/UsersSchemaModel";
 import {MyModelBlogPosts} from "../mongoose/PostsBlogSchemaModel";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
+import {MyModelUser} from "../mongoose/UsersSchemaModel";
 
 export const testingRouter = Router({})
 
 testingRouter
   .delete("/all-data", async (req: Request, res: Response) => {
-    await MyModelUserAccount.deleteMany({})
     await MyModelUser.deleteMany({})
     await MyModelBlogs.deleteMany({})
     await MyModelPosts.deleteMany({})

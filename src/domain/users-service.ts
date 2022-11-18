@@ -1,55 +1,171 @@
-import bcrypt from 'bcrypt'
-import {Pagination, UserDBType} from "../types/types";
-import {UsersRepository} from "../repositories/users-db-repository";
+import {
+  Pagination,
+  UserType
+} from "../types/types";
 import uuid4 from "uuid4";
+import add from "date-fns/add";
+import {ioc} from "../IoCContainer";
+import {UsersRepository} from "../repositories/users-db-repository";
 
 
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {
-    this.usersRepository = usersRepository
   }
 
-  async createUser(login: string, email: string, password: string): Promise<UserDBType | null> {
-    const newId = uuid4().toString();
-    const passwordSalt = await bcrypt.genSalt(10)
-    const passwordHash = await this._generateHash(password, passwordSalt)
-
-    const newUser: UserDBType = {
-      id: newId,
-      login: login,
-      email,
-      passwordSalt,
-      passwordHash,
-      createdAt: new Date().toISOString()
-    }
-    return this.usersRepository.insertUser(newUser)
+  async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
+    return await this.usersRepository.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
   }
 
-  async findUsers(pageNumber: number, pageSize: number, userName: string | null): Promise<Pagination> {
-    return await this.usersRepository.findUsers(pageNumber, pageSize, userName)
+  async createUser(login: string, email: string, password: string, clientIp: string | null, userAgent: string): Promise<UserType | null> {
+    const newUser: UserType = await ioc.user.createNewUser(login, password, email, clientIp, userAgent)
+    return await this.usersRepository.createOrUpdateUser(newUser)
   }
 
-  async findUser(userId: string): Promise<UserDBType | null> {
-    return await this.usersRepository.findUserById(userId)
+  async createNewPassword(newPassword: string, user: UserType) {
+    const newHash = await ioc.user.createNewHash(newPassword)
+    const newUser: UserType = JSON.parse(JSON.stringify(user))
+    newUser.accountData.passwordHash = newHash
+    return await this.usersRepository.createOrUpdateUser(newUser)
   }
 
-  async checkCredentials(loginOrEmail: string, password: string) {
-    const user = await this.usersRepository.findByLoginOrEmail(loginOrEmail)
-    if (user === null) {
+  async createUserRegistration(login: string, email: string, password: string, clientIp: string | null, userAgent: string): Promise<UserType | null> {
+    const newUser: UserType = await ioc.user.createNewUser(login, password, email, clientIp, userAgent)
+    const createUserInDB = await this.usersRepository.createOrUpdateUser(newUser)
+
+    try {
+      if (createUserInDB) {
+        const copyCreateResult = {...createUserInDB}
+        if (!copyCreateResult.accountData.email) {
+          return null
+        }
+        const newDataUserEmailConfirmationCode = {
+          email: copyCreateResult.accountData.email,
+          confirmationCode: copyCreateResult.emailConfirmation.confirmationCode,
+          createdAt: new Date().toISOString()
+        }
+        await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
+
+      }
+      return createUserInDB
+    } catch (e) {
+      console.log(e)
+      await this.usersRepository.deleteUserById(newUser.accountData.id)
       return null
     }
-    const result = await bcrypt.compare(password, user.passwordHash)
-    if (result) {
-      return user
+  }
+
+  async confirmByEmail(code: string, email: string): Promise<UserType | null> {
+    const user = await this.usersRepository.getUserByEmailCode(code, email)
+    if (user) {
+      if (!user.emailConfirmation.isConfirmed) {
+        if (user.emailConfirmation.expirationDate > new Date().toISOString()) {
+          user.emailConfirmation.isConfirmed = true
+          const result = await this.usersRepository.updateUser(user)
+          if (result.matchedCount !== 1) {
+            return null
+          }
+          return user
+        }
+      }
     }
-    return null   //.passwordHash === passwordHash; // true or false if not match
+    return null
   }
 
-  async _generateHash(password: string, salt: string) {
-    return await bcrypt.hash(password, salt)
+  async confirmByCodeInParams(code: string): Promise<UserType | null> {
+
+    const user = await this.usersRepository.findUserByConfirmationCode(code)
+    if (user) {
+      if (!user.emailConfirmation.isConfirmed) {
+        if (user.emailConfirmation.expirationDate > new Date().toISOString()) {
+          user.emailConfirmation.isConfirmed = true
+          await this.usersRepository.updateUser(user)
+          return user
+        }
+      }
+    }
+    return null
   }
 
-  async deleteUserById(id: string): Promise<Boolean> {
-    return await this.usersRepository.deletedUserById(id)
+  async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserType | null> {
+    return await this.usersRepository.findUserByLoginOrEmail(loginOrEmail)
   }
+
+  async findByConfirmationCode(code: string): Promise<UserType | null> {
+    return await this.usersRepository.findByConfirmationCode(code)
+  }
+
+  async countEmailsSentLastHour(code: string): Promise<number> {
+    return await this.usersRepository.countEmailsSentLastHour(code)
+  }
+
+  async deleteUserWithRottenCreatedAt(): Promise<number> {
+    return await this.usersRepository.findByIsConfirmedAndCreatedAt()
+  }
+
+  async sentRecoveryCodeByEmailUserExist(user: UserType) {
+
+    await ioc.emailsToSentRepository.insertEmailToRecoveryCodesDB({
+      email: user.accountData.email,
+      recoveryCode: user.emailConfirmation.confirmationCode,
+      createdAt: new Date().toISOString()
+    })
+    return user
+  }
+
+  async sentRecoveryCodeByEmailUserNotExist(email: string) {
+
+    const newEmailRecoveryCode = {
+      email: email,
+      recoveryCode: uuid4().toString(),
+      createdAt: new Date().toISOString()
+    }
+    await ioc.emailsToSentRepository.insertEmailToRecoveryCodesDB(newEmailRecoveryCode)
+    return newEmailRecoveryCode
+  }
+
+  async updateAndSentConfirmationCodeByEmail(email: string) {
+
+    const user = await this.usersRepository.findUserByLoginOrEmail(email)
+    if (!user) {
+      return null
+    }
+    if (!user.emailConfirmation.isConfirmed) {
+      if (user.emailConfirmation.expirationDate > new Date().toISOString()) {
+        user.emailConfirmation.confirmationCode = uuid4().toString()
+        user.emailConfirmation.expirationDate = add(new Date(),
+          {
+            hours: 1,
+            minutes: 5
+          }).toString()
+        // update user
+        await this.usersRepository.updateUserConfirmationCode(user)
+
+        const newDataUserEmailConfirmationCode = {
+          email: user.accountData.email,
+          confirmationCode: user.emailConfirmation.confirmationCode,
+          createdAt: new Date().toISOString()
+        }
+        // add Email to emailsToSentRepository
+        await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
+        return user
+      }
+    }
+  }
+
+  async findUserByUserId(userId: string): Promise<UserType | null> {
+    return await this.usersRepository.findUserByUserId(userId)
+  }
+
+  async findByLoginAndEmail(email: string, login: string): Promise<UserType | null> {
+    return await this.usersRepository.findByLoginAndEmail(email, login)
+  }
+
+  async deleteUserById(id: string): Promise<boolean> {
+    return await this.usersRepository.deleteUserById(id)
+  }
+
+  async addTimeOfSentEmail(email: string, sentTime: string): Promise<boolean> {
+    return await this.usersRepository.addTimeOfSentEmail(email, sentTime)
+  }
+
 }

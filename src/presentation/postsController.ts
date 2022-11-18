@@ -1,7 +1,7 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
-import {UserAccountType} from "../types/types";
+import {UserType} from "../types/types";
 
 export class PostsController {
   constructor(private postsService: PostsService) {
@@ -14,7 +14,7 @@ export class PostsController {
     const pageSize: number = parseQueryData.pageSize
     const sortBy: string | null = parseQueryData.sortBy
     const sortDirection: string | null = parseQueryData.sortDirection
-    const currentUser: UserAccountType | null = req.user
+    const currentUser: UserType | null = req.user
 
     const foundPosts = await this.postsService.findPosts(pageNumber, pageSize, sortBy, sortDirection, currentUser);
     res.send(foundPosts)
@@ -43,7 +43,7 @@ export class PostsController {
     try {
       const postId = req.params.postId;
       const content = req.body.content;
-      const user: UserAccountType | null = req.user
+      const user: UserType | null = req.user
 
       if (!user) {
         res.status(401)
@@ -75,7 +75,7 @@ export class PostsController {
   async getPostById(req: Request, res: Response) {
     try {
       const postId = req.params.postId;
-      const user: UserAccountType | null = req.user
+      const user: UserType | null = req.user
       const getPost = await this.postsService.getPostById(postId, user);
       if (!getPost) {
         res.status(404).send()
@@ -98,7 +98,7 @@ export class PostsController {
       const pageSize = parseQueryData.pageSize
       const sortBy: string | null = parseQueryData.sortBy
       const sortDirection: string | null = parseQueryData.sortDirection
-      const user: UserAccountType | null = req.user
+      const user: UserType | null = req.user
 
       const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection, user);
       if (getPost.pageSize === 0) {
@@ -170,7 +170,7 @@ export class PostsController {
   async likeStatusPostId(req: Request, res: Response) {
     const likeStatus = req.body.likeStatus
     const postId: string = req.params.postId;
-    const user: UserAccountType = req.user
+    const user: UserType = req.user
     const likeStatusPost = await this.postsService.changeLikeStatusPost(user, postId, likeStatus);
     if (!likeStatusPost) {
       return res.sendStatus(404)

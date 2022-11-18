@@ -2,7 +2,7 @@ import {BloggersService} from "../domain/bloggers-service";
 import {Request, Response} from "express";
 import {PostsService} from "../domain/posts-service";
 import {ioc} from "../IoCContainer";
-import {UserAccountType} from "../types/types";
+import {UserType} from "../types/types";
 
 
 export class BloggersController {
@@ -27,7 +27,7 @@ export class BloggersController {
   async findAllPostByBloggerId(req: Request, res: Response) {
     const id: string = req.params.bloggerId;
     const foundBlogger = await this.bloggersService.getBloggerById(id);
-    const user: UserAccountType | null = req.user
+    const user: UserType | null = req.user
 
     if (foundBlogger.errorsMessages.length === 0) {
       const parseQueryData = await ioc.parseQuery.parse(req)

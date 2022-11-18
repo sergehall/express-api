@@ -1,11 +1,11 @@
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
 import requestIp from "request-ip";
-import {UsersAccountService} from "../domain/usersAccount-service";
+import {UsersService} from "../domain/users-service";
 
 
-export class UsersAccountController {
-  constructor(private usersAccountService: UsersAccountService) {
+export class UsersController {
+  constructor(private usersService: UsersService) {
   }
 
   async getUsers(req: Request, res: Response) {
@@ -18,7 +18,7 @@ export class UsersAccountController {
       const sortBy: string | null = parseQueryData.sortBy
       const sortDirection: string | null = parseQueryData.sortDirection
 
-      const getUsers = await this.usersAccountService.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
+      const getUsers = await this.usersService.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
       if (!getUsers) {
         res.status(404).send()
       } else {
@@ -33,22 +33,21 @@ export class UsersAccountController {
   async createNewUser(req: Request, res: Response) {
     try {
       const clientIp = requestIp.getClientIp(req);
-      const userAccount = await ioc.usersAccountService.createUser(req.body.login, req.body.email, req.body.password, clientIp);
-      if (userAccount) {
-        const userReturn = {
-          id: userAccount.accountData.id,
-          login: userAccount.accountData.login,
-          email: userAccount.accountData.email,
-          createdAt: userAccount.accountData.createdAt
-        }
-        res.status(201).send(userReturn)
-        return
+      const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
+      const newUser = await ioc.usersService.createUser(req.body.login, req.body.email, req.body.password, clientIp, userAgent);
+      if (newUser) {
+        return res.status(201).send({
+          id: newUser.accountData.id,
+          login: newUser.accountData.login,
+          email: newUser.accountData.email,
+          createdAt: newUser.registrationData.createdAt
+        })
       }
-      res.status(400).send({
+      return res.status(400).send({
         errorsMessages: [
           {
-            message: "E11000 duplicate key error collection",
-            field: "Login or password"
+            message: "Email or Login already exists",
+            field: "Login or email"
           }
         ]
       })
@@ -61,17 +60,16 @@ export class UsersAccountController {
 
   async deleteUserById(req: Request, res: Response) {
     try {
-      const id = req.params.userId
+      const id = req.params.id
       const deletedPost = await ioc.usersService.deleteUserById(id)
 
-      if (deletedPost) {
-        res.sendStatus(204)
-      } else {
-        res.sendStatus(404)
+      if (!deletedPost) {
+        return res.sendStatus(404)
       }
+      return res.sendStatus(204)
     } catch (e) {
       console.log(e)
-      res.sendStatus(500)
+      return res.sendStatus(500)
     }
   }
 }

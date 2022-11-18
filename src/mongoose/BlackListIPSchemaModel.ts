@@ -1,6 +1,5 @@
-import mongoose  from 'mongoose';
-import {BlackListIPType} from "../types/types";
-
+import mongoose from 'mongoose';
+import {BlackListIPDBType} from "../types/types";
 
 
 const BlackListIPSchema = new mongoose.Schema({
@@ -9,15 +8,10 @@ const BlackListIPSchema = new mongoose.Schema({
     required: [true, 'ip is required'],
     default: ""
   },
-  countTimes: {
-    type: Array({
-      createdAt: {
-        type: String,
-        required: [true, 'createdAt is required']
-      }
-    }),
-    validate: (v: any) => Array.isArray(v)
+  addedAt: {
+    type: String,
+    required: [true, 'addedAt is required']
   }
 })
 
-export const MyModelBlackListIP = mongoose.model<BlackListIPType>("blackListIP", BlackListIPSchema, 'BlackListIP')
+export const MyModelBlackListIP = mongoose.model<BlackListIPDBType>("blackListIP", BlackListIPSchema, 'BlackListIP')

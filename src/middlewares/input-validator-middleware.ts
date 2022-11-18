@@ -6,7 +6,7 @@ import {body, check, param, validationResult} from "express-validator";
 export const postIdParamsValidation = param('postId').isString().withMessage("postIdParamsValidation must be string.")
 export const bloggerIdParamsValidation = param('bloggerId').isString().withMessage('param bloggerId must string')
 export const blogIdParamsValidation = param('blogId').isString().withMessage("blogIdParamsValidation5")
-export const idParamsValidation = param('id').isString()
+export const idParamsValidation = param('id').trim().isLength({min: 1, max: 50}).withMessage("'param userId must string and >1 and <50 characters.")
 export const userIdParamsValidation = param('userId').trim().isLength({min: 1, max: 50}).withMessage("'param userId must string and >1 and <50 characters.")
 //...........................body
 export const titleValidation = body("title").trim().isLength({min: 1, max: 30}).withMessage("title must be >1 and <30 characters.")

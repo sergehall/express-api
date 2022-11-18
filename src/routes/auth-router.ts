@@ -25,7 +25,7 @@ authRouter.post('/login',
         await ioc.blackListRefreshTokenJWTRepository.addJWT(currentRefreshToken)
       }
       const clientIp = requestIp.getClientIp(req);
-      const title = req.header('user-agent');
+      const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
       const userId = (req.headers.userId) ? `${req.headers.userId}` : '';
 
       const accessToken = await ioc.jwtService.createAccessJWT(userId)
@@ -35,12 +35,12 @@ authRouter.post('/login',
       const newDevices: SessionDevicesType = {
         userId: payload.userId,
         ip: clientIp,
-        title: title,
+        title: userAgent,
         lastActiveDate: new Date(payload.iat * 1000).toISOString(),
         expirationDate: new Date(payload.exp * 1000).toISOString(),
         deviceId: payload.deviceId
       }
-      const filter = {title: title, ip: clientIp}
+      const filter = {title: userAgent, ip: clientIp}
       await ioc.securityDevicesService.createOrUpdateDevices(filter, newDevices)
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
@@ -95,14 +95,14 @@ authRouter.post('/password-recovery',
   inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const email = req.body.email
-    const user = await ioc.usersAccountService.findUserByLoginOrEmail(email)
+    const user = await ioc.usersService.findUserByLoginOrEmail(email)
 
     if (!user) {
-      const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserNotExist(email)
+      const result = await ioc.usersService.sentRecoveryCodeByEmailUserNotExist(email)
       console.log(`Resend password-recovery to email:  ${result?.email}`)
       return res.sendStatus(204)
     }
-    const result = await ioc.usersAccountService.sentRecoveryCodeByEmailUserExist(user)
+    const result = await ioc.usersService.sentRecoveryCodeByEmailUserExist(user)
     console.log(`Resend password-recovery to email:  ${result?.accountData.email}`)
     return res.sendStatus(204)
   })
@@ -116,7 +116,7 @@ authRouter.post('/new-password',
     const newPassword = req.body.newPassword
     const recoveryCode = req.body.recoveryCode
 
-    const user = await ioc.usersAccountService.findByConfirmationCode(recoveryCode)
+    const user = await ioc.usersService.findByConfirmationCode(recoveryCode)
 
     if (!user) {
       return res.status(400).send(
@@ -127,7 +127,7 @@ authRouter.post('/new-password',
           }]
         })
     }
-    await ioc.usersAccountService.createNewPassword(newPassword, user)
+    await ioc.usersService.createNewPassword(newPassword, user)
 
     return res.sendStatus(204)
 
@@ -139,13 +139,13 @@ authRouter.post('/registration-confirmation',
   inputValidatorMiddleware,
   ioc.validateLast10secReq.byRegisConfirm,
   async (req: Request, res: Response) => {
-    const clientIp = requestIp.getClientIp(req);
-    const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
-    if (countItWithIsConnectedFalse > 5) {
-      res.status(429).send('More than 5 emails sent.')
+    const code: string = req.body.code
+    const countEmails = await ioc.usersService.countEmailsSentLastHour(code)
+    if (countEmails > 10) {
+      res.status(429).send('More than 10 emails have been sent in the last hour.')
       return
     }
-    const result = await ioc.usersAccountService.confirmByCodeInParams(req.body.code)
+    const result = await ioc.usersService.confirmByCodeInParams(code)
     if (result === null) {
       res.status(400).send({
         "errorsMessages": [
@@ -172,12 +172,8 @@ authRouter.post('/registration',
   ioc.validateLast10secReq.byRegistration,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
-    const countItWithIsConnectedFalse = await ioc.usersAccountService.checkHowManyTimesUserLoginLastHourSentEmail(clientIp)
-    if (countItWithIsConnectedFalse > 5) {
-      res.status(403).send('5 emails were sent to confirm the code.')
-      return
-    }
-    const user = await ioc.usersAccountService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp);
+    const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
+    const user = await ioc.usersService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp, userAgent);
     if (user) {
       res.sendStatus(204);
       return
@@ -185,7 +181,7 @@ authRouter.post('/registration',
     res.status(400).send({
       "errorsMessages": [
         {
-          message: "Error with authRouter.post('/registration'......",
+          message: "Error post('/registration)",
           field: "some"
         }
       ]
@@ -198,7 +194,7 @@ authRouter.post('/registration-email-resending',
   ioc.validateLast10secReq.byRecovery,
   async (req: Request, res: Response) => {
     const email: string = req.body.email
-    const userResult = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(email)
+    const userResult = await ioc.usersService.updateAndSentConfirmationCodeByEmail(email)
     if (userResult === null) {
       res.status(400).send({
         "errorsMessages": [
@@ -254,12 +250,12 @@ authRouter.get('/resend-registration-email',
       res.status(400).send("Query param is empty")
       return
     }
-    const user = await ioc.usersAccountService.findByConfirmationCode(code)
+    const user = await ioc.usersService.findByConfirmationCode(code)
     if (user === null || !user.accountData.email) {
       res.status(400).send("Bad code or isConfirmed is true.")
       return
     }
-    const result = await ioc.usersAccountService.updateAndSentConfirmationCodeByEmail(user.accountData.email)
+    const result = await ioc.usersService.updateAndSentConfirmationCodeByEmail(user.accountData.email)
     res.send(`Resend code to email:  ${result?.accountData?.email}`)
   })
 
@@ -271,7 +267,7 @@ authRouter.get('/confirm-registration',
       res.sendStatus(400)
       return
     }
-    const result = await ioc.usersAccountService.confirmByCodeInParams(code)
+    const result = await ioc.usersService.confirmByCodeInParams(code)
     if (result && result.emailConfirmation.isConfirmed) {
       res.status(201).send("Email confirmed by query ?code=...");
       return
@@ -283,7 +279,7 @@ authRouter.get('/confirm-registration',
 
 authRouter.post('/confirm-email',
   async (req: Request, res: Response) => {
-    const result = await ioc.usersAccountService.confirmByEmail(req.body.confirmationCode, req.body.email)
+    const result = await ioc.usersService.confirmByEmail(req.body.confirmationCode, req.body.email)
     if (result !== null) {
       res.status(201).send("Email confirmed by email and confirmationCode.");
     } else {
@@ -293,7 +289,7 @@ authRouter.post('/confirm-email',
 
 authRouter.get('/confirm-code/:code',
   async (req: Request, res: Response) => {
-    const result = await ioc.usersAccountService.confirmByCodeInParams(req.params.code)
+    const result = await ioc.usersService.confirmByCodeInParams(req.params.code)
     if (result && result.emailConfirmation.isConfirmed) {
       res.status(201).send("Email confirmed by params confirmationCode.");
     } else {
@@ -303,6 +299,6 @@ authRouter.get('/confirm-code/:code',
 
 authRouter.delete('/logoutRottenCreatedAt',
   async (req: Request, res: Response) => {
-    const result = await ioc.usersAccountService.deleteUserWithRottenCreatedAt()
+    const result = await ioc.usersService.deleteUserWithRottenCreatedAt()
     res.send(`Total, did not confirm registration user were deleted = ${result}`)
   })

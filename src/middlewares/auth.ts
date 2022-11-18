@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from "express";
-import {ioc} from "../IoCContainer";
 import bcrypt from "bcrypt";
 import requestIp from "request-ip";
-import {UserAccountType} from "../types/types";
+import {ioc} from "../IoCContainer";
+import {UserType} from "../types/types";
 
 const base64 = require('base-64');
 
@@ -20,7 +20,7 @@ export class Auth {
       res.sendStatus(401)
       return
     }
-    req.user = await ioc.usersAccountService.findUserByUserId(userId)
+    req.user = await ioc.usersService.findUserByUserId(userId)
     next()
   }
 
@@ -35,7 +35,7 @@ export class Auth {
       next()
       return
     }
-    req.user = await ioc.usersAccountService.findUserByUserId(userId)
+    req.user = await ioc.usersService.findUserByUserId(userId)
     next()
     return
   }
@@ -50,7 +50,7 @@ export class Auth {
       next()
       return
     }
-    req.user = await ioc.usersAccountService.findUserByUserId(userId)
+    req.user = await ioc.usersService.findUserByUserId(userId)
     next()
     return
   }
@@ -78,8 +78,8 @@ export class Auth {
   }
 
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
-    const user: UserAccountType | null = await ioc.usersAccountService.findUserByLoginOrEmail(req.body.login)
-    console.log(user,  "user checkCredentialsLoginPass")
+    const user: UserType | null = await ioc.usersService.findUserByLoginOrEmail(req.body.login)
+    console.log(user, "user checkCredentialsLoginPass")
     if (user) {
       const compare = await bcrypt.compare(req.body.password, user.accountData.passwordHash)
       if (compare) {
@@ -100,7 +100,7 @@ export class Auth {
 
 
   async checkUserAccountNotExists(req: Request, res: Response, next: NextFunction) {
-    const checkOutEmailInDB = await ioc.usersAccountService.findByLoginAndEmail(req.body.email, req.body.login);
+    const checkOutEmailInDB = await ioc.usersService.findByLoginAndEmail(req.body.email, req.body.login);
     if (!checkOutEmailInDB) {
       next()
       return
@@ -119,13 +119,11 @@ export class Auth {
     const clientIp = requestIp.getClientIp(req);
     if (clientIp) {
       const result = await ioc.blackListIPRepository.checkoutIPinBlackList(clientIp);
-      if (result === null) {
-        return res.status(400).send('Black list IP1') // need thinks
+      if (!result) {
+        return next()
       }
-      next()
-      return
+      return res.status(403).send(`IP:  ${clientIp} in black list`) // need thinks
     }
-    return res.status(400).send('Bad IP2'); // need thinks
   }
 
   async compareCurrentAndCreatorComment(req: Request, res: Response, next: NextFunction) {

@@ -2,7 +2,7 @@ import {PostsRepository} from "../repositories/posts-db-repository";
 import {
   Pagination,
   PostsType, ReturnObjectPostsType,
-  ReturnTypeObjectComment, UserAccountType
+  ReturnTypeObjectComment, UserType
 } from "../types/types";
 
 
@@ -11,10 +11,10 @@ export class PostsService {
     this.postsRepository = postsRepository
   }
 
-  async findPosts(pageNumber: number, pageSize: number, sortBy: string| null, sortDirection: string| null, currentUser: UserAccountType | null): Promise<Pagination>{
+  async findPosts(pageNumber: number, pageSize: number, sortBy: string| null, sortDirection: string| null, currentUser: UserType | null): Promise<Pagination>{
     return await this.postsRepository.findPosts(pageNumber, pageSize, sortBy, sortDirection, currentUser)
   }
-  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserAccountType | null): Promise<Pagination>{
+  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserType | null): Promise<Pagination>{
     return await this.postsRepository.findAllPostByBloggerId(bloggerId, pageNumber, pageSize, user)
   }
 
@@ -22,14 +22,14 @@ export class PostsService {
     return await this.postsRepository.createPost(title, shortDescription, content, blogId)
   }
 
-  async createNewCommentByPostId(postId: string, content: string, user: UserAccountType): Promise<ReturnTypeObjectComment> {
+  async createNewCommentByPostId(postId: string, content: string, user: UserType): Promise<ReturnTypeObjectComment> {
     return await this.postsRepository.createNewCommentByPostId(postId, content, user)
   }
 
-  async getPostById(id: string, user: UserAccountType | null): Promise<PostsType | null >{
+  async getPostById(id: string, user: UserType | null): Promise<PostsType | null >{
     return await this.postsRepository.getPostById(id, user)
   }
-  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserAccountType | null): Promise<Pagination>{
+  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserType | null): Promise<Pagination>{
     return await this.postsRepository.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection, user)
   }
 
@@ -45,7 +45,7 @@ export class PostsService {
     return await this.postsRepository.deletedAllPosts()
   }
 
-  async changeLikeStatusPost(user: UserAccountType, postId: string, likeStatus: string): Promise<Boolean> {
+  async changeLikeStatusPost(user: UserType, postId: string, likeStatus: string): Promise<Boolean> {
     return await this.postsRepository.changeLikeStatusPost(user, postId, likeStatus)
   }
 }

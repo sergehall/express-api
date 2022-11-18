@@ -1,13 +1,13 @@
 import {
   ArrayPostsExtLikesInfo,
-  PostsType, UserAccountType
+  PostsType, UserType,
 } from "../types/types";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 
 
 export class PreparationPosts {
-  async preparationPostsForReturn(myArray: ArrayPostsExtLikesInfo, currentUser: UserAccountType | null) {
+  async preparationPostsForReturn(myArray: ArrayPostsExtLikesInfo, currentUser: UserType | null) {
     for (let i in myArray) {
       const id = myArray[i].id
       const post: PostsType = myArray[i]
