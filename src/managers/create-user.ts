@@ -12,6 +12,14 @@ export class NewUserObj {
   }
 
   create() {
+    const currentTime = new Date().toISOString()
+    const confirmationCode = uuid4().toString()
+    const expirationDate = add(new Date(),
+      {
+        hours: 1,
+        minutes: 5
+      }).toISOString()
+
     return {
       accountData: {
         id: this.id,
@@ -19,21 +27,17 @@ export class NewUserObj {
         email: this.email,
         passwordSalt: this.passwordSalt,
         passwordHash: this.passwordSalt,
-        createdAt: new Date().toISOString()
+        createdAt: currentTime
       },
       emailConfirmation: {
-        confirmationCode: uuid4().toString(),
-        expirationDate: add(new Date(),
-          {
-            hours: 1,
-            minutes: 5
-          }).toISOString(),
+        confirmationCode: confirmationCode,
+        expirationDate: expirationDate,
         isConfirmed: false,
-        sentEmail: [{sendTime: new Date().toISOString()}]
+        sentEmail: [{sendTime: currentTime}]
       },
       registrationData: [{
         ip: this.ip,
-        createdAt: new Date().toISOString()
+        createdAt: currentTime
       }]
     }
   }
