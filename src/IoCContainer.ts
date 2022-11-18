@@ -62,6 +62,8 @@ const bloggersRepository = new BloggersRepository()
 const bloggersService = new BloggersService(bloggersRepository)
 const bloggersController = new BloggersController(bloggersService, postsService)
 // Users
+
+
 const usersRepository = new UsersRepository()
 const usersService = new UsersService(usersRepository)
 const usersController = new UsersController(usersService)
@@ -104,6 +106,7 @@ const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
 // Black list
 const blackListIPRepository = new BlackListIPRepository()
 const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepository()
+
 
 export const ioc = {
   auth: auth,

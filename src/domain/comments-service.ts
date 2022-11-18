@@ -7,13 +7,13 @@ import {
 
 export class CommentsService {
   constructor(private commentsRepository: CommentsRepository) {
-    this.commentsRepository = commentsRepository
   }
+
   async findCommentCompareOwner(commentId: string): Promise<CommentType | null> {
     return await this.commentsRepository.findCommentCompareOwner(commentId)
   }
 
-  async findCommentByCommentId(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment>{
+  async findCommentByCommentId(commentId: string, currentUser: UserAccountType | null): Promise<ReturnTypeObjectComment> {
     return await this.commentsRepository.findCommentByCommentId(commentId, currentUser)
   }
 

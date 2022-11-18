@@ -8,10 +8,9 @@ import {SecurityDevicesRepository} from "../repositories/securityDevices-db-repo
 
 export class SecurityDevicesService {
   constructor(private securityDevicesRepository: SecurityDevicesRepository) {
-    this.securityDevicesRepository = securityDevicesRepository
   }
 
-  async createOrUpdateDevices(filter: {} , newDevices: SessionDevicesType): Promise<Boolean> {
+  async createOrUpdateDevices(filter: {}, newDevices: SessionDevicesType): Promise<Boolean> {
     return await this.securityDevicesRepository.createOrUpdateDevices(filter, newDevices)
   }
 
@@ -26,6 +25,7 @@ export class SecurityDevicesService {
   async deleteDeviceByDeviceId(deviceId: string, payloadRefreshToken: PayloadType): Promise<String> {
     return await this.securityDevicesRepository.deleteDeviceByDeviceId(deviceId, payloadRefreshToken)
   }
+
   async deleteDeviceByDeviceIdAfterLogout(payloadRefreshToken: PayloadType): Promise<String> {
     return await this.securityDevicesRepository.deleteDeviceByDeviceIdAfterLogout(payloadRefreshToken)
   }

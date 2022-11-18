@@ -5,19 +5,20 @@ import {CommentsService} from "../domain/comments-service";
 
 export class CommentsController {
   constructor(private commentsService: CommentsService) {
-    this.commentsService = commentsService
   }
+
   async findCommentByCommentId(req: Request, res: Response) {
     try {
       const commentId = req.params.commentId;
       const currentUser = req.user
       const getComment: ReturnTypeObjectComment = await this.commentsService.findCommentByCommentId(commentId, currentUser);
       if (getComment.data !== null) {
-        res.send(getComment.data)
+        return res.send(getComment.data)
       } else {
-        res.status(404).send()
+        return res.status(404).send()
       }
     } catch (error) {
+      console.log(error)
       return res.sendStatus(500)
     }
   }

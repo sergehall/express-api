@@ -4,11 +4,11 @@ import {UsersAccountRepository} from "../repositories/usersAccount-db-repository
 import uuid4 from "uuid4";
 import add from "date-fns/add";
 import {ioc} from "../IoCContainer";
+import {NewUserObj} from "../managers/create-user";
 
 
 export class UsersAccountService {
   constructor(private usersAccountRepository: UsersAccountRepository) {
-    this.usersAccountRepository = usersAccountRepository
   }
 
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
@@ -19,31 +19,32 @@ export class UsersAccountService {
     const newId = uuid4().toString();
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
+    const newUser: UserAccountType = new NewUserObj(newId, login, email, passwordSalt, passwordHash, clientIp).create()
 
-    const newUser: UserAccountType = {
-      accountData: {
-        id: newId,
-        login,
-        email,
-        passwordSalt,
-        passwordHash,
-        createdAt: new Date().toISOString()
-      },
-      emailConfirmation: {
-        confirmationCode: uuid4().toString(),
-        expirationDate: add(new Date(),
-          {
-            hours: 1,
-            minutes: 5
-          }).toISOString(),
-        isConfirmed: false,
-        sentEmail: [{sendTime: new Date().toISOString()}]
-      },
-      registrationData: [{
-        ip: clientIp,
-        createdAt: new Date().toISOString()
-      }]
-    }
+    // const newUser: UserAccountType = {
+    //   accountData: {
+    //     id: newId,
+    //     login,
+    //     email,
+    //     passwordSalt,
+    //     passwordHash,
+    //     createdAt: new Date().toISOString()
+    //   },
+    //   emailConfirmation: {
+    //     confirmationCode: uuid4().toString(),
+    //     expirationDate: add(new Date(),
+    //       {
+    //         hours: 1,
+    //         minutes: 5
+    //       }).toISOString(),
+    //     isConfirmed: false,
+    //     sentEmail: [{sendTime: new Date().toISOString()}]
+    //   },
+    //   registrationData: [{
+    //     ip: clientIp,
+    //     createdAt: new Date().toISOString()
+    //   }]
+    // }
     return await this.usersAccountRepository.createUserAccount(newUser)
   }
 
@@ -61,32 +62,32 @@ export class UsersAccountService {
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null): Promise<UserAccountType | null> {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
-
-    const newUser: UserAccountType = {
-      accountData: {
-        id: uuid4().toString(),
-        login: login,
-        email: email,
-        passwordSalt,
-        passwordHash,
-        createdAt: new Date().toISOString()
-      },
-      emailConfirmation: {
-        confirmationCode: uuid4(),
-        expirationDate: add(new Date(),
-          {
-            hours: 1,
-            minutes: 5
-          }).toString(),
-        isConfirmed: false,
-        sentEmail: [{sendTime: new Date().toISOString()}]
-      },
-      registrationData: [{
-        ip: clientIp,
-        createdAt: new Date().toISOString()
-      }]
-    }
-
+    const newId = uuid4().toString()
+    const newUser: UserAccountType = new NewUserObj(newId, login, email, passwordSalt, passwordHash, clientIp).create()
+    // const newUser2: UserAccountType = {
+    //   accountData: {
+    //     id: newId,
+    //     login: login,
+    //     email: email,
+    //     passwordSalt,
+    //     passwordHash,
+    //     createdAt: new Date().toISOString()
+    //   },
+    //   emailConfirmation: {
+    //     confirmationCode: uuid4().toString(),
+    //     expirationDate: add(new Date(),
+    //       {
+    //         hours: 1,
+    //         minutes: 5
+    //       }).toString(),
+    //     isConfirmed: false,
+    //     sentEmail: [{sendTime: new Date().toISOString()}]
+    //   },
+    //   registrationData: [{
+    //     ip: clientIp,
+    //     createdAt: new Date().toISOString()
+    //   }]
+    // }
     const createResult = await this.usersAccountRepository.createUserAccount(newUser)
 
     try {
