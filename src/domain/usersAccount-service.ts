@@ -19,7 +19,7 @@ export class UsersAccountService {
     const newId = uuid4().toString();
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
-    const newUser: UserAccountType = new NewUserObj(newId, login, email, passwordSalt, passwordHash, clientIp).create()
+    const newUser: UserAccountType = new NewUserObj(login, email, passwordSalt, passwordHash, clientIp).create()
 
     // const newUser: UserAccountType = {
     //   accountData: {
@@ -63,7 +63,7 @@ export class UsersAccountService {
     const passwordSalt = await bcrypt.genSalt(10)
     const passwordHash = await this._generateHash(password, passwordSalt)
     const newId = uuid4().toString()
-    const newUser: UserAccountType = new NewUserObj(newId, login, email, passwordSalt, passwordHash, clientIp).create()
+    const newUser: UserAccountType = new NewUserObj(login, email, passwordSalt, passwordHash, clientIp).create()
     // const newUser2: UserAccountType = {
     //   accountData: {
     //     id: newId,
@@ -154,6 +154,10 @@ export class UsersAccountService {
 
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountType | null> {
     return await this.usersAccountRepository.findUserByLoginOrEmail(loginOrEmail)
+  }
+
+  async findUserByLogin(login: string): Promise<UserAccountType | null> {
+    return await this.usersAccountRepository.findUserByLogin(login)
   }
 
   async findByConfirmationCode(code: string): Promise<UserAccountType | null> {

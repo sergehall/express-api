@@ -79,6 +79,10 @@ export class UsersAccountRepository {
     return await MyModelUserAccount.findOne({$or: [{"accountData.login": {$eq: loginOrEmail}}, {"accountData.email": {$eq: loginOrEmail}}]})
   }
 
+  async findUserByLogin(login: string): Promise<UserAccountType | null> {
+    return await MyModelUserAccount.findOne({"accountData.login": {$eq: login}})
+  }
+
   async findByConfirmationCode(code: string,): Promise<UserAccountType | null> {
     return await MyModelUserAccount.findOne({
         "emailConfirmation.confirmationCode": code,

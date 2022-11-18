@@ -3,7 +3,6 @@ import add from "date-fns/add";
 
 export class NewUserObj {
   constructor(
-    private id: string,
     private login: string,
     private email: string,
     private passwordSalt: string,
@@ -12,6 +11,7 @@ export class NewUserObj {
   }
 
   create() {
+    const id = uuid4().toString()
     const currentTime = new Date().toISOString()
     const confirmationCode = uuid4().toString()
     const expirationDate = add(new Date(),
@@ -22,7 +22,7 @@ export class NewUserObj {
 
     return {
       accountData: {
-        id: this.id,
+        id: id,
         login: this.login,
         email: this.email,
         passwordSalt: this.passwordSalt,
