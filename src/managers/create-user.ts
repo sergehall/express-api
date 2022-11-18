@@ -26,7 +26,7 @@ export class NewUserObj {
         login: this.login,
         email: this.email,
         passwordSalt: this.passwordSalt,
-        passwordHash: this.passwordSalt,
+        passwordHash: this.passwordHash,
         createdAt: currentTime
       },
       emailConfirmation: {
