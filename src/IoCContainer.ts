@@ -23,7 +23,6 @@ import {SecurityDevicesService} from "./domain/securityDevices-service";
 import {SecurityDevicesController} from "./presentation/deviceController";
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {EmailsToSentRepository} from "./repositories/emailsToSent-db-repository";
-import {UsersIPLast10secRepositories,} from "./repositories/usersIPlast10sec-bd-repository";
 import {
   BlackListRefreshTokenJWTRepository
 } from "./repositories/blackListRefreshTokenJWT-db-repository";
@@ -42,6 +41,7 @@ import {User} from "./managers/create-user";
 import {UsersService} from "./domain/users-service";
 import {UsersController} from "./presentation/userController";
 import {UsersRepository} from "./repositories/users-db-repository";
+import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
 
 // Users
 const user = new User()

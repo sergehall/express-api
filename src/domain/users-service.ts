@@ -21,13 +21,6 @@ export class UsersService {
     return await this.usersRepository.createOrUpdateUser(newUser)
   }
 
-  async createNewPassword(newPassword: string, user: UserType) {
-    const newHash = await ioc.user.createNewHash(newPassword)
-    const newUser: UserType = JSON.parse(JSON.stringify(user))
-    newUser.accountData.passwordHash = newHash
-    return await this.usersRepository.createOrUpdateUser(newUser)
-  }
-
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null, userAgent: string): Promise<UserType | null> {
     const newUser: UserType = await ioc.user.createNewUser(login, password, email, clientIp, userAgent)
     const createUserInDB = await this.usersRepository.createOrUpdateUser(newUser)
@@ -54,8 +47,8 @@ export class UsersService {
     }
   }
 
-  async confirmByEmail(code: string, email: string): Promise<UserType | null> {
-    const user = await this.usersRepository.getUserByEmailCode(code, email)
+  async confirmByEmail(email: string, code: string): Promise<UserType | null> {
+    const user = await this.usersRepository.findUserByEmailAndCode(email, code)
     if (user) {
       if (!user.emailConfirmation.isConfirmed) {
         if (user.emailConfirmation.expirationDate > new Date().toISOString()) {
@@ -166,6 +159,13 @@ export class UsersService {
 
   async addTimeOfSentEmail(email: string, sentTime: string): Promise<boolean> {
     return await this.usersRepository.addTimeOfSentEmail(email, sentTime)
+  }
+
+  async createNewPassword(newPassword: string, user: UserType) {
+    const newHash = await ioc.user.createNewHash(newPassword)
+    const newUser: UserType = JSON.parse(JSON.stringify(user))
+    newUser.accountData.passwordHash = newHash
+    return await this.usersRepository.createOrUpdateUser(newUser)
   }
 
 }

@@ -19,6 +19,10 @@ export class UsersRepository {
     }
   }
 
+  async updateUser(user: UserType) {
+    return await MyModelUser.updateOne({"accountData.id": user.accountData.id}, {$set: user})
+  }
+
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
 
     const startIndex = (pageNumber - 1) * pageSize
@@ -94,7 +98,11 @@ export class UsersRepository {
       })
   }
 
-  async getUserByEmailCode(code: string, email: string): Promise<UserType | null> {
+  async findUserByUserId(userId: string): Promise<UserType | null> {
+    return await MyModelUser.findOne({"accountData.id": userId})
+  }
+
+  async findUserByEmailAndCode(email: string, code: string): Promise<UserType | null> {
     return await MyModelUser.findOne({
       "emailConfirmation.confirmationCode": code,
       "accountData.email": email
@@ -116,23 +124,10 @@ export class UsersRepository {
     return countSentEmails
   }
 
-  async updateUser(user: UserType) {
-    return await MyModelUser.updateOne({"accountData.id": user.accountData.id}, {$set: user})
-  }
-
   async updateUserConfirmationCode(user: UserType) {
     return await MyModelUser.findOneAndUpdate(
       {"accountData.email": user.accountData.email},
       {$set: user})
-  }
-
-  async deleteSendTimeOlderMinute(user: UserType): Promise<number> {
-    // redo it so that it does not delete the entire user
-    const result = await MyModelUser.deleteMany({
-      "accountData.id": user.accountData.id,
-      "emailConfirmation.sentEmail.sendTime": {$lt: new Date(Date.now() - 1000 * 60).toISOString()}
-    })
-    return result.deletedCount;
   }
 
   async deleteUserById(id: string): Promise<boolean> {
@@ -147,10 +142,6 @@ export class UsersRepository {
       "registrationData.createdAt": {$lt: new Date(Date.now() - 1000 * 60).toISOString()}
     }) // We delete users who have not confirmed their email within 1 hour = - 1000 * 60 * 60
     return result.deletedCount
-  }
-
-  async findUserByUserId(userId: string): Promise<UserType | null> {
-    return await MyModelUser.findOne({"accountData.id": userId})
   }
 
   async addTimeOfSentEmail(email: string, sentTime: string): Promise<boolean> {
