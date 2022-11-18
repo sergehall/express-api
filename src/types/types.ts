@@ -26,6 +26,7 @@ export type UserType = {
   }
 }
 export type TimeISOType = string
+
 //...............................................Bloggers and Blogs
 export type BloggerType = {
   id: string | null

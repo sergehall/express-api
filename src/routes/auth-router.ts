@@ -199,7 +199,7 @@ authRouter.post('/registration-email-resending',
       res.status(400).send({
         "errorsMessages": [
           {
-            "message": "Check the entered email or isConfirmed already true.",
+            "message": "Email not exist or isConfirmed already true.",
             "field": "email"
           }
         ]
