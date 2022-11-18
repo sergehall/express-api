@@ -13,7 +13,7 @@ export class JWTService {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.ACCESS_SECRET_KEY,
-      {expiresIn: "600s"}
+      {expiresIn: ck.EXP_ACC_TIME}
     )
   }
 
@@ -21,21 +21,21 @@ export class JWTService {
     const deviceId = uuid4().toString();
     return jwt.sign(
       {userId: userId, deviceId}, ck.REFRESH_SECRET_KEY,
-      {expiresIn: "1200s"}
+      {expiresIn: ck.EXP_REF_TIME}
     )
   }
 
   async updateAccessJWT(payload: PayloadType) {
     return jwt.sign(
       {userId: payload.userId, deviceId: payload.deviceId}, ck.ACCESS_SECRET_KEY,
-      {expiresIn: "600s"}
+      {expiresIn: ck.EXP_ACC_TIME}
     )
   }
 
   async updateRefreshJWT(payload: PayloadType) {
     return jwt.sign(
       {userId: payload.userId, deviceId: payload.deviceId}, ck.REFRESH_SECRET_KEY,
-      {expiresIn: "1200s"})
+      {expiresIn: ck.EXP_REF_TIME})
   }
 
   async verifyRefreshJWT(token: string) {
