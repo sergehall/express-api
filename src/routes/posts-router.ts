@@ -24,7 +24,7 @@ postsRouts.get('/',
     contentValidation,
     blogIdBodyValidator,
     inputValidatorMiddleware,
-    ioc.postsController.createNewPost.bind(ioc.postsController))
+    ioc.postsController.createPost.bind(ioc.postsController))
 
   .get('/:postId',
     ioc.auth.noneStatusAccessToken,

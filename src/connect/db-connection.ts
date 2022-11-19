@@ -4,7 +4,7 @@ import mongoose from 'mongoose'
 const dbUrl = ck.ATLAS_URI
 const dbName = ck.DB_NAME
 
-
+// connect by mongoose
 export async function runDb() {
   try {
     await mongoose.connect(dbUrl + "/" + dbName)

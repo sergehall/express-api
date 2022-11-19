@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {ReturnTypeObjectComment, UserType} from "../types/types";
+import {ReturnObjCommentType, UserType} from "../types/types";
 import {CommentsService} from "../domain/comments-service";
 
 
@@ -11,7 +11,7 @@ export class CommentsController {
     try {
       const commentId = req.params.commentId;
       const currentUser = req.user
-      const getComment: ReturnTypeObjectComment = await this.commentsService.findCommentByCommentId(commentId, currentUser);
+      const getComment: ReturnObjCommentType = await this.commentsService.findCommentByCommentId(commentId, currentUser);
       if (getComment.data !== null) {
         return res.send(getComment.data)
       } else {
@@ -28,7 +28,7 @@ export class CommentsController {
       const commentId: string = req.params.commentId;
       const content: string = req.body.content
 
-      const updatedComment: ReturnTypeObjectComment = await this.commentsService.updateCommentById(commentId, content)
+      const updatedComment: ReturnObjCommentType = await this.commentsService.updateCommentById(commentId, content)
 
       if (updatedComment.resultCode === 0) {
         res.status(204)

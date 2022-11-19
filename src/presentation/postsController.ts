@@ -20,7 +20,7 @@ export class PostsController {
     res.send(foundPosts)
   }
 
-  async createNewPost(req: Request, res: Response) {
+  async createPost(req: Request, res: Response) {
     try {
       const title: string = req.body.title;
       const shortDescription: string = req.body.shortDescription;

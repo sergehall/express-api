@@ -1,6 +1,9 @@
 import {
-  ArrayErrorsType, BlogsType,
-  Pagination, ReturnObjectBlogType, UserType
+  ArrayErrorsType,
+  BlogsType,
+  Pagination,
+  ReturnObjBlogType,
+  UserType
 } from "../types/types";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
@@ -42,20 +45,18 @@ export class BlogsRepository {
     };
   }
 
-  async createBlog(name: string, youtubeUrl: string) {
+  async createBlog(name: string, youtubeUrl: string): Promise<ReturnObjBlogType> {
     let errorsArray: ArrayErrorsType = [];
-    const newBlogId = uuid4().toString()
-    const createdAt = new Date().toISOString()
-
-    const createBlog = await MyModelBlogs.create({
-      id: newBlogId,
+    const newBlog = {
+      id: uuid4().toString(),
       name: name,
       youtubeUrl: youtubeUrl,
-      createdAt: createdAt
-    })
+      createdAt: new Date().toISOString()
+    }
+    await MyModelBlogs.create(newBlog)
 
     return {
-      data: createBlog,
+      data: newBlog,
       errorsMessages: errorsArray,
       resultCode: 0
     }
@@ -111,7 +112,7 @@ export class BlogsRepository {
     return foundBlog
   }
 
-  async updatedBlogById(name: string, youtubeUrl: string, id: string): Promise<ReturnObjectBlogType> {
+  async updatedBlogById(name: string, youtubeUrl: string, id: string): Promise<ReturnObjBlogType> {
     const errorsArray: ArrayErrorsType = [];
     const createdAt = new Date().toISOString()
 

@@ -9,10 +9,10 @@ import {
   ArrayErrorsType,
   LastTreeLikes,
   Pagination,
-  PostsType, ReturnObjectPostsType,
-  ReturnTypeObjectComment, UserType
+  PostsType,
+  ReturnObjCommentType, ReturnObjPostType,
+  UserType
 } from "../types/types";
-import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
@@ -67,9 +67,9 @@ export class PostsRepository {
     const result = await MyModelPosts.find(
       filter,
       {
-      _id: false,
-      __v: false
-    }).limit(pageSize).skip(startIndex).lean()
+        _id: false,
+        __v: false
+      }).limit(pageSize).skip(startIndex).lean()
 
     await ioc.preparationPostsForReturn.preparationPostsForReturn(result, user)
 
@@ -86,40 +86,22 @@ export class PostsRepository {
     };
   }
 
-  async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjectPostsType> {
+  async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjPostType> {
     let errorsArray: ArrayErrorsType = [];
     const newPostId = uuid4().toString()
     const createdAt = new Date().toISOString()
 
-    const ReturnObjectPost = {
-      data: {
-        id: "",
-        title: title,
-        shortDescription: shortDescription,
-        content: content,
-        blogId: blogId,
-        blogName: "",
-        createdAt: createdAt,
-        extendedLikesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: "None",
-          newestLikes: []
-        }
-      },
-      errorsMessages: [],
-      resultCode: 1
-    }
-
     const foundBlogId = await MyModelBlogs.findOne({id: blogId})
-
     if (!foundBlogId) {
       errorsArray.push(notFoundBlogId)
-      return {...ReturnObjectPost, errorsMessages: errorsArray}
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
     }
 
     const newPost = {
-      ...ReturnObjectPost.data,
       id: newPostId,
       title: title,
       shortDescription: shortDescription,
@@ -137,14 +119,20 @@ export class PostsRepository {
     }
 
     try {
+      // create post
       const createNewPost = await MyModelPosts.create(newPost)
+      // create post for comments in future
       const creteNewPostInCommentDB = await MyModelComments.create({
         postId: newPostId,
         allComments: []
       })
       if (!createNewPost) {
         errorsArray.push(mongoHasNotUpdated)
-        return {...ReturnObjectPost, errorsMessages: errorsArray}
+        return {
+          data: null,
+          errorsMessages: errorsArray,
+          resultCode: 1
+        }
       }
       return {
         data: newPost,
@@ -154,11 +142,15 @@ export class PostsRepository {
 
     } catch (e: any) {
       console.log(e)
-      return {...ReturnObjectPost, errorsMessages: errorsArray}
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
     }
   }
 
-  async createNewCommentByPostId(postId: string, content: string, user: UserType): Promise<ReturnTypeObjectComment> {
+  async createNewCommentByPostId(postId: string, content: string, user: UserType): Promise<ReturnObjCommentType> {
     try {
       let errorsArray: ArrayErrorsType = [];
       const newCommentId = uuid4().toString()
@@ -290,12 +282,12 @@ export class PostsRepository {
     };
   }
 
-  async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjectPostsType> {
+  async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjPostType> {
     const searchPost = await MyModelPosts.findOne({id: id}, {
       _id: false,
       __v: false,
     }).lean();
-    const searchBlogger = await MyModelBloggers.findOne({id: blogId})
+    const searchBlogger = await MyModelBlogs.findOne({id: blogId})
     const errorsArray: ArrayErrorsType = [];
     const createdAt = (new Date()).toISOString()
 

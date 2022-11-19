@@ -2,12 +2,10 @@ import express, {Request, Response} from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import cookieParser from "cookie-parser"
-import {runDb} from "./repositories/db-connection";
+import {runDb} from "./connect/db-connection";
 import {authRouter} from "./routes/auth-router";
-import {bloggersRouts} from "./routes/bloggers-router";
 import {postsRouts} from "./routes/posts-router";
 import {feedbacksRouter} from "./routes/feedbacks-router";
-import {allDeletedBloggersRouts} from "./routes/all-deleted-bloggers-router";
 import {commentsRouter} from "./routes/comments-router";
 import {emailRouter} from "./routes/email-router";
 import {testingRouter} from "./routes/testing-router";
@@ -32,17 +30,15 @@ app.get('/', (req: Request, res: Response) => {
 })
 
 app.use('/auth', authRouter)
-app.use('/security', securityDevicesRouter)
+app.use('/users', usersRouter)
 app.use('/posts', postsRouts)
 app.use('/blogs', blogsRouts)
-app.use('/bloggers', bloggersRouts)
-app.use('/users', usersRouter)
 app.use('/feedbacks', feedbacksRouter)
 app.use('/comments', commentsRouter)
 app.use('/email', emailRouter)
+app.use('/security', securityDevicesRouter)
 app.use('/testing/', testingRouter)
 
-app.use('/deleted-bloggers', allDeletedBloggersRouts)
 
 const startApp = async () => {
   await runDb()

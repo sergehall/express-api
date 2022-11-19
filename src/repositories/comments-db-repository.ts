@@ -1,7 +1,7 @@
 import {
   ArrayCommentsExtLikesInfo,
-  ArrayErrorsType, CommentType,
-  ReturnTypeObjectComment, UserType
+  ArrayErrorsType, CommentType, ReturnObjCommentType,
+  UserType
 } from "../types/types";
 import {
   mongoHasNotUpdated,
@@ -26,7 +26,7 @@ export class CommentsRepository {
     return result ? result : null;
   }
 
-  async findCommentByCommentId(commentId: string, currentUser: UserType | null): Promise<ReturnTypeObjectComment> {
+  async findCommentByCommentId(commentId: string, currentUser: UserType | null): Promise<ReturnObjCommentType> {
     const errorsArray: ArrayErrorsType = [];
     const filter = {"allComments.id": commentId}
     const foundPostWithComments = await MyModelComments.findOne(
@@ -55,7 +55,7 @@ export class CommentsRepository {
     }
   }
 
-  async updateCommentById(commentId: string, content: string): Promise<ReturnTypeObjectComment> {
+  async updateCommentById(commentId: string, content: string): Promise<ReturnObjCommentType> {
     const errorsArray: ArrayErrorsType = [];
     const filterToUpdate = {"allComments.id": commentId}
     let resultCode = 0
@@ -79,7 +79,7 @@ export class CommentsRepository {
     }
   }
 
-  async deletedCommentById(commentId: string): Promise<ReturnTypeObjectComment> {
+  async deletedCommentById(commentId: string): Promise<ReturnObjCommentType> {
     const errorsArray: ArrayErrorsType = [];
     const filterToDelete = {"allComments.id": commentId}
 

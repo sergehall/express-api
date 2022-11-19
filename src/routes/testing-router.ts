@@ -2,7 +2,6 @@ import {Router, Request, Response} from "express"
 import {MyModelEmailsToSent} from "../mongoose/EmailsToSentSchemaModel";
 import {MyModelBlackListIP} from "../mongoose/BlackListIPSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
-import {MyModelBloggers} from "../mongoose/BloggersSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelBlackListRefreshTokenJWT} from "../mongoose/BlackListRefreshTokenJWTModel";
 import {MyModeLast10secRedEmailRes} from "../mongoose/Last10secRegEmailResModel";
@@ -37,6 +36,5 @@ testingRouter
     await MyModeLast10secRedEmailRes.deleteMany({})
     await MyModelComments.deleteMany({})
     await MyModelBlackListRefreshTokenJWT.deleteMany({})
-    await MyModelBloggers.deleteMany({})
     return res.status(204).send()
   })

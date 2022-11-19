@@ -1,8 +1,10 @@
 import {PostsRepository} from "../repositories/posts-db-repository";
 import {
   Pagination,
-  PostsType, ReturnObjectPostsType,
-  ReturnTypeObjectComment, UserType
+  PostsType,
+  ReturnObjCommentType,
+  ReturnObjPostType,
+  UserType
 } from "../types/types";
 
 
@@ -18,11 +20,11 @@ export class PostsService {
     return await this.postsRepository.findAllPostByBloggerId(bloggerId, pageNumber, pageSize, user)
   }
 
-  async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjectPostsType> {
+  async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjPostType> {
     return await this.postsRepository.createPost(title, shortDescription, content, blogId)
   }
 
-  async createNewCommentByPostId(postId: string, content: string, user: UserType): Promise<ReturnTypeObjectComment> {
+  async createNewCommentByPostId(postId: string, content: string, user: UserType): Promise<ReturnObjCommentType> {
     return await this.postsRepository.createNewCommentByPostId(postId, content, user)
   }
 
@@ -33,7 +35,7 @@ export class PostsService {
     return await this.postsRepository.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection, user)
   }
 
-  async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnObjectPostsType> {
+  async updatePostById(id: string, title: string, shortDescription: string, content: string, bloggerId: string): Promise<ReturnObjPostType> {
     return await this.postsRepository.updatePostById(id, title, shortDescription, content, bloggerId)
   }
 

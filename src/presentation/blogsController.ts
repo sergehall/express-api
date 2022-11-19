@@ -28,7 +28,7 @@ export class BlogsController {
       const youtubeUrl = req.body.youtubeUrl
 
       const newBlog = await this.blogsService.createBlog(name, youtubeUrl);
-      if (newBlog.data !== null && newBlog.resultCode === 0) {
+      if (newBlog.data && newBlog.data.name) {
         res.status(201)
         res.send({
             id: newBlog.data.id,

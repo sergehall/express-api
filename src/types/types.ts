@@ -27,24 +27,14 @@ export type UserType = {
 }
 export type TimeISOType = string
 
-//...............................................Bloggers and Blogs
-export type BloggerType = {
-  id: string | null
-  name: string;
-  youtubeUrl: string;
-}
-export type ReturnObjectBloggerType = {
-  data: BloggerType,
-  errorsMessages: ArrayErrorsType,
-  resultCode: number
-}
+//...............................................Blogs
 export type BlogsType = {
   id: string
   name: string
   youtubeUrl: string
   createdAt: string
 }
-export type ReturnObjectBlogType = {
+export type ReturnObjBlogType = {
   data: BlogsType | null
   errorsMessages: ErrorType[]
   resultCode: number
@@ -83,8 +73,8 @@ export type PostsType = {
       }[]
   }
 }
-export type ReturnObjectPostsType = {
-  data: PostsType
+export type ReturnObjPostType = {
+  data: PostsType | null
   errorsMessages: ErrorType[]
   resultCode: number
 }
@@ -140,7 +130,7 @@ export type CommentsTypeModel = {
   postId: string
   allComments: CommentType[]
 }
-export type ReturnTypeObjectComment = {
+export type ReturnObjCommentType = {
   data: CommentType | null
   errorsMessages: ErrorType[]
   resultCode: number
