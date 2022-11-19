@@ -31,14 +31,12 @@ import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBl
 import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
 import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
-import {User} from "./managers/create-user";
 import {UsersService} from "./domain/users-service";
 import {UsersController} from "./presentation/userController";
 import {UsersRepository} from "./repositories/users-db-repository";
 import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
 
 // Users
-const user = new User()
 const usersRepository = new UsersRepository()
 const usersService = new UsersService(usersRepository)
 const usersController = new UsersController(usersService)
@@ -89,7 +87,6 @@ const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepositor
 
 export const ioc = {
   auth: auth,
-  user: user,
   usersService: usersService,
   usersController: usersController,
   postsService: postsService,

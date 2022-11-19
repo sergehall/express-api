@@ -6,6 +6,9 @@ import uuid4 from "uuid4";
 import add from "date-fns/add";
 import {ioc} from "../IoCContainer";
 import {UsersRepository} from "../repositories/users-db-repository";
+import bcrypt from "bcrypt";
+
+const ck = require('ckey')
 
 
 export class UsersService {
@@ -17,14 +20,13 @@ export class UsersService {
   }
 
   async createUser(login: string, email: string, password: string, clientIp: string | null, userAgent: string): Promise<UserType | null> {
-    const newUser: UserType = await ioc.user.createNewUser(login, password, email, clientIp, userAgent)
+    const newUser: UserType = await this._createNewUser(login, password, email, clientIp, userAgent)
     return await this.usersRepository.createOrUpdateUser(newUser)
   }
 
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null, userAgent: string): Promise<UserType | null> {
-    const newUser: UserType = await ioc.user.createNewUser(login, password, email, clientIp, userAgent)
+    const newUser: UserType = await this._createNewUser(login, password, email, clientIp, userAgent)
     const createUserInDB = await this.usersRepository.createOrUpdateUser(newUser)
-
     try {
       if (createUserInDB) {
         const copyCreateResult = {...createUserInDB}
@@ -162,10 +164,48 @@ export class UsersService {
   }
 
   async createNewPassword(newPassword: string, user: UserType) {
-    const newHash = await ioc.user.createNewHash(newPassword)
+    const passwordSalt = await bcrypt.genSalt(Number(ck.SALT_FACTOR))
+    const newHash =  await this._generateHash(newPassword, passwordSalt)
     const newUser: UserType = JSON.parse(JSON.stringify(user))
     newUser.accountData.passwordHash = newHash
     return await this.usersRepository.createOrUpdateUser(newUser)
+  }
+
+  async _createNewUser(login: string, password: string, email: string, ip: string | null, userAgent: string) {
+    const passwordSalt = await bcrypt.genSalt(Number(ck.SALT_FACTOR))
+    const passwordHash = await this._generateHash(password, passwordSalt)
+    const id = uuid4().toString()
+    const currentTime = new Date().toISOString()
+    const confirmationCode = uuid4().toString()
+    const expirationDate = add(new Date(),
+      {
+        hours: 1,
+        minutes: 5
+      }).toISOString()
+
+    return {
+      accountData: {
+        id: id,
+        login: login,
+        email: email,
+        passwordHash: passwordHash,
+      },
+      emailConfirmation: {
+        confirmationCode: confirmationCode,
+        expirationDate: expirationDate,
+        isConfirmed: false,
+        sentEmail: []
+      },
+      registrationData: {
+        ip: ip,
+        userAgent: userAgent,
+        createdAt: currentTime
+      }
+    };
+  }
+
+  async _generateHash(password: string, salt: string) {
+    return await bcrypt.hash(password, salt)
   }
 
 }
