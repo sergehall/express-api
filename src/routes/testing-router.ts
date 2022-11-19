@@ -20,6 +20,7 @@ export const testingRouter = Router({})
 
 testingRouter
   .delete("/all-data", async (req: Request, res: Response) => {
+    // delete all Collections
     await MyModelUser.deleteMany({})
     await MyModelBlogs.deleteMany({})
     await MyModelPosts.deleteMany({})
