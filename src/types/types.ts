@@ -1,4 +1,6 @@
 //...............................................Errors
+import {ObjectId} from "mongodb";
+
 export type ErrorType = {
   message: string
   field: string
@@ -26,7 +28,34 @@ export type UserType = {
   }
 }
 export type TimeISOType = string
-
+export type UserTestOldType = {
+  id: string
+  login: string
+  email: string
+  passwordSalt: string
+  passwordHash: string
+  createdAt: string
+}
+export type UserTestType = {
+  _id: ObjectId,
+  accountData: {
+    id: string
+    login: string
+    email: string
+    passwordHash: string
+  },
+  emailConfirmation: {
+    confirmationCode: string
+    expirationDate: string
+    isConfirmed: boolean
+    sentEmail: TimeISOType[];
+  },
+  registrationData: {
+    ip: string | null
+    userAgent: string
+    createdAt: string
+  }
+}
 //...............................................Blogs
 export type BlogsType = {
   id: string
