@@ -116,27 +116,7 @@ export type AllDeletedPostsType = {
     bloggerName: string
   }[]
 }
-export type PostsExtLikesInfo = {
-  id: string
-  title: string
-  shortDescription: string
-  content: string
-  blogId: string
-  blogName: string
-  createdAt: string
-  extendedLikesInfo: {
-    likesCount: number,
-    dislikesCount: number,
-    myStatus: string,
-    newestLikes:
-      {
-        addedAt: string,
-        userId: string,
-        login: string
-      }[]
-  }
-}
-export type ArrayPostsExtLikesInfo = PostsExtLikesInfo[]
+
 export type BloggerIdAndArrayPosts = [bloggerIdKey: string, posts: PostsType[]]
 export type AllDeletedPosts = BloggerIdAndArrayPosts[]
 

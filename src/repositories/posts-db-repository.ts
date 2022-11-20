@@ -206,18 +206,11 @@ export class PostsRepository {
       __v: false
     }).lean()
 
-    if (!post) {
-      return null
+    if (post) {
+      await ioc.preparationPostsForReturn.preparationPostsForReturn([post], user)
+      return post
     }
-
-    // const threeNewestLikesArray: ThreeNewestLikesArray = await this._threeLastLikesArray(user, postId)
-    // const ownLikeStatus: OwnLikeStatus = await this._ownLikeStatus(user, postId)
-
-    const result = [post]
-
-    await ioc.preparationPostsForReturn.preparationPostsForReturn(result, user)
-
-    return post
+    return null
   }
 
   async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserType | null): Promise<Pagination> {
