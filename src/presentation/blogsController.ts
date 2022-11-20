@@ -25,15 +25,15 @@ export class BlogsController {
   async createNewBlog(req: Request, res: Response) {
     try {
       const name = req.body.name;
-      const youtubeUrl = req.body.youtubeUrl
+      const websiteUrl = req.body.websiteUrl
 
-      const newBlog = await this.blogsService.createBlog(name, youtubeUrl);
+      const newBlog = await this.blogsService.createBlog(name, websiteUrl);
       if (newBlog.data && newBlog.data.name) {
         res.status(201)
         res.send({
             id: newBlog.data.id,
             name: newBlog.data.name,
-            youtubeUrl: newBlog.data.youtubeUrl,
+            websiteUrl: newBlog.data.websiteUrl,
             createdAt: newBlog.data.createdAt
           }
         )
@@ -91,10 +91,10 @@ export class BlogsController {
   async updatedBlogById(req: Request, res: Response) {
     try {
       const name: string = req.body.name;
-      const youtubeUrl: string = req.body.youtubeUrl
+      const websiteUrl: string = req.body.websiteUrl
       const id: string = req.params.id
 
-      const updatedBlog = await this.blogsService.updatedBlogById(name, youtubeUrl, id);
+      const updatedBlog = await this.blogsService.updatedBlogById(name, websiteUrl, id);
 
       if (updatedBlog.resultCode === 0) {
         res.status(204)

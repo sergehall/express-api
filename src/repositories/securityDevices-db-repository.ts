@@ -1,5 +1,6 @@
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 import {
+  FilterUpdateDevicesType,
   PayloadType,
   SessionDevicesType,
   SessionTypeArray
@@ -8,7 +9,7 @@ import {
 
 export class SecurityDevicesRepository {
 
-  async createOrUpdateDevices(filter: {} , newDevices: SessionDevicesType): Promise<Boolean> {
+  async createOrUpdateDevices(filter: FilterUpdateDevicesType , newDevices: SessionDevicesType): Promise<Boolean> {
     try {
       return await MyModelDevicesSchema.findOneAndUpdate(
         filter,

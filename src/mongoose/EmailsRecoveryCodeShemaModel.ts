@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {EmailsRecoveryCode} from "../types/types";
+import {EmailRecoveryCodeType} from "../types/types";
 
 
 const EmailsRecoveryCodeSchema = new mongoose.Schema({
@@ -17,4 +17,4 @@ const EmailsRecoveryCodeSchema = new mongoose.Schema({
   }
 })
 
-export const MyModelEmailsToSentRecoveryCode = mongoose.model<EmailsRecoveryCode>("emailsToSentRecoveryCode", EmailsRecoveryCodeSchema, 'EmailsToSentRecoveryCode')
+export const MyModelEmailsRecoveryCode = mongoose.model<EmailRecoveryCodeType>("emailsRecoveryCode", EmailsRecoveryCodeSchema, 'EmailsRecoveryCode')

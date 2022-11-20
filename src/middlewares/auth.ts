@@ -17,8 +17,8 @@ export class Auth {
     const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
     const userId = await ioc.jwtService.verifyAccessJWT(token)
     if (!userId) {
-      res.sendStatus(401)
-      return
+      return res.sendStatus(401)
+
     }
     req.user = await ioc.usersService.findUserByUserId(userId)
     next()
@@ -78,7 +78,7 @@ export class Auth {
   }
 
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
-    const user: UserType | null = await ioc.usersService.findUserByLoginOrEmail(req.body.login)
+    const user: UserType | null = await ioc.usersService.findUserByLoginOrEmail(req.body.loginOrEmail)
     if (user) {
       const compare = await bcrypt.compare(req.body.password, user.accountData.passwordHash)
       if (compare) {
@@ -90,8 +90,8 @@ export class Auth {
     return res.status(401).send({
       errorsMessages: [
         {
-          message: "Login or password is wrong!",
-          field: "Login or Password"
+          message: "loginOrEmail or password is wrong!",
+          field: "loginOrEmail or Password"
         }
       ]
     })
@@ -127,8 +127,13 @@ export class Auth {
 
   async compareCurrentAndCreatorComment(req: Request, res: Response, next: NextFunction) {
     try {
-      const userLogin = req.user.accountData.login
-      const userId = req.user.accountData.id
+      const user = req.user
+      if (!user) {
+        res.sendStatus(404)
+        return
+      }
+      const userLogin = user.accountData.login
+      const userId = user.accountData.id
       const commentId = req.params.commentId;
 
       const foundPostWithComments = await ioc.commentsService.findCommentCompareOwner(commentId)

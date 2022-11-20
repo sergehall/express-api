@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {EmailsToSent} from "../types/types";
+import {EmailConfirmCodeType} from "../types/types";
 
 
 const EmailsToSentSchema = new mongoose.Schema({
@@ -17,4 +17,4 @@ const EmailsToSentSchema = new mongoose.Schema({
   }
 })
 
-export const MyModelEmailsToSent = mongoose.model<EmailsToSent>("emailsToSent", EmailsToSentSchema, 'EmailsToSent')
+export const MyModelEmailsConfirmCode = mongoose.model<EmailConfirmCodeType>("emailsConfirmationCode", EmailsToSentSchema, 'EmailsConfirmationCode')

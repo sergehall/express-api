@@ -1,9 +1,9 @@
-import {UserAccountDBType} from "../repositories/db";
+import {UserType} from "./types";
 
 declare global {
   declare namespace Express {
     export interface Request {
-      user: UserAccountDBType | null
+      user: UserType | null
     }
   }
 }

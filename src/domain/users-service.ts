@@ -1,4 +1,6 @@
 import {
+  EmailConfirmCodeType,
+  EmailRecoveryCodeType,
   Pagination,
   UserType
 } from "../types/types";
@@ -26,22 +28,20 @@ export class UsersService {
 
   async createUserRegistration(login: string, email: string, password: string, clientIp: string | null, userAgent: string): Promise<UserType | null> {
     const newUser: UserType = await this._createNewUser(login, password, email, clientIp, userAgent)
-    const createUserInDB = await this.usersRepository.createOrUpdateUser(newUser)
+    const createUser = await this.usersRepository.createOrUpdateUser(newUser)
     try {
-      if (createUserInDB) {
-        const copyCreateResult = {...createUserInDB}
-        if (!copyCreateResult.accountData.email) {
-          return null
-        }
-        const newDataUserEmailConfirmationCode = {
-          email: copyCreateResult.accountData.email,
-          confirmationCode: copyCreateResult.emailConfirmation.confirmationCode,
-          createdAt: new Date().toISOString()
-        }
-        await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
-
+      if (!createUser) {
+        return null
       }
-      return createUserInDB
+      const newDataUserEmailConfirmationCode = {
+        email: createUser.accountData.email,
+        confirmationCode: createUser.emailConfirmation.confirmationCode,
+        createdAt: new Date().toISOString()
+      }
+      await ioc.emailsRepository.insertEmailConfirmCode(newDataUserEmailConfirmationCode)
+
+      return createUser
+
     } catch (e) {
       console.log(e)
       await this.usersRepository.deleteUserById(newUser.accountData.id)
@@ -99,7 +99,7 @@ export class UsersService {
 
   async sentRecoveryCodeByEmailUserExist(user: UserType) {
 
-    await ioc.emailsToSentRepository.insertEmailToRecoveryCodesDB({
+    await ioc.emailsRepository.insertEmailRecoveryCode({
       email: user.accountData.email,
       recoveryCode: user.emailConfirmation.confirmationCode,
       createdAt: new Date().toISOString()
@@ -114,7 +114,7 @@ export class UsersService {
       recoveryCode: uuid4().toString(),
       createdAt: new Date().toISOString()
     }
-    await ioc.emailsToSentRepository.insertEmailToRecoveryCodesDB(newEmailRecoveryCode)
+    await ioc.emailsRepository.insertEmailRecoveryCode(newEmailRecoveryCode)
     return newEmailRecoveryCode
   }
 
@@ -141,7 +141,7 @@ export class UsersService {
           createdAt: new Date().toISOString()
         }
         // add Email to emailsToSentRepository
-        await ioc.emailsToSentRepository.insertEmailToDB(newDataUserEmailConfirmationCode)
+        await ioc.emailsRepository.insertEmailConfirmCode(newDataUserEmailConfirmationCode)
         return user
       }
     }
@@ -159,13 +159,13 @@ export class UsersService {
     return await this.usersRepository.deleteUserById(id)
   }
 
-  async addTimeOfSentEmail(email: string, sentTime: string): Promise<boolean> {
-    return await this.usersRepository.addTimeOfSentEmail(email, sentTime)
+  async addTimeOfSentEmail(emailAndCode: EmailConfirmCodeType | EmailRecoveryCodeType): Promise<boolean> {
+    return await this.usersRepository.addTimeOfSentEmail(emailAndCode)
   }
 
   async createNewPassword(newPassword: string, user: UserType) {
     const passwordSalt = await bcrypt.genSalt(Number(ck.SALT_FACTOR))
-    const newHash =  await this._generateHash(newPassword, passwordSalt)
+    const newHash = await this._generateHash(newPassword, passwordSalt)
     const newUser: UserType = JSON.parse(JSON.stringify(user))
     newUser.accountData.passwordHash = newHash
     return await this.usersRepository.createOrUpdateUser(newUser)

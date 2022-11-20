@@ -11,8 +11,8 @@ import {
 
 export const usersRouter = Router({});
 
-usersRouter.get('/',
-  ioc.usersController.getUsers.bind(ioc.usersController))
+usersRouter
+  .get('/', ioc.usersController.getUsers.bind(ioc.usersController))
 
   .post('/',
     ioc.auth.basicAuthorization,

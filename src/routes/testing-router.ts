@@ -1,5 +1,4 @@
 import {Router, Request, Response} from "express"
-import {MyModelEmailsToSent} from "../mongoose/EmailsToSentSchemaModel";
 import {MyModelBlackListIP} from "../mongoose/BlackListIPSchemaModel";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
@@ -15,6 +14,7 @@ import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
+import {MyModelEmailsConfirmCode} from "../mongoose/EmailsConfirmCodeSchemaModel";
 
 export const testingRouter = Router({})
 
@@ -29,7 +29,7 @@ testingRouter
     await MyModelDevicesSchema.deleteMany({})
     await MyModelLikeStatusCommentId.deleteMany({})
     await MyModelThreeLastLikesPost.deleteMany({})
-    await MyModelEmailsToSent.deleteMany({})
+    await MyModelEmailsConfirmCode.deleteMany({})
     await MyModelBlackListIP.deleteMany({})
     await MyModeLast10secRegConf.deleteMany({})
     await MyModeLast10secReg.deleteMany({})

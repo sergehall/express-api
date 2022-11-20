@@ -1,4 +1,6 @@
 import {
+  EmailConfirmCodeType,
+  EmailRecoveryCodeType,
   Pagination, UserType,
 } from "../types/types";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
@@ -144,10 +146,10 @@ export class UsersRepository {
     return result.deletedCount
   }
 
-  async addTimeOfSentEmail(email: string, sentTime: string): Promise<boolean> {
+  async addTimeOfSentEmail(emailAndCode: EmailConfirmCodeType | EmailRecoveryCodeType): Promise<boolean> {
     return await MyModelUser.findOneAndUpdate(
-      {"accountData.email": email},
-      {$push: {"emailConfirmation.sentEmail": sentTime}},
+      {"accountData.email": emailAndCode.email},
+      {$push: {"emailConfirmation.sentEmail": new Date().toISOString()}},
       {returnDocument: "after"}).lean()
   }
 }

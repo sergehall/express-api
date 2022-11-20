@@ -12,8 +12,13 @@ export class FeedbacksController {
   }
 
   async createFeedback(req: Request, res: Response) {
+    const user = req.user
+    if(!user){
+      return res.sendStatus(403)
+    }
+
     const userIdParams = req.params.userId;
-    const userIdAuth = req.user.accountData.id
+    const userIdAuth = user.accountData.id
 
     if (userIdParams !== userIdAuth) {
       return res.sendStatus(403)

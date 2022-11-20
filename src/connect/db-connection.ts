@@ -8,7 +8,7 @@ const dbName = ck.DB_NAME
 export async function runDb() {
   try {
     await mongoose.connect(dbUrl + "/" + dbName)
-    console.log("Connected successfully to server")
+    console.log("Connected successfully to server :)")
 
   } catch (e) {
     console.log("Can't connection to Db")

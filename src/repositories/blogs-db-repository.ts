@@ -45,12 +45,12 @@ export class BlogsRepository {
     };
   }
 
-  async createBlog(name: string, youtubeUrl: string): Promise<ReturnObjBlogType> {
+  async createBlog(name: string, websiteUrl: string): Promise<ReturnObjBlogType> {
     let errorsArray: ArrayErrorsType = [];
     const newBlog = {
       id: uuid4().toString(),
       name: name,
-      youtubeUrl: youtubeUrl,
+      websiteUrl: websiteUrl,
       createdAt: new Date().toISOString()
     }
     await MyModelBlogs.create(newBlog)
@@ -112,7 +112,7 @@ export class BlogsRepository {
     return foundBlog
   }
 
-  async updatedBlogById(name: string, youtubeUrl: string, id: string): Promise<ReturnObjBlogType> {
+  async updatedBlogById(name: string, websiteUrl: string, id: string): Promise<ReturnObjBlogType> {
     const errorsArray: ArrayErrorsType = [];
     const createdAt = new Date().toISOString()
 
@@ -124,7 +124,7 @@ export class BlogsRepository {
       $set: {
         id: id,
         name: name,
-        youtubeUrl: youtubeUrl,
+        websiteUrl: websiteUrl,
         createdAt: createdAt
       }
     }).lean()

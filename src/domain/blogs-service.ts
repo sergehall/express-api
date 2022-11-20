@@ -16,8 +16,8 @@ export class BlogsService {
     return await this.blogsRepository.findBlogs(pageNumber, pageSize, sortBy, sortDirection)
   }
 
-  async createBlog(name: string, youtubeUrl: string): Promise<ReturnObjBlogType> {
-    return await this.blogsRepository.createBlog(name, youtubeUrl)
+  async createBlog(name: string, websiteUrl: string): Promise<ReturnObjBlogType> {
+    return await this.blogsRepository.createBlog(name, websiteUrl)
   }
 
   async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string,  currentUser: UserType | null): Promise<Pagination | null> {
@@ -28,8 +28,8 @@ export class BlogsService {
     return await this.blogsRepository.findBlogById(id)
   }
 
-  async updatedBlogById(name: string, youtubeUrl: string, id: string): Promise<ReturnObjBlogType>{
-    return await this.blogsRepository.updatedBlogById(name, youtubeUrl, id)
+  async updatedBlogById(name: string, websiteUrl: string, id: string): Promise<ReturnObjBlogType>{
+    return await this.blogsRepository.updatedBlogById(name, websiteUrl, id)
   }
 
   async deletedBlogById(id: string): Promise<Boolean> {

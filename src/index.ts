@@ -49,8 +49,8 @@ const startApp = async () => {
 
 startApp()
   .then(() =>
-    [ioc.emailSender.sendAndDeleteConfirmationCode(),
-      ioc.emailSender.sendAndDeleteRecoveryCode(),
+    [ioc.emailsSender.sendAndDeleteConfirmationCode(),
+      ioc.emailsSender.sendAndDeleteRecoveryCode(),
       ioc.clearingIpWithCreatedAtOlder10Sec.start(),
       ioc.clearingInvalidJWTFromBlackList.start(),
       ioc.clearingDevicesWithExpDate.start()

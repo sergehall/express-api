@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {ReturnObjCommentType, UserType} from "../types/types";
+import {ReturnObjCommentType} from "../types/types";
 import {CommentsService} from "../domain/comments-service";
 
 
@@ -48,7 +48,10 @@ export class CommentsController {
   async likeStatusCommentId(req: Request, res: Response) {
     const likeStatus = req.body.likeStatus
     const commentId: string = req.params.commentId;
-    const user: UserType = req.user
+    const user = req.user
+    if(!user){
+      return res.sendStatus(401)
+    }
 
     const likeStatusComment = await this.commentsService.changeLikeStatusComment(user, commentId, likeStatus);
     if (!likeStatusComment) {

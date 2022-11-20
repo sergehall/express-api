@@ -12,7 +12,7 @@ const BlogsSchema = new  mongoose.Schema({
     type: String,
     required: [true, 'name is required']
   },
-  youtubeUrl: {
+  websiteUrl: {
     type: String,
     required: [true, 'youtubeUrl is required']
   },

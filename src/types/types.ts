@@ -32,7 +32,6 @@ export type UserTestOldType = {
   id: string
   login: string
   email: string
-  passwordSalt: string
   passwordHash: string
   createdAt: string
 }
@@ -60,7 +59,7 @@ export type UserTestType = {
 export type BlogsType = {
   id: string
   name: string
-  youtubeUrl: string
+  websiteUrl: string
   createdAt: string
 }
 export type ReturnObjBlogType = {
@@ -167,28 +166,16 @@ export type ReturnObjCommentType = {
 export type ArrayCommentsExtLikesInfo = CommentType[]
 
 //...............................................Emails
-export type EmailsRecoveryCode = {
-  email: string
-  recoveryCode: string
-  createdAt: string
-}
-export type EmailsToSent = {
+export type EmailConfirmCodeType = {
   email: string
   confirmationCode: string
   createdAt: string
 }
-
-export type UserEmailAndConfirmationCode = {
-  email: string
-  confirmationCode: string
-  createdAt: string
-}
-export type UserEmailAndRecoveryCode = {
+export type EmailRecoveryCodeType = {
   email: string
   recoveryCode: string
   createdAt: string
 }
-
 //...............................................Last10secReq
 export type Last10secReq = {
   ip: string
@@ -279,9 +266,13 @@ export type SessionTypeArray = {
 export type SessionDevicesType = {
   userId: string
   ip: string | null
-  title: string | undefined
+  userAgent: string
   lastActiveDate: string
   expirationDate: string
+  deviceId: string
+}
+export type FilterUpdateDevicesType = {
+  userId: string
   deviceId: string
 }
 //...............................................JWT Payload

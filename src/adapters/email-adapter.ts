@@ -1,7 +1,8 @@
 import nodemailer from "nodemailer";
 import {
-  UserEmailAndConfirmationCode,
-  UserEmailAndRecoveryCode
+  EmailConfirmCodeType,
+  EmailRecoveryCodeType,
+  UserType
 } from "../types/types";
 
 const ck = require('ckey')
@@ -16,18 +17,9 @@ const transporter = nodemailer.createTransport({
 });
 
 
-export class EmailAdapter {
+export class EmailsAdapter {
 
-  async sendEmail(email: string, subject: string, text: string) {
-    return await transporter.sendMail({
-      from: 'Serge Nodemailer <ck.NODEMAILER_EMAIL>',
-      to: email,
-      subject: subject,
-      html: text
-    })
-  }
-
-  async sendEmailConfirmationMessage(emailAndCode: UserEmailAndConfirmationCode) {
+  async sendCodeByRegistration(emailAndCode: EmailConfirmCodeType) {
     return await transporter.sendMail({
       from: 'Email confirmation message <ck.NODEMAILER_EMAIL>',
       to: emailAndCode.email,
@@ -35,29 +27,15 @@ export class EmailAdapter {
       html: `
       <h1 style="color: dimgrey">Click on the link below to confirm your email address</h1>
        <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-registration?code=${emailAndCode.confirmationCode}\"> Push to confirm. /registration-confirmation?code=${emailAndCode.confirmationCode}</a></div>
-      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-code/${emailAndCode.confirmationCode}\"> Push to confirm. /confirm-code/code </a></div>
-      <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/resend-registration-email?code=${emailAndCode.confirmationCode}\"> Push to /resend-registration-emai?сode= </a></div>
       `
     })
   }
 
-  async sendEmailRecoveryPassword(user: object, token: string) {
-    return await transporter.sendMail({
-      from: 'Serge Nodemailer <ck.NODEMAILER_EMAIL>',
-      to: user.toString(),
-      subject: "Recover password",
-      html: `
-        Hello, to recover your password, please enter the following link:
-        http://localhost:5000/recovery/${token}
-        `
-    })
-  }
-
-  async sendEmailRecoveryCode(emailAndCode: UserEmailAndRecoveryCode) {
+  async sendCodeByPasswordRecovery(emailAndCode: EmailRecoveryCodeType) {
     return await transporter.sendMail({
       from: 'Serge Nodemailer <ck.NODEMAILER_EMAIL>',
       to: emailAndCode.email,
-      subject: "Recover password by code",
+      subject: "Password recovery by recoveryCode",
       html:
         `
         <h1>Password recovery</h1>
@@ -65,6 +43,27 @@ export class EmailAdapter {
           <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/password-recovery?recoveryCode=${emailAndCode.recoveryCode}\"> Push for recovery password </a></div>
         </p>
         `
+    })
+  }
+
+  async sendCodeByRecoveryPassword(user: UserType, token: string) {
+    return await transporter.sendMail({
+      from: 'Serge Nodemailer <ck.NODEMAILER_EMAIL>',
+      to: user.accountData.email,
+      subject: "Recover password",
+      html: `
+        Hello, to recover your password, please enter the following link:
+        <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/resend-registration-email?code=${token}\"> сode </a></div>
+        `
+    })
+  }
+
+  async sendEmail(email: string, subject: string, text: string) {
+    return await transporter.sendMail({
+      from: 'Serge Nodemailer <ck.NODEMAILER_EMAIL>',
+      to: email,
+      subject: subject,
+      html: text
     })
   }
 }

@@ -16,7 +16,6 @@ import {
 import {SecurityDevicesService} from "./domain/securityDevices-service";
 import {SecurityDevicesController} from "./presentation/deviceController";
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
-import {EmailsToSentRepository} from "./repositories/emailsToSent-db-repository";
 import {
   BlackListRefreshTokenJWTRepository
 } from "./repositories/blackListRefreshTokenJWT-db-repository";
@@ -25,8 +24,6 @@ import {ParseQuery} from "./middlewares/parse-query";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {JWTService} from "./application/jwt-service";
-import {EmailSender} from "./demons/emailSender";
-import {EmailAdapter} from "./adapters/email-adapter";
 import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBlackList";
 import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
 import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
@@ -35,6 +32,9 @@ import {UsersService} from "./domain/users-service";
 import {UsersController} from "./presentation/userController";
 import {UsersRepository} from "./repositories/users-db-repository";
 import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
+import {EmailsRepository} from "./repositories/emails-db-repository";
+import {EmailsSender} from "./demons/emailSender";
+import {EmailsAdapter} from "./adapters/email-adapter";
 
 // Users
 const usersRepository = new UsersRepository()
@@ -71,10 +71,10 @@ const securityDevicesController = new SecurityDevicesController(securityDevicesS
 // JWT Service
 const jwtService = new JWTService()
 // Email
-const emailAdapter = new EmailAdapter()
-const emailsToSentRepository = new EmailsToSentRepository()
+const emailsAdapter = new EmailsAdapter()
+const emailsRepository = new EmailsRepository()
 // My demons
-const emailSender = new EmailSender()
+const emailsSender = new EmailsSender()
 const clearingIpWithCreatedAtOlder10Sec = new ClearingIpWithCreatedAtOlder10Sec()
 const clearingInvalidJWTFromBlackList = new ClearingInvalidJWTFromBlackList()
 const clearingDevicesWithExpDate = new ClearingDevicesWithExpDate()
@@ -99,7 +99,7 @@ export const ioc = {
   blogsController: blogsController,
   preparationPostsForReturn: preparationPostsForReturn,
   blackListIPRepository: blackListIPRepository,
-  emailsToSentRepository: emailsToSentRepository,
+  emailsRepository: emailsRepository,
   usersIPLast10secRepositories: usersIPLast10secRepositories,
   blackListRefreshTokenJWTRepository: blackListRefreshTokenJWTRepository,
   validateLast10secReq: validateLast10secReq,
@@ -108,8 +108,8 @@ export const ioc = {
   securityDevicesService: securityDevicesService,
   securityDevicesController: securityDevicesController,
   jwtService: jwtService,
-  emailSender: emailSender,
-  emailAdapter: emailAdapter,
+  emailsSender: emailsSender,
+  emailsAdapter: emailsAdapter,
   clearingIpWithCreatedAtOlder10Sec: clearingIpWithCreatedAtOlder10Sec,
   clearingInvalidJWTFromBlackList: clearingInvalidJWTFromBlackList,
   clearingDevicesWithExpDate: clearingDevicesWithExpDate
