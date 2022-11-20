@@ -23,7 +23,7 @@ export class EmailsAdapter {
     return await transporter.sendMail({
       from: 'Email confirmation message <ck.NODEMAILER_EMAIL>',
       to: emailAndCode.email,
-      subject: "Email confirmation",
+      subject: "Registration by confirmation code",
       html: `
       <h1 style="color: dimgrey">Click on the link below to confirm your email address</h1>
        <div><a style="font-size: 20px; text-decoration-line: underline" href=\"https://it-express-api.herokuapp.com/auth/confirm-registration?code=${emailAndCode.confirmationCode}\"> Push to confirm. /registration-confirmation?code=${emailAndCode.confirmationCode}</a></div>
