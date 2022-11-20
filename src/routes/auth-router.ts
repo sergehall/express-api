@@ -56,9 +56,9 @@ authRouter.post('/refresh-token',
       const clientIp = requestIp.getClientIp(req);
       const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
       const currentRefreshToken = req.cookies.refreshToken
+      await ioc.blackListRefreshTokenJWTRepository.addJWT(currentRefreshToken)
       const currentPayload: PayloadType = ioc.jwtService.jwt_decode(currentRefreshToken)
 
-      await ioc.blackListRefreshTokenJWTRepository.addJWT(currentRefreshToken)
       const newAccessToken = await ioc.jwtService.updateAccessJWT(currentPayload)
       const newRefreshToken = await ioc.jwtService.updateRefreshJWT(currentPayload)
 
