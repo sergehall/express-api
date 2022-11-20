@@ -135,7 +135,7 @@ authRouter.post('/registration-confirmation',
     const result = await ioc.usersService.confirmByCodeInParams(code)
     if (result === null) {
       res.status(400).send({
-        "errorsMessages": [
+        errorsMessages: [
           {
             message: "That code is not correct or account already confirmed",
             field: "code"
@@ -178,14 +178,15 @@ authRouter.post('/registration',
   });
 
 authRouter.post('/registration-email-resending',
-  emailValidation, inputValidatorMiddleware,
+  emailValidation,
+  inputValidatorMiddleware,
   ioc.validateLast10secReq.byRecovery,
   async (req: Request, res: Response) => {
     const email: string = req.body.email
     const userResult = await ioc.usersService.updateAndSentConfirmationCodeByEmail(email)
     if (userResult === null) {
       res.status(400).send({
-        "errorsMessages": [
+        errorsMessages: [
           {
             "message": "Email not exist or isConfirmed already true.",
             "field": "email"
