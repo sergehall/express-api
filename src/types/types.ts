@@ -19,7 +19,7 @@ export type UserType = {
     confirmationCode: string
     expirationDate: string
     isConfirmed: boolean
-    sentEmail: TimeISOType[];
+    sentEmail: string[];
   },
   registrationData: {
     ip: string | null
@@ -27,7 +27,6 @@ export type UserType = {
     createdAt: string
   }
 }
-export type TimeISOType = string
 export type UserTestOldType = {
   id: string
   login: string
@@ -47,7 +46,7 @@ export type UserTestType = {
     confirmationCode: string
     expirationDate: string
     isConfirmed: boolean
-    sentEmail: TimeISOType[];
+    sentEmail: string[];
   },
   registrationData: {
     ip: string | null
@@ -220,12 +219,6 @@ export type Pagination = {
   totalCount: number
   items: object
 }
-//...............................................Registration
-export type RegistrationDataType = {
-  ip: string | null
-  createdAt: string
-}
-
 //...............................................BlackList
 export type BlackListRefreshTokenJWT = {
   refreshToken: string
