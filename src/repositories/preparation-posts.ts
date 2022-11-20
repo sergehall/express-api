@@ -52,7 +52,7 @@ export class PreparationPosts {
             ]
         },
         {
-          id: false,
+          _id: false,
           __v: false,
           postId: false,
           likeStatus: false
