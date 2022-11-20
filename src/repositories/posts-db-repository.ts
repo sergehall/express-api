@@ -394,12 +394,13 @@ export class PostsRepository {
     }
 
     try {
+      // post collections
       const findPostInPostDB = await MyModelPosts.findOne({id: postId})
-
       if (!findPostInPostDB) {
         return false
       }
 
+      // LikeStatus collections
       const currentLikeStatus = await MyModelLikeStatusPostsId.findOneAndUpdate(
         {
           $and:
@@ -411,150 +412,151 @@ export class PostsRepository {
         newLikeStatus,
         {upsert: true}
       ).lean()
-
-      const postInThreeLastLikes = await MyModelThreeLastLikesPost.findOne(
-        {
-          $and:
-            [
-              {postId: postId},
-              {"threeNewestLikes.userId": userId}
-            ]
-        }).lean()
-
-
-      if (currentLikeStatus
-        && currentLikeStatus.likeStatus === "Like"
-        && likeStatus === "Like"
-        && postInThreeLastLikes) {
-        return true
-      }
-
-      if (likeStatus === 'Like') {
-        const newestLikeToThreeLastLikes = {
-          addedAt: createdAt,
-          userId: user.accountData.id,
-          login: user.accountData.login
-        }
-        const updateCurrentLikeInLikeStatusPosts = await MyModelLikeStatusPostsId.findOneAndUpdate(
-          {
-            $and: [
-              {postId: postId},
-              {userId: userId}
-            ]
-          },
-          newLikeStatus,
-          {upsert: true}).lean()
-
-        const checkPostLastLikes = await MyModelThreeLastLikesPost.findOne({postId: postId}).lean()
-        if (!checkPostLastLikes) {
-          const createThreeLastLikesArray = await MyModelThreeLastLikesPost.create({
-            postId: postId,
-            threeNewestLikes: [newestLikeToThreeLastLikes]
-          })
-          return true
-        }
-
-        if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length < 3) {
-
-          const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
-            {postId: postId},
-            {$push: {"threeNewestLikes": newestLikeToThreeLastLikes}})
-          return true
-
-        } else if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length === 3) {
-          const sortArray = checkPostLastLikes.threeNewestLikes.sort(function (a, b) {
-            const addedAtA = a.addedAt
-            const addedAtB = b.addedAt
-            if (addedAtA < addedAtB) //sort the rows in ascending order
-              return -1
-            if (addedAtA > addedAtB)
-              return 1
-            return 0
-          })
-
-          sortArray.push(newestLikeToThreeLastLikes)
-
-          const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
-            {postId: postId},
-            {$set: {"threeNewestLikes": sortArray.slice(1)}})
-          return true
-        }
-        return false
-      }
-
-      // if likeStatus: Dislike or None
-      const updateLikeStatus = await MyModelLikeStatusPostsId.findOneAndUpdate(
-        {
-          $and:
-            [{postId: postId},
-              {userId: userId}]
-        },
-        {likeStatus: likeStatus}).lean()
-      const findLikeInThreeLast = await MyModelThreeLastLikesPost.findOne(
-        {
-          $and:
-            [{postId: postId},
-              {"threeNewestLikes.userId": userId}]
-        }).lean()
-
-      if (!findLikeInThreeLast) {
-        return true
-      }
-
-      // get array likes by postId
-      let findNewestLikeArray = await MyModelLikeStatusPostsId.find({
-        $and:
-          [{postId: postId},
-            {likeStatus: "Like"}]
-      }).sort(createdAt).lean()
-
-      async function findLikeNoInThreeLast(findNewestLikeArray: any) {
-
-        while (true) {
-          const newestLike = findNewestLikeArray.pop()
-
-          if (newestLike === undefined) {
-            break
-          }
-          const likeNoInThreeLast = await MyModelThreeLastLikesPost.findOne({"threeNewestLikes.userId": newestLike.userId}).lean()
-          if (!likeNoInThreeLast) {
-            return newestLike
-          }
-        }
-      }
-
-      const findNewestLike: LastTreeLikes = await findLikeNoInThreeLast(findNewestLikeArray)
-
-      if (!findNewestLikeArray && findLikeInThreeLast || !findNewestLike) {
-        const removeLikeFromThreeLastLikes = await MyModelThreeLastLikesPost.findOne({
-          $and:
-            [{postId: postId},
-              {"threeNewestLikes.userId": userId}]
-        }).lean()
-
-        if (removeLikeFromThreeLastLikes) {
-          const delLikesFromThreeLast = removeLikeFromThreeLastLikes.threeNewestLikes.filter(i => i.userId !== userId)
-          const updateThreeLastLikes = await MyModelThreeLastLikesPost.findOneAndUpdate(
-            {postId: postId},
-            {threeNewestLikes: delLikesFromThreeLast}
-          )
-          return true
-        }
-      }
-
-      const gettingLoginNewestLike = await MyModelUser.findOne({"accountData.id": findNewestLike.userId}).lean()
-      if (!gettingLoginNewestLike) {
-        return false
-      }
-
-      const updatedThreeLastLikes = await MyModelThreeLastLikesPost.updateOne({
-          "threeNewestLikes.userId": userId
-        },
-        {
-          "threeNewestLikes.$.addedAt": findNewestLike.createdAt,
-          "threeNewestLikes.$.userId": findNewestLike.userId,
-          "threeNewestLikes.$.login": gettingLoginNewestLike.accountData.login
-        })
+      //
+      // // ThreeLastLikesPost collections
+      // const postInThreeLastLikes = await MyModelThreeLastLikesPost.findOne(
+      //   {
+      //     $and:
+      //       [
+      //         {postId: postId},
+      //         {"threeNewestLikes.userId": userId}
+      //       ]
+      //   }).lean()
+      //
+      //
+      // if (currentLikeStatus
+      //   && currentLikeStatus.likeStatus === "Like"
+      //   && likeStatus === "Like"
+      //   && postInThreeLastLikes) {
+      //   return true
+      // }
+      //
+      // if (likeStatus === 'Like') {
+      //   const newestLikeToThreeLastLikes = {
+      //     addedAt: createdAt,
+      //     userId: user.accountData.id,
+      //     login: user.accountData.login
+      //   }
+      //   const updateCurrentLikeInLikeStatusPosts = await MyModelLikeStatusPostsId.findOneAndUpdate(
+      //     {
+      //       $and: [
+      //         {postId: postId},
+      //         {userId: userId}
+      //       ]
+      //     },
+      //     newLikeStatus,
+      //     {upsert: true}).lean()
+      //
+      //   const checkPostLastLikes = await MyModelThreeLastLikesPost.findOne({postId: postId}).lean()
+      //   if (!checkPostLastLikes) {
+      //     const createThreeLastLikesArray = await MyModelThreeLastLikesPost.create({
+      //       postId: postId,
+      //       threeNewestLikes: [newestLikeToThreeLastLikes]
+      //     })
+      //     return true
+      //   }
+      //
+      //   if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length < 3) {
+      //
+      //     const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
+      //       {postId: postId},
+      //       {$push: {"threeNewestLikes": newestLikeToThreeLastLikes}})
+      //     return true
+      //
+      //   } else if (checkPostLastLikes && !postInThreeLastLikes && checkPostLastLikes.threeNewestLikes.length === 3) {
+      //     const sortArray = checkPostLastLikes.threeNewestLikes.sort(function (a, b) {
+      //       const addedAtA = a.addedAt
+      //       const addedAtB = b.addedAt
+      //       if (addedAtA < addedAtB) //sort the rows in ascending order
+      //         return -1
+      //       if (addedAtA > addedAtB)
+      //         return 1
+      //       return 0
+      //     })
+      //
+      //     sortArray.push(newestLikeToThreeLastLikes)
+      //
+      //     const result = await MyModelThreeLastLikesPost.findOneAndUpdate(
+      //       {postId: postId},
+      //       {$set: {"threeNewestLikes": sortArray.slice(1)}})
+      //     return true
+      //   }
+      //   return false
+      // }
+      //
+      // // if likeStatus: Dislike or None
+      // const updateLikeStatus = await MyModelLikeStatusPostsId.findOneAndUpdate(
+      //   {
+      //     $and:
+      //       [{postId: postId},
+      //         {userId: userId}]
+      //   },
+      //   {likeStatus: likeStatus}).lean()
+      // const findLikeInThreeLast = await MyModelThreeLastLikesPost.findOne(
+      //   {
+      //     $and:
+      //       [{postId: postId},
+      //         {"threeNewestLikes.userId": userId}]
+      //   }).lean()
+      //
+      // if (!findLikeInThreeLast) {
+      //   return true
+      // }
+      //
+      // // get array likes by postId
+      // let findNewestLikeArray = await MyModelLikeStatusPostsId.find({
+      //   $and:
+      //     [{postId: postId},
+      //       {likeStatus: "Like"}]
+      // }).sort(createdAt).lean()
+      //
+      // async function findLikeNoInThreeLast(findNewestLikeArray: any) {
+      //
+      //   while (true) {
+      //     const newestLike = findNewestLikeArray.pop()
+      //
+      //     if (newestLike === undefined) {
+      //       break
+      //     }
+      //     const likeNoInThreeLast = await MyModelThreeLastLikesPost.findOne({"threeNewestLikes.userId": newestLike.userId}).lean()
+      //     if (!likeNoInThreeLast) {
+      //       return newestLike
+      //     }
+      //   }
+      // }
+      //
+      // const findNewestLike: LastTreeLikes = await findLikeNoInThreeLast(findNewestLikeArray)
+      //
+      // if (!findNewestLikeArray && findLikeInThreeLast || !findNewestLike) {
+      //   const removeLikeFromThreeLastLikes = await MyModelThreeLastLikesPost.findOne({
+      //     $and:
+      //       [{postId: postId},
+      //         {"threeNewestLikes.userId": userId}]
+      //   }).lean()
+      //
+      //   if (removeLikeFromThreeLastLikes) {
+      //     const delLikesFromThreeLast = removeLikeFromThreeLastLikes.threeNewestLikes.filter(i => i.userId !== userId)
+      //     const updateThreeLastLikes = await MyModelThreeLastLikesPost.findOneAndUpdate(
+      //       {postId: postId},
+      //       {threeNewestLikes: delLikesFromThreeLast}
+      //     )
+      //     return true
+      //   }
+      // }
+      //
+      // const gettingLoginNewestLike = await MyModelUser.findOne({"accountData.id": findNewestLike.userId}).lean()
+      // if (!gettingLoginNewestLike) {
+      //   return false
+      // }
+      //
+      // const updatedThreeLastLikes = await MyModelThreeLastLikesPost.updateOne({
+      //     "threeNewestLikes.userId": userId
+      //   },
+      //   {
+      //     "threeNewestLikes.$.addedAt": findNewestLike.createdAt,
+      //     "threeNewestLikes.$.userId": findNewestLike.userId,
+      //     "threeNewestLikes.$.login": gettingLoginNewestLike.accountData.login
+      //   })
 
       return true
 
