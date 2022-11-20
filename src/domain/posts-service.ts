@@ -28,8 +28,8 @@ export class PostsService {
     return await this.postsRepository.createNewCommentByPostId(postId, content, user)
   }
 
-  async getPostById(id: string, user: UserType | null): Promise<PostsType | null >{
-    return await this.postsRepository.getPostById(id, user)
+  async getPostById(postId: string, user: UserType | null): Promise<PostsType | null >{
+    return await this.postsRepository.getPostById(postId, user)
   }
   async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserType | null): Promise<Pagination>{
     return await this.postsRepository.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection, user)

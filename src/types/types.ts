@@ -238,8 +238,9 @@ export type likeStatusCommentIdType = {
 export type likeStatusPostsIdType = {
   postId: string
   userId: string
+  login: string
   likeStatus: string
-  createdAt: string
+  addedAt: string
 }
 export type ThreeLastLikesPostType = {
   postId: string
@@ -248,6 +249,14 @@ export type ThreeLastLikesPostType = {
     userId: string
     login: string
   }[]
+}
+export type ThreeNewestLikesArray = {
+  addedAt: string,
+  userId: string,
+  login: string
+}[]
+export type OwnLikeStatus = {
+  likeStatus: string
 }
 //...............................................Session
 export type SessionTypeArray = {

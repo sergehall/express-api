@@ -11,7 +11,7 @@ export const userIdParamsValidation = param('userId').trim().isLength({min: 1, m
 export const titleValidation = body("title").trim().isLength({min: 1, max: 30}).withMessage("title must be >1 and <30 characters.")
 export const shortDescriptionValidation = body("shortDescription").trim().isLength({min: 1, max: 100}).withMessage("shortDescription must be >1 and <100 characters.")
 export const contentValidation = body("content").trim().isLength({min: 1, max: 1000}).withMessage("content must be >1 and <1000 characters.")
-export const blogIdBodyValidator = body('blogId').isString().withMessage("blogIdBodyValidator")
+export const blogIdBodyValidator = body('blogId').trim().isString().isLength({min: 1, max: 100}).withMessage("blogId should be >1 and <100 ch.")
 export const nameValidation = body("name").trim().isLength({min: 1, max: 15}).withMessage("Name must be >1 and <15 characters.")
 export const urlValidation = body("websiteUrl").trim().matches('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$').isLength({min: 15, max: 100}).withMessage("\"youtubeUrl2 should be maxLength=100 or matched to pattern '^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$'")
 export const loginOrEmailValidation = body(['loginOrEmail']).isString().withMessage('Login must be string').isLength({min: 1, max: 20}).withMessage("bodyLogin must be >1 and <20 characters.")

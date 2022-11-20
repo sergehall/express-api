@@ -21,4 +21,4 @@ const LikeStatusCommentIdSchema = new mongoose.Schema({
   }
 })
 
-export const MyModelLikeStatusCommentId =  mongoose.model<likeStatusCommentIdType>("likeStatusComment", LikeStatusCommentIdSchema, 'LikeStatusCommentId')
+export const MyModelLikeStatusCommentId =  mongoose.model<likeStatusCommentIdType>("likeStatusComment", LikeStatusCommentIdSchema, 'LikeStatusComment')

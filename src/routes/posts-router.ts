@@ -34,8 +34,11 @@ postsRouts.get('/',
 
   .put('/:postId',
     ioc.auth.basicAuthorization,
-    postIdParamsValidation, titleValidation, shortDescriptionValidation,
-    contentValidation, blogIdBodyValidator,
+    postIdParamsValidation,
+    titleValidation,
+    shortDescriptionValidation,
+    contentValidation,
+    blogIdBodyValidator,
     inputValidatorMiddleware,
     ioc.postsController.updatePostById.bind(ioc.postsController))
 

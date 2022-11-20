@@ -7,7 +7,6 @@ import {
 import uuid4 from "uuid4";
 import {
   ArrayErrorsType,
-  LastTreeLikes,
   Pagination,
   PostsType,
   ReturnObjCommentType, ReturnObjPostType,
@@ -16,10 +15,8 @@ import {
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
-import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 import {ioc} from "../IoCContainer";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
-import {MyModelUser} from "../mongoose/UsersSchemaModel";
 
 
 export class PostsRepository {
@@ -202,8 +199,9 @@ export class PostsRepository {
     }
   }
 
-  async getPostById(id: string, user: UserType | null): Promise<PostsType | null> {
-    const post: PostsType | null = await MyModelPosts.findOne({id: id}, {
+  async getPostById(postId: string, user: UserType | null): Promise<PostsType | null> {
+
+    const post: PostsType | null = await MyModelPosts.findOne({id: postId}, {
       _id: false,
       __v: false
     }).lean()
@@ -211,6 +209,10 @@ export class PostsRepository {
     if (!post) {
       return null
     }
+
+    // const threeNewestLikesArray: ThreeNewestLikesArray = await this._threeLastLikesArray(user, postId)
+    // const ownLikeStatus: OwnLikeStatus = await this._ownLikeStatus(user, postId)
+
     const result = [post]
 
     await ioc.preparationPostsForReturn.preparationPostsForReturn(result, user)
@@ -283,88 +285,41 @@ export class PostsRepository {
   }
 
   async updatePostById(id: string, title: string, shortDescription: string, content: string, blogId: string): Promise<ReturnObjPostType> {
-    const searchPost = await MyModelPosts.findOne({id: id}, {
-      _id: false,
-      __v: false,
-    }).lean();
-    const searchBlogger = await MyModelBlogs.findOne({id: blogId})
     const errorsArray: ArrayErrorsType = [];
-    const createdAt = (new Date()).toISOString()
 
-    if (!searchPost) {
-      errorsArray.push(notFoundPostId)
-    }
-    if (!searchBlogger) {
+    const findBlog = await MyModelBlogs.findOne({id: blogId})
+    if (!findBlog) {
       errorsArray.push(notFoundBloggerId)
-    }
-    if (searchPost && searchBlogger) {
-      const result = await MyModelPosts.updateOne(
-        {id: id},
-        {
-          $set: {
-            id: id,
-            title: title,
-            shortDescription: shortDescription,
-            content: content,
-            blogId: blogId,
-            blogName: searchBlogger.name,
-          }
-        }).lean()
-
-      if (result.matchedCount === 0) {
-        errorsArray.push(mongoHasNotUpdated)
-      }
-    }
-    if (errorsArray.length !== 0 || !searchPost) {
       return {
-        data: {
-          id: "",
-          title: title,
-          shortDescription: shortDescription,
-          content: content,
-          blogId: blogId,
-          blogName: "",
-          createdAt: createdAt,
-          extendedLikesInfo: {
-            likesCount: 0,
-            dislikesCount: 0,
-            myStatus: "",
-            newestLikes: []
-          }
-        },
+        data: null,
         errorsMessages: errorsArray,
         resultCode: 1
       }
     }
-
-    const foundUpdatedPost = await MyModelPosts.findOne({id: id}, {
-      _id: false,
-    }).lean();
-
-    if (foundUpdatedPost === null) {
-      return {
-        data: {
-          id: "",
+    const updatePost = await MyModelPosts.findOneAndUpdate(
+      {id: id},
+      {
+        $set: {
+          id: id,
           title: title,
           shortDescription: shortDescription,
           content: content,
           blogId: blogId,
-          blogName: "",
-          createdAt: createdAt,
-          extendedLikesInfo: {
-            likesCount: 0,
-            dislikesCount: 0,
-            myStatus: "",
-            newestLikes: []
-          }
+          blogName: findBlog.name,
+        }
+      },
+      {returnDocument: "after"}).lean()
 
-        },
+    if (!updatePost) {
+      errorsArray.push(mongoHasNotUpdated)
+      return {
+        data: null,
         errorsMessages: errorsArray,
         resultCode: 1
       }
     }
     return {
-      data: foundUpdatedPost,
+      data: updatePost,
       errorsMessages: errorsArray,
       resultCode: 0
     }
@@ -384,13 +339,14 @@ export class PostsRepository {
 
   async changeLikeStatusPost(user: UserType, postId: string, likeStatus: string): Promise<Boolean> {
     const userId = user.accountData.id
-    const createdAt = new Date().toISOString()
+    const addedAt = new Date().toISOString()
 
     const newLikeStatus = {
       postId: postId,
       userId: user.accountData.id,
+      login: user.accountData.login,
       likeStatus: likeStatus,
-      createdAt: createdAt,
+      addedAt: addedAt,
     }
 
     try {
@@ -412,6 +368,7 @@ export class PostsRepository {
         newLikeStatus,
         {upsert: true}
       ).lean()
+
       //
       // // ThreeLastLikesPost collections
       // const postInThreeLastLikes = await MyModelThreeLastLikesPost.findOne(
@@ -565,4 +522,45 @@ export class PostsRepository {
       return false
     }
   }
+
+  // async _threeLastLikesArray(user: UserType | null, postId: string): Promise<ThreeNewestLikesArray> {
+  //
+  //   const findThreeLastLikes = await MyModelLikeStatusPostsId.find(
+  //     {
+  //       $and:
+  //         [
+  //           {postId: postId},
+  //           {likeStatus: "Like"}
+  //         ]
+  //     },
+  //     {_id: false, __v: false, likeStatus: false})
+  //     .sort({createdAt: -1})
+  //     .limit(3)
+  //
+  //   console.log(findThreeLastLikes, "findThreeLastLikes")
+  //
+  //   return findThreeLastLikes
+  // }
+  //
+  // async _ownLikeStatus(user: UserType | null, postId: string): Promise<OwnLikeStatus> {
+  //   let ownStatus = "None"
+  //   if (!user){
+  //     return {likeStatus: ownStatus}
+  //   }
+  //   const findThreeLastLikes = await MyModelLikeStatusPostsId.findOne(
+  //     {
+  //       $and:
+  //         [
+  //           {postId: postId},
+  //           {userId: user.accountData.id}
+  //         ]
+  //     },
+  //     {_id: false, __v: false}
+  //   )
+  //   if(findThreeLastLikes){
+  //     ownStatus = findThreeLastLikes.likeStatus
+  //   }
+  //   console.log(ownStatus, "ownStatus")
+  //   return {likeStatus: ownStatus}
+  // }
 }

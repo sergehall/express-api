@@ -11,14 +11,18 @@ const LikeStatusPostsIdSchema = new mongoose.Schema({
     type: String,
     required: [true, 'userId is required'],
   },
+  login: {
+    type: String,
+    required: [true, 'login is required']
+  },
   likeStatus: {
     type: String,
     required: [true, 'likeStatus is required']
   },
-  createdAt: {
+  addedAt: {
     type: String,
-    required: [true, 'createdAt is required']
+    required: [true, 'addedAt is required']
   }
 })
 
-export const MyModelLikeStatusPostsId =  mongoose.model<likeStatusPostsIdType>("likeStatusPosts", LikeStatusPostsIdSchema, 'LikeStatusPostsId')
+export const MyModelLikeStatusPostsId =  mongoose.model<likeStatusPostsIdType>("likeStatusPosts", LikeStatusPostsIdSchema, 'LikeStatusPosts')

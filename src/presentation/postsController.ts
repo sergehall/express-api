@@ -120,9 +120,9 @@ export class PostsController {
       const title: string = req.body.title
       const shortDescription: string = req.body.shortDescription
       const content: string = req.body.content
-      const bloggerId: string = req.body.bloggerId
+      const blogId: string = req.body.blogId
 
-      const updatedPost = await this.postsService.updatePostById(id, title, shortDescription, content, bloggerId)
+      const updatedPost = await this.postsService.updatePostById(id, title, shortDescription, content, blogId)
       if (updatedPost.resultCode === 0) {
         res.status(204)
         res.send()
