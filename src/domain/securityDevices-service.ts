@@ -14,7 +14,7 @@ export class SecurityDevicesService {
     const newDevices: SessionDevicesType = {
       userId: currentPayload.userId,
       ip: clientIp,
-      userAgent: userAgent,
+      title: userAgent,
       lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
       expirationDate: new Date(newPayload.exp * 1000).toISOString(),
       deviceId: currentPayload.deviceId
@@ -26,7 +26,7 @@ export class SecurityDevicesService {
     const newDevices: SessionDevicesType = {
       userId: newPayload.userId,
       ip: clientIp,
-      userAgent: userAgent,
+      title: userAgent,
       lastActiveDate: new Date(newPayload.iat * 1000).toISOString(),
       expirationDate: new Date(newPayload.exp * 1000).toISOString(),
       deviceId: newPayload.deviceId

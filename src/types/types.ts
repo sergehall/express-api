@@ -266,7 +266,7 @@ export type SessionTypeArray = {
 export type SessionDevicesType = {
   userId: string
   ip: string | null
-  userAgent: string
+  title: string
   lastActiveDate: string
   expirationDate: string
   deviceId: string
