@@ -10,7 +10,6 @@ import {MyModeLast10secRegConf} from "../mongoose/Last10secRegConfModel";
 import {MyModelBlogPosts} from "../mongoose/PostsBlogSchemaModel";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
-import {MyModelThreeLastLikesPost} from "../mongoose/ThreeLastLikesPost";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
@@ -25,10 +24,9 @@ testingRouter
     await MyModelBlogs.deleteMany({})
     await MyModelPosts.deleteMany({})
     await MyModelBlogPosts.deleteMany({})
-    await MyModelLikeStatusPostsId.deleteMany({})
     await MyModelDevicesSchema.deleteMany({})
+    await MyModelLikeStatusPostsId.deleteMany({})
     await MyModelLikeStatusCommentId.deleteMany({})
-    await MyModelThreeLastLikesPost.deleteMany({})
     await MyModelEmailsConfirmCode.deleteMany({})
     await MyModelBlackListIP.deleteMany({})
     await MyModeLast10secRegConf.deleteMany({})

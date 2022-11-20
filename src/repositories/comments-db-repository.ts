@@ -1,6 +1,7 @@
 import {
-  ArrayCommentsExtLikesInfo,
-  ArrayErrorsType, CommentType, ReturnObjCommentType,
+  ArrayErrorsType,
+  CommentType,
+  ReturnObjCommentType,
   UserType
 } from "../types/types";
 import {
@@ -45,7 +46,7 @@ export class CommentsRepository {
       }
     }
 
-    const commentArray: ArrayCommentsExtLikesInfo = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
+    const commentArray: CommentType[] = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
     const commentFiledLikesInfo = await ioc.preparationComments.preparationCommentsForReturn(commentArray, currentUser)
 
     return {
@@ -119,7 +120,7 @@ export class CommentsRepository {
         return false
       }
 
-      const currentLikeStatus = await MyModelLikeStatusCommentId.findOneAndUpdate(
+      await MyModelLikeStatusCommentId.findOneAndUpdate(
         {
           $and:
             [

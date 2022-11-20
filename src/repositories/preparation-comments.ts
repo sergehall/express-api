@@ -1,56 +1,49 @@
 import {
-  ArrayCommentsExtLikesInfo, UserType
+  CommentType,
+  UserType
 } from "../types/types";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 
 
 export class PreparationComments {
 
-  async preparationCommentsForReturn(commentsArray: ArrayCommentsExtLikesInfo, currentUser: UserType | null) {
+  async preparationCommentsForReturn(commentsArray: CommentType[], currentUser: UserType | null) {
     const filledCommentsArray = []
     for (let i in commentsArray) {
-      const comment = commentsArray[i]
       const commentId = commentsArray[i].id
-      const filterCommentId = {commentId: commentId}
-      let currentLikeStatus = {likeStatus: "None"}
+      const comment: CommentType = commentsArray[i]
+      let ownLikeStatus = "None"
 
-      if(currentUser && comment.userId === currentUser.accountData.id){
-        const checkCurrentLikeStatus = await MyModelLikeStatusCommentId.findOne(
+      if(currentUser){
+        const currentComment = await MyModelLikeStatusCommentId.findOne(
           {
             $and: [
               {userId: currentUser.accountData.id},
-              filterCommentId]
-          }
+              {commentId: commentId}]
+          },
+          {
+            _id: false,
+            __v: false,}
         )
-        if (checkCurrentLikeStatus) {
-          currentLikeStatus = {likeStatus: checkCurrentLikeStatus.likeStatus}
+        if (currentComment) {
+          ownLikeStatus = currentComment.likeStatus
         }
       }
+      comment.likesInfo.myStatus = ownLikeStatus
 
-      const countLikes = await MyModelLikeStatusCommentId.countDocuments({
+      comment.likesInfo.likesCount = await MyModelLikeStatusCommentId.countDocuments({
         $and:
           [{commentId: commentId},
             {likeStatus: "Like"}]
-      }).lean()
+      })
 
-      const countDislike = await MyModelLikeStatusCommentId.countDocuments({
+      comment.likesInfo.dislikesCount = await MyModelLikeStatusCommentId.countDocuments({
         $and:
           [{commentId: commentId},
             {likeStatus: "Dislike"}]
-      }).lean()
-
-      filledCommentsArray.push({
-        id: comment.id,
-        content: comment.content,
-        userId: comment.userId,
-        userLogin: comment.userLogin,
-        createdAt: comment.createdAt,
-        likesInfo: {
-          likesCount: countLikes,
-          dislikesCount: countDislike,
-          myStatus: currentLikeStatus.likeStatus,
-        }
       })
+
+      filledCommentsArray.push(comment)
     }
     return filledCommentsArray
   }

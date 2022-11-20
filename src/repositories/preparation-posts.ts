@@ -7,10 +7,11 @@ import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 
 export class PreparationPosts {
 
-  async preparationPostsForReturn(myArray: PostsType[], currentUser: UserType | null) {
-    for (let i in myArray) {
-      const postId = myArray[i].id
-      const post: PostsType = myArray[i]
+  async preparationPostsForReturn(postArray: PostsType[], currentUser: UserType | null) {
+    for (let i in postArray) {
+      const postId = postArray[i].id
+      const post: PostsType = postArray[i]
+
       post.extendedLikesInfo.likesCount = await MyModelLikeStatusPostsId.countDocuments({
         $and:
           [{postId: postId},

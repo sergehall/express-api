@@ -1,13 +1,13 @@
-//...............................................Errors
 import {ObjectId} from "mongodb";
 
+//...............................................Errors
 export type ErrorType = {
   message: string
   field: string
 }
 export type ArrayErrorsType = ErrorType[]
 
-//...............................................User and extended UserAccount
+//...............................................User
 export type UserType = {
   accountData: {
     id: string
@@ -105,21 +105,6 @@ export type ReturnObjPostType = {
   errorsMessages: ErrorType[]
   resultCode: number
 }
-export type AllDeletedPostsType = {
-  bloggerIdKey: string
-  posts: {
-    id: string | null
-    title: string
-    shortDescription: string
-    content: string
-    bloggerId: string
-    bloggerName: string
-  }[]
-}
-
-export type BloggerIdAndArrayPosts = [bloggerIdKey: string, posts: PostsType[]]
-export type AllDeletedPosts = BloggerIdAndArrayPosts[]
-
 //...............................................Comments
 export type CommentType = {
   id: string
@@ -142,8 +127,6 @@ export type ReturnObjCommentType = {
   errorsMessages: ErrorType[]
   resultCode: number
 }
-export type ArrayCommentsExtLikesInfo = CommentType[]
-
 //...............................................Emails
 export type EmailConfirmCodeType = {
   email: string
@@ -184,13 +167,6 @@ export type DevicesSchemaModel = {
   expirationDate: string
   deviceId: string
 }
-//...............................................LastTreeLikes
-export type LastTreeLikes = {
-  postId: string
-  userId: string
-  likeStatus: string
-  createdAt: string
-}
 //...............................................Pagination
 export type Pagination = {
   pagesCount: number
@@ -221,22 +197,6 @@ export type likeStatusPostsIdType = {
   login: string
   likeStatus: string
   addedAt: string
-}
-export type ThreeLastLikesPostType = {
-  postId: string
-  threeNewestLikes: {
-    addedAt: string
-    userId: string
-    login: string
-  }[]
-}
-export type ThreeNewestLikesArray = {
-  addedAt: string,
-  userId: string,
-  login: string
-}[]
-export type OwnLikeStatus = {
-  likeStatus: string
 }
 //...............................................Session
 export type SessionTypeArray = {
