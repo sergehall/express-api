@@ -12,21 +12,17 @@ export class FeedbacksController {
   }
 
   async createFeedback(req: Request, res: Response) {
+    const userId = req.params.userId;
     const user = req.user
+
     if(!user){
-      return res.sendStatus(403)
+      return res.sendStatus(401)
     }
 
-    const userIdParams = req.params.userId;
-    const userIdAuth = user.accountData.id
-
-    if (userIdParams !== userIdAuth) {
-      return res.sendStatus(403)
-    }
-    const newFeedback = await this.feedbacksService.sendFeedback(userIdParams, req.body.comment)
-    if (newFeedback.resultCode !== 0) {
+    const newFeedback = await this.feedbacksService.sendFeedback(userId, req.body.comment)
+    if (!newFeedback.data) {
       return res.status(400).send(newFeedback.errorsMessages)
     }
-    res.status(201).send(newFeedback.data)
+    res.status(201).send(newFeedback.data[0])
   }
 }

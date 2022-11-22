@@ -1,20 +1,32 @@
 import {ArrayErrorsType, FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/types";
 import {MyModelFeedbacks} from "../mongoose/FeedbacksSchemaModel";
 import uuid4 from "uuid4";
+import {mongoHasNotUpdated, notFoundUserId} from "../middlewares/errorsMessages";
+import {MyModelUser} from "../mongoose/UsersSchemaModel";
 
 
 export class FeedbacksRepository {
   async createFeedback(userId: string, comment: string): Promise<ReturnTypeObjectFeedback> {
-    const errorsArray: ArrayErrorsType = [];
+    let errorsArray: ArrayErrorsType = [];
+    if (!await MyModelUser.findOne({"accountData.id": userId})) {
+      errorsArray.push(notFoundUserId)
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+
+    const newComment = {
+      commentId: uuid4().toString(),
+      comment: comment
+    }
+
     const newFeedback: FeedbacksTypeModel = await MyModelFeedbacks.findOneAndUpdate(
       {id: userId},
       {
         $push: {
-          allFeedbacks:
-            {
-              commentId: uuid4().toString(),
-              comment: comment
-            }
+          allFeedbacks: newComment
         }
       },
       {
@@ -22,8 +34,18 @@ export class FeedbacksRepository {
         returnDocument: "after",
         projection: {_id: false, __v: false, "allFeedbacks._id": false}
       })
+
+    if (!newFeedback) {
+      errorsArray.push(mongoHasNotUpdated)
+      return {
+        data: null,
+        errorsMessages: errorsArray,
+        resultCode: 1
+      }
+    }
+
     return {
-      data: newFeedback,
+      data: [newComment],
       errorsMessages: errorsArray,
       resultCode: 0
     }

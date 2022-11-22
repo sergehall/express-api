@@ -143,15 +143,16 @@ export type Last10secReq = {
 }
 
 //...............................................Feedbacks
+export type Feedback = {
+  commentId: string
+  comment: string
+}
 export type FeedbacksTypeModel = {
   id: string
-  allFeedbacks: {
-    commentId: string
-    comment: string
-  }[]
+  allFeedbacks: Feedback[]
 }
 export type ReturnTypeObjectFeedback = {
-  data: FeedbacksTypeModel | null
+  data: Feedback[] | null
   errorsMessages: ErrorType[]
   resultCode: number
 }
