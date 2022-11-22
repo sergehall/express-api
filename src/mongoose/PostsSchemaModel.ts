@@ -33,11 +33,11 @@ const PostsSchema = new mongoose.Schema({
   },
   extendedLikesInfo: {
     likesCount: {
-      type: String,
+      type: Number,
       required: [true, 'likesCount is required']
     },
     dislikesCount: {
-      type: String,
+      type: Number,
       required: [true, 'dislikesCount is required']
     },
     myStatus: {

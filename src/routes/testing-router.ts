@@ -7,7 +7,6 @@ import {MyModeLast10secRedEmailRes} from "../mongoose/Last10secRegEmailResModel"
 import {MyModeLast10secLog} from "../mongoose/Last10secLogModel";
 import {MyModeLast10secReg} from "../mongoose/Last10secRegModel";
 import {MyModeLast10secRegConf} from "../mongoose/Last10secRegConfModel";
-import {MyModelBlogPosts} from "../mongoose/PostsBlogSchemaModel";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
@@ -23,7 +22,6 @@ testingRouter
     await MyModelUser.deleteMany({})
     await MyModelBlogs.deleteMany({})
     await MyModelPosts.deleteMany({})
-    await MyModelBlogPosts.deleteMany({})
     await MyModelDevicesSchema.deleteMany({})
     await MyModelLikeStatusPostsId.deleteMany({})
     await MyModelLikeStatusCommentId.deleteMany({})

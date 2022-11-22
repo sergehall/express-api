@@ -90,13 +90,10 @@ export class PostsRepository {
 
     try {
       // create post
-      const createNewPost = await MyModelPosts.create(newPost)
-      // create post for comments in future
-      await MyModelComments.create({
-        postId: newPostId,
-        allComments: []
-      })
-      if (!createNewPost) {
+      const createNewPost: PostsType = await MyModelPosts.create(
+        newPost)
+
+      if (!createNewPost.createdAt) {
         errorsArray.push(mongoHasNotUpdated)
         return {
           data: null,
@@ -142,7 +139,8 @@ export class PostsRepository {
         {postId: postId},
         {
           $push: {allComments: newComment}
-        }
+        },
+        {upsert: true}
       )
 
       if (!findOneAndUpdateComment) {
