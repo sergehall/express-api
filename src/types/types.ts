@@ -6,7 +6,18 @@ export type ErrorType = {
   field: string
 }
 export type ArrayErrorsType = ErrorType[]
-
+//...............................................Pagination
+export type Pagination = {
+  pagesCount: number
+  page: number
+  pageSize: number
+  totalCount: number
+  items:
+    PostsType[]
+    | CommentType[]
+    | BlogsType[]
+    | UserType[]
+}
 //...............................................User
 export type UserType = {
   accountData: {
@@ -66,19 +77,6 @@ export type ReturnObjBlogType = {
   errorsMessages: ErrorType[]
   resultCode: number
 }
-export type BlogPostsType = {
-  blogId: string;
-  allPosts: {
-    id: string
-    title: string
-    shortDescription: string
-    content: string
-    blogId: string
-    blogName: string
-    addedAt: string
-  }[]
-}
-
 //...............................................Posts
 export type PostsType = {
   id: string
@@ -157,7 +155,6 @@ export type ReturnTypeObjectFeedback = {
   errorsMessages: ErrorType[]
   resultCode: number
 }
-
 //...............................................Devices
 export type DevicesSchemaModel = {
   userId: string
@@ -166,14 +163,6 @@ export type DevicesSchemaModel = {
   lastActiveDate: string
   expirationDate: string
   deviceId: string
-}
-//...............................................Pagination
-export type Pagination = {
-  pagesCount: number
-  page: number
-  pageSize: number
-  totalCount: number
-  items: object
 }
 //...............................................BlackList
 export type BlackListRefreshTokenJWT = {

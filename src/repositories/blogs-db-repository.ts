@@ -1,7 +1,7 @@
 import {
   ArrayErrorsType,
   BlogsType,
-  Pagination,
+  Pagination, PostsType,
   ReturnObjBlogType,
   UserType
 } from "../types/types";
@@ -63,8 +63,13 @@ export class BlogsRepository {
   }
 
   async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string, currentUser: UserType | null): Promise<Pagination | null> {
+    // check exist blogger
+    if (!await MyModelBlogs.findOne({id: blogId})) {
+      return null
+    }
+    // find all post by blogId
+    let filledPosts: PostsType[] = []
     const filterBlogId = {blogId: blogId}
-
     const direction = sortDirection === "desc" ? 1 : -1;
 
     let field = "createdAt"
@@ -83,11 +88,9 @@ export class BlogsRepository {
       .skip(startIndex)
       .sort({[field]: direction}).lean()
 
-    if (!allPostsByBlogId) {
-      return null
+    if (allPostsByBlogId.length !== 0) {
+      filledPosts = await ioc.preparationPostsForReturn.preparationPostsForReturn(allPostsByBlogId, currentUser)
     }
-
-    const filledPosts = await ioc.preparationPostsForReturn.preparationPostsForReturn(allPostsByBlogId, currentUser)
 
     const totalCount = await MyModelPosts.countDocuments(filterBlogId)
     const pagesCount = Math.ceil(totalCount / pageSize)
