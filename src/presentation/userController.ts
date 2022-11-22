@@ -19,11 +19,7 @@ export class UsersController {
       const sortDirection: string | null = parseQueryData.sortDirection
 
       const getUsers = await this.usersService.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
-      if (!getUsers) {
-        res.status(404).send()
-      } else {
-        res.send(getUsers)
-      }
+      return  res.send(getUsers)
     } catch (e) {
       console.log(e)
       return res.sendStatus(500)
