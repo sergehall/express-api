@@ -120,30 +120,8 @@ export class PostsRepository {
   async createNewCommentByPostId(postId: string, content: string, user: UserType): Promise<ReturnObjCommentType> {
     try {
       let errorsArray: ArrayErrorsType = [];
-      const newCommentId = uuid4().toString()
-      const createdAt = new Date().toISOString()
 
-      const newComment = {
-        id: newCommentId,
-        content: content,
-        userId: user.accountData.id,
-        userLogin: user.accountData.login,
-        createdAt: createdAt,
-        likesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: "None"
-        }
-      }
-      const findOneAndUpdateComment = await MyModelComments.findOneAndUpdate(
-        {postId: postId},
-        {
-          $push: {allComments: newComment}
-        },
-        {upsert: true}
-      )
-
-      if (!findOneAndUpdateComment) {
+      if (!await MyModelPosts.findOne({id: postId})) {
         errorsArray.push(notFoundPostId)
         return {
           data: null,
@@ -152,11 +130,33 @@ export class PostsRepository {
         }
       }
 
+      const newComment = {
+        id: uuid4().toString(),
+        content: content,
+        userId: user.accountData.id,
+        userLogin: user.accountData.login,
+        createdAt: new Date().toISOString(),
+        likesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: "None"
+        }
+      }
+
+      await MyModelComments.findOneAndUpdate(
+        {postId: postId},
+        {
+          $push: {allComments: newComment}
+        },
+        {upsert: true}
+      )
+
       return {
         data: newComment,
         errorsMessages: errorsArray,
         resultCode: 0
       }
+
     } catch (e) {
       console.log(e)
       return {
@@ -180,7 +180,7 @@ export class PostsRepository {
     if (!post) {
       return null
     }
-    if(!user){
+    if (!user) {
       return post
     }
     const filledPost = await ioc.preparationPostsForReturn.preparationPostsForReturn([post], user)
