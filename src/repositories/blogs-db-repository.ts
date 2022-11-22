@@ -86,7 +86,8 @@ export class BlogsRepository {
     if (!allPostsByBlogId) {
       return null
     }
-    await ioc.preparationPostsForReturn.preparationPostsForReturn(allPostsByBlogId, currentUser)
+
+    const filledPosts = await ioc.preparationPostsForReturn.preparationPostsForReturn(allPostsByBlogId, currentUser)
 
     const totalCount = await MyModelPosts.countDocuments(filterBlogId)
     const pagesCount = Math.ceil(totalCount / pageSize)
@@ -96,7 +97,7 @@ export class BlogsRepository {
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: allPostsByBlogId
+      items: filledPosts
     };
   }
 

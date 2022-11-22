@@ -41,7 +41,7 @@ export class PostsRepository {
       .skip(startIndex)
       .sort({[field]: direction}).lean()
 
-    await ioc.preparationPostsForReturn.preparationPostsForReturn(findAllPosts, currentUser)
+    const filledPost = await ioc.preparationPostsForReturn.preparationPostsForReturn(findAllPosts, currentUser)
 
     const totalCount = await MyModelPosts.countDocuments({})
     const pagesCount = Math.ceil(totalCount / pageSize)
@@ -52,35 +52,7 @@ export class PostsRepository {
       page: pageNumber,
       pageSize: pageSize,
       totalCount: totalCount,
-      items: findAllPosts
-    };
-  }
-
-  async findAllPostByBloggerId(bloggerId: string, pageNumber: number, pageSize: number, user: UserType | null): Promise<Pagination> {
-    let filter = {}
-    if (bloggerId) {
-      filter = {bloggerId: bloggerId}
-    }
-    const startIndex = (pageNumber - 1) * pageSize
-    const result = await MyModelPosts.find(
-      filter,
-      {
-        _id: false,
-        __v: false
-      }).limit(pageSize).skip(startIndex).lean()
-
-    await ioc.preparationPostsForReturn.preparationPostsForReturn(result, user)
-
-    const totalCount = await MyModelPosts.countDocuments(filter)
-
-    const pagesCount = Math.ceil(totalCount / pageSize)
-
-    return {
-      pagesCount: pagesCount,
-      page: pageNumber,
-      pageSize: pageSize,
-      totalCount: totalCount,
-      items: result
+      items: filledPost
     };
   }
 
@@ -207,11 +179,14 @@ export class PostsRepository {
       __v: false
     }).lean()
 
-    if (post) {
-      await ioc.preparationPostsForReturn.preparationPostsForReturn([post], user)
+    if (!post) {
+      return null
+    }
+    if(!user){
       return post
     }
-    return null
+    const filledPost = await ioc.preparationPostsForReturn.preparationPostsForReturn([post], user)
+    return filledPost[0]
   }
 
   async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserType | null): Promise<Pagination> {

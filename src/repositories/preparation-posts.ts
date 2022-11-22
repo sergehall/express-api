@@ -7,19 +7,20 @@ import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 
 export class PreparationPosts {
 
-  async preparationPostsForReturn(postArray: PostsType[], currentUser: UserType | null) {
+  async preparationPostsForReturn(postArray: PostsType[], currentUser: UserType | null): Promise<PostsType[]> {
+    const filledPosts = []
     for (let i in postArray) {
       const postId = postArray[i].id
-      const post: PostsType = postArray[i]
+      const currentPost: PostsType = postArray[i]
 
-      post.extendedLikesInfo.likesCount = await MyModelLikeStatusPostsId.countDocuments({
+      currentPost.extendedLikesInfo.likesCount = await MyModelLikeStatusPostsId.countDocuments({
         $and:
           [{postId: postId},
             {likeStatus: "Like"}]
       }).lean()
 
       // getting dislikes and count
-      post.extendedLikesInfo.dislikesCount = await MyModelLikeStatusPostsId.countDocuments({
+      currentPost.extendedLikesInfo.dislikesCount = await MyModelLikeStatusPostsId.countDocuments({
         $and:
           [{postId: postId},
             {likeStatus: "Dislike"}]
@@ -41,10 +42,10 @@ export class PreparationPosts {
           ownStatus = findOwnPost.likeStatus
         }
       }
-      post.extendedLikesInfo.myStatus = ownStatus
+      currentPost.extendedLikesInfo.myStatus = ownStatus
 
       // getting 3 last likes
-      post.extendedLikesInfo.newestLikes = await MyModelLikeStatusPostsId.find(
+      currentPost.extendedLikesInfo.newestLikes = await MyModelLikeStatusPostsId.find(
         {
           $and:
             [
@@ -60,6 +61,8 @@ export class PreparationPosts {
         })
         .sort({addedAt: -1})
         .limit(3)
+      filledPosts.push(currentPost)
     }
+    return filledPosts
   }
 }

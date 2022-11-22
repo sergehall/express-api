@@ -8,7 +8,7 @@ import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 export class PreparationComments {
 
   async preparationCommentsForReturn(commentsArray: CommentType[], currentUser: UserType | null) {
-    const filledCommentsArray = []
+    const filledComments = []
     for (let i in commentsArray) {
       const commentId = commentsArray[i].id
       const comment: CommentType = commentsArray[i]
@@ -43,8 +43,8 @@ export class PreparationComments {
             {likeStatus: "Dislike"}]
       })
 
-      filledCommentsArray.push(comment)
+      filledComments.push(comment)
     }
-    return filledCommentsArray
+    return filledComments
   }
 }
