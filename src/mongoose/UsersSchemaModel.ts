@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema({
     passwordHash: {
       type: String,
       required: [true, 'passwordHash is required']
+    },
+    createdAt: {
+      type: String,
+      required: [true, 'createdAt is required']
     }
   },
   emailConfirmation: {
@@ -49,10 +53,6 @@ const UserSchema = new mongoose.Schema({
     userAgent: {
       type: String,
       required: [true, 'userAgent is required']
-    },
-    createdAt: {
-      type: String,
-      required: [true, 'createdAt is required']
     }
   }
 })

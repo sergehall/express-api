@@ -189,6 +189,7 @@ export class UsersService {
         login: login,
         email: email,
         passwordHash: passwordHash,
+        createdAt: currentTime
       },
       emailConfirmation: {
         confirmationCode: confirmationCode,
@@ -198,8 +199,7 @@ export class UsersService {
       },
       registrationData: {
         ip: ip,
-        userAgent: userAgent,
-        createdAt: currentTime
+        userAgent: userAgent
       }
     };
   }

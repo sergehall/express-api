@@ -40,7 +40,7 @@ export class UsersController {
           id: newUser.accountData.id,
           login: newUser.accountData.login,
           email: newUser.accountData.email,
-          createdAt: newUser.registrationData.createdAt
+          createdAt: newUser.accountData.createdAt
         })
       }
       return res.status(400).send({

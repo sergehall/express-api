@@ -59,7 +59,6 @@ export class UsersRepository {
         "accountData.passwordSalt": false,
         emailConfirmation: false,
         registrationData: false
-
       })
       .limit(pageSize)
       .skip(startIndex)

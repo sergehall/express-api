@@ -25,6 +25,7 @@ export type UserType = {
     login: string
     email: string
     passwordHash: string
+    createdAt: string
   },
   emailConfirmation: {
     confirmationCode: string
@@ -35,7 +36,6 @@ export type UserType = {
   registrationData: {
     ip: string | null
     userAgent: string
-    createdAt: string
   }
 }
 export type UserTestOldType = {
