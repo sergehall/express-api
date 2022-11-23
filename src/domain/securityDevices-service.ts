@@ -6,7 +6,7 @@ import {
 import {SecurityDevicesRepository} from "../repositories/securityDevices-db-repository";
 
 export class SecurityDevicesService {
-  constructor(private securityDevicesRepository: SecurityDevicesRepository) {
+  constructor(protected securityDevicesRepository: SecurityDevicesRepository) {
   }
 
   async updateDevices(currentPayload: PayloadType,  newPayload: PayloadType, clientIp: string | null, userAgent: string): Promise<Boolean> {

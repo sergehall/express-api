@@ -4,7 +4,7 @@ import {CommentsService} from "../domain/comments-service";
 
 
 export class CommentsController {
-  constructor(private commentsService: CommentsService) {
+  constructor(protected commentsService: CommentsService) {
   }
 
   async findCommentByCommentId(req: Request, res: Response) {

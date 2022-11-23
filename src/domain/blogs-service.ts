@@ -8,7 +8,7 @@ import {
 } from "../types/types";
 
 export class BlogsService {
-  constructor(private blogsRepository: BlogsRepository) {
+  constructor(protected blogsRepository: BlogsRepository) {
     this.blogsRepository = blogsRepository
   }
 

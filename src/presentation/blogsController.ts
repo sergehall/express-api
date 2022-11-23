@@ -6,7 +6,7 @@ import {UserType} from "../types/types";
 
 
 export class BlogsController {
-  constructor(private blogsService: BlogsService, private postService: PostsService) {
+  constructor(protected blogsService: BlogsService, protected postService: PostsService) {
   }
 
   async getAllBlogs(req: Request, res: Response) {

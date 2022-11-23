@@ -13,7 +13,7 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {PayloadType} from "../types/types";
 
-export const authRouter = Router({})
+export const   authRouter = Router({})
 
 authRouter.post('/login',
   loginOrEmailValidation,

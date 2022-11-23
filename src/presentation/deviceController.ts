@@ -5,7 +5,7 @@ import {SecurityDevicesService} from "../domain/securityDevices-service";
 
 
 export class SecurityDevicesController {
-  constructor(private securityDevicesService: SecurityDevicesService) {
+  constructor(protected securityDevicesService: SecurityDevicesService) {
   }
 
   async getAllDevices(req: Request, res: Response) {

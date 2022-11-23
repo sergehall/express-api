@@ -3,7 +3,7 @@ import {FeedbacksRepository} from "../repositories/feedback-db-repository";
 
 
 export class FeedbacksService {
-  constructor(private feedbacksRepository: FeedbacksRepository) {
+  constructor(protected feedbacksRepository: FeedbacksRepository) {
     this.feedbacksRepository = feedbacksRepository
   }
   async  allFeedbacks(): Promise<FeedbacksTypeModel> {

@@ -6,6 +6,7 @@ import {MyModelUser} from "../mongoose/UsersSchemaModel";
 
 
 export class FeedbacksRepository {
+
   async createFeedback(userId: string, comment: string): Promise<ReturnTypeObjectFeedback> {
     let errorsArray: ArrayErrorsType = [];
     if (!await MyModelUser.findOne({"accountData.id": userId})) {

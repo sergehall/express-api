@@ -3,7 +3,7 @@ import {Request, Response} from "express";
 
 
 export class FeedbacksController {
-  constructor(private feedbacksService: FeedbacksService) {
+  constructor(protected feedbacksService: FeedbacksService) {
   }
 
   async getAllFeedbacks(req: Request, res: Response) {

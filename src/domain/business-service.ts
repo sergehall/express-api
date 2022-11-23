@@ -3,6 +3,7 @@ import {UserType} from "../types/types";
 
 
 export const businessService = {
+
   async doSendEmailSimple(email: string, subject: string, text: string) {
     await emailManagers.doSendEmailSimple(email, subject, text);
   },

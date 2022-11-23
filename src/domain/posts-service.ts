@@ -9,7 +9,7 @@ import {
 
 
 export class PostsService {
-  constructor(private postsRepository: PostsRepository) {
+  constructor(protected postsRepository: PostsRepository) {
     this.postsRepository = postsRepository
   }
 

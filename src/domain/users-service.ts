@@ -14,7 +14,7 @@ const ck = require('ckey')
 
 
 export class UsersService {
-  constructor(private usersRepository: UsersRepository) {
+  constructor(protected usersRepository: UsersRepository) {
   }
 
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {

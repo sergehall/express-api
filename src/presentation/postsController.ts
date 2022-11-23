@@ -4,7 +4,7 @@ import {ioc} from "../IoCContainer";
 import {UserType} from "../types/types";
 
 export class PostsController {
-  constructor(private postsService: PostsService) {
+  constructor(protected postsService: PostsService) {
   }
 
   async getAllPosts(req: Request, res: Response) {

@@ -5,7 +5,7 @@ import {UsersService} from "../domain/users-service";
 
 
 export class UsersController {
-  constructor(private usersService: UsersService) {
+  constructor(protected usersService: UsersService) {
   }
 
   async getUsers(req: Request, res: Response) {

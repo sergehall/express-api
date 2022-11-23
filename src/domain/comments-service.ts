@@ -6,7 +6,7 @@ import {
 
 
 export class CommentsService {
-  constructor(private commentsRepository: CommentsRepository) {
+  constructor(protected commentsRepository: CommentsRepository) {
   }
 
   async findCommentCompareOwner(commentId: string): Promise<CommentType | null> {
