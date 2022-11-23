@@ -1,10 +1,11 @@
-import {BlackListRefreshTokenJWT, PayloadType} from "../types/types";
 import {MyModelBlackListRefreshTokenJWT} from "../mongoose/BlackListRefreshTokenJWTModel";
 import {ioc} from "../IoCContainer";
+import {BlackListRefreshTokenJWT, PayloadType} from "../types/tsTypes";
+import {injectable} from "inversify";
 
 const ck = require('ckey')
 
-
+@injectable()
 export class BlackListRefreshTokenJWTRepository {
 
   async findJWT(refreshToken: string): Promise<BlackListRefreshTokenJWT | null> {

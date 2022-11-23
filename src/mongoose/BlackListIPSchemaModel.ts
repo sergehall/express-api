@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {BlackListIPDBType} from "../types/types";
+import {BlackListIPDBType} from "../types/tsTypes";
 
 
 const BlackListIPSchema = new mongoose.Schema({

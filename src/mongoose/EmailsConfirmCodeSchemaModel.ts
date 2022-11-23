@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {EmailConfirmCodeType} from "../types/types";
+import {EmailConfirmCodeType} from "../types/tsTypes";
 
 
 const EmailsToSentSchema = new mongoose.Schema({

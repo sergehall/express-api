@@ -3,18 +3,22 @@ import {
   EmailRecoveryCodeType,
   Pagination,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
 import uuid4 from "uuid4";
 import add from "date-fns/add";
 import {ioc} from "../IoCContainer";
 import {UsersRepository} from "../repositories/users-db-repository";
 import bcrypt from "bcrypt";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
+
 
 const ck = require('ckey')
 
 
+@injectable()
 export class UsersService {
-  constructor(protected usersRepository: UsersRepository) {
+  constructor(@inject(TYPES.UsersRepository) protected usersRepository: UsersRepository) {
   }
 
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {EmailRecoveryCodeType} from "../types/types";
+import {EmailRecoveryCodeType} from "../types/tsTypes";
 
 
 const EmailsRecoveryCodeSchema = new mongoose.Schema({

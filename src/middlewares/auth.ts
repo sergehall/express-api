@@ -2,11 +2,12 @@ import {NextFunction, Request, Response} from "express";
 import bcrypt from "bcrypt";
 import requestIp from "request-ip";
 import {ioc} from "../IoCContainer";
-import {UserType} from "../types/types";
+import {UserType} from "../types/tsTypes";
+import {injectable} from "inversify";
 
 const base64 = require('base-64');
 
-
+@injectable()
 export class Auth {
 
   async authenticationAccessToken(req: Request, res: Response, next: NextFunction) {

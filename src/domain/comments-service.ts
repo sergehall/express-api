@@ -1,12 +1,15 @@
 import {CommentsRepository} from "../repositories/comments-db-repository";
 import {
-  CommentType, ReturnObjCommentType,
+  CommentType,
+  ReturnObjCommentType,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
 
-
+@injectable()
 export class CommentsService {
-  constructor(protected commentsRepository: CommentsRepository) {
+  constructor(@inject(TYPES.CommentsRepository) protected commentsRepository: CommentsRepository) {
   }
 
   async findCommentCompareOwner(commentId: string): Promise<CommentType | null> {

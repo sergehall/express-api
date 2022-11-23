@@ -1,10 +1,14 @@
-import {ArrayErrorsType, FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/types";
+import {ArrayErrorsType,
+  FeedbacksTypeModel,
+  ReturnTypeObjectFeedback} from "../types/tsTypes";
 import {MyModelFeedbacks} from "../mongoose/FeedbacksSchemaModel";
 import uuid4 from "uuid4";
 import {mongoHasNotUpdated, notFoundUserId} from "../middlewares/errorsMessages";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class FeedbacksRepository {
 
   async createFeedback(userId: string, comment: string): Promise<ReturnTypeObjectFeedback> {

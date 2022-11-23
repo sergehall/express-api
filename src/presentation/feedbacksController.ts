@@ -1,9 +1,11 @@
 import {FeedbacksService} from "../domain/feedbacks-service";
 import {Request, Response} from "express";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
 
-
+@injectable()
 export class FeedbacksController {
-  constructor(protected feedbacksService: FeedbacksService) {
+  constructor(@inject(TYPES.FeedbacksService) protected feedbacksService: FeedbacksService) {
   }
 
   async getAllFeedbacks(req: Request, res: Response) {

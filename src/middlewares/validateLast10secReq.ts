@@ -1,8 +1,10 @@
 import {Request, Response, NextFunction} from "express";
 import requestIp from "request-ip";
 import {ioc} from "../IoCContainer";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class ValidateLast10secReq {
 
   async byRegisConfirm(req: Request, res: Response, next: NextFunction) {

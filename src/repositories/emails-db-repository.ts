@@ -1,6 +1,6 @@
-import {EmailConfirmCodeType, EmailRecoveryCodeType} from "../types/types";
 import {MyModelEmailsConfirmCode} from "../mongoose/EmailsConfirmCodeSchemaModel";
 import {MyModelEmailsRecoveryCode} from "../mongoose/EmailsRecoveryCodeShemaModel";
+import {EmailConfirmCodeType, EmailRecoveryCodeType} from "../types/tsTypes";
 
 
 export class EmailsRepository {

@@ -2,10 +2,12 @@ import {
   EmailConfirmCodeType,
   EmailRecoveryCodeType,
   Pagination, UserType,
-} from "../types/types";
+} from "../types/tsTypes";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class UsersRepository {
 
   async createOrUpdateUser(user: UserType): Promise<UserType | null> {
@@ -45,7 +47,7 @@ export class UsersRepository {
       field = sortBy
     }
 
-    const users = await MyModelUser.find(
+    const users: UserType[] = await MyModelUser.find(
       {
         $and: [
           filterLogin,

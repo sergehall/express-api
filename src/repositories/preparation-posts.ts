@@ -1,7 +1,7 @@
 import {
   PostsType,
   UserType,
-} from "../types/types";
+} from "../types/tsTypes";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 
 

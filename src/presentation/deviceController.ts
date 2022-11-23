@@ -1,16 +1,18 @@
 import {Request, Response} from "express";
-import {PayloadType} from "../types/types";
+import {PayloadType} from "../types/tsTypes";
 import {ioc} from "../IoCContainer";
 import {SecurityDevicesService} from "../domain/securityDevices-service";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
 
-
+@injectable()
 export class SecurityDevicesController {
-  constructor(protected securityDevicesService: SecurityDevicesService) {
+  constructor(@inject(TYPES.SecurityDevicesService) protected securityDevicesService: SecurityDevicesService) {
   }
 
   async getAllDevices(req: Request, res: Response) {
     const refreshToken = req.cookies.refreshToken
-    const payload: PayloadType = ioc.jwtService.jwt_decode(refreshToken);
+    const payload: PayloadType = await ioc.jwtService.jwt_decode(refreshToken);
     const getDevices = await this.securityDevicesService.getAllDevices(payload)
     return res.send(getDevices)
   }
@@ -18,7 +20,7 @@ export class SecurityDevicesController {
   async deleteAllDevicesExceptCurrent(req: Request, res: Response) {
     try {
       const refreshToken = req.cookies.refreshToken
-      const payloadRefreshToken: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
+      const payloadRefreshToken: PayloadType = await ioc.jwtService.jwt_decode(refreshToken)
       await this.securityDevicesService.deleteAllDevicesExceptCurrent(payloadRefreshToken)
       return res.sendStatus(204)
     } catch (e) {
@@ -31,7 +33,7 @@ export class SecurityDevicesController {
     try {
       const deletedId = req.params.deviceId
       const refreshToken = req.cookies.refreshToken
-      const payloadRefreshToken: PayloadType = ioc.jwtService.jwt_decode(refreshToken)
+      const payloadRefreshToken: PayloadType = await ioc.jwtService.jwt_decode(refreshToken)
 
       const result = await this.securityDevicesService.deleteDeviceByDeviceId(deletedId, payloadRefreshToken)
       if (result === "204") {

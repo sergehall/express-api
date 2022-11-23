@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {DevicesSchemaModel} from "../types/types";
+import {DevicesSchemaModel} from "../types/tsTypes";
 
 
 

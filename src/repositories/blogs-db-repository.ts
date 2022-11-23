@@ -4,14 +4,15 @@ import {
   Pagination, PostsType,
   ReturnObjBlogType,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
 import {mongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {ioc} from "../IoCContainer";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class BlogsRepository {
 
   async findBlogs(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null,): Promise<Pagination> {

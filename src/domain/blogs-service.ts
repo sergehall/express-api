@@ -5,11 +5,13 @@ import {
   Pagination,
   ReturnObjBlogType,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
 
+@injectable()
 export class BlogsService {
-  constructor(protected blogsRepository: BlogsRepository) {
-    this.blogsRepository = blogsRepository
+  constructor(@inject(TYPES.BlogsRepository) protected blogsRepository: BlogsRepository) {
   }
 
   async findBlogs(pageNumber: number, pageSize: number, sortBy: string| null, sortDirection: string| null): Promise<Pagination> {

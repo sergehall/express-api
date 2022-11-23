@@ -1,18 +1,22 @@
 import {Router} from "express";
 import {ioc} from "../IoCContainer";
+import {container} from "../Container";
+import {SecurityDevicesController} from "../presentation/deviceController";
 
 
 export const securityDevicesRouter = Router({})
 
+const securityDevicesController = container.resolve<SecurityDevicesController>(SecurityDevicesController)
+
 securityDevicesRouter.get('/devices',
   ioc.jwtService.verifyRefreshTokenAndCheckInBlackList,
-  ioc.securityDevicesController.getAllDevices.bind(ioc.securityDevicesController))
+  securityDevicesController.getAllDevices.bind(securityDevicesController))
 
   .delete('/devices',
     ioc.jwtService.verifyRefreshTokenAndCheckInBlackList,
-    ioc.securityDevicesController.deleteAllDevicesExceptCurrent.bind(ioc.securityDevicesController))
+    securityDevicesController.deleteAllDevicesExceptCurrent.bind(securityDevicesController))
 
   .delete('/devices/:deviceId',
     ioc.jwtService.verifyRefreshTokenAndCheckInBlackList,
-    ioc.securityDevicesController.deleteDeviceByDeviceId.bind(ioc.securityDevicesController))
+    securityDevicesController.deleteDeviceByDeviceId.bind(securityDevicesController))
 

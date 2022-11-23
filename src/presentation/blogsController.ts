@@ -1,17 +1,21 @@
 import {BlogsService} from "../domain/blogs-service";
 import {Request, Response} from "express";
-import {ioc} from "../IoCContainer";
 import {PostsService} from "../domain/posts-service";
-import {UserType} from "../types/types";
+import {UserType} from "../types/tsTypes";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
+import {container} from "../Container";
+import {ParseQuery} from "../middlewares/parse-query";
 
-
+@injectable()
 export class BlogsController {
-  constructor(protected blogsService: BlogsService, protected postService: PostsService) {
+  constructor(@inject(TYPES.BlogsService) protected blogsService: BlogsService,
+              @inject(TYPES.PostsService) protected postService: PostsService) {
   }
 
   async getAllBlogs(req: Request, res: Response) {
 
-    const parseQueryData = await ioc.parseQuery.parse(req)
+    const parseQueryData = await container.resolve(ParseQuery).parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
     const sortBy: string | null = parseQueryData.sortBy
@@ -61,7 +65,7 @@ export class BlogsController {
   async findAllPostsByBlogId(req: Request, res: Response) {
     const blogId: string = req.params.blogId
     const currentUser: UserType | null = req.user
-    const parseQueryData = await ioc.parseQuery.parse(req)
+    const parseQueryData = await container.resolve(ParseQuery).parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
     const sortBy: string | null = parseQueryData.sortBy

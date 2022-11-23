@@ -5,12 +5,13 @@ import {
   ReturnObjCommentType,
   ReturnObjPostType,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
 
-
+@injectable()
 export class PostsService {
-  constructor(protected postsRepository: PostsRepository) {
-    this.postsRepository = postsRepository
+  constructor(@inject(TYPES.PostsRepository) protected postsRepository: PostsRepository) {
   }
 
   async findPosts(pageNumber: number, pageSize: number, sortBy: string| null, sortDirection: string| null, currentUser: UserType | null): Promise<Pagination>{

@@ -1,7 +1,8 @@
 import {ioc} from "../IoCContainer";
 import {MyModelBlackListRefreshTokenJWT} from "../mongoose/BlackListRefreshTokenJWTModel";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class ClearingInvalidJWTFromBlackList {
   // runs every 1 min
   async start() {

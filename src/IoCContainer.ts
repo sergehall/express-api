@@ -35,6 +35,8 @@ import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-r
 import {EmailsRepository} from "./repositories/emails-db-repository";
 import {EmailsSender} from "./demons/emailSender";
 import {EmailsAdapter} from "./adapters/email-adapter";
+import {BusinessService} from "./domain/business-service";
+import {EmailManagers} from "./managers/email-managers";
 
 // Users
 const usersRepository = new UsersRepository()
@@ -72,6 +74,8 @@ const securityDevicesController = new SecurityDevicesController(securityDevicesS
 const jwtService = new JWTService()
 // Email
 const emailsAdapter = new EmailsAdapter()
+const emailManagers = new EmailManagers(emailsAdapter)
+const businessService = new BusinessService(emailManagers)
 const emailsRepository = new EmailsRepository()
 // My demons
 const emailsSender = new EmailsSender()
@@ -112,5 +116,9 @@ export const ioc = {
   emailsAdapter: emailsAdapter,
   clearingIpWithCreatedAtOlder10Sec: clearingIpWithCreatedAtOlder10Sec,
   clearingInvalidJWTFromBlackList: clearingInvalidJWTFromBlackList,
-  clearingDevicesWithExpDate: clearingDevicesWithExpDate
+  clearingDevicesWithExpDate: clearingDevicesWithExpDate,
+  businessService: businessService,
+  emailManagers: emailManagers
 }
+
+

@@ -8,30 +8,34 @@ import {
   shortDescriptionValidation,
   titleValidation, urlValidation
 } from "../middlewares/input-validator-middleware";
+import {container} from "../Container";
+import {BlogsController} from "../presentation/blogsController";
 
 
 export const blogsRouts = Router({})
 
+const blogsController = container.resolve<BlogsController>(BlogsController)
+
 blogsRouts.get('/',
-  ioc.blogsController.getAllBlogs.bind(ioc.blogsController))
+  blogsController.getAllBlogs.bind(blogsController))
 
   .get('/:blogId/posts',
     blogIdParamsValidation,
     inputValidatorMiddleware,
     ioc.auth.noneStatusAccessToken,
-    ioc.blogsController.findAllPostsByBlogId.bind(ioc.blogsController))
+    blogsController.findAllPostsByBlogId.bind(blogsController))
 
   .get('/:id',
     idParamsValidation,
     inputValidatorMiddleware,
-    ioc.blogsController.findBlogById.bind(ioc.blogsController))
+    blogsController.findBlogById.bind(blogsController))
 
   .post('/',
     ioc.auth.basicAuthorization,
     nameValidation,
     urlValidation,
     inputValidatorMiddleware,
-    ioc.blogsController.createNewBlog.bind(ioc.blogsController))
+    blogsController.createNewBlog.bind(blogsController))
 
   .post('/:blogId/posts',
     ioc.auth.basicAuthorization,
@@ -40,7 +44,7 @@ blogsRouts.get('/',
     contentValidation,
     blogIdParamsValidation,
     inputValidatorMiddleware,
-    ioc.blogsController.createNewPostByBlogId.bind(ioc.blogsController))
+    blogsController.createNewPostByBlogId.bind(blogsController))
 
   .put('/:id',
     ioc.auth.basicAuthorization,
@@ -48,11 +52,11 @@ blogsRouts.get('/',
     urlValidation,
     idParamsValidation,
     inputValidatorMiddleware,
-    ioc.blogsController.updatedBlogById.bind(ioc.blogsController))
+    blogsController.updatedBlogById.bind(blogsController))
 
   .delete('/:id',
     ioc.auth.basicAuthorization,
     idParamsValidation,
     inputValidatorMiddleware,
-    ioc.blogsController.deleteBlogById.bind(ioc.blogsController))
+    blogsController.deleteBlogById.bind(blogsController))
 

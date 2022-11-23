@@ -1,8 +1,9 @@
 import {Request} from "express";
 
+
+
 export class ParseQuery {
   async parse(req: Request) {
-
     let pageNumber: number = parseInt(<string>req.query.pageNumber)
     let pageSize: number = parseInt(<string>req.query.pageSize)
     let searchNameTerm: string | undefined | null = req.query.searchNameTerm?.toString()

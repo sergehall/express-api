@@ -1,10 +1,11 @@
-import {FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/types";
+import {FeedbacksTypeModel, ReturnTypeObjectFeedback} from "../types/tsTypes";
 import {FeedbacksRepository} from "../repositories/feedback-db-repository";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
 
-
+@injectable()
 export class FeedbacksService {
-  constructor(protected feedbacksRepository: FeedbacksRepository) {
-    this.feedbacksRepository = feedbacksRepository
+  constructor(@inject(TYPES.FeedbacksRepository) protected feedbacksRepository: FeedbacksRepository) {
   }
   async  allFeedbacks(): Promise<FeedbacksTypeModel> {
     return await this.feedbacksRepository.getAllFeedbacks()

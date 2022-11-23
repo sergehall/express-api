@@ -2,10 +2,13 @@ import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
 import requestIp from "request-ip";
 import {UsersService} from "../domain/users-service";
+import { injectable, inject } from "inversify";
+import {TYPES} from "../types";
 
 
+@injectable()
 export class UsersController {
-  constructor(protected usersService: UsersService) {
+  constructor(@inject(TYPES.UsersService) protected usersService: UsersService) {
   }
 
   async getUsers(req: Request, res: Response) {

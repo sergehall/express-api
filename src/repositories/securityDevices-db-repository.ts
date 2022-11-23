@@ -4,9 +4,10 @@ import {
   PayloadType,
   SessionDevicesType,
   SessionTypeArray
-} from "../types/types";
+} from "../types/tsTypes";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class SecurityDevicesRepository {
 
   async createOrUpdateDevices(filter: FilterUpdateDevicesType , newDevices: SessionDevicesType): Promise<Boolean> {

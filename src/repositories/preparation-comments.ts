@@ -1,7 +1,7 @@
 import {
   CommentType,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 
 

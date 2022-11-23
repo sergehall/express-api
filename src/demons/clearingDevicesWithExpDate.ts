@@ -1,8 +1,9 @@
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
 import {ioc} from "../IoCContainer";
+import {injectable} from "inversify";
 
 
-
+@injectable()
 export class ClearingDevicesWithExpDate {
   // runs every 5 sec
   async start() {

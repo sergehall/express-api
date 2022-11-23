@@ -4,15 +4,19 @@ import {
   inputValidatorMiddleware,
   userIdParamsValidation
 } from "../middlewares/input-validator-middleware";
+import {container} from "../Container";
+import {FeedbacksController} from "../presentation/feedbacksController";
 
 
 export const feedbacksRouter = Router({})
 
+const feedbacksController = container.resolve<FeedbacksController>(FeedbacksController)
+
 feedbacksRouter.get('/',
-  ioc.feedbacksController.getAllFeedbacks.bind(ioc.feedbacksController))
+  feedbacksController.getAllFeedbacks.bind(feedbacksController))
 
   .post('/:userId',
     ioc.auth.authenticationAccessToken,
     userIdParamsValidation,
     inputValidatorMiddleware,
-    ioc.feedbacksController.createFeedback.bind(ioc.feedbacksController))
+    feedbacksController.createFeedback.bind(feedbacksController))

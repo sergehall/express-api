@@ -1,20 +1,23 @@
-import {emailManagers} from "../managers/email-managers";
-import {UserType} from "../types/types";
+import {EmailManagers} from "../managers/email-managers";
+import {UserType} from "../types/tsTypes";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
 
-
-export const businessService = {
-
+@injectable()
+export class BusinessService{
+  constructor(@inject(TYPES.EmailManagers) protected emailManagers: EmailManagers) {
+  }
   async doSendEmailSimple(email: string, subject: string, text: string) {
-    await emailManagers.doSendEmailSimple(email, subject, text);
-  },
+    await this.emailManagers.doSendEmailSimple(email, subject, text);
+  }
   async sendEmailRecoveryPassword(user: UserType, token: string) {
     // save to repository
     // get user from repository
-    await emailManagers.sendEmailRecoveryPassword(user, token);
-  },
+    await this.emailManagers.sendEmailRecoveryPassword(user, token);
+  }
   async doSomethingElse() {
     // save to repository
     // get user from repository
     // do something with user sent or received
   }
-};
+}

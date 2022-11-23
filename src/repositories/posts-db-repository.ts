@@ -12,14 +12,16 @@ import {
   ReturnObjCommentType,
   ReturnObjPostType,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
 import {ioc} from "../IoCContainer";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class PostsRepository {
 
   async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserType | null): Promise<Pagination> {

@@ -1,10 +1,12 @@
 import {Router, Request, Response} from "express"
-import {businessService} from "../domain/business-service";
 import {ioc} from "../IoCContainer";
+import {container} from "../Container";
+import {BusinessService} from "../domain/business-service";
 
 
 export const emailRouter = Router({})
 
+const businessService = container.resolve<BusinessService>(BusinessService)
 
 emailRouter
   .post("/send",

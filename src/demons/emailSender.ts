@@ -1,6 +1,8 @@
 import {ioc} from "../IoCContainer";
+import {injectable} from "inversify";
 
 
+@injectable()
 export class EmailsSender {
 
   async sendAndDeleteConfirmationCode() {

@@ -1,10 +1,15 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
 import {ioc} from "../IoCContainer";
-import {UserType} from "../types/types";
+import {UserType} from "../types/tsTypes";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
+import {container} from "../Container";
+import {ParseQuery} from "../middlewares/parse-query";
 
+@injectable()
 export class PostsController {
-  constructor(protected postsService: PostsService) {
+  constructor(@inject(TYPES.PostsService) protected postsService: PostsService) {
   }
 
   async getAllPosts(req: Request, res: Response) {
@@ -93,7 +98,7 @@ export class PostsController {
   async getCommentsByPostId(req: Request, res: Response) {
     try {
       const postId = req.params.postId;
-      const parseQueryData = await ioc.parseQuery.parse(req)
+      const parseQueryData = await container.resolve(ParseQuery).parse(req)
       const pageNumber = parseQueryData.pageNumber
       const pageSize = parseQueryData.pageSize
       const sortBy: string | null = parseQueryData.sortBy

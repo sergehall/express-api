@@ -4,8 +4,9 @@ import {MyModeLast10secRedEmailRes} from "../mongoose/Last10secRegEmailResModel"
 import {MyModeLast10secLog} from "../mongoose/Last10secLogModel";
 import {ioc} from "../IoCContainer";
 import {MyModeRedLast10secNewPasswordReq} from "../mongoose/Last10secNewPassResModel";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class ClearingIpWithCreatedAtOlder10Sec {
   // runs every 2 minutes
   async start() {

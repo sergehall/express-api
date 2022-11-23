@@ -3,7 +3,8 @@ import {
   EmailConfirmCodeType,
   EmailRecoveryCodeType,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
+import {injectable} from "inversify";
 
 const ck = require('ckey')
 
@@ -16,7 +17,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-
+@injectable()
 export class EmailsAdapter {
 
   async sendCodeByRegistration(emailAndCode: EmailConfirmCodeType) {

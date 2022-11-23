@@ -5,7 +5,9 @@ import {MyModeLast10secRedEmailRes} from "../mongoose/Last10secRegEmailResModel"
 import {
   MyModeRedLast10secNewPasswordReq
 } from "../mongoose/Last10secNewPassResModel";
+import {injectable} from "inversify";
 
+@injectable()
 export class UsersIPLast10secRepositories {
   async addAndCountByIpAndTimeRegConf(clientIp: string | null): Promise<number> {
     await MyModeLast10secRegConf.create({ip: clientIp, createdAt: new Date().toISOString()})

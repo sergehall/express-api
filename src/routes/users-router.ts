@@ -7,12 +7,17 @@ import {
   emailValidation,
   inputValidatorMiddleware,
 } from "../middlewares/input-validator-middleware";
+import {UsersController} from "../presentation/userController";
+import {container} from "../Container";
+
 
 
 export const usersRouter = Router({});
 
+const usersController = container.resolve<UsersController>(UsersController)
+
 usersRouter
-  .get('/', ioc.usersController.getUsers.bind(ioc.usersController))
+  .get('/', usersController.getUsers.bind(usersController))
 
   .post('/',
     ioc.auth.basicAuthorization,
@@ -20,12 +25,12 @@ usersRouter
     passwordValidation,
     emailValidation,
     inputValidatorMiddleware,
-    ioc.usersController.createNewUser.bind(ioc.usersController))
+    usersController.createNewUser.bind(usersController))
 
   .delete('/:userId',
     ioc.auth.basicAuthorization,
     idParamsValidation,
     inputValidatorMiddleware,
-    ioc.usersController.deleteUserById.bind(ioc.usersController))
+    usersController.deleteUserById.bind(usersController))
 
 

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {BlackListRefreshTokenJWT} from "../types/types";
+import {BlackListRefreshTokenJWT} from "../types/tsTypes";
 
 
 const BlackListRefreshTokenJWTSchema = new mongoose.Schema({

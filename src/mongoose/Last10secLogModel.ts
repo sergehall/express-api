@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {Last10secReq} from "../types/types";
+import {Last10secReq} from "../types/tsTypes";
 
 
 const UsersIPLast10secCollectionLogSchema = new mongoose.Schema({

@@ -2,11 +2,15 @@ import {
   PayloadType,
   SessionDevicesType,
   SessionTypeArray
-} from "../types/types";
+} from "../types/tsTypes";
 import {SecurityDevicesRepository} from "../repositories/securityDevices-db-repository";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
 
+
+@injectable()
 export class SecurityDevicesService {
-  constructor(protected securityDevicesRepository: SecurityDevicesRepository) {
+  constructor(@inject(TYPES.SecurityDevicesRepository) protected securityDevicesRepository: SecurityDevicesRepository) {
   }
 
   async updateDevices(currentPayload: PayloadType,  newPayload: PayloadType, clientIp: string | null, userAgent: string): Promise<Boolean> {

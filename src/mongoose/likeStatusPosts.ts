@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {likeStatusPostsIdType} from "../types/types";
+import {likeStatusPostsIdType} from "../types/tsTypes";
 
 
 const LikeStatusPostsIdSchema = new mongoose.Schema({

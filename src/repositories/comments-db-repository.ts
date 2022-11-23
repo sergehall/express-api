@@ -3,7 +3,7 @@ import {
   CommentType,
   ReturnObjCommentType,
   UserType
-} from "../types/types";
+} from "../types/tsTypes";
 import {
   mongoHasNotUpdated,
   notDeletedComment,
@@ -12,8 +12,9 @@ import {
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 import {ioc} from "../IoCContainer";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class CommentsRepository {
 
   async findCommentCompareOwner(commentId: string): Promise<CommentType | null> {

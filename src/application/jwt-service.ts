@@ -2,11 +2,13 @@ import {NextFunction, Request, Response} from "express";
 import jwt from 'jsonwebtoken'
 import {ioc} from "../IoCContainer";
 import uuid4 from "uuid4";
-import {PayloadType} from "../types/types";
+import {PayloadType} from "../types/tsTypes";
 import jwt_decode from "jwt-decode";
+import {injectable} from "inversify";
 
 const ck = require('ckey')
 
+@injectable()
 export class JWTService {
 
   async createAccessJWT(userId: string) {
@@ -74,7 +76,7 @@ export class JWTService {
     }
   }
 
-  jwt_decode(token: string): PayloadType {
+  async jwt_decode(token: string): Promise<PayloadType> {
     return jwt_decode(token)
   }
 }

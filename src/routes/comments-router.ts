@@ -3,27 +3,31 @@ import {ioc} from "../IoCContainer";
 import {
   contentCommentValidation, inputValidatorMiddleware, likeStatusValidator
 } from "../middlewares/input-validator-middleware";
+import {container} from "../Container";
+import {CommentsController} from "../presentation/commentsController";
 
 
 export const commentsRouter = Router({})
 
+const commentsController = container.resolve<CommentsController>(CommentsController)
+
 commentsRouter.get('/:commentId',
   ioc.auth.noneStatusAccessToken,
-  ioc.commentsController.findCommentByCommentId.bind(ioc.commentsController))
+  commentsController.findCommentByCommentId.bind(commentsController))
 
   .put('/:commentId',
     ioc.auth.authenticationAccessToken,
     ioc.auth.compareCurrentAndCreatorComment,
     contentCommentValidation, inputValidatorMiddleware,
-    ioc.commentsController.updateCommentsById.bind(ioc.commentsController))
+    commentsController.updateCommentsById.bind(commentsController))
 
   .put('/:commentId/like-status',
     ioc.auth.authenticationAccessToken,
     likeStatusValidator,
     inputValidatorMiddleware,
-    ioc.commentsController.likeStatusCommentId.bind(ioc.commentsController))
+    commentsController.likeStatusCommentId.bind(commentsController))
 
   .delete('/:commentId',
     ioc.auth.authenticationAccessToken,
     ioc.auth.compareCurrentAndCreatorComment,
-    ioc.commentsController.deleteCommentsById.bind(ioc.commentsController))
+    commentsController.deleteCommentsById.bind(commentsController))
