@@ -6,6 +6,7 @@ import {inject, injectable} from "inversify";
 import {TYPES} from "../types";
 import {container} from "../Container";
 import {ParseQuery} from "../middlewares/parse-query";
+import {ioc} from "../IoCContainer";
 
 @injectable()
 export class BlogsController {
@@ -65,7 +66,7 @@ export class BlogsController {
   async findAllPostsByBlogId(req: Request, res: Response) {
     const blogId: string = req.params.blogId
     const currentUser: UserType | null = req.user
-    const parseQueryData = await container.resolve(ParseQuery).parse(req)
+    const parseQueryData = await ioc.parseQuery.parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
     const sortBy: string | null = parseQueryData.sortBy
