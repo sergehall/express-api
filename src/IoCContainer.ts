@@ -47,11 +47,11 @@ const auth = new Auth()
 const parseQuery = new ParseQuery()
 const validateLast10secReq = new ValidateLast10secReq()
 // PostsExtLikesInfo
-const preparationPostsForReturn = new PreparationPosts()
+const preparationPosts = new PreparationPosts()
 // CommentsExtLikesInfo
 const preparationComments = new PreparationComments()
 // Posts
-const postsRepository = new PostsRepository(preparationPostsForReturn, preparationComments)
+const postsRepository = new PostsRepository(preparationPosts, preparationComments)
 const postsService = new PostsService(postsRepository)
 const postsController = new PostsController(postsService)
 // Feedbacks
@@ -63,7 +63,7 @@ const commentsRepository = new CommentsRepository(preparationComments)
 const commentsService = new CommentsService(commentsRepository)
 const commentsController = new CommentsController(commentsService)
 // Blogs
-const blogsRepository = new BlogsRepository()
+const blogsRepository = new BlogsRepository(preparationPosts)
 const blogsService = new BlogsService(blogsRepository)
 const blogsController = new BlogsController(blogsService, postsService)
 // Devices
@@ -101,7 +101,7 @@ export const ioc = {
   commentsController: commentsController,
   blogsService: blogsService,
   blogsController: blogsController,
-  preparationPostsForReturn: preparationPostsForReturn,
+  preparationPosts: preparationPosts,
   blackListIPRepository: blackListIPRepository,
   emailsRepository: emailsRepository,
   usersIPLast10secRepositories: usersIPLast10secRepositories,

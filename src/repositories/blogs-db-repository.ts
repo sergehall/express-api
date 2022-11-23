@@ -9,11 +9,16 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import uuid4 from "uuid4";
 import {mongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
-import {ioc} from "../IoCContainer";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
+import {TYPES} from "../types";
+import {PreparationPosts} from "./preparation-posts";
+
 
 @injectable()
 export class BlogsRepository {
+
+  constructor(@inject(TYPES.PreparationPosts) protected preparationPosts: PreparationPosts) {
+  }
 
   async findBlogs(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null,): Promise<Pagination> {
     const direction = sortDirection === "desc" ? 1 : -1;
@@ -90,7 +95,7 @@ export class BlogsRepository {
       .sort({[field]: direction}).lean()
 
     if (allPostsByBlogId.length !== 0) {
-      filledPosts = await ioc.preparationPostsForReturn.preparationPostsForReturn(allPostsByBlogId, currentUser)
+      filledPosts = await this.preparationPosts.preparationPostsForReturn(allPostsByBlogId, currentUser)
     }
 
     const totalCount = await MyModelPosts.countDocuments(filterBlogId)
