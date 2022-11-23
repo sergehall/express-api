@@ -46,8 +46,12 @@ const usersController = new UsersController(usersService)
 const auth = new Auth()
 const parseQuery = new ParseQuery()
 const validateLast10secReq = new ValidateLast10secReq()
+// PostsExtLikesInfo
+const preparationPostsForReturn = new PreparationPosts()
+// CommentsExtLikesInfo
+const preparationComments = new PreparationComments()
 // Posts
-const postsRepository = new PostsRepository()
+const postsRepository = new PostsRepository(preparationPostsForReturn, preparationComments)
 const postsService = new PostsService(postsRepository)
 const postsController = new PostsController(postsService)
 // Feedbacks
@@ -55,17 +59,13 @@ const feedbacksRepository = new FeedbacksRepository()
 const feedbacksService = new FeedbacksService(feedbacksRepository)
 const feedbacksController = new FeedbacksController(feedbacksService)
 // Comments
-const commentsRepository = new CommentsRepository()
+const commentsRepository = new CommentsRepository(preparationComments)
 const commentsService = new CommentsService(commentsRepository)
 const commentsController = new CommentsController(commentsService)
 // Blogs
 const blogsRepository = new BlogsRepository()
 const blogsService = new BlogsService(blogsRepository)
 const blogsController = new BlogsController(blogsService, postsService)
-// PostsExtLikesInfo
-const preparationPostsForReturn = new PreparationPosts()
-// CommentsExtLikesInfo
-const preparationComments = new PreparationComments()
 // Devices
 const securityDevicesRepository = new SecurityDevicesRepository()
 const securityDevicesService = new SecurityDevicesService(securityDevicesRepository)

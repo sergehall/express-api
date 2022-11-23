@@ -3,8 +3,9 @@ import {
   UserType
 } from "../types/tsTypes";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class PreparationComments {
 
   async preparationCommentsForReturn(commentsArray: CommentType[], currentUser: UserType | null) {

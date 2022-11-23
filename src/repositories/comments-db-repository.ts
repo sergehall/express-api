@@ -11,11 +11,15 @@ import {
 } from "../middlewares/errorsMessages";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
-import {ioc} from "../IoCContainer";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
+import {PreparationComments} from "./preparation-comments";
+import {TYPES} from "../types";
 
 @injectable()
 export class CommentsRepository {
+
+  constructor(@inject(TYPES.PreparationComments) protected preparationComments: PreparationComments) {
+  }
 
   async findCommentCompareOwner(commentId: string): Promise<CommentType | null> {
     const result: CommentType | undefined = await MyModelComments.findOne(
@@ -48,7 +52,7 @@ export class CommentsRepository {
     }
 
     const commentArray: CommentType[] = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
-    const commentFiledLikesInfo = await ioc.preparationComments.preparationCommentsForReturn(commentArray, currentUser)
+    const commentFiledLikesInfo = await this.preparationComments.preparationCommentsForReturn(commentArray, currentUser)
 
     return {
       data: commentFiledLikesInfo[0],

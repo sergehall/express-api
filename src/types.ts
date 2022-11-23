@@ -28,6 +28,8 @@ import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
 import {Auth} from "./middlewares/auth";
+import {PreparationComments} from "./repositories/preparation-comments";
+import {PreparationPosts} from "./repositories/preparation-posts";
 
 
 export const TYPES = {
@@ -76,4 +78,7 @@ export const TYPES = {
   ValidateLast10secReq: Symbol.for("ValidateLast10secReq"),
   // Auth
   Auth: Symbol.for("Auth"),
+  // PreparationPosts
+  PreparationPosts: Symbol.for("PreparationPosts"),
+  PreparationComments: Symbol.for("PreparationComments")
 };

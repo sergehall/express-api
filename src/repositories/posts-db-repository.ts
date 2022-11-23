@@ -16,13 +16,19 @@ import {
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
-import {ioc} from "../IoCContainer";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
-import {injectable} from "inversify";
+import {inject, injectable} from "inversify";
+import {PreparationPosts} from "./preparation-posts";
+import {PreparationComments} from "./preparation-comments";
+import {TYPES} from "../types";
 
 
 @injectable()
 export class PostsRepository {
+
+  constructor(@inject(TYPES.PreparationPosts) protected preparationPosts: PreparationPosts,
+              @inject(TYPES.PreparationComments) protected preparationComments: PreparationComments) {
+  }
 
   async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserType | null): Promise<Pagination> {
     const direction = sortDirection === "desc" ? 1 : -1;
@@ -43,7 +49,7 @@ export class PostsRepository {
       .skip(startIndex)
       .sort({[field]: direction}).lean()
 
-    const filledPost = await ioc.preparationPostsForReturn.preparationPostsForReturn(findAllPosts, currentUser)
+    const filledPost = await this.preparationPosts.preparationPostsForReturn(findAllPosts, currentUser)
 
     const totalCount = await MyModelPosts.countDocuments({})
     const pagesCount = Math.ceil(totalCount / pageSize)
@@ -185,7 +191,7 @@ export class PostsRepository {
     if (!user) {
       return post
     }
-    const filledPost = await ioc.preparationPostsForReturn.preparationPostsForReturn([post], user)
+    const filledPost = await this.preparationPosts.preparationPostsForReturn([post], user)
     return filledPost[0]
   }
 
@@ -242,7 +248,7 @@ export class PostsRepository {
     let startIndex = (pageNumber - 1) * pageSize
     const commentsSlice = comments.slice(startIndex, startIndex + pageSize)
 
-    const filledComments = await ioc.preparationComments.preparationCommentsForReturn(commentsSlice, user)
+    const filledComments = await this.preparationComments.preparationCommentsForReturn(commentsSlice, user)
 
     return {
       pagesCount: pagesCount,

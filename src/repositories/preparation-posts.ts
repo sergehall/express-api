@@ -3,8 +3,9 @@ import {
   UserType,
 } from "../types/tsTypes";
 import {MyModelLikeStatusPostsId} from "../mongoose/likeStatusPosts";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class PreparationPosts {
 
   async preparationPostsForReturn(postArray: PostsType[], currentUser: UserType | null): Promise<PostsType[]> {

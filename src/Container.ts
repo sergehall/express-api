@@ -33,6 +33,8 @@ import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
 import {Auth} from "./middlewares/auth";
+import {PreparationComments} from "./repositories/preparation-comments";
+import {PreparationPosts} from "./repositories/preparation-posts";
 
 
 export const container = new Container();
@@ -81,3 +83,7 @@ container.bind<UsersIPLast10secRepositories>(TYPES.UsersIPLast10secRepositories)
 container.bind<ValidateLast10secReq>(TYPES.ValidateLast10secReq).to(ValidateLast10secReq);
 // Auth
 container.bind<Auth>(TYPES.Auth).to(Auth);
+// Preparation
+container.bind<PreparationPosts>(TYPES.PreparationPosts).to(PreparationPosts);
+container.bind<PreparationComments>(TYPES.PreparationComments).to(PreparationComments);
+
