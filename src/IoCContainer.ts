@@ -38,9 +38,15 @@ import {EmailsAdapter} from "./adapters/email-adapter";
 import {BusinessService} from "./domain/business-service";
 import {EmailManagers} from "./managers/email-managers";
 
+
+// Email
+const emailsAdapter = new EmailsAdapter()
+const emailManagers = new EmailManagers(emailsAdapter)
+const businessService = new BusinessService(emailManagers)
+const emailsRepository = new EmailsRepository()
 // Users
 const usersRepository = new UsersRepository()
-const usersService = new UsersService(usersRepository)
+const usersService = new UsersService(usersRepository, emailsRepository)
 const usersController = new UsersController(usersService)
 // Middleware
 const auth = new Auth()
@@ -72,11 +78,6 @@ const securityDevicesService = new SecurityDevicesService(securityDevicesReposit
 const securityDevicesController = new SecurityDevicesController(securityDevicesService)
 // JWT Service
 const jwtService = new JWTService()
-// Email
-const emailsAdapter = new EmailsAdapter()
-const emailManagers = new EmailManagers(emailsAdapter)
-const businessService = new BusinessService(emailManagers)
-const emailsRepository = new EmailsRepository()
 // My demons
 const emailsSender = new EmailsSender()
 const clearingIpWithCreatedAtOlder10Sec = new ClearingIpWithCreatedAtOlder10Sec()
