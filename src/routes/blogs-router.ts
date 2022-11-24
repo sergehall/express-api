@@ -1,5 +1,4 @@
 import {Router} from "express";
-import {ioc} from "../IoCContainer";
 import {
   blogIdParamsValidation, contentValidation,
   idParamsValidation,
@@ -10,11 +9,13 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {container} from "../Container";
 import {BlogsController} from "../presentation/blogsController";
+import {Auth} from "../middlewares/auth";
 
 
 export const blogsRouts = Router({})
 
 const blogsController = container.resolve<BlogsController>(BlogsController)
+const auth = container.resolve<Auth>(Auth)
 
 blogsRouts.get('/',
   blogsController.getAllBlogs.bind(blogsController))
@@ -22,7 +23,7 @@ blogsRouts.get('/',
   .get('/:blogId/posts',
     blogIdParamsValidation,
     inputValidatorMiddleware,
-    ioc.auth.noneStatusAccessToken,
+    auth.noneStatusAccessToken,
     blogsController.findAllPostsByBlogId.bind(blogsController))
 
   .get('/:id',
@@ -31,14 +32,14 @@ blogsRouts.get('/',
     blogsController.findBlogById.bind(blogsController))
 
   .post('/',
-    ioc.auth.basicAuthorization,
+    auth.basicAuthorization,
     nameValidation,
     urlValidation,
     inputValidatorMiddleware,
     blogsController.createNewBlog.bind(blogsController))
 
   .post('/:blogId/posts',
-    ioc.auth.basicAuthorization,
+    auth.basicAuthorization,
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
@@ -47,7 +48,7 @@ blogsRouts.get('/',
     blogsController.createNewPostByBlogId.bind(blogsController))
 
   .put('/:id',
-    ioc.auth.basicAuthorization,
+    auth.basicAuthorization,
     nameValidation,
     urlValidation,
     idParamsValidation,
@@ -55,7 +56,7 @@ blogsRouts.get('/',
     blogsController.updatedBlogById.bind(blogsController))
 
   .delete('/:id',
-    ioc.auth.basicAuthorization,
+    auth.basicAuthorization,
     idParamsValidation,
     inputValidatorMiddleware,
     blogsController.deleteBlogById.bind(blogsController))

@@ -25,29 +25,35 @@ import {Auth} from "../middlewares/auth";
 
 export const authRouter = Router({})
 
+const jwtService = container.resolve<JWTService>(JWTService)
+const securityDevicesService = container.resolve<SecurityDevicesService>(SecurityDevicesService)
+const blackListRefreshTokenJWTRepository = container.resolve(BlackListRefreshTokenJWTRepository)
+const auth = container.resolve<Auth>(Auth)
+const validateLast10secReq = container.resolve<ValidateLast10secReq>(ValidateLast10secReq)
+const usersService = container.resolve<UsersService>(UsersService)
 
 authRouter.post('/login',
   loginOrEmailValidation,
   passwordValidation,
   inputValidatorMiddleware,
-  container.resolve(ValidateLast10secReq).byLogin,
-  container.resolve(Auth).checkCredentialsLoginPass,
+  validateLast10secReq.byLogin,
+  auth.checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     try {
       const currentRefreshToken = req.cookies.refreshToken
       if (currentRefreshToken) {
-        await container.resolve(BlackListRefreshTokenJWTRepository).addJWT(currentRefreshToken)
+        await blackListRefreshTokenJWTRepository.addJWT(currentRefreshToken)
       }
       const clientIp = requestIp.getClientIp(req);
       const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
       const userId = (req.headers.userId) ? `${req.headers.userId}` : '';
 
-      const accessToken = await container.resolve(JWTService).createAccessJWT(userId)
-      const refreshToken = await container.resolve(JWTService).createRefreshJWT(userId)
+      const accessToken = await jwtService.createAccessJWT(userId)
+      const refreshToken = await jwtService.createRefreshJWT(userId)
 
-      const newPayload: PayloadType = await container.resolve(JWTService).jwt_decode(refreshToken);
+      const newPayload: PayloadType = await jwtService.jwt_decode(refreshToken);
 
-      await container.resolve(SecurityDevicesService).createDevices(newPayload, clientIp, userAgent)
+      await securityDevicesService.createDevices(newPayload, clientIp, userAgent)
 
       res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true})
       return res.status(200).send({
@@ -61,21 +67,21 @@ authRouter.post('/login',
   })
 
 authRouter.post('/refresh-token',
-  container.resolve(JWTService).verifyRefreshTokenAndCheckInBlackList,
+  jwtService.verifyRefreshTokenAndCheckInBlackList,
   async (req: Request, res: Response) => {
     try {
       const clientIp = requestIp.getClientIp(req);
       const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
       const currentRefreshToken = req.cookies.refreshToken
 
-      await container.resolve(BlackListRefreshTokenJWTRepository).addJWT(currentRefreshToken)
-      const currentPayload: PayloadType = await container.resolve(JWTService).jwt_decode(currentRefreshToken)
+      await blackListRefreshTokenJWTRepository.addJWT(currentRefreshToken)
+      const currentPayload: PayloadType = await jwtService.jwt_decode(currentRefreshToken)
 
-      const newAccessToken = await container.resolve(JWTService).updateAccessJWT(currentPayload)
-      const newRefreshToken = await container.resolve(JWTService).updateRefreshJWT(currentPayload)
+      const newAccessToken = await jwtService.updateAccessJWT(currentPayload)
+      const newRefreshToken = await jwtService.updateRefreshJWT(currentPayload)
 
-      const newPayload: PayloadType = await container.resolve(JWTService).jwt_decode(newRefreshToken)
-      await container.resolve(SecurityDevicesService).updateDevices(currentPayload, newPayload, clientIp, userAgent)
+      const newPayload: PayloadType = await jwtService.jwt_decode(newRefreshToken)
+      await securityDevicesService.updateDevices(currentPayload, newPayload, clientIp, userAgent)
 
       res.cookie("refreshToken", newRefreshToken, {httpOnly: true, secure: true})
       res.status(200).send({accessToken: newAccessToken})
@@ -89,25 +95,25 @@ authRouter.post('/refresh-token',
   })
 
 authRouter.post('/password-recovery',
-  container.resolve(ValidateLast10secReq).byRecovery,
+  validateLast10secReq.byRecovery,
   emailValidation,
   inputValidatorMiddleware,
   async (req: Request, res: Response) => {
     const email = req.body.email
-    const user = await container.resolve(UsersService).findUserByLoginOrEmail(email)
+    const user = await usersService.findUserByLoginOrEmail(email)
 
     if (!user) {
-      const result = await container.resolve(UsersService).sentRecoveryCodeByEmailUserNotExist(email)
+      const result = await usersService.sentRecoveryCodeByEmailUserNotExist(email)
       console.log(`Send recovery code to email: ${result?.email}`)
       return res.sendStatus(204)
     }
-    const result = await container.resolve(UsersService).sentRecoveryCodeByEmailUserExist(user)
+    const result = await usersService.sentRecoveryCodeByEmailUserExist(user)
     console.log(`Send recovery code to email: ${result?.accountData.email}`)
     return res.sendStatus(204)
   })
 
 authRouter.post('/new-password',
-  container.resolve(ValidateLast10secReq).byNewPassword,
+  validateLast10secReq.byNewPassword,
   newPasswordValidation,
   recoveryCodeValidation,
   inputValidatorMiddleware,
@@ -115,7 +121,7 @@ authRouter.post('/new-password',
     const newPassword = req.body.newPassword
     const recoveryCode = req.body.recoveryCode
 
-    const user = await container.resolve(UsersService).findByConfirmationCode(recoveryCode)
+    const user = await usersService.findByConfirmationCode(recoveryCode)
 
     if (!user) {
       return res.status(400).send(
@@ -126,26 +132,26 @@ authRouter.post('/new-password',
           }]
         })
     }
-    await container.resolve(UsersService).createNewPassword(newPassword, user)
+    await usersService.createNewPassword(newPassword, user)
 
     return res.sendStatus(204)
 
   })
 
 authRouter.post('/registration-confirmation',
-  container.resolve(Auth).checkIpInBlackList,
+  auth.checkIpInBlackList,
   confirmationCodeValidation,
   inputValidatorMiddleware,
-  container.resolve(ValidateLast10secReq).byRegisConfirm,
+  validateLast10secReq.byRegisConfirm,
   async (req: Request, res: Response) => {
     const code: string = req.body.code
 
-    const countEmails = await container.resolve(UsersService).countEmailsSentLastHour(code)
+    const countEmails = await usersService.countEmailsSentLastHour(code)
     if (countEmails > 10) {
       res.status(429).send('More than 10 emails have been sent in the last hour.')
       return
     }
-    const result = await container.resolve(UsersService).confirmByCodeInParams(code)
+    const result = await usersService.confirmByCodeInParams(code)
     if (result === null) {
       res.status(400).send({
         errorsMessages: [
@@ -162,19 +168,19 @@ authRouter.post('/registration-confirmation',
   });
 
 authRouter.post('/registration',
-  container.resolve(Auth).checkIpInBlackList,
-  container.resolve(Auth).checkoutContentType,
+  auth.checkIpInBlackList,
+  auth.checkoutContentType,
   loginValidation,
   passwordValidation,
   emailValidation,
   inputValidatorMiddleware,
-  container.resolve(Auth).checkUserAccountNotExists,
-  container.resolve(ValidateLast10secReq).byRegistration,
+  auth.checkUserAccountNotExists,
+  validateLast10secReq.byRegistration,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
     const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
 
-    const user = await container.resolve(UsersService).createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp, userAgent);
+    const user = await usersService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp, userAgent);
 
     if (user) {
       console.log(`Send confirmation code to: ${req.body.email}`)
@@ -195,10 +201,10 @@ authRouter.post('/registration',
 authRouter.post('/registration-email-resending',
   emailValidation,
   inputValidatorMiddleware,
-  container.resolve(ValidateLast10secReq).byRecovery,
+  validateLast10secReq.byRecovery,
   async (req: Request, res: Response) => {
     const email: string = req.body.email
-    const userResult = await container.resolve(UsersService).updateAndSentConfirmationCodeByEmail(email)
+    const userResult = await usersService.updateAndSentConfirmationCodeByEmail(email)
     if (userResult === null) {
       res.status(400).send({
         errorsMessages: [
@@ -216,13 +222,13 @@ authRouter.post('/registration-email-resending',
   });
 
 authRouter.post('/logout',
-  container.resolve(JWTService).verifyRefreshTokenAndCheckInBlackList,
+  jwtService.verifyRefreshTokenAndCheckInBlackList,
   async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
-    const payload: PayloadType = await container.resolve(JWTService).jwt_decode(refreshToken);
+    const payload: PayloadType = await jwtService.jwt_decode(refreshToken);
 
-    await container.resolve(BlackListRefreshTokenJWTRepository).addJWT(refreshToken)
-    const result = await container.resolve(SecurityDevicesService).deleteDeviceByDeviceIdAfterLogout(payload)
+    await blackListRefreshTokenJWTRepository.addJWT(refreshToken)
+    const result = await securityDevicesService.deleteDeviceByDeviceIdAfterLogout(payload)
     if (result === "204") {
       return res.sendStatus(204)
     }
@@ -230,7 +236,7 @@ authRouter.post('/logout',
   })
 
 authRouter.get("/me",
-  container.resolve(Auth).authenticationAccessToken,
+  auth.authenticationAccessToken,
   async (req: Request, res: Response) => {
     const user = req.user
     if (user) {
@@ -247,7 +253,7 @@ authRouter.get("/me",
 // just for me
 
 authRouter.get('/resend-registration-email',
-  container.resolve(ValidateLast10secReq).byRecovery,
+  validateLast10secReq.byRecovery,
   async (req: Request, res: Response) => {
     const parseQueryData = await ioc.parseQuery.parse(req)
     const code = parseQueryData.code
@@ -255,12 +261,12 @@ authRouter.get('/resend-registration-email',
       res.status(400).send("Query param is empty")
       return
     }
-    const user = await container.resolve(UsersService).findByConfirmationCode(code)
+    const user = await usersService.findByConfirmationCode(code)
     if (user === null || !user.accountData.email) {
       res.status(400).send("Bad code or isConfirmed is true.")
       return
     }
-    const result = await container.resolve(UsersService).updateAndSentConfirmationCodeByEmail(user.accountData.email)
+    const result = await usersService.updateAndSentConfirmationCodeByEmail(user.accountData.email)
     res.send(`Resend code to email:  ${result?.accountData?.email}`)
   })
 
@@ -272,7 +278,7 @@ authRouter.get('/confirm-registration',
       res.sendStatus(400)
       return
     }
-    const result = await container.resolve(UsersService).confirmByCodeInParams(code)
+    const result = await usersService.confirmByCodeInParams(code)
     if (result && result.emailConfirmation.isConfirmed) {
       res.status(201).send("Email confirmed by query ?code=...");
       return
@@ -284,7 +290,7 @@ authRouter.get('/confirm-registration',
 
 authRouter.post('/confirm-email',
   async (req: Request, res: Response) => {
-    const result = await container.resolve(UsersService).confirmByEmail(req.body.confirmationCode, req.body.email)
+    const result = await usersService.confirmByEmail(req.body.confirmationCode, req.body.email)
     if (result !== null) {
       res.status(201).send("Email confirmed by email and confirmationCode.");
     } else {
@@ -294,7 +300,7 @@ authRouter.post('/confirm-email',
 
 authRouter.get('/confirm-code/:code',
   async (req: Request, res: Response) => {
-    const result = await container.resolve(UsersService).confirmByCodeInParams(req.params.code)
+    const result = await usersService.confirmByCodeInParams(req.params.code)
     if (result && result.emailConfirmation.isConfirmed) {
       res.status(201).send("Email confirmed by params confirmationCode.");
     } else {
@@ -304,6 +310,6 @@ authRouter.get('/confirm-code/:code',
 
 authRouter.delete('/logoutRottenCreatedAt',
   async (req: Request, res: Response) => {
-    const result = await container.resolve(UsersService).deleteUserWithRottenCreatedAt()
+    const result = usersService.deleteUserWithRottenCreatedAt()
     res.send(`Total, did not confirm registration user were deleted = ${result}`)
   })

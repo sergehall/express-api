@@ -29,8 +29,6 @@ export class UsersRepository {
 
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
 
-    const startIndex = (pageNumber - 1) * pageSize
-
     let filterLogin = {}
     if (searchLoginTerm) {
       filterLogin = {"accountData.login": searchLoginTerm}
@@ -40,11 +38,12 @@ export class UsersRepository {
       filterEmail = {"accountData.email": searchEmailTerm}
     }
 
+    const startIndex = (pageNumber - 1) * pageSize
     const direction = sortDirection === "desc" ? -1 : 1;
-
     let field = "createdAt"
-    if (sortBy === "accountData.login" || sortBy === "accountData.email") {
-      field = sortBy
+
+    if (sortBy === "login" || sortBy === "email") {
+      field = "accountData." + sortBy
     }
 
     const users: UserType[] = await MyModelUser.find(

@@ -1,9 +1,11 @@
 import {MyModelEmailsConfirmCode} from "../mongoose/EmailsConfirmCodeSchemaModel";
 import {MyModelEmailsRecoveryCode} from "../mongoose/EmailsRecoveryCodeShemaModel";
 import {EmailConfirmCodeType, EmailRecoveryCodeType} from "../types/tsTypes";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class EmailsRepository {
+
   async insertEmailConfirmCode(emailAndCode: EmailConfirmCodeType): Promise<Boolean> {
     const findOneAndUpdateData = await MyModelEmailsConfirmCode.create(
       {

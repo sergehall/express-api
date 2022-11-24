@@ -35,6 +35,7 @@ import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
 import {Auth} from "./middlewares/auth";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {PreparationPosts} from "./repositories/preparation-posts";
+import {EmailsRepository} from "./repositories/emails-db-repository";
 
 
 export const container = new Container();
@@ -67,6 +68,7 @@ container.bind<SecurityDevicesController>(TYPES.SecurityDevicesController).to(Se
 container.bind<EmailManagers>(TYPES.EmailManagers).to(EmailManagers);
 container.bind<EmailsAdapter>(TYPES.EmailsAdapter).to(EmailsAdapter);
 container.bind<BusinessService>(TYPES.BusinessService).to(BusinessService);
+container.bind<EmailsRepository>(TYPES.EmailsRepository).to(EmailsRepository)
 // JWT
 container.bind<JWTService>(TYPES.JWTService).to(JWTService);
 // Black List

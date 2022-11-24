@@ -1,12 +1,13 @@
 import {Router, Request, Response} from "express"
-import {ioc} from "../IoCContainer";
 import {container} from "../Container";
 import {BusinessService} from "../domain/business-service";
+import {Auth} from "../middlewares/auth";
 
 
 export const emailRouter = Router({})
 
 const businessService = container.resolve<BusinessService>(BusinessService)
+const auth = container.resolve<Auth>(Auth)
 
 emailRouter
   .post("/send",
@@ -16,7 +17,7 @@ emailRouter
   })
 
   .post("/recovery-password",
-    ioc.auth.authenticationAccessToken,
+    auth.authenticationAccessToken,
     async (req: Request, res: Response) => {
     if (!req.user) {
       return res.sendStatus(401)

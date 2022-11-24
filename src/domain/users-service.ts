@@ -6,11 +6,11 @@ import {
 } from "../types/tsTypes";
 import uuid4 from "uuid4";
 import add from "date-fns/add";
-import {ioc} from "../IoCContainer";
-import {UsersRepository} from "../repositories/users-db-repository";
 import bcrypt from "bcrypt";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../types";
+import {EmailsRepository} from "../repositories/emails-db-repository";
+import {UsersRepository} from "../repositories/users-db-repository";
 
 
 const ck = require('ckey')
@@ -18,7 +18,9 @@ const ck = require('ckey')
 
 @injectable()
 export class UsersService {
-  constructor(@inject(TYPES.UsersRepository) protected usersRepository: UsersRepository) {
+  constructor(
+    @inject(TYPES.UsersRepository) protected usersRepository: UsersRepository,
+    @inject(TYPES.EmailsRepository) protected emailsRepository: EmailsRepository) {
   }
 
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
@@ -42,7 +44,7 @@ export class UsersService {
         confirmationCode: createUser.emailConfirmation.confirmationCode,
         createdAt: new Date().toISOString()
       }
-      await ioc.emailsRepository.insertEmailConfirmCode(newDataUserEmailConfirmationCode)
+      await this.emailsRepository.insertEmailConfirmCode(newDataUserEmailConfirmationCode)
 
       return createUser
 
@@ -103,7 +105,7 @@ export class UsersService {
 
   async sentRecoveryCodeByEmailUserExist(user: UserType) {
 
-    await ioc.emailsRepository.insertEmailRecoveryCode({
+    await this.emailsRepository.insertEmailRecoveryCode({
       email: user.accountData.email,
       recoveryCode: user.emailConfirmation.confirmationCode,
       createdAt: new Date().toISOString()
@@ -118,7 +120,7 @@ export class UsersService {
       recoveryCode: uuid4().toString(),
       createdAt: new Date().toISOString()
     }
-    await ioc.emailsRepository.insertEmailRecoveryCode(newEmailRecoveryCode)
+    await this.emailsRepository.insertEmailRecoveryCode(newEmailRecoveryCode)
     return newEmailRecoveryCode
   }
 
@@ -145,7 +147,7 @@ export class UsersService {
           createdAt: new Date().toISOString()
         }
         // add Email to emailsToSentRepository
-        await ioc.emailsRepository.insertEmailConfirmCode(newDataUserEmailConfirmationCode)
+        await this.emailsRepository.insertEmailConfirmCode(newDataUserEmailConfirmationCode)
         return user
       }
     }

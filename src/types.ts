@@ -30,6 +30,7 @@ import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
 import {Auth} from "./middlewares/auth";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {PreparationPosts} from "./repositories/preparation-posts";
+import {EmailsRepository} from "./repositories/emails-db-repository";
 
 
 export const TYPES = {
@@ -61,6 +62,7 @@ export const TYPES = {
   EmailManagers: Symbol.for("EmailManagers"),
   EmailsAdapter: Symbol.for("EmailsAdapter"),
   BusinessService: Symbol.for("BusinessService"),
+  EmailsRepository: Symbol.for("EmailsRepository"),
   // JWT
   JWTService: Symbol.for("JWTService"),
   // Auth
