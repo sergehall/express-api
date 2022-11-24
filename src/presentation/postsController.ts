@@ -4,8 +4,6 @@ import {ioc} from "../IoCContainer";
 import {UserType} from "../types/tsTypes";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../types";
-import {container} from "../Container";
-import {ParseQuery} from "../middlewares/parse-query";
 
 @injectable()
 export class PostsController {
@@ -98,14 +96,14 @@ export class PostsController {
   async getCommentsByPostId(req: Request, res: Response) {
     try {
       const postId = req.params.postId;
-      const parseQueryData = await container.resolve(ParseQuery).parse(req)
+      const parseQueryData = await ioc.parseQuery.parse(req)
       const pageNumber = parseQueryData.pageNumber
       const pageSize = parseQueryData.pageSize
       const sortBy: string | null = parseQueryData.sortBy
       const sortDirection: string | null = parseQueryData.sortDirection
       const user: UserType | null = req.user
-
       const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection, user);
+
       if (getPost.pageSize === 0) {
         return res.status(404).send()
 
