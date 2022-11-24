@@ -1,14 +1,24 @@
 import {NextFunction, Request, Response} from "express";
 import bcrypt from "bcrypt";
 import requestIp from "request-ip";
-import {ioc} from "../IoCContainer";
 import {UserType} from "../types/tsTypes";
-import {injectable} from "inversify";
-
+import {inject, injectable} from "inversify";
+import {JWTService} from "../application/jwt-service";
+import {UsersService} from "../domain/users-service";
+import {BlackListIPRepository} from "../repositories/blackListIP-repository";
+import {CommentsService} from "../domain/comments-service";
+import {TYPES} from "../types";
 const base64 = require('base-64');
 
+
 @injectable()
-export class Auth {
+export class AuthMiddlewares {
+
+  constructor(@inject(TYPES.JWTService) protected jwtService: JWTService,
+              @inject(TYPES.UsersService) protected usersService: UsersService,
+              @inject(TYPES.BlackListIPRepository) protected blackListIPRepository: BlackListIPRepository,
+              @inject(TYPES.CommentsService) protected commentsService: CommentsService) {
+  }
 
   async authenticationAccessToken(req: Request, res: Response, next: NextFunction) {
     if (!req.headers.authorization) {
@@ -16,12 +26,12 @@ export class Auth {
       return
     }
     const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
-    const userId = await ioc.jwtService.verifyAccessJWT(token)
+    const userId = await this.jwtService.verifyAccessJWT(token)
     if (!userId) {
       return res.sendStatus(401)
 
     }
-    req.user = await ioc.usersService.findUserByUserId(userId)
+    req.user = await this.usersService.findUserByUserId(userId)
     next()
   }
 
@@ -31,12 +41,12 @@ export class Auth {
       return
     }
 
-    const userId = await ioc.jwtService.verifyRefreshJWT(req.cookies.refreshToken)
+    const userId = await this.jwtService.verifyRefreshJWT(req.cookies.refreshToken)
     if (!userId) {
       next()
       return
     }
-    req.user = await ioc.usersService.findUserByUserId(userId)
+    req.user = await this.usersService.findUserByUserId(userId)
     next()
     return
   }
@@ -46,12 +56,12 @@ export class Auth {
       next()
       return
     }
-    const userId = await ioc.jwtService.verifyAccessJWT(req.headers.authorization.split(" ")[1])
+    const userId = await this.jwtService.verifyAccessJWT(req.headers.authorization.split(" ")[1])
     if (!userId) {
       next()
       return
     }
-    req.user = await ioc.usersService.findUserByUserId(userId)
+    req.user = await this.usersService.findUserByUserId(userId)
     next()
     return
   }
@@ -79,7 +89,7 @@ export class Auth {
   }
 
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
-    const user: UserType | null = await ioc.usersService.findUserByLoginOrEmail(req.body.loginOrEmail)
+    const user: UserType | null = await this.usersService.findUserByLoginOrEmail(req.body.loginOrEmail)
     if (user) {
       const compare = await bcrypt.compare(req.body.password, user.accountData.passwordHash)
       if (compare) {
@@ -98,9 +108,8 @@ export class Auth {
     })
   }
 
-
   async checkUserAccountNotExists(req: Request, res: Response, next: NextFunction) {
-    const checkOutEmailInDB = await ioc.usersService.findByLoginAndEmail(req.body.email, req.body.login);
+    const checkOutEmailInDB = await this.usersService.findByLoginAndEmail(req.body.email, req.body.login);
     if (!checkOutEmailInDB) {
       next()
       return
@@ -118,7 +127,7 @@ export class Auth {
   async checkIpInBlackList(req: Request, res: Response, next: NextFunction) {
     const clientIp = requestIp.getClientIp(req);
     if (clientIp) {
-      const result = await ioc.blackListIPRepository.checkoutIPinBlackList(clientIp);
+      const result = await this.blackListIPRepository.checkoutIPinBlackList(clientIp);
       if (!result) {
         return next()
       }
@@ -137,7 +146,7 @@ export class Auth {
       const userId = user.accountData.id
       const commentId = req.params.commentId;
 
-      const foundPostWithComments = await ioc.commentsService.findCommentCompareOwner(commentId)
+      const foundPostWithComments = await this.commentsService.findCommentCompareOwner(commentId)
 
       if (foundPostWithComments) {
         if (foundPostWithComments.userId === userId && foundPostWithComments.userLogin === userLogin) {

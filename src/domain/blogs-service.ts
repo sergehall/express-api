@@ -11,6 +11,7 @@ import {TYPES} from "../types";
 
 @injectable()
 export class BlogsService {
+
   constructor(@inject(TYPES.BlogsRepository) protected blogsRepository: BlogsRepository) {
   }
 

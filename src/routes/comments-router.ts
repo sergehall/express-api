@@ -4,31 +4,31 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {container} from "../Container";
 import {CommentsController} from "../presentation/commentsController";
-import {Auth} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/auth";
 
 
 export const commentsRouter = Router({})
 
 const commentsController = container.resolve<CommentsController>(CommentsController)
-const auth = container.resolve<Auth>(Auth)
+const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 commentsRouter.get('/:commentId',
-  auth.noneStatusAccessToken,
+  authMiddlewares.noneStatusAccessToken,
   commentsController.findCommentByCommentId.bind(commentsController))
 
   .put('/:commentId',
-    auth.authenticationAccessToken,
-    auth.compareCurrentAndCreatorComment,
+    authMiddlewares.authenticationAccessToken,
+    authMiddlewares.compareCurrentAndCreatorComment,
     contentCommentValidation, inputValidatorMiddleware,
     commentsController.updateCommentsById.bind(commentsController))
 
   .put('/:commentId/like-status',
-    auth.authenticationAccessToken,
+    authMiddlewares.authenticationAccessToken,
     likeStatusValidator,
     inputValidatorMiddleware,
     commentsController.likeStatusCommentId.bind(commentsController))
 
   .delete('/:commentId',
-    auth.authenticationAccessToken,
-    auth.compareCurrentAndCreatorComment,
+    authMiddlewares.authenticationAccessToken,
+    authMiddlewares.compareCurrentAndCreatorComment,
     commentsController.deleteCommentsById.bind(commentsController))

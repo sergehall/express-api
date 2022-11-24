@@ -27,7 +27,7 @@ import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedA
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
-import {Auth} from "./middlewares/auth";
+import {AuthMiddlewares} from "./middlewares/auth";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {EmailsRepository} from "./repositories/emails-db-repository";
@@ -78,8 +78,8 @@ export const TYPES = {
   UsersIPLast10secRepositories: Symbol.for("UsersIPLast10secRepositories"),
   // Validate last 10 sec
   ValidateLast10secReq: Symbol.for("ValidateLast10secReq"),
-  // Auth
-  Auth: Symbol.for("Auth"),
+  // AuthMiddlewares
+  AuthMiddlewares: Symbol.for("AuthMiddlewares"),
   // PreparationPosts
   PreparationPosts: Symbol.for("PreparationPosts"),
   PreparationComments: Symbol.for("PreparationComments")

@@ -9,20 +9,21 @@ import {
   likeStatusValidator, blogIdBodyValidator,
 } from "../middlewares/input-validator-middleware";
 import {container} from "../Container";
-import {ioc} from "../IoCContainer";
 import {PostsController} from "../presentation/postsController";
+import {AuthMiddlewares} from "../middlewares/auth";
 
 
 export const postsRouts = Router({})
 
 const postsController = container.resolve<PostsController>(PostsController)
+const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 postsRouts.get('/',
-  ioc.auth.noneStatusAccessToken,
+  authMiddlewares.noneStatusAccessToken,
   postsController.getAllPosts.bind(postsController))
 
   .post('/',
-    ioc.auth.basicAuthorization,
+    authMiddlewares.basicAuthorization,
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
@@ -31,13 +32,13 @@ postsRouts.get('/',
     postsController.createPost.bind(postsController))
 
   .get('/:postId',
-    ioc.auth.noneStatusAccessToken,
+    authMiddlewares.noneStatusAccessToken,
     postIdParamsValidation,
     inputValidatorMiddleware,
     postsController.getPostById.bind(postsController))
 
   .put('/:postId',
-    ioc.auth.basicAuthorization,
+    authMiddlewares.basicAuthorization,
     postIdParamsValidation,
     titleValidation,
     shortDescriptionValidation,
@@ -47,29 +48,29 @@ postsRouts.get('/',
     postsController.updatePostById.bind(postsController))
 
   .delete('/:postId',
-    ioc.auth.basicAuthorization,
+    authMiddlewares.basicAuthorization,
     postIdParamsValidation,
     inputValidatorMiddleware,
     postsController.deletePostById.bind(postsController))
 
   .delete('/',
-    ioc.auth.basicAuthorization,
+    authMiddlewares.basicAuthorization,
     postsController.deleteAllPosts.bind(postsController))
 
   .get('/:postId/comments',
-    ioc.auth.noneStatusAccessToken,
+    authMiddlewares.noneStatusAccessToken,
     postIdParamsValidation,
     inputValidatorMiddleware,
     postsController.getCommentsByPostId.bind(postsController))
 
   .post('/:postId/comments',
-    ioc.auth.authenticationAccessToken,
+    authMiddlewares.authenticationAccessToken,
     contentCommentValidation,
     inputValidatorMiddleware,
     postsController.createNewCommentByPostId.bind(postsController))
 
   .put('/:postId/like-status',
-    ioc.auth.authenticationAccessToken,
+    authMiddlewares.authenticationAccessToken,
     postIdParamsValidation,
     likeStatusValidator,
     inputValidatorMiddleware,

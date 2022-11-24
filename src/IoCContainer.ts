@@ -19,7 +19,7 @@ import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {
   BlackListRefreshTokenJWTRepository
 } from "./repositories/blackListRefreshTokenJWT-db-repository";
-import {Auth} from "./middlewares/auth";
+import {AuthMiddlewares} from "./middlewares/auth";
 import {ParseQuery} from "./middlewares/parse-query";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {PreparationComments} from "./repositories/preparation-comments";
@@ -48,10 +48,8 @@ const emailsRepository = new EmailsRepository()
 const usersRepository = new UsersRepository()
 const usersService = new UsersService(usersRepository, emailsRepository)
 const usersController = new UsersController(usersService)
-// Middleware
-const auth = new Auth()
-const parseQuery = new ParseQuery()
-const validateLast10secReq = new ValidateLast10secReq()
+// JWT Service
+const jwtService = new JWTService()
 // PostsExtLikesInfo
 const preparationPosts = new PreparationPosts()
 // CommentsExtLikesInfo
@@ -76,8 +74,6 @@ const blogsController = new BlogsController(blogsService, postsService)
 const securityDevicesRepository = new SecurityDevicesRepository()
 const securityDevicesService = new SecurityDevicesService(securityDevicesRepository)
 const securityDevicesController = new SecurityDevicesController(securityDevicesService)
-// JWT Service
-const jwtService = new JWTService()
 // My demons
 const emailsSender = new EmailsSender()
 const clearingIpWithCreatedAtOlder10Sec = new ClearingIpWithCreatedAtOlder10Sec()
@@ -88,10 +84,13 @@ const usersIPLast10secRepositories = new UsersIPLast10secRepositories()
 // Black list
 const blackListIPRepository = new BlackListIPRepository()
 const blackListRefreshTokenJWTRepository = new BlackListRefreshTokenJWTRepository()
-
+// Middleware
+const authMiddlewares = new AuthMiddlewares(jwtService, usersService, blackListIPRepository, commentsService)
+const parseQuery = new ParseQuery()
+const validateLast10secReq = new ValidateLast10secReq()
 
 export const ioc = {
-  auth: auth,
+  authMiddlewares: authMiddlewares,
   usersService: usersService,
   usersController: usersController,
   postsService: postsService,

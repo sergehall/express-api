@@ -1,13 +1,13 @@
 import {Router, Request, Response} from "express"
 import {container} from "../Container";
 import {BusinessService} from "../domain/business-service";
-import {Auth} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/auth";
 
 
 export const emailRouter = Router({})
 
 const businessService = container.resolve<BusinessService>(BusinessService)
-const auth = container.resolve<Auth>(Auth)
+const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 emailRouter
   .post("/send",
@@ -17,7 +17,7 @@ emailRouter
   })
 
   .post("/recovery-password",
-    auth.authenticationAccessToken,
+    authMiddlewares.authenticationAccessToken,
     async (req: Request, res: Response) => {
     if (!req.user) {
       return res.sendStatus(401)

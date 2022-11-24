@@ -32,7 +32,7 @@ import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedA
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
-import {Auth} from "./middlewares/auth";
+import {AuthMiddlewares} from "./middlewares/auth";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {EmailsRepository} from "./repositories/emails-db-repository";
@@ -84,7 +84,7 @@ container.bind<UsersIPLast10secRepositories>(TYPES.UsersIPLast10secRepositories)
 // Validate last 10 sec
 container.bind<ValidateLast10secReq>(TYPES.ValidateLast10secReq).to(ValidateLast10secReq);
 // Auth
-container.bind<Auth>(TYPES.Auth).to(Auth);
+container.bind<AuthMiddlewares>(TYPES.AuthMiddlewares).to(AuthMiddlewares);
 // Preparation
 container.bind<PreparationPosts>(TYPES.PreparationPosts).to(PreparationPosts);
 container.bind<PreparationComments>(TYPES.PreparationComments).to(PreparationComments);

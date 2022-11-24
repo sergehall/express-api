@@ -9,13 +9,13 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {container} from "../Container";
 import {BlogsController} from "../presentation/blogsController";
-import {Auth} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/auth";
 
 
 export const blogsRouts = Router({})
 
 const blogsController = container.resolve<BlogsController>(BlogsController)
-const auth = container.resolve<Auth>(Auth)
+const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 blogsRouts.get('/',
   blogsController.getAllBlogs.bind(blogsController))
@@ -23,7 +23,7 @@ blogsRouts.get('/',
   .get('/:blogId/posts',
     blogIdParamsValidation,
     inputValidatorMiddleware,
-    auth.noneStatusAccessToken,
+    authMiddlewares.noneStatusAccessToken,
     blogsController.findAllPostsByBlogId.bind(blogsController))
 
   .get('/:id',
@@ -32,14 +32,14 @@ blogsRouts.get('/',
     blogsController.findBlogById.bind(blogsController))
 
   .post('/',
-    auth.basicAuthorization,
+    authMiddlewares.basicAuthorization,
     nameValidation,
     urlValidation,
     inputValidatorMiddleware,
     blogsController.createNewBlog.bind(blogsController))
 
   .post('/:blogId/posts',
-    auth.basicAuthorization,
+    authMiddlewares.basicAuthorization,
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
@@ -48,7 +48,7 @@ blogsRouts.get('/',
     blogsController.createNewPostByBlogId.bind(blogsController))
 
   .put('/:id',
-    auth.basicAuthorization,
+    authMiddlewares.basicAuthorization,
     nameValidation,
     urlValidation,
     idParamsValidation,
@@ -56,7 +56,7 @@ blogsRouts.get('/',
     blogsController.updatedBlogById.bind(blogsController))
 
   .delete('/:id',
-    auth.basicAuthorization,
+    authMiddlewares.basicAuthorization,
     idParamsValidation,
     inputValidatorMiddleware,
     blogsController.deleteBlogById.bind(blogsController))

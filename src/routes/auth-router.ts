@@ -20,7 +20,7 @@ import {
   BlackListRefreshTokenJWTRepository
 } from "../repositories/blackListRefreshTokenJWT-db-repository";
 import {ValidateLast10secReq} from "../middlewares/validateLast10secReq";
-import {Auth} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/auth";
 
 
 export const authRouter = Router({})
@@ -28,7 +28,7 @@ export const authRouter = Router({})
 const jwtService = container.resolve<JWTService>(JWTService)
 const securityDevicesService = container.resolve<SecurityDevicesService>(SecurityDevicesService)
 const blackListRefreshTokenJWTRepository = container.resolve(BlackListRefreshTokenJWTRepository)
-const auth = container.resolve<Auth>(Auth)
+const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
 const validateLast10secReq = container.resolve<ValidateLast10secReq>(ValidateLast10secReq)
 const usersService = container.resolve<UsersService>(UsersService)
 
@@ -37,7 +37,7 @@ authRouter.post('/login',
   passwordValidation,
   inputValidatorMiddleware,
   validateLast10secReq.byLogin,
-  auth.checkCredentialsLoginPass,
+  authMiddlewares.checkCredentialsLoginPass,
   async (req: Request, res: Response) => {
     try {
       const currentRefreshToken = req.cookies.refreshToken
@@ -139,7 +139,7 @@ authRouter.post('/new-password',
   })
 
 authRouter.post('/registration-confirmation',
-  auth.checkIpInBlackList,
+  authMiddlewares.checkIpInBlackList,
   confirmationCodeValidation,
   inputValidatorMiddleware,
   validateLast10secReq.byRegisConfirm,
@@ -168,13 +168,13 @@ authRouter.post('/registration-confirmation',
   });
 
 authRouter.post('/registration',
-  auth.checkIpInBlackList,
-  auth.checkoutContentType,
+  authMiddlewares.checkIpInBlackList,
+  authMiddlewares.checkoutContentType,
   loginValidation,
   passwordValidation,
   emailValidation,
   inputValidatorMiddleware,
-  auth.checkUserAccountNotExists,
+  authMiddlewares.checkUserAccountNotExists,
   validateLast10secReq.byRegistration,
   async (req: Request, res: Response) => {
     const clientIp = requestIp.getClientIp(req);
@@ -236,7 +236,7 @@ authRouter.post('/logout',
   })
 
 authRouter.get("/me",
-  auth.authenticationAccessToken,
+  authMiddlewares.authenticationAccessToken,
   async (req: Request, res: Response) => {
     const user = req.user
     if (user) {
