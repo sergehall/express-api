@@ -1,9 +1,10 @@
 import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
-import {ioc} from "../IoCContainer";
 import {UserType} from "../types/tsTypes";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../types";
+import {container} from "../Container";
+import {ParseQuery} from "../middlewares/parse-query";
 
 @injectable()
 export class PostsController {
@@ -12,7 +13,8 @@ export class PostsController {
 
   async getAllPosts(req: Request, res: Response) {
 
-    const parseQueryData = await ioc.parseQuery.parse(req)
+    const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+    const parseQueryData = await parseQuery.parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
     const sortBy: string | null = parseQueryData.sortBy
@@ -95,8 +97,9 @@ export class PostsController {
 
   async getCommentsByPostId(req: Request, res: Response) {
     try {
+      const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+      const parseQueryData = await parseQuery.parse(req)
       const postId = req.params.postId;
-      const parseQueryData = await ioc.parseQuery.parse(req)
       const pageNumber = parseQueryData.pageNumber
       const pageSize = parseQueryData.pageSize
       const sortBy: string | null = parseQueryData.sortBy

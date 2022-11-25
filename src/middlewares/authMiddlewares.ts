@@ -1,67 +1,67 @@
 import {NextFunction, Request, Response} from "express";
 import bcrypt from "bcrypt";
+const base64 = require('base-64');
 import requestIp from "request-ip";
 import {UserType} from "../types/tsTypes";
-import {inject, injectable} from "inversify";
 import {JWTService} from "../application/jwt-service";
 import {UsersService} from "../domain/users-service";
 import {BlackListIPRepository} from "../repositories/blackListIP-repository";
 import {CommentsService} from "../domain/comments-service";
-import {TYPES} from "../types";
-const base64 = require('base-64');
+import {injectable} from "inversify";
+import {container} from "../Container";
 
 
 @injectable()
 export class AuthMiddlewares {
 
-  constructor(@inject(TYPES.JWTService) protected jwtService: JWTService,
-              @inject(TYPES.UsersService) protected usersService: UsersService,
-              @inject(TYPES.BlackListIPRepository) protected blackListIPRepository: BlackListIPRepository,
-              @inject(TYPES.CommentsService) protected commentsService: CommentsService) {
-  }
-
   async authenticationAccessToken(req: Request, res: Response, next: NextFunction) {
+    const jwtService = container.resolve<JWTService>(JWTService)
+    const usersService = container.resolve<UsersService>(UsersService)
     if (!req.headers.authorization) {
       res.sendStatus(401)
       return
     }
     const token = req.headers.authorization.split(' ')[1] // "bearer jdgjkad.jajgdj.jksadgj"
-    const userId = await this.jwtService.verifyAccessJWT(token)
+    const userId = await jwtService.verifyAccessJWT(token)
     if (!userId) {
       return res.sendStatus(401)
 
     }
-    req.user = await this.usersService.findUserByUserId(userId)
+    req.user = await usersService.findUserByUserId(userId)
     next()
   }
 
   async noneStatusRefreshToken(req: Request, res: Response, next: NextFunction) {
+    const jwtService = container.resolve<JWTService>(JWTService)
+    const usersService = container.resolve<UsersService>(UsersService)
     if (!req.cookies.refreshToken) {
       next()
       return
     }
 
-    const userId = await this.jwtService.verifyRefreshJWT(req.cookies.refreshToken)
+    const userId = await jwtService.verifyRefreshJWT(req.cookies.refreshToken)
     if (!userId) {
       next()
       return
     }
-    req.user = await this.usersService.findUserByUserId(userId)
+    req.user = await usersService.findUserByUserId(userId)
     next()
     return
   }
 
   async noneStatusAccessToken(req: Request, res: Response, next: NextFunction) {
+    const jwtService = container.resolve<JWTService>(JWTService)
+    const usersService = container.resolve<UsersService>(UsersService)
     if (!req.headers.authorization) {
       next()
       return
     }
-    const userId = await this.jwtService.verifyAccessJWT(req.headers.authorization.split(" ")[1])
+    const userId = await jwtService.verifyAccessJWT(req.headers.authorization.split(" ")[1])
     if (!userId) {
       next()
       return
     }
-    req.user = await this.usersService.findUserByUserId(userId)
+    req.user = await usersService.findUserByUserId(userId)
     next()
     return
   }
@@ -89,7 +89,8 @@ export class AuthMiddlewares {
   }
 
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
-    const user: UserType | null = await this.usersService.findUserByLoginOrEmail(req.body.loginOrEmail)
+    const usersService = container.resolve<UsersService>(UsersService)
+    const user: UserType | null = await usersService.findUserByLoginOrEmail(req.body.loginOrEmail)
     if (user) {
       const compare = await bcrypt.compare(req.body.password, user.accountData.passwordHash)
       if (compare) {
@@ -109,7 +110,8 @@ export class AuthMiddlewares {
   }
 
   async checkUserAccountNotExists(req: Request, res: Response, next: NextFunction) {
-    const checkOutEmailInDB = await this.usersService.findByLoginAndEmail(req.body.email, req.body.login);
+    const usersService = container.resolve<UsersService>(UsersService)
+    const checkOutEmailInDB = await usersService.findByLoginAndEmail(req.body.email, req.body.login);
     if (!checkOutEmailInDB) {
       next()
       return
@@ -125,9 +127,10 @@ export class AuthMiddlewares {
   }
 
   async checkIpInBlackList(req: Request, res: Response, next: NextFunction) {
+    const blackListIPRepository = container.resolve<BlackListIPRepository>(BlackListIPRepository)
     const clientIp = requestIp.getClientIp(req);
     if (clientIp) {
-      const result = await this.blackListIPRepository.checkoutIPinBlackList(clientIp);
+      const result = await blackListIPRepository.checkoutIPinBlackList(clientIp);
       if (!result) {
         return next()
       }
@@ -136,6 +139,7 @@ export class AuthMiddlewares {
   }
 
   async compareCurrentAndCreatorComment(req: Request, res: Response, next: NextFunction) {
+    const commentsService = container.resolve<CommentsService>(CommentsService)
     try {
       const user = req.user
       if (!user) {
@@ -146,7 +150,7 @@ export class AuthMiddlewares {
       const userId = user.accountData.id
       const commentId = req.params.commentId;
 
-      const foundPostWithComments = await this.commentsService.findCommentCompareOwner(commentId)
+      const foundPostWithComments = await commentsService.findCommentCompareOwner(commentId)
 
       if (foundPostWithComments) {
         if (foundPostWithComments.userId === userId && foundPostWithComments.userLogin === userLogin) {

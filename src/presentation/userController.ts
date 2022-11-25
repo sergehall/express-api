@@ -1,9 +1,10 @@
 import {Request, Response} from "express";
-import {ioc} from "../IoCContainer";
 import requestIp from "request-ip";
 import {UsersService} from "../domain/users-service";
 import { injectable, inject } from "inversify";
 import {TYPES} from "../types";
+import {container} from "../Container";
+import {ParseQuery} from "../middlewares/parse-query";
 
 
 @injectable()
@@ -13,7 +14,8 @@ export class UsersController {
 
   async getUsers(req: Request, res: Response) {
     try {
-      const parseQueryData = await ioc.parseQuery.parse(req)
+      const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+      const parseQueryData = await parseQuery.parse(req)
       const pageNumber: number = parseQueryData.pageNumber
       const pageSize: number = parseQueryData.pageSize
       const searchLoginTerm: string | null = parseQueryData.searchLoginTerm
@@ -33,7 +35,7 @@ export class UsersController {
     try {
       const clientIp = requestIp.getClientIp(req);
       const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
-      const newUser = await ioc.usersService.createUser(req.body.login, req.body.email, req.body.password, clientIp, userAgent);
+      const newUser = await this.usersService.createUser(req.body.login, req.body.email, req.body.password, clientIp, userAgent);
       if (newUser) {
         return res.status(201).send({
           id: newUser.accountData.id,
@@ -60,7 +62,7 @@ export class UsersController {
   async deleteUserById(req: Request, res: Response) {
     try {
       const id = req.params.id
-      const deletedPost = await ioc.usersService.deleteUserById(id)
+      const deletedPost = await this.usersService.deleteUserById(id)
 
       if (!deletedPost) {
         return res.sendStatus(404)

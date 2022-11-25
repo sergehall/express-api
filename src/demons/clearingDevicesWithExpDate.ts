@@ -1,6 +1,6 @@
 import {MyModelDevicesSchema} from "../mongoose/DevicesSchemaModel";
-import {ioc} from "../IoCContainer";
 import {injectable} from "inversify";
+import {container} from "../Container";
 
 
 @injectable()
@@ -8,8 +8,9 @@ export class ClearingDevicesWithExpDate {
   // runs every 5 sec
   async start() {
     setTimeout(async () => {
+      const clearingDevicesWithExpDate = container.resolve(ClearingDevicesWithExpDate)
       await MyModelDevicesSchema.deleteMany({expirationDate: {$lt: new Date().toISOString()}})
-      await ioc.clearingInvalidJWTFromBlackList.start()
+      await clearingDevicesWithExpDate.start()
     }, 5000)
   }
 }

@@ -4,7 +4,7 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {container} from "../Container";
 import {CommentsController} from "../presentation/commentsController";
-import {AuthMiddlewares} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const commentsRouter = Router({})

@@ -1,5 +1,8 @@
-import {ioc} from "../IoCContainer";
 import {injectable} from "inversify";
+import {container} from "../Container";
+import {UsersService} from "../domain/users-service";
+import {EmailsAdapter} from "../adapters/email-adapter";
+import {EmailsRepository} from "../repositories/emails-db-repository";
 
 
 @injectable()
@@ -7,25 +10,35 @@ export class EmailsSender {
 
   async sendAndDeleteConfirmationCode() {
     setTimeout(async () => {
-      const emailAndCode = await ioc.emailsRepository.findEmailByOldestDate()
+      const emailsAdapter = container.resolve<EmailsAdapter>(EmailsAdapter)
+      const usersService = container.resolve<UsersService>(UsersService)
+      const emailsRepository = container.resolve<EmailsRepository>(EmailsRepository)
+      const emailsSender = container.resolve<EmailsSender>(EmailsSender)
+
+      const emailAndCode = await emailsRepository.findEmailByOldestDate()
       if (emailAndCode) {
-        await ioc.emailsAdapter.sendCodeByRegistration(emailAndCode)
-        await ioc.usersService.addTimeOfSentEmail(emailAndCode)
-        await ioc.emailsRepository.deleteEmailConfirmCodeAfterSent(emailAndCode)
+        await emailsAdapter.sendCodeByRegistration(emailAndCode)
+        await usersService.addTimeOfSentEmail(emailAndCode)
+        await emailsRepository.deleteEmailConfirmCodeAfterSent(emailAndCode)
       }
-      await ioc.emailsSender.sendAndDeleteConfirmationCode()
+      await emailsSender.sendAndDeleteConfirmationCode()
     }, 5000)
   }
 
   async sendAndDeleteRecoveryCode() {
     setTimeout(async () => {
-      const emailAndCode = await ioc.emailsRepository.findEmailByOldestDateRecoveryCode()
+      const usersService = container.resolve<UsersService>(UsersService)
+      const emailsAdapter = container.resolve<EmailsAdapter>(EmailsAdapter)
+      const emailsRepository = container.resolve<EmailsRepository>(EmailsRepository)
+      const emailsSender = container.resolve<EmailsSender>(EmailsSender)
+
+      const emailAndCode = await emailsRepository.findEmailByOldestDateRecoveryCode()
       if (emailAndCode) {
-        await ioc.emailsAdapter.sendCodeByPasswordRecovery(emailAndCode)
-        await ioc.usersService.addTimeOfSentEmail(emailAndCode)
-        await ioc.emailsRepository.deleteEmailRecoveryCodeAfterSent(emailAndCode)
+        await emailsAdapter.sendCodeByPasswordRecovery(emailAndCode)
+        await usersService.addTimeOfSentEmail(emailAndCode)
+        await emailsRepository.deleteEmailRecoveryCodeAfterSent(emailAndCode)
       }
-      await ioc.emailsSender.sendAndDeleteRecoveryCode()
+      await emailsSender.sendAndDeleteRecoveryCode()
     }, 5000)
   }
 }

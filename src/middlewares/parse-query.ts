@@ -1,7 +1,8 @@
 import {Request} from "express";
+import {injectable} from "inversify";
 
 
-
+@injectable()
 export class ParseQuery {
   async parse(req: Request) {
     let pageNumber: number = parseInt(<string>req.query.pageNumber)

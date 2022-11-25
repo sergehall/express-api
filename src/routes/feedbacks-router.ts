@@ -5,7 +5,7 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {container} from "../Container";
 import {FeedbacksController} from "../presentation/feedbacksController";
-import {AuthMiddlewares} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const feedbacksRouter = Router({})

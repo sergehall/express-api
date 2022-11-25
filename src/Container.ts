@@ -21,7 +21,6 @@ import {SecurityDevicesRepository} from "./repositories/securityDevices-db-repos
 import {EmailManagers} from "./managers/email-managers";
 import {EmailsAdapter} from "./adapters/email-adapter";
 import {BusinessService} from "./domain/business-service";
-import {JWTService} from "./application/jwt-service";
 import {
   BlackListRefreshTokenJWTRepository
 } from "./repositories/blackListRefreshTokenJWT-db-repository";
@@ -32,14 +31,18 @@ import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedA
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
-import {AuthMiddlewares} from "./middlewares/auth";
+import {AuthMiddlewares} from "./middlewares/authMiddlewares";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {EmailsRepository} from "./repositories/emails-db-repository";
+import {JWTService} from "./application/jwt-service";
+import {ParseQuery} from "./middlewares/parse-query";
 
 
 export const container = new Container();
 
+// JWT
+container.bind<JWTService>(TYPES.JWTService).to(JWTService)
 // Users
 container.bind<UsersRepository>(TYPES.UsersRepository).to(UsersRepository);
 container.bind<UsersService>(TYPES.UsersService).to(UsersService);
@@ -69,8 +72,6 @@ container.bind<EmailManagers>(TYPES.EmailManagers).to(EmailManagers);
 container.bind<EmailsAdapter>(TYPES.EmailsAdapter).to(EmailsAdapter);
 container.bind<BusinessService>(TYPES.BusinessService).to(BusinessService);
 container.bind<EmailsRepository>(TYPES.EmailsRepository).to(EmailsRepository)
-// JWT
-container.bind<JWTService>(TYPES.JWTService).to(JWTService);
 // Black List
 container.bind<BlackListRefreshTokenJWTRepository>(TYPES.BlackListRefreshTokenJWTRepository).to(BlackListRefreshTokenJWTRepository);
 container.bind<BlackListIPRepository>(TYPES.BlackListIPRepository).to(BlackListIPRepository);
@@ -88,4 +89,7 @@ container.bind<AuthMiddlewares>(TYPES.AuthMiddlewares).to(AuthMiddlewares);
 // Preparation
 container.bind<PreparationPosts>(TYPES.PreparationPosts).to(PreparationPosts);
 container.bind<PreparationComments>(TYPES.PreparationComments).to(PreparationComments);
+// ParseQuery
+container.bind<ParseQuery>(TYPES.ParseQuery).to(ParseQuery);
+
 

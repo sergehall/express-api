@@ -1,5 +1,4 @@
 import {Router, Request, Response} from "express";
-import {ioc} from "../IoCContainer";
 import requestIp from 'request-ip';
 import {
   confirmationCodeValidation,
@@ -11,8 +10,8 @@ import {
   passwordValidation,
   recoveryCodeValidation
 } from "../middlewares/input-validator-middleware";
-import {PayloadType} from "../types/tsTypes";
 import {container} from "../Container";
+import {PayloadType} from "../types/tsTypes";
 import {JWTService} from "../application/jwt-service";
 import {SecurityDevicesService} from "../domain/securityDevices-service";
 import {UsersService} from "../domain/users-service";
@@ -20,7 +19,8 @@ import {
   BlackListRefreshTokenJWTRepository
 } from "../repositories/blackListRefreshTokenJWT-db-repository";
 import {ValidateLast10secReq} from "../middlewares/validateLast10secReq";
-import {AuthMiddlewares} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/authMiddlewares";
+import {ParseQuery} from "../middlewares/parse-query";
 
 
 export const authRouter = Router({})
@@ -255,7 +255,8 @@ authRouter.get("/me",
 authRouter.get('/resend-registration-email',
   validateLast10secReq.byRecovery,
   async (req: Request, res: Response) => {
-    const parseQueryData = await ioc.parseQuery.parse(req)
+    const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+    const parseQueryData = await parseQuery.parse(req)
     const code = parseQueryData.code
     if (code === null) {
       res.status(400).send("Query param is empty")
@@ -272,7 +273,8 @@ authRouter.get('/resend-registration-email',
 
 authRouter.get('/confirm-registration',
   async (req: Request, res: Response) => {
-    const parseQueryData = await ioc.parseQuery.parse(req)
+    const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+    const parseQueryData = await parseQuery.parse(req)
     const code = parseQueryData.code
     if (code === null) {
       res.sendStatus(400)

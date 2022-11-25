@@ -10,7 +10,7 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {container} from "../Container";
 import {PostsController} from "../presentation/postsController";
-import {AuthMiddlewares} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const postsRouts = Router({})

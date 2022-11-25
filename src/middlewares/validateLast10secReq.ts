@@ -1,15 +1,17 @@
 import {Request, Response, NextFunction} from "express";
 import requestIp from "request-ip";
-import {ioc} from "../IoCContainer";
 import {injectable} from "inversify";
+import {container} from "../Container";
+import {UsersIPLast10secRepositories} from "../repositories/usersIPlast10sec-db-repository";
 
 
 @injectable()
 export class ValidateLast10secReq {
 
   async byRegisConfirm(req: Request, res: Response, next: NextFunction) {
+    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
-    const countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountByIpAndTimeRegConf(clientIp)
+    const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountByIpAndTimeRegConf(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       return next()
@@ -19,8 +21,9 @@ export class ValidateLast10secReq {
   }
 
   async byRegistration(req: Request, res: Response, next: NextFunction) {
+    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
-    const countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountByIpAndTimeReg(clientIp)
+    const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountByIpAndTimeReg(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       return next()
@@ -30,8 +33,9 @@ export class ValidateLast10secReq {
   }
 
   async byLogin(req: Request, res: Response, next: NextFunction) {
+    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
-    const countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountByIpAndTimeLog(clientIp)
+    const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountByIpAndTimeLog(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       return next()
@@ -40,8 +44,9 @@ export class ValidateLast10secReq {
   }
 
   async byRecovery(req: Request, res: Response, next: NextFunction) {
+    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
-    const countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountByIpAndTimeRegEmailRes(clientIp)
+    const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountByIpAndTimeRegEmailRes(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       return next()
@@ -50,8 +55,9 @@ export class ValidateLast10secReq {
   }
 
   async byNewPassword(req: Request, res: Response, next: NextFunction) {
+    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
-    const countRegistrationAttempts = await ioc.usersIPLast10secRepositories.addAndCountSameIpNewPasswordReq(clientIp)
+    const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountSameIpNewPasswordReq(clientIp)
 
     if (countRegistrationAttempts <= 5) {
       return next()

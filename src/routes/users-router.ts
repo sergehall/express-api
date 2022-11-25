@@ -8,7 +8,7 @@ import {
 } from "../middlewares/input-validator-middleware";
 import {container} from "../Container";
 import {UsersController} from "../presentation/userController";
-import {AuthMiddlewares} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 

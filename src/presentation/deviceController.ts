@@ -1,9 +1,10 @@
 import {Request, Response} from "express";
 import {PayloadType} from "../types/tsTypes";
-import {ioc} from "../IoCContainer";
 import {SecurityDevicesService} from "../domain/securityDevices-service";
 import {inject, injectable} from "inversify";
 import {TYPES} from "../types";
+import {container} from "../Container";
+import {JWTService} from "../application/jwt-service";
 
 @injectable()
 export class SecurityDevicesController {
@@ -11,16 +12,18 @@ export class SecurityDevicesController {
   }
 
   async getAllDevices(req: Request, res: Response) {
+    const jwtService = container.resolve<JWTService>(JWTService)
     const refreshToken = req.cookies.refreshToken
-    const payload: PayloadType = await ioc.jwtService.jwt_decode(refreshToken);
+    const payload: PayloadType = await jwtService.jwt_decode(refreshToken);
     const getDevices = await this.securityDevicesService.getAllDevices(payload)
     return res.send(getDevices)
   }
 
   async deleteAllDevicesExceptCurrent(req: Request, res: Response) {
     try {
+      const jwtService = container.resolve<JWTService>(JWTService)
       const refreshToken = req.cookies.refreshToken
-      const payloadRefreshToken: PayloadType = await ioc.jwtService.jwt_decode(refreshToken)
+      const payloadRefreshToken: PayloadType = await jwtService.jwt_decode(refreshToken)
       await this.securityDevicesService.deleteAllDevicesExceptCurrent(payloadRefreshToken)
       return res.sendStatus(204)
     } catch (e) {
@@ -30,10 +33,11 @@ export class SecurityDevicesController {
   }
 
   async deleteDeviceByDeviceId(req: Request, res: Response) {
+    const jwtService = container.resolve<JWTService>(JWTService)
     try {
       const deletedId = req.params.deviceId
       const refreshToken = req.cookies.refreshToken
-      const payloadRefreshToken: PayloadType = await ioc.jwtService.jwt_decode(refreshToken)
+      const payloadRefreshToken: PayloadType = await jwtService.jwt_decode(refreshToken)
 
       const result = await this.securityDevicesService.deleteDeviceByDeviceId(deletedId, payloadRefreshToken)
       if (result === "204") {

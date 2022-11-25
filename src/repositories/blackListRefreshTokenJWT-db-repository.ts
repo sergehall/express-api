@@ -1,7 +1,8 @@
 import {MyModelBlackListRefreshTokenJWT} from "../mongoose/BlackListRefreshTokenJWTModel";
-import {ioc} from "../IoCContainer";
 import {BlackListRefreshTokenJWT, PayloadType} from "../types/tsTypes";
 import {injectable} from "inversify";
+import {container} from "../Container";
+import {JWTService} from "../application/jwt-service";
 
 const ck = require('ckey')
 
@@ -13,7 +14,8 @@ export class BlackListRefreshTokenJWTRepository {
   }
 
   async addJWT(refreshToken: string) {
-    const payload: PayloadType = await ioc.jwtService.jwt_decode(refreshToken)
+    const jwtService = container.resolve<JWTService>(JWTService)
+    const payload: PayloadType = await jwtService.jwt_decode(refreshToken)
     const signBlackListJWT = refreshToken.slice(ck.NUM1, ck.NUM2);
 
     async function generateString(numCh: number) {

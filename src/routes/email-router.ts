@@ -1,7 +1,7 @@
 import {Router, Request, Response} from "express"
 import {container} from "../Container";
 import {BusinessService} from "../domain/business-service";
-import {AuthMiddlewares} from "../middlewares/auth";
+import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const emailRouter = Router({})

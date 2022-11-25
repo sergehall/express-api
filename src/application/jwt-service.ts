@@ -1,10 +1,13 @@
 import {NextFunction, Request, Response} from "express";
 import jwt from 'jsonwebtoken'
-import {ioc} from "../IoCContainer";
 import uuid4 from "uuid4";
 import {PayloadType} from "../types/tsTypes";
 import jwt_decode from "jwt-decode";
 import {injectable} from "inversify";
+import {container} from "../Container";
+import {
+  BlackListRefreshTokenJWTRepository
+} from "../repositories/blackListRefreshTokenJWT-db-repository";
 
 const ck = require('ckey')
 
@@ -59,12 +62,13 @@ export class JWTService {
   }
 
   async verifyRefreshTokenAndCheckInBlackList(req: Request, res: Response, next: NextFunction) {
+    const blackListRefreshTokenJWTRepository = container.resolve<BlackListRefreshTokenJWTRepository>(BlackListRefreshTokenJWTRepository)
     try {
       const refreshToken = req.cookies.refreshToken
       if (
         !refreshToken ||
         !await jwt.verify(refreshToken, ck.REFRESH_SECRET_KEY) ||
-        await ioc.blackListRefreshTokenJWTRepository.findJWT(refreshToken)
+        await blackListRefreshTokenJWTRepository.findJWT(refreshToken)
       ) {
         return res.sendStatus(401)
       }

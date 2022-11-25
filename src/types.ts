@@ -27,10 +27,10 @@ import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedA
 import {BlackListIPRepository} from "./repositories/blackListIP-repository";
 import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
 import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
-import {AuthMiddlewares} from "./middlewares/auth";
 import {PreparationComments} from "./repositories/preparation-comments";
 import {PreparationPosts} from "./repositories/preparation-posts";
 import {EmailsRepository} from "./repositories/emails-db-repository";
+import {ParseQuery} from "./middlewares/parse-query";
 
 
 export const TYPES = {
@@ -63,9 +63,6 @@ export const TYPES = {
   EmailsAdapter: Symbol.for("EmailsAdapter"),
   BusinessService: Symbol.for("BusinessService"),
   EmailsRepository: Symbol.for("EmailsRepository"),
-  // JWT
-  JWTService: Symbol.for("JWTService"),
-  // Auth
   // BlackList
   BlackListRefreshTokenJWTRepository: Symbol.for("BlackListRefreshTokenJWTRepository"),
   BlackListIPRepository: Symbol.for("BlackListIPRepository"),
@@ -82,5 +79,9 @@ export const TYPES = {
   AuthMiddlewares: Symbol.for("AuthMiddlewares"),
   // PreparationPosts
   PreparationPosts: Symbol.for("PreparationPosts"),
-  PreparationComments: Symbol.for("PreparationComments")
+  PreparationComments: Symbol.for("PreparationComments"),
+  // JWT
+  JWTService: Symbol.for("JWTService"),
+  // ParseQuery
+  ParseQuery: Symbol.for("ParseQuery")
 };
