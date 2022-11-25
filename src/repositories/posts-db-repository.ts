@@ -69,38 +69,35 @@ export class PostsRepository {
     const newPostId = uuid4().toString()
     const createdAt = new Date().toISOString()
 
-    const foundBlogId = await MyModelBlogs.findOne({id: blogId})
-    if (!foundBlogId) {
-      errorsArray.push(notFoundBlogId)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
-
-    const newPost = {
-      id: newPostId,
-      title: title,
-      shortDescription: shortDescription,
-      content: content,
-      blogId: blogId,
-      blogName: foundBlogId.name,
-      createdAt: createdAt,
-      extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: "None",
-        newestLikes: []
-
-      }
-    }
-
     try {
-      // create post
-      const createNewPost: PostsType = await MyModelPosts.create(
-        newPost)
+      const foundBlogId = await MyModelBlogs.findOne({id: blogId})
+      if (!foundBlogId) {
+        errorsArray.push(notFoundBlogId)
+        return {
+          data: null,
+          errorsMessages: errorsArray,
+          resultCode: 1
+        }
+      }
 
+      const newPost = {
+        id: newPostId,
+        title: title,
+        shortDescription: shortDescription,
+        content: content,
+        blogId: blogId,
+        blogName: foundBlogId.name,
+        createdAt: createdAt,
+        extendedLikesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: "None",
+          newestLikes: []
+
+        }
+      }
+      // create post
+      const createNewPost: PostsType = await MyModelPosts.create(newPost)
       if (!createNewPost.createdAt) {
         errorsArray.push(mongoHasNotUpdated)
         return {
