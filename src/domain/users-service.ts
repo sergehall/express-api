@@ -8,7 +8,7 @@ import uuid4 from "uuid4";
 import add from "date-fns/add";
 import bcrypt from "bcrypt";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
+import {TYPES} from "../types/types";
 import {EmailsRepository} from "../repositories/emails-db-repository";
 import {UsersRepository} from "../repositories/users-db-repository";
 

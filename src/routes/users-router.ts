@@ -6,7 +6,7 @@ import {
   emailValidation,
   inputValidatorMiddleware,
 } from "../middlewares/input-validator-middleware";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {UsersController} from "../presentation/userController";
 import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
@@ -14,8 +14,8 @@ import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 export const usersRouter = Router({});
 
-const usersController = container.resolve<UsersController>(UsersController)
-const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
+const usersController = myContainer.resolve<UsersController>(UsersController)
+const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 usersRouter
   .get('/', usersController.getUsers.bind(usersController))

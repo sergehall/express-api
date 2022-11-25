@@ -1,7 +1,7 @@
 import {FeedbacksService} from "../domain/feedbacks-service";
 import {Request, Response} from "express";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
+import {TYPES} from "../types/types";
 
 @injectable()
 export class FeedbacksController {

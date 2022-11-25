@@ -4,7 +4,7 @@ import uuid4 from "uuid4";
 import {PayloadType} from "../types/tsTypes";
 import jwt_decode from "jwt-decode";
 import {injectable} from "inversify";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {
   BlackListRefreshTokenJWTRepository
 } from "../repositories/blackListRefreshTokenJWT-db-repository";
@@ -62,7 +62,7 @@ export class JWTService {
   }
 
   async verifyRefreshTokenAndCheckInBlackList(req: Request, res: Response, next: NextFunction) {
-    const blackListRefreshTokenJWTRepository = container.resolve<BlackListRefreshTokenJWTRepository>(BlackListRefreshTokenJWTRepository)
+    const blackListRefreshTokenJWTRepository = myContainer.resolve<BlackListRefreshTokenJWTRepository>(BlackListRefreshTokenJWTRepository)
     try {
       const refreshToken = req.cookies.refreshToken
       if (

@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import {ReturnObjCommentType} from "../types/tsTypes";
 import {CommentsService} from "../domain/comments-service";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
+import {TYPES} from "../types/types";
 
 @injectable()
 export class CommentsController {

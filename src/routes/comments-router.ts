@@ -2,15 +2,15 @@ import {Router} from "express";
 import {
   contentCommentValidation, inputValidatorMiddleware, likeStatusValidator
 } from "../middlewares/input-validator-middleware";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {CommentsController} from "../presentation/commentsController";
 import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const commentsRouter = Router({})
 
-const commentsController = container.resolve<CommentsController>(CommentsController)
-const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
+const commentsController = myContainer.resolve<CommentsController>(CommentsController)
+const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 commentsRouter.get('/:commentId',
   authMiddlewares.noneStatusAccessToken,

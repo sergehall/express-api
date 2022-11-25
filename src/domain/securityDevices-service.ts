@@ -5,7 +5,7 @@ import {
 } from "../types/tsTypes";
 import {SecurityDevicesRepository} from "../repositories/securityDevices-db-repository";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
+import {TYPES} from "../types/types";
 
 
 @injectable()

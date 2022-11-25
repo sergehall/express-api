@@ -1,36 +1,36 @@
-import {UsersController} from "./presentation/userController";
-import {PostsController} from "./presentation/postsController";
-import {PostsRepository} from "./repositories/posts-db-repository";
-import {UsersRepository} from "./repositories/users-db-repository";
-import {BlogsService} from "./domain/blogs-service";
-import {BlogsController} from "./presentation/blogsController";
-import {BlogsRepository} from "./repositories/blogs-db-repository";
-import {PostsService} from "./domain/posts-service";
-import {FeedbacksService} from "./domain/feedbacks-service";
-import {CommentsController} from "./presentation/commentsController";
-import {CommentsService} from "./domain/comments-service";
-import {CommentsRepository} from "./repositories/comments-db-repository";
-import {SecurityDevicesRepository} from "./repositories/securityDevices-db-repository";
-import {SecurityDevicesService} from "./domain/securityDevices-service";
-import {SecurityDevicesController} from "./presentation/deviceController";
-import {EmailsAdapter} from "./adapters/email-adapter";
-import {EmailManagers} from "./managers/email-managers";
-import {BusinessService} from "./domain/business-service";
-import {JWTService} from "./application/jwt-service";
+import {UsersController} from "../presentation/userController";
+import {PostsController} from "../presentation/postsController";
+import {PostsRepository} from "../repositories/posts-db-repository";
+import {UsersRepository} from "../repositories/users-db-repository";
+import {BlogsService} from "../domain/blogs-service";
+import {BlogsController} from "../presentation/blogsController";
+import {BlogsRepository} from "../repositories/blogs-db-repository";
+import {PostsService} from "../domain/posts-service";
+import {FeedbacksService} from "../domain/feedbacks-service";
+import {CommentsController} from "../presentation/commentsController";
+import {CommentsService} from "../domain/comments-service";
+import {CommentsRepository} from "../repositories/comments-db-repository";
+import {SecurityDevicesRepository} from "../repositories/securityDevices-db-repository";
+import {SecurityDevicesService} from "../domain/securityDevices-service";
+import {SecurityDevicesController} from "../presentation/deviceController";
+import {EmailsAdapter} from "../adapters/email-adapter";
+import {EmailManagers} from "../managers/email-managers";
+import {BusinessService} from "../domain/business-service";
+import {JWTService} from "../application/jwt-service";
 import {
   BlackListRefreshTokenJWTRepository
-} from "./repositories/blackListRefreshTokenJWT-db-repository";
-import {EmailsSender} from "./demons/emailSender";
-import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
-import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBlackList";
-import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
-import {BlackListIPRepository} from "./repositories/blackListIP-repository";
-import {UsersIPLast10secRepositories} from "./repositories/usersIPlast10sec-db-repository";
-import {ValidateLast10secReq} from "./middlewares/validateLast10secReq";
-import {PreparationComments} from "./repositories/preparation-comments";
-import {PreparationPosts} from "./repositories/preparation-posts";
-import {EmailsRepository} from "./repositories/emails-db-repository";
-import {ParseQuery} from "./middlewares/parse-query";
+} from "../repositories/blackListRefreshTokenJWT-db-repository";
+import {EmailsSender} from "../demons/emailSender";
+import {ClearingDevicesWithExpDate} from "../demons/clearingDevicesWithExpDate";
+import {ClearingInvalidJWTFromBlackList} from "../demons/clearingInvalidJWTFromBlackList";
+import {ClearingIpWithCreatedAtOlder10Sec} from "../demons/clearingIpWithCreatedAtOlder10Sec";
+import {BlackListIPRepository} from "../repositories/blackListIP-repository";
+import {UsersIPLast10secRepositories} from "../repositories/usersIPlast10sec-db-repository";
+import {ValidateLast10secReq} from "../middlewares/validateLast10secReq";
+import {PreparationComments} from "../repositories/preparation-comments";
+import {PreparationPosts} from "../repositories/preparation-posts";
+import {EmailsRepository} from "../repositories/emails-db-repository";
+import {ParseQuery} from "../middlewares/parse-query";
 
 
 export const TYPES = {

@@ -7,7 +7,7 @@ import {
   UserType
 } from "../types/tsTypes";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
+import {TYPES} from "../types/types";
 
 @injectable()
 export class PostsService {

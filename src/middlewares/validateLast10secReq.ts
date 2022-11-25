@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction} from "express";
 import requestIp from "request-ip";
 import {injectable} from "inversify";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {UsersIPLast10secRepositories} from "../repositories/usersIPlast10sec-db-repository";
 
 
@@ -9,7 +9,7 @@ import {UsersIPLast10secRepositories} from "../repositories/usersIPlast10sec-db-
 export class ValidateLast10secReq {
 
   async byRegisConfirm(req: Request, res: Response, next: NextFunction) {
-    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
+    const usersIPLast10secRepositories = await myContainer.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
     const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountByIpAndTimeRegConf(clientIp)
 
@@ -21,7 +21,7 @@ export class ValidateLast10secReq {
   }
 
   async byRegistration(req: Request, res: Response, next: NextFunction) {
-    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
+    const usersIPLast10secRepositories = await myContainer.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
     const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountByIpAndTimeReg(clientIp)
 
@@ -33,7 +33,7 @@ export class ValidateLast10secReq {
   }
 
   async byLogin(req: Request, res: Response, next: NextFunction) {
-    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
+    const usersIPLast10secRepositories = await myContainer.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
     const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountByIpAndTimeLog(clientIp)
 
@@ -44,7 +44,7 @@ export class ValidateLast10secReq {
   }
 
   async byRecovery(req: Request, res: Response, next: NextFunction) {
-    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
+    const usersIPLast10secRepositories = await myContainer.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
     const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountByIpAndTimeRegEmailRes(clientIp)
 
@@ -55,7 +55,7 @@ export class ValidateLast10secReq {
   }
 
   async byNewPassword(req: Request, res: Response, next: NextFunction) {
-    const usersIPLast10secRepositories = await container.resolve(UsersIPLast10secRepositories)
+    const usersIPLast10secRepositories = await myContainer.resolve(UsersIPLast10secRepositories)
     const clientIp = requestIp.getClientIp(req);
     const countRegistrationAttempts = await usersIPLast10secRepositories.addAndCountSameIpNewPasswordReq(clientIp)
 

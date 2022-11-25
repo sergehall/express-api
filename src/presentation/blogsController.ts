@@ -3,8 +3,8 @@ import {Request, Response} from "express";
 import {PostsService} from "../domain/posts-service";
 import {UserType} from "../types/tsTypes";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
-import {container} from "../Container";
+import {TYPES} from "../types/types";
+import {myContainer} from "../types/container";
 import {ParseQuery} from "../middlewares/parse-query";
 
 @injectable()
@@ -15,7 +15,7 @@ export class BlogsController {
 
   async getAllBlogs(req: Request, res: Response) {
 
-    const parseQueryData = await container.resolve(ParseQuery).parse(req)
+    const parseQueryData = await myContainer.resolve(ParseQuery).parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
     const sortBy: string | null = parseQueryData.sortBy
@@ -63,7 +63,7 @@ export class BlogsController {
   }
 
   async findAllPostsByBlogId(req: Request, res: Response) {
-    const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+    const parseQuery = myContainer.resolve<ParseQuery>(ParseQuery)
     const parseQueryData = await parseQuery.parse(req)
     const blogId: string = req.params.blogId
     const currentUser: UserType | null = req.user

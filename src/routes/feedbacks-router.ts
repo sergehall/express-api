@@ -3,21 +3,21 @@ import {
   inputValidatorMiddleware,
   userIdParamsValidation
 } from "../middlewares/input-validator-middleware";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {FeedbacksController} from "../presentation/feedbacksController";
 import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const feedbacksRouter = Router({})
 
-const feedbacksController = container.resolve<FeedbacksController>(FeedbacksController)
-const auth = container.resolve<AuthMiddlewares>(AuthMiddlewares)
+const feedbacksController = myContainer.resolve<FeedbacksController>(FeedbacksController)
+const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 feedbacksRouter.get('/',
   feedbacksController.getAllFeedbacks.bind(feedbacksController))
 
   .post('/:userId',
-    auth.authenticationAccessToken,
+    authMiddlewares.authenticationAccessToken,
     userIdParamsValidation,
     inputValidatorMiddleware,
     feedbacksController.createFeedback.bind(feedbacksController))

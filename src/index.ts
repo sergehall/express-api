@@ -1,5 +1,6 @@
 import express, {Request, Response} from 'express'
 import "reflect-metadata"
+import {myContainer} from "./types/container";
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import cookieParser from "cookie-parser"
@@ -13,7 +14,6 @@ import {testingRouter} from "./routes/testing-router";
 import {usersRouter} from "./routes/users-router";
 import {blogsRouts} from "./routes/blogs-router";
 import {securityDevicesRouter} from "./routes/securityDevices-router";
-import {container} from "./Container";
 import {EmailsSender} from "./demons/emailSender";
 import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
 import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBlackList";
@@ -54,10 +54,10 @@ const startApp = async () => {
 
 startApp()
   .then(() =>
-    [container.resolve(EmailsSender).sendAndDeleteConfirmationCode(),
-      container.resolve(EmailsSender).sendAndDeleteRecoveryCode(),
-      container.resolve(ClearingIpWithCreatedAtOlder10Sec).start(),
-      container.resolve(ClearingInvalidJWTFromBlackList).start(),
-      container.resolve(ClearingDevicesWithExpDate).start()
+    [myContainer.resolve(EmailsSender).sendAndDeleteConfirmationCode(),
+      myContainer.resolve(EmailsSender).sendAndDeleteRecoveryCode(),
+      myContainer.resolve(ClearingIpWithCreatedAtOlder10Sec).start(),
+      myContainer.resolve(ClearingInvalidJWTFromBlackList).start(),
+      myContainer.resolve(ClearingDevicesWithExpDate).start()
     ])
 

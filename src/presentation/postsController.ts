@@ -2,8 +2,8 @@ import {PostsService} from "../domain/posts-service";
 import {Request, Response} from "express";
 import {UserType} from "../types/tsTypes";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
-import {container} from "../Container";
+import {TYPES} from "../types/types";
+import {myContainer} from "../types/container";
 import {ParseQuery} from "../middlewares/parse-query";
 
 @injectable()
@@ -13,7 +13,7 @@ export class PostsController {
 
   async getAllPosts(req: Request, res: Response) {
 
-    const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+    const parseQuery = myContainer.resolve<ParseQuery>(ParseQuery)
     const parseQueryData = await parseQuery.parse(req)
     const pageNumber: number = parseQueryData.pageNumber
     const pageSize: number = parseQueryData.pageSize
@@ -97,7 +97,7 @@ export class PostsController {
 
   async getCommentsByPostId(req: Request, res: Response) {
     try {
-      const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+      const parseQuery = myContainer.resolve<ParseQuery>(ParseQuery)
       const parseQueryData = await parseQuery.parse(req)
       const postId = req.params.postId;
       const pageNumber = parseQueryData.pageNumber

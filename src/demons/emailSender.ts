@@ -1,5 +1,5 @@
 import {injectable} from "inversify";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {UsersService} from "../domain/users-service";
 import {EmailsAdapter} from "../adapters/email-adapter";
 import {EmailsRepository} from "../repositories/emails-db-repository";
@@ -10,10 +10,10 @@ export class EmailsSender {
 
   async sendAndDeleteConfirmationCode() {
     setTimeout(async () => {
-      const emailsAdapter = container.resolve<EmailsAdapter>(EmailsAdapter)
-      const usersService = container.resolve<UsersService>(UsersService)
-      const emailsRepository = container.resolve<EmailsRepository>(EmailsRepository)
-      const emailsSender = container.resolve<EmailsSender>(EmailsSender)
+      const emailsAdapter = myContainer.resolve<EmailsAdapter>(EmailsAdapter)
+      const usersService = myContainer.resolve<UsersService>(UsersService)
+      const emailsRepository = myContainer.resolve<EmailsRepository>(EmailsRepository)
+      const emailsSender = myContainer.resolve<EmailsSender>(EmailsSender)
 
       const emailAndCode = await emailsRepository.findEmailByOldestDate()
       if (emailAndCode) {
@@ -27,10 +27,10 @@ export class EmailsSender {
 
   async sendAndDeleteRecoveryCode() {
     setTimeout(async () => {
-      const usersService = container.resolve<UsersService>(UsersService)
-      const emailsAdapter = container.resolve<EmailsAdapter>(EmailsAdapter)
-      const emailsRepository = container.resolve<EmailsRepository>(EmailsRepository)
-      const emailsSender = container.resolve<EmailsSender>(EmailsSender)
+      const usersService = myContainer.resolve<UsersService>(UsersService)
+      const emailsAdapter = myContainer.resolve<EmailsAdapter>(EmailsAdapter)
+      const emailsRepository = myContainer.resolve<EmailsRepository>(EmailsRepository)
+      const emailsSender = myContainer.resolve<EmailsSender>(EmailsSender)
 
       const emailAndCode = await emailsRepository.findEmailByOldestDateRecoveryCode()
       if (emailAndCode) {

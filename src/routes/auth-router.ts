@@ -10,7 +10,7 @@ import {
   passwordValidation,
   recoveryCodeValidation
 } from "../middlewares/input-validator-middleware";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {PayloadType} from "../types/tsTypes";
 import {JWTService} from "../application/jwt-service";
 import {SecurityDevicesService} from "../domain/securityDevices-service";
@@ -25,12 +25,13 @@ import {ParseQuery} from "../middlewares/parse-query";
 
 export const authRouter = Router({})
 
-const jwtService = container.resolve<JWTService>(JWTService)
-const securityDevicesService = container.resolve<SecurityDevicesService>(SecurityDevicesService)
-const blackListRefreshTokenJWTRepository = container.resolve(BlackListRefreshTokenJWTRepository)
-const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
-const validateLast10secReq = container.resolve<ValidateLast10secReq>(ValidateLast10secReq)
-const usersService = container.resolve<UsersService>(UsersService)
+const jwtService = myContainer.resolve<JWTService>(JWTService)
+const securityDevicesService = myContainer.resolve<SecurityDevicesService>(SecurityDevicesService)
+const blackListRefreshTokenJWTRepository = myContainer.resolve(BlackListRefreshTokenJWTRepository)
+const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
+const validateLast10secReq = myContainer.resolve<ValidateLast10secReq>(ValidateLast10secReq)
+const usersService = myContainer.resolve<UsersService>(UsersService)
+const parseQuery = myContainer.resolve<ParseQuery>(ParseQuery)
 
 authRouter.post('/login',
   loginOrEmailValidation,
@@ -145,7 +146,6 @@ authRouter.post('/registration-confirmation',
   validateLast10secReq.byRegisConfirm,
   async (req: Request, res: Response) => {
     const code: string = req.body.code
-
     const countEmails = await usersService.countEmailsSentLastHour(code)
     if (countEmails > 10) {
       res.status(429).send('More than 10 emails have been sent in the last hour.')
@@ -224,6 +224,7 @@ authRouter.post('/registration-email-resending',
 authRouter.post('/logout',
   jwtService.verifyRefreshTokenAndCheckInBlackList,
   async (req: Request, res: Response) => {
+
     const refreshToken = req.cookies.refreshToken
     const payload: PayloadType = await jwtService.jwt_decode(refreshToken);
 
@@ -255,7 +256,6 @@ authRouter.get("/me",
 authRouter.get('/resend-registration-email',
   validateLast10secReq.byRecovery,
   async (req: Request, res: Response) => {
-    const parseQuery = container.resolve<ParseQuery>(ParseQuery)
     const parseQueryData = await parseQuery.parse(req)
     const code = parseQueryData.code
     if (code === null) {
@@ -273,7 +273,6 @@ authRouter.get('/resend-registration-email',
 
 authRouter.get('/confirm-registration',
   async (req: Request, res: Response) => {
-    const parseQuery = container.resolve<ParseQuery>(ParseQuery)
     const parseQueryData = await parseQuery.parse(req)
     const code = parseQueryData.code
     if (code === null) {

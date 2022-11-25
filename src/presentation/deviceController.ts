@@ -2,8 +2,8 @@ import {Request, Response} from "express";
 import {PayloadType} from "../types/tsTypes";
 import {SecurityDevicesService} from "../domain/securityDevices-service";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
-import {container} from "../Container";
+import {TYPES} from "../types/types";
+import {myContainer} from "../types/container";
 import {JWTService} from "../application/jwt-service";
 
 @injectable()
@@ -12,7 +12,7 @@ export class SecurityDevicesController {
   }
 
   async getAllDevices(req: Request, res: Response) {
-    const jwtService = container.resolve<JWTService>(JWTService)
+    const jwtService = myContainer.resolve<JWTService>(JWTService)
     const refreshToken = req.cookies.refreshToken
     const payload: PayloadType = await jwtService.jwt_decode(refreshToken);
     const getDevices = await this.securityDevicesService.getAllDevices(payload)
@@ -21,7 +21,7 @@ export class SecurityDevicesController {
 
   async deleteAllDevicesExceptCurrent(req: Request, res: Response) {
     try {
-      const jwtService = container.resolve<JWTService>(JWTService)
+      const jwtService = myContainer.resolve<JWTService>(JWTService)
       const refreshToken = req.cookies.refreshToken
       const payloadRefreshToken: PayloadType = await jwtService.jwt_decode(refreshToken)
       await this.securityDevicesService.deleteAllDevicesExceptCurrent(payloadRefreshToken)
@@ -33,7 +33,7 @@ export class SecurityDevicesController {
   }
 
   async deleteDeviceByDeviceId(req: Request, res: Response) {
-    const jwtService = container.resolve<JWTService>(JWTService)
+    const jwtService = myContainer.resolve<JWTService>(JWTService)
     try {
       const deletedId = req.params.deviceId
       const refreshToken = req.cookies.refreshToken

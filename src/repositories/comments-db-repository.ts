@@ -13,7 +13,7 @@ import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 import {inject, injectable} from "inversify";
 import {PreparationComments} from "./preparation-comments";
-import {TYPES} from "../types";
+import {TYPES} from "../types/types";
 
 @injectable()
 export class CommentsRepository {

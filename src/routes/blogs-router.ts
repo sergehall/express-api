@@ -7,15 +7,15 @@ import {
   shortDescriptionValidation,
   titleValidation, urlValidation
 } from "../middlewares/input-validator-middleware";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {BlogsController} from "../presentation/blogsController";
 import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const blogsRouts = Router({})
 
-const blogsController = container.resolve<BlogsController>(BlogsController)
-const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
+const blogsController = myContainer.resolve<BlogsController>(BlogsController)
+const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 blogsRouts.get('/',
   blogsController.getAllBlogs.bind(blogsController))

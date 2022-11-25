@@ -2,8 +2,8 @@ import {Request, Response} from "express";
 import requestIp from "request-ip";
 import {UsersService} from "../domain/users-service";
 import { injectable, inject } from "inversify";
-import {TYPES} from "../types";
-import {container} from "../Container";
+import {TYPES} from "../types/types";
+import {myContainer} from "../types/container";
 import {ParseQuery} from "../middlewares/parse-query";
 
 
@@ -14,7 +14,7 @@ export class UsersController {
 
   async getUsers(req: Request, res: Response) {
     try {
-      const parseQuery = container.resolve<ParseQuery>(ParseQuery)
+      const parseQuery = myContainer.resolve<ParseQuery>(ParseQuery)
       const parseQueryData = await parseQuery.parse(req)
       const pageNumber: number = parseQueryData.pageNumber
       const pageSize: number = parseQueryData.pageSize

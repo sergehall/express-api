@@ -20,7 +20,7 @@ import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {inject, injectable} from "inversify";
 import {PreparationPosts} from "./preparation-posts";
 import {PreparationComments} from "./preparation-comments";
-import {TYPES} from "../types";
+import {TYPES} from "../types/types";
 
 
 @injectable()

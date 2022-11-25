@@ -1,13 +1,13 @@
 import {Router} from "express";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {SecurityDevicesController} from "../presentation/deviceController";
 import {JWTService} from "../application/jwt-service";
 
 
 export const securityDevicesRouter = Router({})
 
-const securityDevicesController = container.resolve<SecurityDevicesController>(SecurityDevicesController)
-const jwtService = container.resolve<JWTService>(JWTService)
+const securityDevicesController = myContainer.resolve<SecurityDevicesController>(SecurityDevicesController)
+const jwtService = myContainer.resolve<JWTService>(JWTService)
 
 securityDevicesRouter.get('/devices',
   jwtService.verifyRefreshTokenAndCheckInBlackList,

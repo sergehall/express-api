@@ -1,13 +1,13 @@
 import {Router, Request, Response} from "express"
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {BusinessService} from "../domain/business-service";
 import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const emailRouter = Router({})
 
-const businessService = container.resolve<BusinessService>(BusinessService)
-const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
+const businessService = myContainer.resolve<BusinessService>(BusinessService)
+const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 emailRouter
   .post("/send",

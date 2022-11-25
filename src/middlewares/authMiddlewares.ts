@@ -8,15 +8,15 @@ import {UsersService} from "../domain/users-service";
 import {BlackListIPRepository} from "../repositories/blackListIP-repository";
 import {CommentsService} from "../domain/comments-service";
 import {injectable} from "inversify";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 
 
 @injectable()
 export class AuthMiddlewares {
 
   async authenticationAccessToken(req: Request, res: Response, next: NextFunction) {
-    const jwtService = container.resolve<JWTService>(JWTService)
-    const usersService = container.resolve<UsersService>(UsersService)
+    const jwtService = myContainer.resolve<JWTService>(JWTService)
+    const usersService = myContainer.resolve<UsersService>(UsersService)
     if (!req.headers.authorization) {
       res.sendStatus(401)
       return
@@ -32,8 +32,8 @@ export class AuthMiddlewares {
   }
 
   async noneStatusRefreshToken(req: Request, res: Response, next: NextFunction) {
-    const jwtService = container.resolve<JWTService>(JWTService)
-    const usersService = container.resolve<UsersService>(UsersService)
+    const jwtService = myContainer.resolve<JWTService>(JWTService)
+    const usersService = myContainer.resolve<UsersService>(UsersService)
     if (!req.cookies.refreshToken) {
       next()
       return
@@ -50,8 +50,8 @@ export class AuthMiddlewares {
   }
 
   async noneStatusAccessToken(req: Request, res: Response, next: NextFunction) {
-    const jwtService = container.resolve<JWTService>(JWTService)
-    const usersService = container.resolve<UsersService>(UsersService)
+    const jwtService = myContainer.resolve<JWTService>(JWTService)
+    const usersService = myContainer.resolve<UsersService>(UsersService)
     if (!req.headers.authorization) {
       next()
       return
@@ -89,7 +89,7 @@ export class AuthMiddlewares {
   }
 
   async checkCredentialsLoginPass(req: Request, res: Response, next: NextFunction) {
-    const usersService = container.resolve<UsersService>(UsersService)
+    const usersService = myContainer.resolve<UsersService>(UsersService)
     const user: UserType | null = await usersService.findUserByLoginOrEmail(req.body.loginOrEmail)
     if (user) {
       const compare = await bcrypt.compare(req.body.password, user.accountData.passwordHash)
@@ -110,7 +110,7 @@ export class AuthMiddlewares {
   }
 
   async checkUserAccountNotExists(req: Request, res: Response, next: NextFunction) {
-    const usersService = container.resolve<UsersService>(UsersService)
+    const usersService = myContainer.resolve<UsersService>(UsersService)
     const checkOutEmailInDB = await usersService.findByLoginAndEmail(req.body.email, req.body.login);
     if (!checkOutEmailInDB) {
       next()
@@ -127,7 +127,7 @@ export class AuthMiddlewares {
   }
 
   async checkIpInBlackList(req: Request, res: Response, next: NextFunction) {
-    const blackListIPRepository = container.resolve<BlackListIPRepository>(BlackListIPRepository)
+    const blackListIPRepository = myContainer.resolve<BlackListIPRepository>(BlackListIPRepository)
     const clientIp = requestIp.getClientIp(req);
     if (clientIp) {
       const result = await blackListIPRepository.checkoutIPinBlackList(clientIp);
@@ -139,7 +139,7 @@ export class AuthMiddlewares {
   }
 
   async compareCurrentAndCreatorComment(req: Request, res: Response, next: NextFunction) {
-    const commentsService = container.resolve<CommentsService>(CommentsService)
+    const commentsService = myContainer.resolve<CommentsService>(CommentsService)
     try {
       const user = req.user
       if (!user) {

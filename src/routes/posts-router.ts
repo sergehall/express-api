@@ -8,15 +8,15 @@ import {
   contentCommentValidation,
   likeStatusValidator, blogIdBodyValidator,
 } from "../middlewares/input-validator-middleware";
-import {container} from "../Container";
+import {myContainer} from "../types/container";
 import {PostsController} from "../presentation/postsController";
 import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 
 
 export const postsRouts = Router({})
 
-const postsController = container.resolve<PostsController>(PostsController)
-const authMiddlewares = container.resolve<AuthMiddlewares>(AuthMiddlewares)
+const postsController = myContainer.resolve<PostsController>(PostsController)
+const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
 
 postsRouts.get('/',
   authMiddlewares.noneStatusAccessToken,

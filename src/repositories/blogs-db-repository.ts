@@ -10,7 +10,7 @@ import uuid4 from "uuid4";
 import {mongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
 import {inject, injectable} from "inversify";
-import {TYPES} from "../types";
+import {TYPES} from "../types/types";
 import {PreparationPosts} from "./preparation-posts";
 
 
