@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "name": "it-incubator-express-api",
+  "name": "express-api",
   "builds": [
     {
       "src": "src/index.ts",
       "use": "@vercel/node"
     }
   ],
-  
+
   "routes": [
     {
       "src": "/(.*)",
