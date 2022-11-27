@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "name": "express-api",
+  "version": 2,
+  "name": "it-incubator-express-api",
   "builds": [
     {
       "src": "src/index.ts",
