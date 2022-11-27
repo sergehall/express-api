@@ -31,7 +31,7 @@ app.set('trust proxy', true)
 
 app.set('view engine', 'ejs')
 app.get('/', (req: Request, res: Response) => {
-  res.render('src/views/index.ejs')
+  res.render('views/index')
 })
 
 app.use('/auth', authRouter)
