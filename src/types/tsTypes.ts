@@ -175,17 +175,23 @@ export type BlackListIPDBType = {
   addedAt: string
 }
 //...............................................likeStatus
+export enum ELikeStatus {
+  Like = 'Like',
+  Dislike = 'Dislike',
+  None = 'None',
+}
+type likeStatusType = "Like" | "Dislike" | "None"
 export type likeStatusCommentIdType = {
   commentId: string
   userId: string
-  likeStatus: string
+  likeStatus: likeStatusType
   createdAt: string
 }
 export type likeStatusPostsIdType = {
   postId: string
   userId: string
   login: string
-  likeStatus: string
+  likeStatus: likeStatusType
   addedAt: string
 }
 //...............................................Session

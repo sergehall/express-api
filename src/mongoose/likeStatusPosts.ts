@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import {likeStatusPostsIdType} from "../types/tsTypes";
+import {ELikeStatus, likeStatusPostsIdType} from "../types/tsTypes";
 
 
 const LikeStatusPostsIdSchema = new mongoose.Schema({
@@ -17,6 +17,7 @@ const LikeStatusPostsIdSchema = new mongoose.Schema({
   },
   likeStatus: {
     type: String,
+    enum: ELikeStatus,
     required: [true, 'likeStatus is required']
   },
   addedAt: {
@@ -25,4 +26,4 @@ const LikeStatusPostsIdSchema = new mongoose.Schema({
   }
 })
 
-export const MyModelLikeStatusPostsId =  mongoose.model<likeStatusPostsIdType>("likeStatusPosts", LikeStatusPostsIdSchema, 'LikeStatusPosts')
+export const MyModelLikeStatusPostsId = mongoose.model<likeStatusPostsIdType>("likeStatusPosts", LikeStatusPostsIdSchema, 'LikeStatusPosts')
