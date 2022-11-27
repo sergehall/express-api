@@ -12,8 +12,5 @@
       "src": "/(.*)",
       "dest": "/"
     }
-  ],
-
-  "outputDirectory": "views/index.ejs"
-
+  ]
 }
