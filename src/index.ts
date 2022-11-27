@@ -30,8 +30,8 @@ const port = process.env.PORT || 5000
 app.set('trust proxy', true)
 
 app.set('view engine', 'ejs')
-app.get('src/views/', (req: Request, res: Response) => {
-  res.render('index.ejs')
+app.get('/', (req: Request, res: Response) => {
+  res.render('src/views/index.ejs')
 })
 
 app.use('/auth', authRouter)
