@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
-import {likeArr, likeStatusPostsIdType} from "../types/tsTypes";
+import {likeStatusPostsIdType} from "../types/tsTypes";
 
 
-const LikeStatusPostsIdSchema = new mongoose.Schema({
+
+export const LikeStatusPostsIdSchema = new mongoose.Schema({
   postId: {
     type: String,
     required: [true, 'postId is required'],
@@ -17,7 +18,7 @@ const LikeStatusPostsIdSchema = new mongoose.Schema({
   },
   likeStatus: {
     type: String,
-    validate: (value: string) => likeArr.includes(value),
+    enum: ['Like', 'Dislike' , 'None'],
     required: [true, 'likeStatus is required']
   },
   addedAt: {

@@ -25,7 +25,7 @@ export class PostsService {
   }
 
   async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserType | null): Promise<Pagination> {
-    const direction = sortDirection === "desc" ? 1 : -1;
+    const direction = sortDirection === "asc" ? 1 : -1;
 
     let field = "createdAt"
     if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogId" || sortBy === "blogName" || sortBy === "content" || sortBy === "blogName") {
@@ -159,17 +159,18 @@ export class PostsService {
     return await this.postsRepository.deletedAllPosts()
   }
 
-  async changeLikeStatusPost(user: UserType, postId: string, likeStatus: string): Promise<Boolean> {
+  async changeLikeStatusPost(user: UserType, postId: string, likeStatus: string): Promise<String> {
     const addedAt = new Date().toISOString()
 
     const findPostInPostDB = await this.postsRepository.findPostByPostId(postId)
     if (!findPostInPostDB) {
-      return false
+      return "404"
     }
 
     const update = await this.likeStatusPostsRepository.updateLikeStatusPost(user, postId, likeStatus, addedAt)
+    console.log(update, "update")
 
-    return update !== null;
+    return update;
 
   }
 }
