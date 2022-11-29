@@ -22,6 +22,6 @@ export class LikeStatusPostsRepository {
         addedAt: addedAt,
       },
       {upsert: true}
-    ).lean()
+    )
   }
 }

@@ -37,10 +37,10 @@ import {PreparationPosts} from "../repositories/preparation-posts";
 import {EmailsRepository} from "../repositories/emails-db-repository";
 import {JWTService} from "../application/jwt-service";
 import {ParseQuery} from "../middlewares/parse-query";
-import {LikeStatusPostsRepository} from "../repositories/LikeStatusPosts-db-repository";
 import {
   LikeStatusCommentsRepository
 } from "../repositories/likeStatusComment-db-repository";
+import {LikeStatusPostsRepository} from "../repositories/likeStatusPosts-db-repository";
 
 
 export const myContainer = new Container();
@@ -95,7 +95,7 @@ myContainer.bind<PreparationPosts>(TYPES.PreparationPosts).to(PreparationPosts);
 myContainer.bind<PreparationComments>(TYPES.PreparationComments).to(PreparationComments);
 // ParseQuery
 myContainer.bind<ParseQuery>(TYPES.ParseQuery).to(ParseQuery);
-// LikeStatusPostsRepository
-myContainer.bind<LikeStatusPostsRepository>(TYPES.LikeStatusPostsRepository).to(LikeStatusPostsRepository);
 // LikeStatusCommentRepository
 myContainer.bind<LikeStatusCommentsRepository>(TYPES.LikeStatusCommentsRepository).to(LikeStatusCommentsRepository);
+// LikeStatusPostsRepository
+myContainer.bind<LikeStatusPostsRepository>(TYPES.LikeStatusPostsRepository).to(LikeStatusPostsRepository);

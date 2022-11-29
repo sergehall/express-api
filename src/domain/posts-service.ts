@@ -13,7 +13,7 @@ import {PreparationPosts} from "../repositories/preparation-posts";
 import uuid4 from "uuid4";
 import {BlogsRepository} from "../repositories/blogs-db-repository";
 import {mongoHasNotUpdated, notFoundBlogId} from "../middlewares/errorsMessages";
-import {LikeStatusPostsRepository} from "../repositories/LikeStatusPosts-db-repository";
+import {LikeStatusPostsRepository} from "../repositories/likeStatusPosts-db-repository";
 
 
 @injectable()

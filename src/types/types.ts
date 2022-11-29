@@ -31,6 +31,7 @@ import {PreparationComments} from "../repositories/preparation-comments";
 import {PreparationPosts} from "../repositories/preparation-posts";
 import {EmailsRepository} from "../repositories/emails-db-repository";
 import {ParseQuery} from "../middlewares/parse-query";
+import {LikeStatusPostsRepository} from "../repositories/likeStatusPosts-db-repository";
 
 
 export const TYPES = {
@@ -84,7 +85,7 @@ export const TYPES = {
   JWTService: Symbol.for("JWTService"),
   // ParseQuery
   ParseQuery: Symbol.for("ParseQuery"),
-  // LikeStatusPostsRepository
+  // LikeStatus
   LikeStatusPostsRepository: Symbol.for("LikeStatusPostsRepository"),
   LikeStatusCommentsRepository: Symbol.for("  LikeStatusCommentsRepository"),
 };
