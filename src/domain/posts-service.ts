@@ -159,18 +159,13 @@ export class PostsService {
     return await this.postsRepository.deletedAllPosts()
   }
 
-  async changeLikeStatusPost(user: UserType, postId: string, likeStatus: string): Promise<String> {
+  async changeLikeStatusPost(user: UserType, postId: string, likeStatus: string): Promise<Boolean> {
     const addedAt = new Date().toISOString()
 
     const findPostInPostDB = await this.postsRepository.findPostByPostId(postId)
     if (!findPostInPostDB) {
-      return "404"
+      return false
     }
-
-    const update = await this.likeStatusPostsRepository.updateLikeStatusPost(user, postId, likeStatus, addedAt)
-    console.log(update, "update")
-
-    return update;
-
+    return await this.likeStatusPostsRepository.updateLikeStatusPost(user, postId, likeStatus, addedAt);
   }
 }

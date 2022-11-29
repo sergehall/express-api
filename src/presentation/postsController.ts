@@ -182,11 +182,8 @@ export class PostsController {
       return res.sendStatus(401)
     }
     const likeStatusPost = await this.postsService.changeLikeStatusPost(user, postId, likeStatus);
-    if (likeStatusPost.split(" ")[0] === "404") {
+    if (!likeStatusPost) {
       return res.sendStatus(404)
-    }
-    if (likeStatusPost.split(" ")[0] === "400") {
-      return res.sendStatus(400)
     }
     return res.sendStatus(204)
   }
