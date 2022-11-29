@@ -24,7 +24,7 @@ export const newPasswordValidation = body(['newPassword']).trim().isString().wit
 export const recoveryCodeValidation = body(['recoveryCode']).trim().isString().withMessage('recoveryCode must be string').isLength({min: 1, max: 2000}).withMessage("recoveryCode must be >1 and <2000 characters.")
 //...........................check
 // export const likeStatusValidator = check('likeStatus').isIn(["None", "Like", "Dislike"])
-export const likeStatusValidator = body(['likeStatus']).isString()
+export const likeStatusValidator = body(['likeStatus'])
 
 
 export const inputValidatorMiddleware = (req: Request, res: Response, next: NextFunction) => {

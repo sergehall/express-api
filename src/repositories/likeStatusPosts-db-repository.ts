@@ -6,6 +6,7 @@ import {UserType} from "../types/tsTypes";
 @injectable()
 export class LikeStatusPostsRepository {
   async updateLikeStatusPost(user: UserType, postId: string, likeStatus: string, addedAt: string) {
+
     return await MyModelLikeStatusPostsId.findOneAndUpdate(
       {
         $and:

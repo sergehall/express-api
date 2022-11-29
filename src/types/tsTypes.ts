@@ -208,7 +208,8 @@ export enum ELikeStatus {
   Dislike = 'Dislike',
   None = 'None',
 }
-type likeStatusType = 'Like' | 'Dislike' | 'None'
+export type likeStatusType = 'Like' | 'Dislike' | 'None'
+export const likeArr = ['Like', 'Dislike', 'None']
 export type likeStatusCommentIdType = {
   commentId: string
   userId: string
