@@ -23,6 +23,7 @@ blogsRouts.get('/',
   .get('/:blogId/posts',
     blogIdParamsValidation,
     inputValidatorMiddleware,
+    authMiddlewares.findBlogById,
     authMiddlewares.noneStatusAccessToken,
     blogsController.findAllPostsByBlogId.bind(blogsController))
 

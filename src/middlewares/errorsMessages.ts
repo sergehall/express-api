@@ -3,9 +3,9 @@ export const mongoHasNotUpdated = {
   message: "Mongo database has not updated the data",
   field: "MongoDb"
 }
-export const notFoundBloggerId = {
-  message: "Invalid 'bloggerId' such blogger doesn't exist",
-  field: "bloggerId"
+export const mongoHasNotCreateBlog = {
+  message: "Mongo database has not create new blog",
+  field: "MongoDb"
 }
 export const notFoundUserId = {
   message: "Invalid 'userId' such user doesn't exist",

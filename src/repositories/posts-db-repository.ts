@@ -1,23 +1,18 @@
 import {
- DTOPosts,
+  DTOPosts,
   PostsType
 } from "../types/tsTypes";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
 import {MyModelPosts} from "../mongoose/PostsSchemaModel";
-import {inject, injectable} from "inversify";
-import {PreparationPosts} from "./preparation-posts";
-import {TYPES} from "../types/types";
+import {injectable} from "inversify";
 
 
 @injectable()
 export class PostsRepository {
 
-  constructor(@inject(TYPES.PreparationPosts) protected preparationPosts: PreparationPosts) {
-  }
-
-  async findPosts(dtoPosts: DTOPosts): Promise<PostsType[]> {
+  async findPosts(dtoPosts: DTOPosts, [...filters]): Promise<PostsType[]> {
     return await MyModelPosts.find(
-      {},
+      {$and: filters},
       {
         _id: false,
         __v: false

@@ -118,6 +118,13 @@ export type DTOPosts = {
   field: string
   direction: number
 }
+export type DTOFindPostsByBlogId = {
+  blogId: string
+  pageSize: number
+  startIndex: number
+  field: string
+  direction: number
+}
 //...............................................Comments
 export type CommentType = {
   id: string

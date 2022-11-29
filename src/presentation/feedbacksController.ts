@@ -21,7 +21,7 @@ export class FeedbacksController {
       return res.sendStatus(401)
     }
 
-    const newFeedback = await this.feedbacksService.sendFeedback(userId, req.body.comment)
+    const newFeedback = await this.feedbacksService.createFeedback(userId, req.body.comment)
     if (!newFeedback.data) {
       return res.status(400).send(newFeedback.errorsMessages)
     }

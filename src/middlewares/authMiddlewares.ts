@@ -9,6 +9,7 @@ import {BlackListIPRepository} from "../repositories/blackListIP-repository";
 import {CommentsService} from "../domain/comments-service";
 import {injectable} from "inversify";
 import {myContainer} from "../types/container";
+import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 
 
 @injectable()
@@ -167,6 +168,22 @@ export class AuthMiddlewares {
       console.log(e)
       res.sendStatus(401)
       return
+    }
+  }
+
+  async findBlogById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const blog = await MyModelBlogs.findOne({id: req.params.blogId})
+
+      if (blog) {
+        next()
+        return
+      }
+      return res.sendStatus(404)
+
+    } catch (e) {
+      console.log(e)
+      return res.sendStatus(404)
     }
   }
 

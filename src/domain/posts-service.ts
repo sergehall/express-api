@@ -38,7 +38,7 @@ export class PostsService {
       field: field,
       direction: direction
     }
-    const posts = await this.postsRepository.findPosts(dtoPosts)
+    const posts = await this.postsRepository.findPosts(dtoPosts, [{}])
     const filledPost = await this.preparationPosts.preparationPostsForReturn(posts, currentUser)
     const totalCount = await this.postsRepository.countDocuments([{}])
     const pagesCount = Math.ceil(totalCount / pageSize)
