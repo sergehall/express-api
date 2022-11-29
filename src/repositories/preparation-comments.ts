@@ -12,9 +12,9 @@ export class PreparationComments {
     const filledComments = []
     for (let i in commentsArray) {
       const commentId = commentsArray[i].id
-      const comment: CommentType = commentsArray[i]
-      let ownLikeStatus = "None"
+      const currentComment: CommentType = commentsArray[i]
 
+      let ownLikeStatus = "None"
       if(currentUser){
         const currentComment = await MyModelLikeStatusCommentId.findOne(
           {
@@ -30,21 +30,34 @@ export class PreparationComments {
           ownLikeStatus = currentComment.likeStatus
         }
       }
-      comment.likesInfo.myStatus = ownLikeStatus
 
-      comment.likesInfo.likesCount = await MyModelLikeStatusCommentId.countDocuments({
+      // getting likes count
+      const likesCount = await MyModelLikeStatusCommentId.countDocuments({
         $and:
           [{commentId: commentId},
             {likeStatus: "Like"}]
       })
 
-      comment.likesInfo.dislikesCount = await MyModelLikeStatusCommentId.countDocuments({
+      // getting dislikes count
+      const dislikesCount = await MyModelLikeStatusCommentId.countDocuments({
         $and:
           [{commentId: commentId},
             {likeStatus: "Dislike"}]
       })
 
-      filledComments.push(comment)
+      const filledComment: CommentType  = {
+        id: currentComment.id,
+        content: currentComment.content,
+        userId: currentComment.userId,
+        userLogin: currentComment.userLogin,
+        createdAt: currentComment.createdAt,
+        likesInfo: {
+          likesCount: likesCount,
+          dislikesCount: dislikesCount,
+          myStatus: ownLikeStatus
+        }
+      }
+      filledComments.push(filledComment)
     }
     return filledComments
   }

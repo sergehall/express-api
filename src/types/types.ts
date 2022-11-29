@@ -83,5 +83,8 @@ export const TYPES = {
   // JWT
   JWTService: Symbol.for("JWTService"),
   // ParseQuery
-  ParseQuery: Symbol.for("ParseQuery")
+  ParseQuery: Symbol.for("ParseQuery"),
+  // LikeStatusPostsRepository
+  LikeStatusPostsRepository: Symbol.for("LikeStatusPostsRepository"),
+  LikeStatusCommentsRepository: Symbol.for("  LikeStatusCommentsRepository"),
 };

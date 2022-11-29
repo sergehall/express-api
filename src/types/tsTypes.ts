@@ -65,6 +65,15 @@ export type UserTestType = {
     createdAt: string
   }
 }
+export type DTOUsers = {
+  filterLogin: {}
+  filterEmail: {}
+  pageSize: number
+  startIndex: number
+  field: string
+  direction: number
+}
+export type filters = {}[]
 //...............................................Blogs
 export type BlogsType = {
   id: string
@@ -103,6 +112,12 @@ export type ReturnObjPostType = {
   errorsMessages: ErrorType[]
   resultCode: number
 }
+export type DTOPosts = {
+  pageSize: number
+  startIndex: number
+  field: string
+  direction: number
+}
 //...............................................Comments
 export type CommentType = {
   id: string
@@ -124,6 +139,12 @@ export type ReturnObjCommentType = {
   data: CommentType | null
   errorsMessages: ErrorType[]
   resultCode: number
+}
+export type DTOLikeStatusComm = {
+  commentId: string
+  userId: string
+  likeStatus: string,
+  createdAt: string
 }
 //...............................................Emails
 export type EmailConfirmCodeType = {
@@ -180,7 +201,7 @@ export enum ELikeStatus {
   Dislike = 'Dislike',
   None = 'None',
 }
-type likeStatusType = "Like" | "Dislike" | "None"
+type likeStatusType = 'Like' | 'Dislike' | 'None'
 export type likeStatusCommentIdType = {
   commentId: string
   userId: string

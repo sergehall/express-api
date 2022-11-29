@@ -183,7 +183,7 @@ authRouter.post('/registration',
     const user = await usersService.createUserRegistration(req.body.login, req.body.email, req.body.password, clientIp, userAgent);
 
     if (user) {
-      console.log(`Send confirmation code to: ${req.body.email}`)
+      console.log(`Send confirmation code to: ${user.accountData.email}`)
       res.sendStatus(204);
       return
     }

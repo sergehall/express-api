@@ -150,10 +150,10 @@ export class AuthMiddlewares {
       const userId = user.accountData.id
       const commentId = req.params.commentId;
 
-      const foundPostWithComments = await commentsService.findCommentCompareOwner(commentId)
+      const findComment = await commentsService.findCommentForCompare(commentId)
 
-      if (foundPostWithComments) {
-        if (foundPostWithComments.userId === userId && foundPostWithComments.userLogin === userLogin) {
+      if (findComment) {
+        if (findComment.userId === userId && findComment.userLogin === userLogin) {
           next()
           return
         }

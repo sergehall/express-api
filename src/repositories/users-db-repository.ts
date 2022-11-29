@@ -1,7 +1,8 @@
 import {
+  DTOUsers,
   EmailConfirmCodeType,
   EmailRecoveryCodeType,
-  Pagination, UserType,
+  UserType,
 } from "../types/tsTypes";
 import {MyModelUser} from "../mongoose/UsersSchemaModel";
 import {injectable} from "inversify";
@@ -27,30 +28,12 @@ export class UsersRepository {
     return await MyModelUser.updateOne({"accountData.id": user.accountData.id}, {$set: user})
   }
 
-  async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
-
-    let filterLogin = {}
-    if (searchLoginTerm) {
-      filterLogin = {"accountData.login": searchLoginTerm}
-    }
-    let filterEmail = {}
-    if (searchEmailTerm) {
-      filterEmail = {"accountData.email": searchEmailTerm}
-    }
-
-    const startIndex = (pageNumber - 1) * pageSize
-    const direction = sortDirection === "desc" ? -1 : 1;
-    let field = "createdAt"
-
-    if (sortBy === "login" || sortBy === "email") {
-      field = "accountData." + sortBy
-    }
-
-    const users: UserType[] = await MyModelUser.find(
+  async findUsers(dtoFindUsers: DTOUsers): Promise<UserType[]> {
+    return await MyModelUser.find(
       {
         $and: [
-          filterLogin,
-          filterEmail
+          dtoFindUsers.filterLogin,
+          dtoFindUsers.filterLogin
         ]
       },
       {
@@ -61,20 +44,13 @@ export class UsersRepository {
         emailConfirmation: false,
         registrationData: false
       })
-      .limit(pageSize)
-      .skip(startIndex)
-      .sort({[field]: direction}).lean()
+      .limit(dtoFindUsers.pageSize)
+      .skip(dtoFindUsers.startIndex)
+      .sort({[dtoFindUsers.field]: dtoFindUsers.direction}).lean()
+  }
 
-    const totalCount = await MyModelUser.countDocuments({$and: [filterLogin, filterEmail]})
-    const pagesCount = Math.ceil(totalCount / pageSize)
-
-    return {
-      pagesCount: pagesCount,
-      page: pageNumber,
-      pageSize: pageSize,
-      totalCount: totalCount,
-      items: users
-    }
+  async countDocuments([...filters]){
+    return await MyModelUser.countDocuments({$and: filters})
   }
 
   async findByLoginAndEmail(email: string, login: string): Promise<UserType | null> {
@@ -115,17 +91,6 @@ export class UsersRepository {
     return await MyModelUser.findOne({"emailConfirmation.confirmationCode": code})
   }
 
-  async countEmailsSentLastHour(code: string): Promise<number> {
-    let countSentEmails = 0;
-    const currentUser: UserType | null = await MyModelUser.findOne(
-      {"emailConfirmation.confirmationCode": code}
-    )
-    if (currentUser) {
-      countSentEmails = currentUser.emailConfirmation.sentEmail.map(i => i > new Date(Date.now() - 60 * 60 * 1000).toISOString()).length
-    }
-    return countSentEmails
-  }
-
   async updateUserConfirmationCode(user: UserType) {
     return await MyModelUser.findOneAndUpdate(
       {"accountData.email": user.accountData.email},
@@ -133,12 +98,11 @@ export class UsersRepository {
   }
 
   async deleteUserById(id: string): Promise<boolean> {
-    const filter = {"accountData.id": id}
-    const result = await MyModelUser.deleteOne(filter)
+    const result = await MyModelUser.deleteOne({"accountData.id": id})
     return result.acknowledged && result.deletedCount === 1;
   }
 
-  async findByIsConfirmedAndCreatedAt(): Promise<number> {
+  async findByIsNotConfirmedAndCreatedAt(): Promise<number> {
     const result = await MyModelUser.deleteMany({
       "emailConfirmation.isConfirmed": false,
       "registrationData.createdAt": {$lt: new Date(Date.now() - 1000 * 60).toISOString()}

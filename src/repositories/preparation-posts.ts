@@ -9,26 +9,27 @@ import {injectable} from "inversify";
 export class PreparationPosts {
 
   async preparationPostsForReturn(postArray: PostsType[], currentUser: UserType | null): Promise<PostsType[]> {
-    const filledPosts = []
+    const filledPosts: PostsType[] = []
     for (let i in postArray) {
       const postId = postArray[i].id
       const currentPost: PostsType = postArray[i]
 
-      currentPost.extendedLikesInfo.likesCount = await MyModelLikeStatusPostsId.countDocuments({
+      // getting likes count
+      const likesCount = await MyModelLikeStatusPostsId.countDocuments({
         $and:
           [{postId: postId},
             {likeStatus: "Like"}]
       }).lean()
 
-      // getting dislikes and count
-      currentPost.extendedLikesInfo.dislikesCount = await MyModelLikeStatusPostsId.countDocuments({
+      // getting dislikes count
+      const dislikesCount = await MyModelLikeStatusPostsId.countDocuments({
         $and:
           [{postId: postId},
             {likeStatus: "Dislike"}]
       }).lean()
 
       // getting the status of the post owner
-      let ownStatus = "None"
+      let ownLikeStatus = "None"
       if (currentUser) {
         const findOwnPost = await MyModelLikeStatusPostsId.findOne(
           {
@@ -40,13 +41,12 @@ export class PreparationPosts {
           }
         )
         if (findOwnPost) {
-          ownStatus = findOwnPost.likeStatus
+          ownLikeStatus = findOwnPost.likeStatus
         }
       }
-      currentPost.extendedLikesInfo.myStatus = ownStatus
 
       // getting 3 last likes
-      currentPost.extendedLikesInfo.newestLikes = await MyModelLikeStatusPostsId.find(
+      const newestLikes = await MyModelLikeStatusPostsId.find(
         {
           $and:
             [
@@ -58,11 +58,30 @@ export class PreparationPosts {
           _id: false,
           __v: false,
           postId: false,
-          likeStatus: false
+          likeStatus: false,
+          "extendedLikesInfo.newestLikes._id": false
         })
         .sort({addedAt: -1})
         .limit(3)
-      filledPosts.push(currentPost)
+
+
+      const currentPostWithLastThreeLikes = {
+        id: currentPost.id,
+        title: currentPost.title,
+        shortDescription: currentPost.shortDescription,
+        content: currentPost.content,
+        blogId: currentPost.blogId,
+        blogName: currentPost.blogName,
+        createdAt: currentPost.createdAt,
+        extendedLikesInfo: {
+          likesCount: likesCount,
+          dislikesCount: dislikesCount,
+          myStatus: ownLikeStatus,
+          newestLikes: newestLikes
+        }
+      }
+
+      filledPosts.push(currentPostWithLastThreeLikes)
     }
     return filledPosts
   }

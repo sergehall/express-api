@@ -1,6 +1,7 @@
 import {
+  DTOUsers,
   EmailConfirmCodeType,
-  EmailRecoveryCodeType,
+  EmailRecoveryCodeType, filters,
   Pagination,
   UserType
 } from "../types/tsTypes";
@@ -24,7 +25,44 @@ export class UsersService {
   }
 
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
-    return await this.usersRepository.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
+    let filterLogin = {}
+    if (searchLoginTerm) {
+      filterLogin = {"accountData.login": searchLoginTerm}
+    }
+    let filterEmail = {}
+    if (searchEmailTerm) {
+      filterEmail = {"accountData.email": searchEmailTerm}
+    }
+
+    const startIndex = (pageNumber - 1) * pageSize
+    const direction = sortDirection === "desc" ? -1 : 1;
+    let field = "createdAt"
+
+    if (sortBy === "login" || sortBy === "email") {
+      field = "accountData." + sortBy
+    }
+    const dtoFindUsers: DTOUsers = {
+      filterLogin,
+      filterEmail,
+      pageSize,
+      startIndex,
+      field,
+      direction
+    }
+
+    const users = await this.usersRepository.findUsers(dtoFindUsers)
+
+    const filters: filters = [filterLogin, filterEmail]
+    const countDocuments = await this.usersRepository.countDocuments(filters)
+
+    const pagesCount = Math.ceil(countDocuments / pageSize)
+    return {
+      pagesCount: pagesCount,
+      page: pageNumber,
+      pageSize: pageSize,
+      totalCount: countDocuments,
+      items: users
+    }
   }
 
   async createUser(login: string, email: string, password: string, clientIp: string | null, userAgent: string): Promise<UserType | null> {
@@ -96,11 +134,16 @@ export class UsersService {
   }
 
   async countEmailsSentLastHour(code: string): Promise<number> {
-    return await this.usersRepository.countEmailsSentLastHour(code)
+    let countSentEmails = 0;
+    const currentUser: UserType | null = await this.usersRepository.findUserByConfirmationCode(code)
+    if (currentUser) {
+      countSentEmails = currentUser.emailConfirmation.sentEmail.map(i => i > new Date(Date.now() - 60 * 60 * 1000).toISOString()).length
+    }
+    return countSentEmails
   }
 
   async deleteUserWithRottenCreatedAt(): Promise<number> {
-    return await this.usersRepository.findByIsConfirmedAndCreatedAt()
+    return await this.usersRepository.findByIsNotConfirmedAndCreatedAt()
   }
 
   async sentRecoveryCodeByEmailUserExist(user: UserType) {

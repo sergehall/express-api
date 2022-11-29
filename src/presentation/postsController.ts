@@ -5,10 +5,12 @@ import {inject, injectable} from "inversify";
 import {TYPES} from "../types/types";
 import {myContainer} from "../types/container";
 import {ParseQuery} from "../middlewares/parse-query";
+import {CommentsService} from "../domain/comments-service";
 
 @injectable()
 export class PostsController {
-  constructor(@inject(TYPES.PostsService) protected postsService: PostsService) {
+  constructor(@inject(TYPES.PostsService) protected postsService: PostsService,
+              @inject(TYPES.CommentsService) protected commentsService: CommentsService) {
   }
 
   async getAllPosts(req: Request, res: Response) {
@@ -55,7 +57,7 @@ export class PostsController {
         res.send()
         return
       }
-      const newPost = await this.postsService.createNewCommentByPostId(postId, content, user)
+      const newPost = await this.commentsService.createNewCommentByPostId(postId, content, user)
 
 
       if (newPost.resultCode === 0) {
@@ -105,7 +107,7 @@ export class PostsController {
       const sortBy: string | null = parseQueryData.sortBy
       const sortDirection: string | null = parseQueryData.sortDirection
       const user: UserType | null = req.user
-      const getPost = await this.postsService.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection, user);
+      const getPost = await this.commentsService.getCommentsByPostId(postId, pageNumber, pageSize, sortBy, sortDirection, user);
 
       if (getPost.pageSize === 0) {
         return res.status(404).send()
@@ -118,7 +120,6 @@ export class PostsController {
       return res.sendStatus(500)
     }
   }
-
 
   async updatePostById(req: Request, res: Response) {
     try {
@@ -153,7 +154,7 @@ export class PostsController {
   async deletePostById(req: Request, res: Response) {
     const id = req.params.postId
 
-    const deletedPost = await this.postsService.deletedById(id)
+    const deletedPost = await this.postsService.deletePostById(id)
 
     if (deletedPost) {
       res.sendStatus(204)

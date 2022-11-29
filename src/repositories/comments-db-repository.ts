@@ -1,16 +1,8 @@
 import {
-  ArrayErrorsType,
+  CommentsTypeModel,
   CommentType,
-  ReturnObjCommentType,
-  UserType
 } from "../types/tsTypes";
-import {
-  mongoHasNotUpdated,
-  notDeletedComment,
-  notFoundCommentId
-} from "../middlewares/errorsMessages";
 import {MyModelComments} from "../mongoose/CommentsSchemaModel";
-import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 import {inject, injectable} from "inversify";
 import {PreparationComments} from "./preparation-comments";
 import {TYPES} from "../types/types";
@@ -21,8 +13,8 @@ export class CommentsRepository {
   constructor(@inject(TYPES.PreparationComments) protected preparationComments: PreparationComments) {
   }
 
-  async findCommentCompareOwner(commentId: string): Promise<CommentType | null> {
-    const result: CommentType | undefined = await MyModelComments.findOne(
+  async findCommentById(commentId: string): Promise<CommentType | null> {
+    const result = await MyModelComments.findOne(
       {"allComments.id": commentId},
       {
         _id: false,
@@ -32,123 +24,48 @@ export class CommentsRepository {
     return result ? result : null;
   }
 
-  async findCommentByCommentId(commentId: string, currentUser: UserType | null): Promise<ReturnObjCommentType> {
-    const errorsArray: ArrayErrorsType = [];
-    const filter = {"allComments.id": commentId}
-    const foundPostWithComments = await MyModelComments.findOne(
-      filter,
+  async createCommentByPostId(postId: string, newComment: CommentType): Promise<CommentsTypeModel | null> {
+    return await MyModelComments.findOneAndUpdate(
+      {postId: postId},
       {
-        _id: false,
-        "allComments._id": false
-      }).lean()
-
-    if (!foundPostWithComments) {
-      errorsArray.push(notFoundCommentId)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
-
-    const commentArray: CommentType[] = [foundPostWithComments.allComments.filter(i => i.id === commentId)[0]]
-    const commentFiledLikesInfo = await this.preparationComments.preparationCommentsForReturn(commentArray, currentUser)
-
-    return {
-      data: commentFiledLikesInfo[0],
-      errorsMessages: errorsArray,
-      resultCode: 0
-    }
+        $push: {allComments: newComment}
+      },
+      {upsert: true}
+    )
   }
 
-  async updateCommentById(commentId: string, content: string): Promise<ReturnObjCommentType> {
-    const errorsArray: ArrayErrorsType = [];
-    const filterToUpdate = {"allComments.id": commentId}
-    let resultCode = 0
+  async findAllCommentsByPostId(postId: string): Promise<CommentsTypeModel | null> {
+    return await MyModelComments.findOne(
+      {postId: postId},
+      {_id: false, 'allComments._id': false})
+  }
+
+  async updateCommentById(commentId: string, content: string): Promise<Boolean> {
 
     const result = await MyModelComments.updateOne(
-      filterToUpdate,
+      {"allComments.id": commentId},
       {$set: {"allComments.$.content": content}})
 
-    if (result.modifiedCount === 0 && result.matchedCount == 0) {
-      errorsArray.push(mongoHasNotUpdated)
-    }
-
-    if (errorsArray.length !== 0) {
-      resultCode = 1
-    }
-
-    return {
-      data: null,
-      errorsMessages: errorsArray,
-      resultCode: resultCode
-    }
+    return (result.modifiedCount !== 0 && result.matchedCount !== 0)
   }
 
-  async deletedCommentById(commentId: string): Promise<ReturnObjCommentType> {
-    const errorsArray: ArrayErrorsType = [];
-    const filterToDelete = {"allComments.id": commentId}
+  async deletedCommentById(commentId: string): Promise<Boolean> {
 
-    const resultDeleted = await MyModelComments.findOneAndUpdate(filterToDelete, {
-      $pull: {
-        allComments: {
-          id: commentId
-        }
-      }
-    })
-
-    if (!resultDeleted) {
-      errorsArray.push(notDeletedComment)
-      return {
-        data: null,
-        errorsMessages: errorsArray,
-        resultCode: 1
-      }
-    }
-    return {
-      data: null,
-      errorsMessages: errorsArray,
-      resultCode: 0
-    }
-  }
-
-  async changeLikeStatusComment(user: UserType, commentId: string, likeStatus: string): Promise<Boolean> {
-    const userId = user.accountData.id
-    const createdAt = new Date().toISOString()
-
-    try {
-      const result = await MyModelComments.findOneAndUpdate(
-        {"allComments.id": commentId},
-        {$set: {"allComments.likeStatus": likeStatus}},
-        {upsert: true})
-      if (!result) {
-        return false
-      }
-
-      await MyModelLikeStatusCommentId.findOneAndUpdate(
-        {
-          $and:
-            [
-              {commentId: commentId},
-              {userId: userId}
-            ]
-        },
-        {
-          $set: {
-            commentId: commentId,
-            userId: userId,
-            likeStatus: likeStatus,
-            createdAt: createdAt,
+    const resultDeleted = await MyModelComments.findOneAndUpdate(
+      {"allComments.id": commentId},
+      {
+        $pull: {
+          allComments: {
+            id: commentId
           }
-        },
-        {upsert: true})
-
-      return true
-
-    } catch (e) {
-      console.log(e)
+        }
+      },
+      {returnDocument: "after"}).lean()
+    if (!resultDeleted) {
       return false
     }
+    // check comment is deleted
+    return resultDeleted.allComments.filter(i => i.id === commentId).length === 0
   }
 
 }
