@@ -1,5 +1,5 @@
 import {
-  BlogsType
+  BlogsType, DTOBlogsType
 } from "../types/tsTypes";
 import {MyModelBlogs} from "../mongoose/BlogsSchemaModel";
 import {injectable} from "inversify";
@@ -7,16 +7,16 @@ import {injectable} from "inversify";
 
 @injectable()
 export class BlogsRepository {
-  async findBlogs(pageSize: number, startIndex: number, field: string, direction: number): Promise<BlogsType[]> {
+  async findBlogs(dtoBlogs: DTOBlogsType): Promise<BlogsType[]> {
     return await MyModelBlogs.find(
       {},
       {
         _id: false,
         __v: false
       })
-      .limit(pageSize)
-      .skip(startIndex)
-      .sort({[field]: direction}).lean()
+      .limit(dtoBlogs.pageSize)
+      .skip(dtoBlogs.startIndex)
+      .sort({[dtoBlogs.field]: dtoBlogs.direction}).lean()
   }
 
   async countDocuments([...filters]) {

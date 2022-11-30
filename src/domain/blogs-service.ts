@@ -6,7 +6,7 @@ import {PostsRepository} from "../repositories/posts-db-repository";
 import {PreparationPosts} from "../repositories/preparation-posts";
 import {
   ArrayErrorsType,
-  BlogsType,
+  BlogsType, DTOBlogsType,
   DTOFindPostsByBlogId,
   Pagination,
   PostsType,
@@ -32,7 +32,13 @@ export class BlogsService {
       field = sortBy
     }
     const startIndex = (pageNumber - 1) * pageSize
-    const blogs = await this.blogsRepository.findBlogs(pageSize, startIndex, field, direction)
+    const dtoBlogs: DTOBlogsType = {
+      pageSize: pageSize,
+      startIndex: startIndex,
+      field: field,
+      direction: direction
+    }
+    const blogs = await this.blogsRepository.findBlogs(dtoBlogs)
     const totalCount = await this.blogsRepository.countDocuments([{}])
     const pagesCount = Math.ceil(totalCount / pageSize)
     return {

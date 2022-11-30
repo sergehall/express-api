@@ -1,5 +1,5 @@
 import {ObjectId} from "mongodb";
-import {SortOrder} from 'mongoose';
+import {SortOrder} from 'mongoose'
 
 //...............................................Errors
 export type ErrorType = {
@@ -72,7 +72,7 @@ export type DTOUsers = {
   pageSize: number
   startIndex: number
   field: string
-  direction: number
+  direction: SortOrder
 }
 export type filters = {}[]
 //...............................................Blogs
@@ -86,6 +86,12 @@ export type ReturnObjBlogType = {
   data: BlogsType | null
   errorsMessages: ErrorType[]
   resultCode: number
+}
+export type DTOBlogsType = {
+  pageSize: number,
+  startIndex: number,
+  field: string,
+  direction: SortOrder
 }
 //...............................................Posts
 export type PostsType = {
@@ -117,14 +123,14 @@ export type DTOPosts = {
   pageSize: number
   startIndex: number
   field: string
-  direction: number
+  direction: SortOrder
 }
 export type DTOFindPostsByBlogId = {
   blogId: string
   pageSize: number
   startIndex: number
-  field: SortOrder
-  direction: number
+  field: string
+  direction: SortOrder
 }
 //...............................................Comments
 export type CommentType = {
