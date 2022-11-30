@@ -1,4 +1,5 @@
 import {ObjectId} from "mongodb";
+import {SortOrder} from 'mongoose';
 
 //...............................................Errors
 export type ErrorType = {
@@ -122,7 +123,7 @@ export type DTOFindPostsByBlogId = {
   blogId: string
   pageSize: number
   startIndex: number
-  field: string
+  field: SortOrder
   direction: number
 }
 //...............................................Comments
