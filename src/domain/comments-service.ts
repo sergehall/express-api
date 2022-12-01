@@ -79,9 +79,6 @@ export class CommentsService {
     const allPosts = await this.commentsRepository.findAllCommentsByPostId(postId)
     let allComments: CommentType[] = []
     let totalCount = 0
-    let startIndex = (pageNumber - 1) * pageSize
-    const pagesCount = Math.ceil(totalCount / pageSize)
-
     let desc = 1
     let asc = -1
     let field: "userId" | "userLogin" | "content" | "createdAt" = "createdAt"
@@ -102,6 +99,9 @@ export class CommentsService {
     async function byField(field: "userId" | "userLogin" | "content" | "createdAt", asc: number, desc: number) {
       return (a: CommentType, b: CommentType) => a[field] > b[field] ? asc : desc;
     }
+
+    const startIndex = (pageNumber - 1) * pageSize
+    const pagesCount = Math.ceil(totalCount / pageSize)
 
     const commentsSlice = allComments.slice(startIndex, startIndex + pageSize)
     const filledComments = await this.preparationComments.preparationCommentsForReturn(commentsSlice, user)
