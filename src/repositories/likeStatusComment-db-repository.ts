@@ -23,7 +23,7 @@ export class LikeStatusCommentsRepository {
           createdAt: dtoLikeStatusComm.createdAt,
         }
       },
-      {upsert: true}).lean()
+      {upsert: true, returnDocument: "after"}).lean()
 
     return result !== null
   }
