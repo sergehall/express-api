@@ -7,6 +7,7 @@ import {injectable} from "inversify";
 
 @injectable()
 export class BlogsRepository {
+
   async findBlogs(dtoBlogs: DTOBlogsType): Promise<BlogsType[]> {
     return await MyModelBlogs.find(
       {},

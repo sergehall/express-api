@@ -256,3 +256,7 @@ export type PayloadType = {
   iat: number
   exp: number
 }
+export type DTOJWT = {
+  refreshToken: string
+  expirationDate: string
+}

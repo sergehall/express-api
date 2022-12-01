@@ -15,9 +15,6 @@ import {PayloadType} from "../types/tsTypes";
 import {JWTService} from "../application/jwt-service";
 import {SecurityDevicesService} from "../domain/securityDevices-service";
 import {UsersService} from "../domain/users-service";
-import {
-  BlackListRefreshTokenJWTRepository
-} from "../repositories/blackListRefreshTokenJWT-db-repository";
 import {ValidateLast10secReq} from "../middlewares/validateLast10secReq";
 import {AuthMiddlewares} from "../middlewares/authMiddlewares";
 import {ParseQuery} from "../middlewares/parse-query";
@@ -27,7 +24,6 @@ export const authRouter = Router({})
 
 const jwtService = myContainer.resolve<JWTService>(JWTService)
 const securityDevicesService = myContainer.resolve<SecurityDevicesService>(SecurityDevicesService)
-const blackListRefreshTokenJWTRepository = myContainer.resolve(BlackListRefreshTokenJWTRepository)
 const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
 const validateLast10secReq = myContainer.resolve<ValidateLast10secReq>(ValidateLast10secReq)
 const usersService = myContainer.resolve<UsersService>(UsersService)
@@ -43,7 +39,7 @@ authRouter.post('/login',
     try {
       const currentRefreshToken = req.cookies.refreshToken
       if (currentRefreshToken) {
-        await blackListRefreshTokenJWTRepository.addJWT(currentRefreshToken)
+        await jwtService.addJWTInBlackList(currentRefreshToken)
       }
       const clientIp = requestIp.getClientIp(req);
       const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
@@ -75,7 +71,7 @@ authRouter.post('/refresh-token',
       const userAgent = req.header('user-agent') ? `${req.header('user-agent')}` : '';
       const currentRefreshToken = req.cookies.refreshToken
 
-      await blackListRefreshTokenJWTRepository.addJWT(currentRefreshToken)
+      await jwtService.addJWTInBlackList(currentRefreshToken)
       const currentPayload: PayloadType = await jwtService.jwt_decode(currentRefreshToken)
 
       const newAccessToken = await jwtService.updateAccessJWT(currentPayload)
@@ -228,7 +224,7 @@ authRouter.post('/logout',
     const refreshToken = req.cookies.refreshToken
     const payload: PayloadType = await jwtService.jwt_decode(refreshToken);
 
-    await blackListRefreshTokenJWTRepository.addJWT(refreshToken)
+    await jwtService.addJWTInBlackList(refreshToken)
     const result = await securityDevicesService.deleteDeviceByDeviceIdAfterLogout(payload)
     if (result === "204") {
       return res.sendStatus(204)

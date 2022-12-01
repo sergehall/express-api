@@ -5,6 +5,7 @@ import {MyModelLikeStatusCommentId} from "../mongoose/likeStatusComment";
 
 @injectable()
 export class LikeStatusCommentsRepository {
+
   async updateLikeStatusComment(dtoLikeStatusComm: DTOLikeStatusComm){
     const result = await MyModelLikeStatusCommentId.findOneAndUpdate(
       {

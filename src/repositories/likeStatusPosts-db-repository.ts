@@ -8,7 +8,7 @@ export class LikeStatusPostsRepository {
 
   async updateLikeStatusPost(user: UserType, postId: string, likeStatus: string, addedAt: string): Promise<Boolean> {
 
-    return await MyModelLikeStatusPostsId.findOneAndUpdate(
+    const result = await MyModelLikeStatusPostsId.findOneAndUpdate(
       {
         $and:
           [
@@ -25,5 +25,7 @@ export class LikeStatusPostsRepository {
       },
       {upsert: true}
     ).lean()
+
+    return result !== null
   }
 }

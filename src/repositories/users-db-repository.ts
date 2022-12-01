@@ -49,7 +49,7 @@ export class UsersRepository {
       .sort({[dtoFindUsers.field]: dtoFindUsers.direction}).lean()
   }
 
-  async countDocuments([...filters]){
+  async countDocuments([...filters]) {
     return await MyModelUser.countDocuments({$and: filters})
   }
 
@@ -62,10 +62,13 @@ export class UsersRepository {
   }
 
   async findByConfirmationCode(code: string,): Promise<UserType | null> {
-    return await MyModelUser.findOne({
-        "emailConfirmation.confirmationCode": code,
-        "emailConfirmation.isConfirmed": false,
-        "emailConfirmation.expirationDate": {$gt: new Date().toISOString()}
+    return await MyModelUser.findOne(
+      {
+        $and: [
+          {"emailConfirmation.confirmationCode": code},
+          {"emailConfirmation.isConfirmed": false},
+          {"emailConfirmation.expirationDate": {$gt: new Date().toISOString()}}
+        ]
       },
       {
         _id: false,
@@ -82,8 +85,11 @@ export class UsersRepository {
 
   async findUserByEmailAndCode(email: string, code: string): Promise<UserType | null> {
     return await MyModelUser.findOne({
-      "emailConfirmation.confirmationCode": code,
-      "accountData.email": email
+      $and:
+        [
+          {"emailConfirmation.confirmationCode": code},
+          {"accountData.email": email}
+        ]
     })
   }
 

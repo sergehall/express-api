@@ -9,6 +9,7 @@ import {injectable} from "inversify";
 
 @injectable()
 export class UsersIPLast10secRepositories {
+
   async addAndCountByIpAndTimeRegConf(clientIp: string | null): Promise<number> {
     await MyModeLast10secRegConf.create({ip: clientIp, createdAt: new Date().toISOString()})
     const currentTimeMinus10sec = new Date(Date.now() - 1000 * 10).toISOString()

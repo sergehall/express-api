@@ -41,6 +41,7 @@ import {
   LikeStatusCommentsRepository
 } from "../repositories/likeStatusComment-db-repository";
 import {LikeStatusPostsRepository} from "../repositories/likeStatusPosts-db-repository";
+import {ClearingUsersExpDateNotConfirm} from "../demons/clearingUsersExpDateNotConfirm";
 
 
 export const myContainer = new Container();
@@ -99,3 +100,5 @@ myContainer.bind<ParseQuery>(TYPES.ParseQuery).to(ParseQuery);
 myContainer.bind<LikeStatusCommentsRepository>(TYPES.LikeStatusCommentsRepository).to(LikeStatusCommentsRepository);
 // LikeStatusPostsRepository
 myContainer.bind<LikeStatusPostsRepository>(TYPES.LikeStatusPostsRepository).to(LikeStatusPostsRepository);
+// ClearingUsersExpDateNotConfirm
+myContainer.bind<ClearingUsersExpDateNotConfirm>(TYPES.ClearingUsersExpDateNotConfirm).to(ClearingUsersExpDateNotConfirm);

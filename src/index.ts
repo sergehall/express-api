@@ -18,6 +18,7 @@ import {EmailsSender} from "./demons/emailSender";
 import {ClearingIpWithCreatedAtOlder10Sec} from "./demons/clearingIpWithCreatedAtOlder10Sec";
 import {ClearingInvalidJWTFromBlackList} from "./demons/clearingInvalidJWTFromBlackList";
 import {ClearingDevicesWithExpDate} from "./demons/clearingDevicesWithExpDate";
+import {ClearingUsersExpDateNotConfirm} from "./demons/clearingUsersExpDateNotConfirm";
 
 
 const app = express()
@@ -58,6 +59,7 @@ startApp()
       myContainer.resolve(EmailsSender).sendAndDeleteRecoveryCode(),
       myContainer.resolve(ClearingIpWithCreatedAtOlder10Sec).start(),
       myContainer.resolve(ClearingInvalidJWTFromBlackList).start(),
-      myContainer.resolve(ClearingDevicesWithExpDate).start()
+      myContainer.resolve(ClearingDevicesWithExpDate).start(),
+      myContainer.resolve(ClearingUsersExpDateNotConfirm).start()
     ])
 

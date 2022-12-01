@@ -88,4 +88,6 @@ export const TYPES = {
   // LikeStatus
   LikeStatusPostsRepository: Symbol.for("LikeStatusPostsRepository"),
   LikeStatusCommentsRepository: Symbol.for("  LikeStatusCommentsRepository"),
+  // ClearingUsersExpDateNotConfirm
+  ClearingUsersExpDateNotConfirm: Symbol.for("  ClearingUsersExpDateNotConfirm"),
 };
