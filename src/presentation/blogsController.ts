@@ -101,20 +101,10 @@ export class BlogsController {
 
       const updatedBlog = await this.blogsService.updatedBlogById(name, websiteUrl, id);
 
-      if (updatedBlog.resultCode === 0) {
-        res.status(204)
-        return res.send()
+      if (updatedBlog.resultCode) {
+        return res.sendStatus(404)
       }
-
-      if (updatedBlog.errorsMessages.find(p => p.field === "blogId")) {
-        res.status(404)
-        return res.send()
-      }
-
-      res.status(400)
-      const errorsMessages = updatedBlog.errorsMessages
-      const resultCode = updatedBlog.resultCode
-      return res.send({errorsMessages, resultCode})
+      return res.sendStatus(204)
 
     } catch (error) {
       console.log(error)
