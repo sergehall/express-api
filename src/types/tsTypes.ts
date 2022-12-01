@@ -154,12 +154,6 @@ export type ReturnObjCommentType = {
   errorsMessages: ErrorType[]
   resultCode: number
 }
-export type DTOLikeStatusComm = {
-  commentId: string
-  userId: string
-  likeStatus: string,
-  createdAt: string
-}
 //...............................................Emails
 export type EmailConfirmCodeType = {
   email: string
@@ -210,13 +204,6 @@ export type BlackListIPDBType = {
   addedAt: string
 }
 //...............................................likeStatus
-
-export type likeStatusType = 'Like' | 'Dislike' | 'None'
-// export enum ELikeStatus {
-//   Like = 'Like',
-//   Dislike = 'Dislike',
-//   None = 'None',
-// }
 export type likeStatusCommentIdType = {
   commentId: string
   userId: string
@@ -224,6 +211,19 @@ export type likeStatusCommentIdType = {
   createdAt: string
 }
 export type likeStatusPostsIdType = {
+  postId: string
+  userId: string
+  login: string
+  likeStatus: string
+  addedAt: string
+}
+export type DTOLikeStatusComm = {
+  commentId: string
+  userId: string
+  likeStatus: string
+  createdAt: string
+}
+export type DTOLikeStatusPost = {
   postId: string
   userId: string
   login: string

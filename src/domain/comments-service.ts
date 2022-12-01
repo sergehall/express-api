@@ -171,13 +171,15 @@ export class CommentsService {
   }
 
   async changeLikeStatusComment(user: UserType, commentId: string, likeStatus: string): Promise<Boolean> {
-    const userId = user.accountData.id
-    const createdAt = new Date().toISOString()
+    const findCommentInDB = await this.commentsRepository.findCommentById(commentId)
+    if (!findCommentInDB) {
+      return false
+    }
     const dtoLikeStatusComm: DTOLikeStatusComm = {
       commentId: commentId,
-      userId: userId,
+      userId: user.accountData.id,
       likeStatus: likeStatus,
-      createdAt: createdAt
+      createdAt: new Date().toISOString()
     }
     return await this.likeStatusCommentsRepository.updateLikeStatusComment(dtoLikeStatusComm);
   }

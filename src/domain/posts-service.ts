@@ -160,12 +160,18 @@ export class PostsService {
   }
 
   async changeLikeStatusPost(user: UserType, postId: string, likeStatus: string): Promise<Boolean> {
-    const addedAt = new Date().toISOString()
 
     const findPostInPostDB = await this.postsRepository.findPostByPostId(postId)
     if (!findPostInPostDB) {
       return false
     }
-    return await this.likeStatusPostsRepository.updateLikeStatusPost(user, postId, likeStatus, addedAt);
+    const dtoLikeStatusPost = {
+      postId: postId,
+      userId: user.accountData.id,
+      login: user.accountData.login,
+      likeStatus: likeStatus,
+      addedAt: new Date().toISOString()
+    }
+    return await this.likeStatusPostsRepository.updateLikeStatusPost(dtoLikeStatusPost);
   }
 }
