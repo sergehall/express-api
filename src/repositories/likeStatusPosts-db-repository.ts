@@ -23,7 +23,7 @@ export class LikeStatusPostsRepository {
         likeStatus: likeStatus,
         addedAt: addedAt,
       },
-      {upsert: true}
+      {upsert: true, returnDocument: "after"}
     ).lean()
 
     return result !== null

@@ -182,6 +182,7 @@ export class PostsController {
       return res.sendStatus(401)
     }
     const likeStatusPost = await this.postsService.changeLikeStatusPost(user, postId, likeStatus);
+
     if (!likeStatusPost) {
       return res.sendStatus(404)
     }
