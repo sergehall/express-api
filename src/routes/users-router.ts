@@ -16,7 +16,7 @@ export const usersRouter = Router({});
 
 const usersController = myContainer.resolve<UsersController>(UsersController)
 const authMiddlewares = myContainer.resolve<AuthMiddlewares>(AuthMiddlewares)
-
+// r
 usersRouter
   .get('/', usersController.getUsers.bind(usersController))
 
