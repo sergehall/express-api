@@ -55,7 +55,7 @@ export class ParseQuery {
       sortBy = null
     }
     const sortOrderArr = [-1, 1, 'descending', 'desc', 'ascending', 'asc']
-    let sortDirection: SortOrder = 1;
+    let sortDirection: SortOrder = "desc";
     if (sortOrderArr.includes(querySortDir)) {
       sortDirection = querySortDir;
     }
