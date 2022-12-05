@@ -1,5 +1,7 @@
 import {ObjectId} from "mongodb";
 
+
+export type SortOrder = -1 | 1 | "asc" | "ascending" | "desc" | "descending"
 //...............................................Errors
 export type ErrorType = {
   message: string
@@ -71,7 +73,7 @@ export type DTOUsers = {
   pageSize: number
   startIndex: number
   field: string
-  direction: -1 | 1 | "asc" | "ascending" | "desc" | "descending"
+  direction: SortOrder
 }
 export type filters = {}[]
 //...............................................Blogs
@@ -90,7 +92,7 @@ export type DTOBlogsType = {
   pageSize: number,
   startIndex: number,
   field: string,
-  direction: -1 | 1 | "asc" | "ascending" | "desc" | "descending"
+  direction: SortOrder
 }
 //...............................................Posts
 export type PostsType = {
@@ -122,14 +124,14 @@ export type DTOPosts = {
   pageSize: number
   startIndex: number
   field: string
-  direction: -1 | 1 | "asc" | "ascending" | "desc" | "descending"
+  direction: SortOrder
 }
 export type DTOFindPostsByBlogId = {
   blogId: string
   pageSize: number
   startIndex: number
   field: string
-  direction: -1 | 1 | "asc" | "ascending" | "desc" | "descending"
+  direction: SortOrder
 }
 //...............................................Comments
 export type CommentType = {

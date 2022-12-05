@@ -10,7 +10,7 @@ import {
   DTOFindPostsByBlogId,
   Pagination,
   PostsType,
-  ReturnObjBlogType,
+  ReturnObjBlogType, SortOrder,
   UserType
 } from "../types/tsTypes";
 import {mongoHasNotCreateBlog,
@@ -24,8 +24,8 @@ export class BlogsService {
               @inject(TYPES.PreparationPosts) protected preparationPosts: PreparationPosts) {
   }
 
-  async findBlogs(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
-    const direction = sortDirection === "asc" ? 1 : -1;
+  async findBlogs(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: SortOrder): Promise<Pagination> {
+    const direction = sortDirection;
 
     let field = "createdAt"
     if (sortBy === "name" || sortBy === "websiteUrl") {
@@ -50,10 +50,10 @@ export class BlogsService {
     };
   }
 
-  async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, blogId: string, currentUser: UserType | null): Promise<Pagination | null> {
+  async findAllPostsByBlogId(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: SortOrder, blogId: string, currentUser: UserType | null): Promise<Pagination | null> {
     // find all post by blogId
     let filledPosts: PostsType[] = []
-    const direction = sortDirection === "asc" ? 1 : -1;
+    const direction = sortDirection;
 
     let field = "createdAt"
     if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogName" || sortBy === "content" || sortBy === "blogName") {

@@ -5,6 +5,7 @@ import { injectable, inject } from "inversify";
 import {TYPES} from "../types/types";
 import {myContainer} from "../types/container";
 import {ParseQuery} from "../middlewares/parse-query";
+import {SortOrder} from "../types/tsTypes";
 
 
 @injectable()
@@ -21,7 +22,7 @@ export class UsersController {
       const searchLoginTerm: string | null = parseQueryData.searchLoginTerm
       const searchEmailTerm: string | null = parseQueryData.searchEmailTerm
       const sortBy: string | null = parseQueryData.sortBy
-      const sortDirection: string | null = parseQueryData.sortDirection
+      const sortDirection: SortOrder = parseQueryData.sortDirection
 
       const getUsers = await this.usersService.findUsers(searchLoginTerm, searchEmailTerm, pageNumber, pageSize, sortBy, sortDirection)
       return  res.send(getUsers)

@@ -2,7 +2,7 @@ import {CommentsRepository} from "../repositories/comments-db-repository";
 import {
   ArrayErrorsType,
   CommentType, DTOLikeStatusComm, Pagination,
-  ReturnObjCommentType,
+  ReturnObjCommentType, SortOrder,
   UserType
 } from "../types/tsTypes";
 import {inject, injectable} from "inversify";
@@ -64,7 +64,7 @@ export class CommentsService {
     }
   }
 
-  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, user: UserType | null): Promise<Pagination> {
+  async getCommentsByPostId(postId: string, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: SortOrder, user: UserType | null): Promise<Pagination> {
 
     const findPost = await this.postsRepository.findPostByPostId(postId)
     if (!findPost) {
@@ -82,8 +82,7 @@ export class CommentsService {
     let desc = 1
     let asc = -1
     let field: "userId" | "userLogin" | "content" | "createdAt" = "createdAt"
-
-    if (sortDirection === "asc") {
+    if (sortDirection === "asc" || sortDirection === "ascending" || sortDirection === 1) {
       desc = -1
       asc = 1
     }

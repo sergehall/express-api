@@ -4,7 +4,7 @@ import {
   DTOPosts,
   Pagination,
   PostsType,
-  ReturnObjPostType,
+  ReturnObjPostType, SortOrder,
   UserType
 } from "../types/tsTypes";
 import {inject, injectable} from "inversify";
@@ -24,13 +24,13 @@ export class PostsService {
               @inject(TYPES.LikeStatusPostsRepository) protected likeStatusPostsRepository: LikeStatusPostsRepository) {
   }
 
-  async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null, currentUser: UserType | null): Promise<Pagination> {
-    const direction = sortDirection === "asc" ? 1 : -1;
-
+  async findPosts(pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: SortOrder, currentUser: UserType | null): Promise<Pagination> {
+    const direction = sortDirection;
     let field = "createdAt"
     if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogId" || sortBy === "blogName" || sortBy === "content" || sortBy === "blogName") {
       field = sortBy
     }
+    console.log(direction, "direction", field, "field")
     const startIndex = (pageNumber - 1) * pageSize
     const dtoPosts: DTOPosts = {
       pageSize: pageSize,

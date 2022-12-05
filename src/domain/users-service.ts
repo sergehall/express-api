@@ -2,7 +2,7 @@ import {
   DTOUsers,
   EmailConfirmCodeType,
   EmailRecoveryCodeType, filters,
-  Pagination,
+  Pagination, SortOrder,
   UserType
 } from "../types/tsTypes";
 import uuid4 from "uuid4";
@@ -24,7 +24,7 @@ export class UsersService {
     @inject(TYPES.EmailsRepository) protected emailsRepository: EmailsRepository) {
   }
 
-  async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: string | null): Promise<Pagination> {
+  async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: SortOrder): Promise<Pagination> {
     let filterLogin = {}
     if (searchLoginTerm) {
       filterLogin = {"accountData.login": searchLoginTerm}
@@ -35,7 +35,7 @@ export class UsersService {
     }
 
     const startIndex = (pageNumber - 1) * pageSize
-    const direction = sortDirection === "desc" ? -1 : 1;
+    const direction = sortDirection;
     let field = "createdAt"
 
     if (sortBy === "login" || sortBy === "email") {
