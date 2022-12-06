@@ -30,7 +30,6 @@ export class PostsService {
     if (sortBy === "title" || sortBy === "shortDescription" || sortBy === "blogId" || sortBy === "blogName" || sortBy === "content" || sortBy === "blogName") {
       field = sortBy
     }
-    console.log(direction, "direction", field, "field")
     const startIndex = (pageNumber - 1) * pageSize
     const dtoPosts: DTOPosts = {
       pageSize: pageSize,
