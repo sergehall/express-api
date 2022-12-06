@@ -8,7 +8,7 @@ const ck = require('ckey')
 describe('check functions UsersRepository', () => {
   const dbUrl = ck.ATLAS_URI
   const client = new MongoClient(dbUrl);
-  const usersCollections = client.db(ck.DB_NAME_TEST).collection("Users")
+  const usersCollections = client.db(ck.TEST_DATABASE).collection("Users")
 
   const newUserWithObjId: UserTestType = {
     _id: new ObjectId('63786eb0efbb69c0b6193121'),
