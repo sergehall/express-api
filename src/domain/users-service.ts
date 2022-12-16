@@ -1,7 +1,7 @@
 import {
   DTOUsers,
   EmailConfirmCodeType,
-  EmailRecoveryCodeType, filters,
+  EmailRecoveryCodeType,
   Pagination, SortOrder,
   UserType
 } from "../types/tsTypes";
@@ -25,15 +25,20 @@ export class UsersService {
   }
 
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: SortOrder): Promise<Pagination> {
-    let filterLogin = {}
-    if (searchLoginTerm) {
-      filterLogin = {"accountData.login": searchLoginTerm}
+    console.log(searchLoginTerm, searchEmailTerm)
+    const queryArr = [searchLoginTerm, searchEmailTerm]
+    const filters = [];
+    for (let i = 0, l = queryArr.length; i < l; i++) {
+      if (queryArr[i] && queryArr[i] === searchLoginTerm) {
+        filters.push({"accountData.login": {$regex: searchLoginTerm}});
+      } else if (queryArr[i] && queryArr[i] === searchEmailTerm) {
+        filters.push({"accountData.email": {$regex: searchEmailTerm}});
+      }
     }
-    let filterEmail = {}
-    if (searchEmailTerm) {
-      filterEmail = {"accountData.email": searchEmailTerm}
+    if (filters.length === 0) {
+      filters.push({})
     }
-
+    
     const startIndex = (pageNumber - 1) * pageSize
     const direction = sortDirection;
     let field = "createdAt"
@@ -42,8 +47,7 @@ export class UsersService {
       field = "accountData." + sortBy
     }
     const dtoFindUsers: DTOUsers = {
-      filterLogin,
-      filterEmail,
+      filters,
       pageSize,
       startIndex,
       field,
@@ -52,7 +56,6 @@ export class UsersService {
 
     const users = await this.usersRepository.findUsers(dtoFindUsers)
 
-    const filters: filters = [filterLogin, filterEmail]
     const countDocuments = await this.usersRepository.countDocuments(filters)
 
     const pagesCount = Math.ceil(countDocuments / pageSize)

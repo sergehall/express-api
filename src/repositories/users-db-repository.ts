@@ -31,10 +31,7 @@ export class UsersRepository {
   async findUsers(dtoFindUsers: DTOUsers): Promise<UserType[]> {
     return await MyModelUser.find(
       {
-        $and: [
-          dtoFindUsers.filterLogin,
-          dtoFindUsers.filterLogin
-        ]
+        $and: dtoFindUsers.filters
       },
       {
         _id: false,

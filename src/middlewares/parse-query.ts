@@ -62,7 +62,6 @@ export class ParseQuery {
     if (Number(querySortDir) === -1) {
       sortDirection = -1;
     }
-    console.log(sortDirection)
     return {
       pageNumber: pageNumber,
       pageSize: pageSize,

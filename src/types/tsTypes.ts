@@ -67,15 +67,19 @@ export type UserTestType = {
     createdAt: string
   }
 }
+export type FiltersType = {
+  searchNameTerm?: string;
+  searchLoginTerm?: string;
+  searchEmailTerm?: string;
+}[];
+export type emptyFilter = {}[]
 export type DTOUsers = {
-  filterLogin: {}
-  filterEmail: {}
+  filters: FiltersType | emptyFilter
   pageSize: number
   startIndex: number
   field: string
   direction: SortOrder
 }
-export type filters = {}[]
 //...............................................Blogs
 export type BlogsType = {
   id: string
