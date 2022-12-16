@@ -25,7 +25,6 @@ export class UsersService {
   }
 
   async findUsers(searchLoginTerm: string | null, searchEmailTerm: string | null, pageNumber: number, pageSize: number, sortBy: string | null, sortDirection: SortOrder): Promise<Pagination> {
-    console.log(searchLoginTerm, searchEmailTerm)
     const queryArr = [searchLoginTerm, searchEmailTerm]
     const filters = [];
     for (let i = 0, l = queryArr.length; i < l; i++) {
@@ -38,7 +37,7 @@ export class UsersService {
     if (filters.length === 0) {
       filters.push({})
     }
-    
+
     const startIndex = (pageNumber - 1) * pageSize
     const direction = sortDirection;
     let field = "createdAt"
