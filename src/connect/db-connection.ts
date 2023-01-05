@@ -2,7 +2,7 @@ const ck = require('ckey')
 import mongoose from 'mongoose'
 
 const dbUrl = ck.ATLAS_URI
-const dbName = ck.NEST_DATABASE
+const dbName = ck.EXPRESS_DATABASE
 
 // connect by mongoose
 export async function runDb() {
